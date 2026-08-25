@@ -1,0 +1,126 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import {
+  CombatEngine,
+  Direction,
+  directionFromSwipe,
+  directionFromTap,
+  oppositeDirection,
+} from '../src/game-core.js';
+
+test('tap edge zones map to four guard directions and centre remains neutral', () => {
+  assert.equal(directionFromTap(50, 5, 100, 200), Direction.TOP);
+  assert.equal(directionFromTap(99, 100, 100, 200), Direction.RIGHT);
+  assert.equal(directionFromTap(50, 199, 100, 200), Direction.BOTTOM);
+  assert.equal(directionFromTap(1, 100, 100, 200), Direction.LEFT);
+  assert.equal(directionFromTap(50, 100, 100, 200), null);
+});
+
+test('swipe uses dominant axis and minimum distance', () => {
+  assert.equal(directionFromSwipe(80, 12), Direction.RIGHT);
+  assert.equal(directionFromSwipe(-80, 12), Direction.LEFT);
+  assert.equal(directionFromSwipe(8, -90), Direction.TOP);
+  assert.equal(directionFromSwipe(8, 90), Direction.BOTTOM);
+  assert.equal(directionFromSwipe(10, 8), null);
+});
+
+test('opposite direction supports meaningful counter-slash direction', () => {
+  assert.equal(oppositeDirection(Direction.TOP), Direction.BOTTOM);
+  assert.equal(oppositeDirection(Direction.RIGHT), Direction.LEFT);
+  assert.equal(oppositeDirection(Direction.BOTTOM), Direction.TOP);
+  assert.equal(oppositeDirection(Direction.LEFT), Direction.RIGHT);
+});
+
+test('matching strike direction parries and opens one counter window', () => {
+  const enemy = {
+    id: 'test-enemy', name: 'Test Enemy', title: 'Test Stage', maxHp: 4,
+    gapMs: 100, recoveryMs: 500, perfectWindowMs: 60,
+    attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 100, damage: 1 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy] });
+  combat.start(0);
+  combat.update(1550);
+  assert.equal(combat.phase, 'telegraph');
+  combat.update(1650);
+  assert.equal(combat.phase, 'strike');
+  const parry = combat.attemptParry(Direction.TOP, 1670);
+  assert.deepEqual(parry, { accepted: true, perfect: true });
+  assert.equal(combat.phase, 'recovery');
+  const counter = combat.attemptAttack(Direction.BOTTOM, 1700);
+  assert.equal(counter.accepted, true);
+  assert.equal(counter.damage, 3);
+  assert.equal(combat.enemyHp, 1);
+  assert.equal(combat.attemptAttack(Direction.LEFT, 1720).reason, 'already-used');
+});
+
+test('wrong direction does not parry and unanswered strike damages player', () => {
+  const enemy = {
+    id: 'test-enemy', name: 'Test Enemy', title: 'Test Stage', maxHp: 2,
+    gapMs: 100, recoveryMs: 300, perfectWindowMs: 50,
+    attacks: [{ direction: Direction.LEFT, telegraphMs: 100, strikeMs: 100, damage: 2 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy], playerMaxHp: 5 });
+  combat.start(0);
+  combat.update(1550);
+  combat.update(1650);
+  const parry = combat.attemptParry(Direction.RIGHT, 1670);
+  assert.equal(parry.accepted, false);
+  assert.equal(parry.reason, 'wrong-direction');
+  combat.update(1750);
+  assert.equal(combat.playerHp, 3);
+  assert.equal(combat.phase, 'recovery');
+  assert.equal(combat.attemptAttack(Direction.RIGHT, 1760).reason, 'no-parry-opening');
+});
+
+test('feint changes displayed direction before the strike', () => {
+  const enemy = {
+    id: 'feint-enemy', name: 'Feint Enemy', title: 'Test Stage', maxHp: 2,
+    gapMs: 100, recoveryMs: 300, perfectWindowMs: 50,
+    attacks: [{ direction: Direction.RIGHT, feintFrom: Direction.LEFT, feintAt: 0.5, telegraphMs: 200, strikeMs: 100, damage: 1 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy] });
+  combat.start(0);
+  combat.update(1550);
+  assert.equal(combat.snapshot(1550).attack.displayedDirection, Direction.LEFT);
+  combat.update(1655);
+  assert.equal(combat.snapshot(1655).attack.displayedDirection, Direction.RIGHT);
+});
+
+test('three stages advance sequentially to victory', () => {
+  const enemies = ['one', 'two', 'three'].map((id) => ({
+    id, name: id, title: id, maxHp: 1, gapMs: 10, recoveryMs: 20, perfectWindowMs: 50,
+    attacks: [{ direction: Direction.TOP, telegraphMs: 10, strikeMs: 10, damage: 1 }],
+  }));
+  const combat = new CombatEngine({ enemies });
+  let now = 0;
+  combat.start(now);
+  for (let stage = 0; stage < enemies.length; stage += 1) {
+    now += 1550;
+    combat.update(now);
+    now += 10;
+    combat.update(now);
+    assert.equal(combat.phase, 'strike');
+    assert.equal(combat.attemptParry(Direction.TOP, now + 1).accepted, true);
+    assert.equal(combat.attemptAttack(Direction.BOTTOM, now + 2).defeated, true);
+    now += 1452;
+    combat.update(now);
+  }
+  assert.equal(combat.phase, 'victory');
+  assert.equal(combat.enemyIndex, 2);
+});
+
+test('lethal enemy strike reaches defeat and keeps health at zero', () => {
+  const enemy = {
+    id: 'executioner', name: 'Executioner', title: 'Test Stage', maxHp: 2,
+    gapMs: 10, recoveryMs: 10, perfectWindowMs: 20,
+    attacks: [{ direction: Direction.TOP, telegraphMs: 10, strikeMs: 10, damage: 5 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy], playerMaxHp: 5 });
+  combat.start(0);
+  combat.update(1550);
+  combat.update(1560);
+  combat.update(1570);
+  assert.equal(combat.phase, 'defeat');
+  assert.equal(combat.playerHp, 0);
+});
