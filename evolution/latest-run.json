@@ -1,0 +1,12 @@
+{
+  "run": 0,
+  "date": "2026-08-25",
+  "version": "0.1.0",
+  "scope": "Initial mobile-first playable vertical slice and evolution SOT",
+  "status": "baseline-created",
+  "next_candidates": [
+    "animation-readability-and-impact",
+    "posture-and-guard-break-system",
+    "mobile-browser-smoke-test"
+  ]
+}
