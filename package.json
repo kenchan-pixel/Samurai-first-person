@@ -1,0 +1,14 @@
+{
+  "name": "samurai-first-person",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mobile-first first-person 3D samurai action web game built around directional parries and swipe attacks.",
+  "scripts": {
+    "test": "node --test",
+    "serve": "python3 -m http.server 4173"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
