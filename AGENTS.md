@@ -9,16 +9,34 @@
 
 ## Delivery rules
 
-- Mobile-first is mandatory. The primary acceptance viewport is a recent iPhone in portrait orientation.
+- Mobile-first is mandatory. Primary acceptance is a recent iPhone in portrait orientation.
 - Every product request is cumulative unless Ken explicitly removes a requirement.
-- One task = one branch = one focused pull request.
-- Do not push feature work directly to `main`.
-- Do not merge pull requests. Final merge belongs to Ken.
 - Preserve the current playable baseline before adding features.
-- A run must deliver one visible, complete vertical slice. Pure refactors, documentation-only changes, test-only changes, colour tweaks, or placeholder controls do not qualify as an evolution run.
+- Do not merge pull requests. Final merge belongs to Ken.
 - Do not replace the technology stack without a documented Decision Gate.
 - Do not add login, payments, analytics, advertising, external tracking, paid APIs, or sensitive permissions without approval.
 - Do not use copyrighted game assets, character likenesses, music, logos, or copied level designs.
+
+## Normal feature work
+
+- One task = one branch = one focused pull request.
+- Do not push feature work directly to `main`.
+
+## Scheduled autonomous-evolution exception
+
+The recurring ChatGPT Scheduled Task is intentionally different from normal feature work:
+
+- It always continues from the latest `autonomous-evolution` branch.
+- It uses one long-lived Draft PR from `autonomous-evolution` to `main`.
+- One scheduled run may produce **at most one final Git commit** after all file changes for that run are ready.
+- Never create a new evolution branch or PR per hourly run.
+- Never merge the Draft PR.
+- Every successful implementation run must deliver one substantial, player-visible vertical slice or one material blocker/regression repair.
+- Pure refactors, documentation-only changes, test-only changes, tiny style tweaks, placeholder controls, or low-value changes do not qualify.
+- If there is any unresolved blocker, failed CI, material regression, or broken preview, repair that before starting a new feature.
+- If a run only inspects/waits and makes no product code change, do not create a commit merely to prove the schedule ran.
+
+Full protocol: `docs/SCHEDULED_TASK_PROMPT.md` and `docs/EVOLUTION_RULES.md`.
 
 ## Mandatory preflight
 
@@ -29,19 +47,21 @@ Before modifying code, read:
 3. `docs/EVOLUTION_RULES.md`
 4. `docs/REGRESSION_CHECKLIST.md`
 5. `docs/IMPROVEMENT_BACKLOG.md`
-6. `evolution/RUN_LOG.md`
+6. `docs/SCHEDULED_TASK_PROMPT.md`
+7. `evolution/state.json`
+8. `evolution/RUN_LOG.md`
 
-Then inspect the current code, open issues, open pull requests, and CI state.
+Then inspect current code, the long-lived Draft PR, unresolved review threads/comments, CI/checks, and latest deployment state.
 
 ## Definition of done
 
-A task is complete only when:
+A run is complete only when:
 
-- the improvement is visibly usable on mobile;
+- the improvement is visibly usable on mobile, or a material blocker/regression is actually repaired;
 - all existing tests pass;
 - the regression checklist has been checked;
 - no browser runtime error is introduced;
-- input remains usable by touch and mouse;
-- the change does not silently remove an approved baseline feature;
-- `docs/CURRENT_BASELINE.md`, `docs/IMPROVEMENT_BACKLOG.md`, `CHANGELOG.md`, and `evolution/RUN_LOG.md` are updated when applicable;
-- the pull request explains Before, After, verification evidence, risks, and retained baseline behaviour.
+- touch and mouse input still work;
+- approved baseline behaviour is not silently removed;
+- relevant SOT/log files are updated in the same final commit;
+- the Draft PR receives a concise run comment with Before, After, verification, regression, risk, and preview/deployment status.

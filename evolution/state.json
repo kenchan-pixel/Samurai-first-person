@@ -1,0 +1,21 @@
+{
+  "protocol_version": 1,
+  "branch": "autonomous-evolution",
+  "base_branch": "main",
+  "status": "idle",
+  "run_number": 0,
+  "last_action_type": "SETUP",
+  "last_action": "Prepared persistent hourly autonomous-evolution workflow",
+  "last_commit": null,
+  "active_blocker": null,
+  "ci_status": "unknown",
+  "preview_status": "not_connected",
+  "preview_url": null,
+  "vercel_project_id": null,
+  "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
+  "next_candidates": [
+    "Improve combat animation readability and impact",
+    "Add posture / guard-break system",
+    "Add automated mobile browser smoke coverage"
+  ]
+}

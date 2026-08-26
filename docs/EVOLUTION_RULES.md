@@ -2,70 +2,101 @@
 
 ## Purpose
 
-Enable a recurring ChatGPT Scheduled Task to inspect the latest repository state, choose one high-value improvement, implement it, verify it, and open a pull request for Ken's review.
+Run a high-frequency, human-supervised autonomous product-evolution experiment. ChatGPT periodically reads the latest repository state, chooses the highest-value next action, implements it, verifies it, and keeps moving the playable game toward — and where justified beyond — the product goal.
 
-## Required outcome per run
+## High-frequency operating model
 
-Every run must deliver **one substantial visible vertical slice**. The slice may include multiple coordinated changes needed to make that improvement complete.
+- Cadence target: hourly.
+- Persistent branch: `autonomous-evolution`.
+- Persistent Draft PR: `autonomous-evolution` → `main`.
+- Production baseline: `main`, changed only when Ken merges.
+- One scheduled run = at most one final commit.
+- One implementation commit = one Vercel Preview update once Git integration is connected.
+- Do not create a new branch or PR per run.
+
+## Priority order at the start of every run
+
+1. Failed CI/checks or broken runtime/preview.
+2. Unresolved blocker review threads/comments.
+3. Material regressions against `CURRENT_BASELINE.md` or `REGRESSION_CHECKLIST.md`.
+4. Only when the above are clear: one new high-value visible improvement.
+
+While a blocker/regression exists, **new feature work is prohibited**.
+
+A blocker includes an unresolved review thread or review/comment explicitly marked `BLOCKER`, plus any defect that breaks a baseline flow, causes data/security risk, makes the game unplayable, or causes CI/runtime failure.
+
+## Required outcome per implementation run
+
+Deliver one substantial visible vertical slice. Multiple coordinated file changes are allowed when needed to complete that slice.
 
 Qualifying examples:
 
-- a new enemy whose animation, attacks, behaviour, stage presentation, and verification are complete;
-- a full stamina/posture system with HUD, combat consequences, enemy integration, and tests;
-- a major animation and camera-feedback pass that visibly improves every parry and strike;
-- a complete challenge mode with scoring, restart flow, and persistent local best score;
-- an accessibility control mode that is genuinely playable and tested.
+- a new enemy with complete attacks, behaviour, stage presentation, and verification;
+- a posture/guard-break system with HUD, combat consequences, integration, and tests;
+- a major combat-animation/camera feedback pass;
+- a complete challenge mode with scoring and restart flow;
+- a material blocker repair that restores a broken baseline flow.
 
 Non-qualifying examples:
 
-- changing colours, spacing, labels, or one icon;
-- adding a setting that does not change gameplay;
+- colours, spacing, labels, or one icon;
 - documentation-only work;
-- refactoring without a visible improvement;
+- refactoring without visible player benefit;
 - tests without product behaviour;
-- adding placeholders or disabled controls;
-- creating a design proposal without implementing it.
+- placeholders or disabled controls;
+- splitting one obvious slice into tiny hourly changes to inflate run count.
 
 ## Selection process
 
+When feature work is allowed:
+
 1. Re-read Product Goal and Current Baseline.
-2. Inspect current gameplay, open issues, PRs, CI, backlog, and recent run log.
-3. Generate at least three candidate improvements.
-4. Score each candidate from 1–5 on:
-   - visible player impact;
-   - goal alignment;
-   - novelty relative to recent runs;
-   - technical confidence;
-   - regression/performance risk, reversed so safer is higher.
-5. Choose the highest-value candidate that fits one bounded pull request.
-6. Do not repeatedly optimise the same subsystem unless a verified defect or major opportunity justifies it.
+2. Inspect actual gameplay/code, open PR review feedback, CI, backlog, and recent run history.
+3. Generate at least three materially different candidate improvements.
+4. Score 1–5 on visible impact, goal alignment, novelty, confidence, and regression/performance safety.
+5. Choose the highest-value candidate that fits one bounded implementation run.
+6. Avoid repeatedly optimising the same subsystem unless evidence justifies it.
 
-## Implementation constraints
+## Commit discipline
 
-- Use a new branch named `evolution/YYYY-MM-DD-short-scope`.
-- One evolution run creates one pull request.
-- Never merge the pull request.
-- Preserve mobile-first controls and portrait usability.
-- Protect 60fps-oriented rendering; visual complexity must have an adaptive or bounded cost.
-- Prefer procedural or original assets. Do not import copyrighted game assets.
-- Keep external services and dependencies minimal.
-- Never weaken tests merely to make CI pass.
+- Stage all run changes conceptually before writing the final Git history.
+- Use Git tree/blob/commit APIs where available so the run lands as one commit even when multiple files change.
+- Commit message format: `evolution: <visible outcome>` or `fix: <blocker outcome>`.
+- Update code, tests, relevant SOT, `evolution/state.json`, and run log in that same commit.
+- If no qualifying implementation is made, leave Git unchanged.
 
-## Required pull request evidence
+## Deployment discipline
 
-- **Before:** concrete limitation or missing experience.
-- **After:** what a player can now see or do.
-- **Implementation:** main systems and files changed.
-- **Verification:** automated tests and manual mobile checks.
-- **Regression:** results against `REGRESSION_CHECKLIST.md`.
-- **Risk/limitations:** remaining issues and performance considerations.
-- **Preview:** screenshot, video, or deploy URL when available.
+- Vercel Preview is the deploy target for `autonomous-evolution` once the repo is imported into Vercel.
+- Do not deploy merely because an hourly schedule fired.
+- A real implementation/blocker-fix commit should update the preview.
+- Production deploy occurs only from `main` after Ken merges.
+- Preview deployment is allowed before reviewer clearance because reviewers need the preview to find visual/mobile blockers.
 
-## Stop or maintenance conditions
+## Verification
 
-Do not make a low-value change merely because the schedule ran. When no qualifying improvement can be implemented safely:
+Before completing an implementation run:
 
-1. perform a focused gameplay/technical audit;
-2. identify and reproduce a material defect or measurable weakness;
-3. fix that defect as the run's vertical slice;
-4. if no material issue exists, open an issue describing the Decision Gate rather than modifying code.
+- run repository tests;
+- check the full regression checklist;
+- inspect changed code for runtime/schema/security issues;
+- perform a mobile-oriented browser/runtime check when tooling permits;
+- verify the Draft PR remains open and unmerged;
+- inspect deployment status when Vercel is connected.
+
+## Required Draft PR run comment
+
+For each implementation commit append one concise top-level PR comment:
+
+- Run number / commit SHA
+- Action type: `FEATURE`, `BLOCKER_FIX`, or `REGRESSION_FIX`
+- Before
+- After
+- Verification
+- Baseline regression result
+- Known risk/limitations
+- Preview deployment status/link when available
+
+## Stop / hold conditions
+
+Do not force a low-value change. If no safe qualifying improvement is available, or the next move requires a product/architecture decision that could materially redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.
