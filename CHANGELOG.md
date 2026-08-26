@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1-evolution — Renderer correctness hardening
+
+- Fixed the foreground player-katana signed-distance mask so the blade remains localized instead of degenerating into a frame-wide tint.
+- Replaced undefined reversed-edge GLSL `smoothstep` masks with ordered signed-distance masks for consistent WebGL ES behavior across drivers.
+- Added a dependency-free headless Chrome/Chromium WebGL2 smoke test that verifies shader compile/link and an enabled start control in CI.
+- Kept combat rules, enemy timings, input mapping, progression and gameplay content unchanged.
+
 ## 0.2.0-evolution — Combat animation readability
 
 - Replaced the rigid enemy presentation with phase-driven procedural anticipation, strike commitment, and recovery follow-through.

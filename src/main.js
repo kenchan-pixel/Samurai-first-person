@@ -146,6 +146,10 @@ float ease(float x){
   return x*x*(3.-2.*x);
 }
 
+float mask(float d,float feather){
+  return 1.-smoothstep(0.,feather,d);
+}
+
 vec3 paint(vec2 uv){
   vec3 c=mix(vec3(.018,.02,.026),stage>1.5?vec3(.09,.025,.018):vec3(.035,.04,.05),max(0.,uv.y));
   float floorY=uv.y+.28;
@@ -153,14 +157,14 @@ vec3 paint(vec2 uv){
     float z=.12/max(.02,-floorY);
     float gx=abs(fract((uv.x/z+.5)*8.)-.5);
     float gy=abs(fract(z*3.)-.5);
-    c+=vec3(.18,.13,.09)*(.05/(gx+.08)+.035/(gy+.08))*smoothstep(-.02,-.7,floorY);
+    c+=vec3(.18,.13,.09)*(.05/(gx+.08)+.035/(gy+.08))*(1.-smoothstep(-.7,-.02,floorY));
   }
 
   for(float s=-1.;s<=1.;s+=2.){
     float d=box(uv-vec2(s*.72,.05),vec2(.04,.58));
-    c=mix(c,vec3(.33,.12,.08),smoothstep(.025,0.,d));
+    c=mix(c,vec3(.33,.12,.08),mask(d,.025));
     d=box(uv-vec2(s*.72,.55),vec2(.3,.045));
-    c=mix(c,vec3(.42,.16,.1),smoothstep(.025,0.,d));
+    c=mix(c,vec3(.42,.16,.1),mask(d,.025));
   }
 
   float hitGlow=exp(-max(0.,hit)*5.);
@@ -182,25 +186,25 @@ vec3 paint(vec2 uv){
   vec2 e=uv-bodyShift;
   float torsoTilt=-attackAxis.x*.11*tele+attackAxis.x*.16*attackPulse;
   float shadow=length(vec2(e.x*.95,(e.y+.39)*3.2))-.19*stageWeight;
-  c=mix(c,vec3(.01,.008,.008),smoothstep(.08,0.,shadow)*.7);
+  c=mix(c,vec3(.01,.008,.008),mask(shadow,.08)*.7);
 
   vec3 armour=stage<.5?vec3(.55,.16,.1):stage<1.5?vec3(.13,.22,.5):vec3(.45,.08,.07);
   vec3 armourDark=armour*.45;
 
   float leftLeg=seg(e,vec2(-.07,-.23),vec2(-.13-.02*stage,-.39),.052);
   float rightLeg=seg(e,vec2(.07,-.23),vec2(.13+.02*stage,-.39),.052);
-  c=mix(c,armourDark,smoothstep(.02,0.,min(leftLeg,rightLeg)));
+  c=mix(c,armourDark,mask(min(leftLeg,rightLeg),.02));
 
   float torso=rbox(e-vec2(0.,-.005),vec2(.165,.305),torsoTilt);
-  c=mix(c,armour,smoothstep(.025,0.,torso));
+  c=mix(c,armour,mask(torso,.025));
   float sash=box(rot(e-vec2(0.,-.08),torsoTilt),vec2(.18,.035));
-  c=mix(c,armourDark*.72,smoothstep(.018,0.,sash));
+  c=mix(c,armourDark*.72,mask(sash,.018));
 
   vec2 headPos=vec2(attackAxis.x*.018*tele,.405+attackAxis.y*.008*tele);
   float head=length(e-headPos)-.105;
-  c=mix(c,vec3(.58,.39,.25),smoothstep(.02,0.,head));
+  c=mix(c,vec3(.58,.39,.25),mask(head,.02));
   float helm=box(e-headPos-vec2(0,.07),vec2(.15+.015*stage,.045));
-  c=mix(c,vec3(.05),smoothstep(.02,0.,helm));
+  c=mix(c,vec3(.05),mask(helm,.02));
 
   float swordAngle=a-.38;
   if(phase>.5&&phase<1.5){
@@ -219,16 +223,16 @@ vec3 paint(vec2 uv){
   float upperArm=seg(e,shoulderR,elbow,.038);
   float foreArm=seg(e,elbow,hilt,.034);
   float supportArm=seg(e,shoulderL,hilt-attackAxis*.045,.031);
-  c=mix(c,vec3(.22,.11,.075),smoothstep(.02,0.,min(upperArm,min(foreArm,supportArm))));
+  c=mix(c,vec3(.22,.11,.075),mask(min(upperArm,min(foreArm,supportArm)),.02));
 
   vec2 bladeDir=vec2(sin(swordAngle),cos(swordAngle));
   float blade=seg(e,hilt-bladeDir*.045,hilt+bladeDir*.59,.017);
   float bladeHalo=seg(e,hilt-bladeDir*.045,hilt+bladeDir*.59,.048);
   float readPulse=tele*smoothstep(.45,1.,prog)*(.65+.35*sin(T*18.));
-  c+=vec3(1.,.36,.12)*smoothstep(.07,0.,bladeHalo)*readPulse*.16;
-  c=mix(c,vec3(.92,.94,.9),smoothstep(.015,0.,blade));
+  c+=vec3(1.,.36,.12)*mask(bladeHalo,.07)*readPulse*.16;
+  c=mix(c,vec3(.92,.94,.9),mask(blade,.015));
   float guard=seg(e,hilt-sideAxis*.055,hilt+sideAxis*.055,.015);
-  c=mix(c,vec3(.12,.08,.05),smoothstep(.012,0.,guard));
+  c=mix(c,vec3(.12,.08,.05),mask(guard,.012));
 
   float trail=strike*sin(clamp(prog,0.,1.)*3.1415926);
   float trailAngle1=swordAngle-.18;
@@ -237,8 +241,8 @@ vec3 paint(vec2 uv){
   vec2 trailDir2=vec2(sin(trailAngle2),cos(trailAngle2));
   float trail1=seg(e,hilt+trailDir1*.02,hilt+trailDir1*.57,.031);
   float trail2=seg(e,hilt+trailDir2*.03,hilt+trailDir2*.54,.045);
-  c+=vec3(1.,.33,.09)*smoothstep(.055,0.,trail1)*trail*.32;
-  c+=vec3(.9,.16,.05)*smoothstep(.07,0.,trail2)*trail*.16;
+  c+=vec3(1.,.33,.09)*mask(trail1,.055)*trail*.32;
+  c+=vec3(.9,.16,.05)*mask(trail2,.07)*trail*.16;
 
   float contact=hitGlow*exp(-18.*abs(length(e-vec2(.02,.05))-.23));
   c+=vec3(1.,.55,.18)*contact*.18;
@@ -246,8 +250,8 @@ vec3 paint(vec2 uv){
   float playerAngle=pdir*1.5708+(pact>.5?(pact>1.5?sin(T*16.)*.55:-.9+fract(T*3.)*1.8):-.6);
   vec2 playerHilt=uv-vec2(.34,-.47);
   vec2 playerDir=vec2(sin(playerAngle),cos(playerAngle));
-  float playerBlade=seg(playerHilt,playerHilt-playerDir*.1,playerHilt+playerDir*.75,.026);
-  c=mix(c,vec3(.95,.96,.9),smoothstep(.02,0.,playerBlade));
+  float playerBlade=seg(playerHilt,-playerDir*.1,playerDir*.75,.026);
+  c=mix(c,vec3(.95,.96,.9),mask(playerBlade,.02));
 
   c+=vec3(1.,.45,.18)*hitGlow*.2;
   return c;
@@ -314,11 +318,14 @@ void main(){
 let view;
 try {
   view = new View(canvas);
+  document.documentElement.dataset.webgl = 'ready';
 } catch (e) {
   console.error(e);
   unsupported.hidden = false;
   $('#start-button').disabled = true;
+  document.documentElement.dataset.webgl = 'failed';
 }
+document.documentElement.dataset.startReady = String(!$('#start-button').disabled);
 
 function say(a, b, d = 0) {
   msg = [a, b];

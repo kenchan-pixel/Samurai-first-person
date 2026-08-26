@@ -134,3 +134,45 @@ Exact new-HEAD CI and Vercel Preview must be terminal green before another featu
 - Add posture / guard-break system.
 - Deepen combat impact with richer hit stop, camera impulse, and sparks.
 - Add enemy spacing and footwork.
+
+## Run 003 — Renderer correctness and WebGL verification
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Scope:** Repair the current-head P1/P2 renderer findings before allowing any new feature work.
+
+### Before
+
+- The foreground player-katana segment used translated sample coordinates and translated segment endpoints together, so the translation cancelled and produced a spatially degenerate constant-distance mask rather than a localized blade.
+- The fragment shader used reversed `smoothstep(edge0, edge1, x)` edges for many signed-distance masks. GLSL ES leaves results undefined when `edge0 >= edge1`, creating cross-driver rendering risk.
+- CI only ran Node logic/source tests, so a deployed shader could compile incorrectly or disable the start control without CI noticing.
+
+### After
+
+- Player-katana endpoints are now local to `playerHilt`, restoring a screen-localized foreground blade mask.
+- All inverse signed-distance masks use one ordered `mask()` helper; the floor fade also uses ordered `smoothstep` edges.
+- The app exposes initialization-only `data-webgl` and `data-start-ready` signals for automated acceptance without changing gameplay UI.
+- A dependency-free headless Chrome/Chromium smoke test serves the real app, instantiates WebGL2 with SwiftShader, requires shader compile/link success, and verifies the start control stays enabled.
+- GitHub CI now runs both the existing Node suite and the browser WebGL smoke test.
+
+### Verification before final commit
+
+- Exact previous HEAD `14fe569cad03d037e9bbb5550fc10e18938e2c04`: CI run #25 succeeded.
+- Exact previous HEAD Vercel status: success.
+- PR review on that HEAD identified the P1 player-katana mask defect and the P2 undefined-mask / missing-browser-smoke risk; both are the sole scope of this repair.
+- No inline review threads exist and the Draft PR remains open/unmerged.
+- Combat state machine, enemy definitions, touch/swipe mapping, progression, generated audio and user-visible HUD structure are unchanged.
+
+### Post-commit verification
+
+The new exact HEAD must complete CI including `npm run test:browser` and Vercel Preview must reach `success`. Results will be recorded in the PR run comment without a second metadata-only commit.
+
+### Known risks
+
+- SwiftShader proves browser-level WebGL2 compile/link and startup behavior, not real iPhone GPU performance or artistic correctness. Preview review on a target phone remains the human visual/performance gate.
+
+### Next-run candidates
+
+- Add posture / guard-break system.
+- Deepen combat impact with richer hit stop, camera impulse and sparks.
+- Add enemy spacing and footwork.
