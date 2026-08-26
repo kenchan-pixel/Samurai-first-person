@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0-evolution — Crimson Shogun multi-phase boss
+
+- Added Crimson Shogun as a fourth-stage boss after the three approved baseline enemies without removing or reordering the existing campaign.
+- Added a deterministic Phase I → Blood Moon Phase II transition at 6 HP or lower after a valid counter, with posture/attack reset and an 1100 ms breathing gap.
+- Phase II raises boss posture resistance, tightens the perfect-parry window, shortens neutral/recovery timing, and switches to a faster feint/heavy signature pattern.
+- Added a bounded boss-only blood-moon/ember atmosphere plus an explicit Phase II banner; the decorative layer is pointer-transparent, asset-free, and honours reduced-motion preference.
+- Added Node coverage for boss injection, phase transition, pressure reset and restart-to-Phase-I, plus browser readiness verification for the real app module wiring.
+- Preserved the existing directional parry/swipe interaction, posture bonuses, mastery/personal-best behavior, static deployment model, and owner-only merge gate.
+
 ## 0.4.1-evolution — Mastery browser integration hardening
 
 - Extended the headless browser gate beyond module initialization to exercise the real mastery observer through the actual `CombatEngine` event stream.

@@ -95,6 +95,9 @@ try {
   if (!appDom.includes('data-mastery-ready="true"')) {
     throw new Error('Mastery observer did not initialize in the real application document');
   }
+  if (!appDom.includes('data-boss-ready="true"')) {
+    throw new Error('Boss encounter module did not initialize before the real application runtime');
+  }
 
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2600 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) {
@@ -110,7 +113,7 @@ try {
     throw new Error('Mastery result content or restart control overflowed the 320x568 smoke viewport');
   }
 
-  console.log(`browser smoke passed with ${browser}: WebGL2/startup plus mastery event-stream, local best, storage fallback and 320x568 result layout`);
+  console.log(`browser smoke passed with ${browser}: WebGL2/startup + boss encounter readiness + mastery event-stream, local best, storage fallback and 320x568 result layout`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

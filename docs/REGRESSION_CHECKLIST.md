@@ -38,10 +38,14 @@ Run this checklist before marking an evolution pull request complete.
 
 ## Progression
 
-- [ ] All three baseline enemies appear.
-- [ ] Each enemy retains distinct health, attack behaviour, and posture threshold.
+- [ ] All three original baseline enemies appear before the boss.
+- [ ] Each original enemy retains distinct health, attack behaviour, and posture threshold.
+- [ ] Crimson Shogun appears as stage 4 / 4 with 12 HP and Phase I posture maximum 6.
+- [ ] A valid counter that leaves Crimson Shogun at 6 HP or lower triggers Blood Moon Phase II exactly once.
+- [ ] The boss phase transition resets boss posture/attack cursor, creates a short neutral breathing gap, and switches to the Phase II attack/timing set.
+- [ ] Restart returns the boss encounter to Phase I rather than retaining Phase II state.
 - [ ] Defeating one stage advances to the next stage.
-- [ ] Defeating the final enemy reaches victory.
+- [ ] Defeating Crimson Shogun reaches victory.
 - [ ] Reaching zero player health reaches defeat.
 - [ ] Stage transitions and restart reset posture, health, enemy, timing, and HUD state.
 
@@ -61,20 +65,23 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Player parry/attack animation matches input direction.
 - [ ] Player/enemy posture values remain visible without blocking the combat view.
 - [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
+- [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
+- [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion.
 - [ ] Result mastery summary remains readable at 320×568 portrait without obscuring the restart control.
 - [ ] Audio remains optional and starts only after user interaction.
 - [ ] Gameplay timing is based on elapsed time, not frame count.
 - [ ] No unbounded object, event-listener, particle, or audio-node growth is introduced.
-- [ ] Recent target phone remains responsive during a complete three-stage run.
+- [ ] Recent target phone remains responsive during a complete four-stage run.
 
 ## Delivery
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms WebGL2, enabled start control, and mastery observer initialization in the real app document.
+- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, and boss encounter initialization in the real app document.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
+- [ ] Boss Node coverage proves stage injection, one-time Phase II transition, pressure reset, and restart-to-Phase-I behavior.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

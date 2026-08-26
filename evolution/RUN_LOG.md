@@ -91,3 +91,63 @@ The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm ru
 - Add a multi-phase boss vertical slice.
 - Add enemy spacing and footwork.
 - Deepen combat impact with richer hit stop, camera impulse and sparks.
+
+## Run 007 — Crimson Shogun multi-phase boss
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Scope:** Add the first real boss duel as a complete fourth-stage vertical slice with a mid-fight phase change, distinct arena presentation and executable encounter regression coverage.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `37e0fbeaae5478bbf703b48595a381a252bc8e35`: CI run `33005455392` = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; there were no inline review threads.
+- The latest actionable P2 on Run 005 was already closed by Run 006's executable mastery integration gate and Run 6 PR receipt. No applicable unresolved P0/P1 or blocking P2 remained before feature selection.
+
+### Candidate selection
+
+Three materially different candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Multi-phase boss vertical slice: **5 / 5 / 5 / 4 / 3 = 22**.
+- Enemy spacing and footwork: **5 / 5 / 5 / 3 / 3 = 21** because distance-dependent combat needs deeper renderer/encounter coupling and broader phone playtesting.
+- Combat-juice expansion: **4 / 4 / 2 / 5 / 4 = 19** because the current baseline already has hit stop, shake, flash, audio and optional vibration.
+
+Boss work wins because the Product Goal explicitly calls for memorable bosses and distinct duels, while the current engine can safely extend the campaign through a bounded encounter adapter without changing the proven four-direction interaction model.
+
+### Before
+
+- Victory followed the third Oni Guard stage; there was no boss duel.
+- No enemy changed attack/timing rules midway through a fight.
+- The campaign had no boss-specific arena event or phase-transition presentation.
+
+### After
+
+- Crimson Shogun is appended as stage 4 / 4 after the three baseline enemies.
+- Phase I has 12 HP, posture 6, deliberate heavy/feint patterns and a 72 ms perfect-parry window.
+- A valid counter that leaves the boss at 6 HP or lower triggers Blood Moon Phase II exactly once: boss posture and attack cursor reset, the used recovery becomes an 1100 ms neutral gap, and the boss earns a small transition score bonus.
+- Phase II raises posture to 7, tightens the perfect window to 58 ms, shortens gaps/recovery, and switches to a faster signature attack set with mixed feints/heavies.
+- A fixed, pointer-transparent blood moon plus bounded ember field activates only for the boss; Phase II shows an explicit banner and stronger atmosphere. Reduced-motion preference disables looping ember movement.
+- Restart always reconstructs the boss at Phase I.
+- Node tests cover boss injection, transition/reset semantics and app wiring; browser smoke now requires the boss module to initialize in the real page before `main.js`.
+
+### Pre-commit verification
+
+- Previous exact HEAD CI and Vercel were terminal green.
+- New encounter and overlay modules passed `node --check` locally before Git object creation.
+- The change preserves existing `game-core.js`, `main.js`, mastery modules, input mapping, posture formulas, WebGL shader and existing browser mastery harness.
+
+### Post-commit gate
+
+The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before another feature run. The PR Run 7 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+
+### Known risks
+
+- Boss HP/posture/timing values are first-pass balancing and need real-phone play review.
+- The boss reuses the existing procedural combatant silhouette; the new moon/ember atmosphere makes the stage distinct, but a later visual-identity pass may add stronger boss-specific weapon/silhouette language if evidence justifies it.
+- The encounter is installed as an idempotent pre-main adapter to avoid destabilising the proven core state machine; if encounter complexity grows substantially, it should move into a dedicated first-class encounter controller rather than accumulating prototype patches.
+
+### Next-run candidates
+
+- Add enemy spacing and footwork with distance-dependent attacks.
+- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
+- Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively.

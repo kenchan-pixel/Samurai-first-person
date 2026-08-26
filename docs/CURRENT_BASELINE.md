@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.4.1-evolution**
+Version: **0.5.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -8,7 +8,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - The game starts from a mobile-friendly title screen.
 - The player enters a first-person dojo combat view.
-- Three enemies are fought sequentially.
+- Three enemies are fought sequentially as the approved baseline sequence, followed by a fourth boss duel.
 - Each stage begins, plays, resolves, and advances without reloading the page.
 - The game has victory and defeat states with restart support.
 
@@ -23,10 +23,20 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Perfect parry counters deal increased damage.
 - Wrong timing or direction can result in player damage.
 - Successful parries pressure enemy posture; perfect parries build posture faster.
-- Each enemy has a distinct posture threshold: Ashigaru Scout 3, Wandering Ronin 4, Oni Guard 5.
+- Each baseline enemy has a distinct posture threshold: Ashigaru Scout 3, Wandering Ronin 4, Oni Guard 5.
 - Filling enemy posture causes a guard break, extends the current counter window, and adds +2 damage to the next valid counter before posture resets.
 - Incoming hits build player posture. Heavy attacks build posture faster; when player posture reaches 4, the guard breaks, that hit gains +1 damage, and player posture resets.
 - A successful parry relieves one point of player posture, rewarding recovery through correct defence.
+
+## Boss encounter
+
+- **Crimson Shogun** is a fourth-stage boss after the three approved baseline enemies.
+- Phase I uses 12 HP, posture 6, deliberate heavy attacks, and mixed feints.
+- At 6 HP or lower after a valid counter, the boss enters **Blood Moon Phase II** instead of continuing the same pattern.
+- The phase transition resets boss posture/attack cursor, creates an 1100 ms breathing gap, and awards a small transition score bonus without changing player controls.
+- Phase II raises posture to 7, tightens the perfect-parry window, shortens neutral gaps/recovery, and switches to a faster feint/heavy signature attack set.
+- The boss stage adds a bounded procedural blood-moon/ember atmosphere and an explicit Phase II banner; effects are decorative, pointer-transparent, and honour reduced-motion preference.
+- Defeating the boss reaches the existing victory/mastery flow. Restart returns the boss to Phase I.
 
 ## Mastery and replay feedback
 
@@ -41,7 +51,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - **Ashigaru Scout:** low health, broad timing windows, simple single attacks, low posture threshold.
 - **Wandering Ronin:** faster rhythm, feints, mixed directions, higher health, medium posture threshold.
-- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest posture threshold; heavy hits also pressure player posture faster.
+- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest baseline posture threshold; heavy hits also pressure player posture faster.
+- **Crimson Shogun:** multi-phase boss with a mid-fight ruleset/tempo shift, higher posture resistance, signature heavy/feint patterns, and a distinct arena atmosphere.
 
 ## Presentation
 
@@ -52,6 +63,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Procedural arms, stance/legs, torso lean, ground shadow, telegraph blade halo, and strike trail make the opponent silhouette and blade path easier to read without adding dense controls.
 - HUD shows player health, enemy health, stage, combat prompt, directional feedback, and compact player/enemy posture values.
 - Enemy guard break and player guard break use explicit combat prompts, stronger impact timing, audio, flash, and optional vibration feedback.
+- Boss-specific blood-moon and ember presentation is bounded to a fixed DOM layer and does not add external assets.
 - Generated Web Audio cues are used; no external audio assets are required.
 - Pointer input supports touch, stylus, and mouse.
 
@@ -59,9 +71,11 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - Static web app with ES modules and no runtime framework dependency.
 - Combat rules separated from rendering in `src/game-core.js`.
+- `src/boss-encounter.js` installs the boss as a small idempotent encounter adapter before `src/main.js` creates the engine; baseline enemies and the core interaction model remain untouched.
+- `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere and marks readiness for browser smoke verification.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
-- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, mastery statistics, grading, personal-best comparison, and time formatting.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies the start control and mastery observer initialize, and runs a separate 320×568 mastery integration harness through the actual patched `CombatEngine` event stream.
+- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, and time formatting.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss encounter initialization, and runs a separate 320×568 mastery integration harness through the actual patched `CombatEngine` event stream.
 - The browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the 320×568 viewport.
 - GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

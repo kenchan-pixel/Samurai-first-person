@@ -3,23 +3,23 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 6,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Closed the mastery integration regression gap with executable browser coverage for real CombatEngine event-stream rendering, personal-best protection, storage fallback and 320x568 result layout",
-  "last_commit": "ef3022d443b80f2ac10e51348d58141712e9a44d",
+  "run_number": 7,
+  "last_action_type": "FEATURE",
+  "last_action": "Added Crimson Shogun as a fourth-stage multi-phase boss with a Blood Moon tempo/attack transition, bounded boss atmosphere and encounter regression coverage",
+  "last_commit": "37e0fbeaae5478bbf703b48595a381a252bc8e35",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/92cuDPj57oFDeYa1yiTcHEHNFtJm",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/CqNvZr4nQmcv2oN1AeBJi1Z7mXnT",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Add a multi-phase boss vertical slice",
-    "Add enemy spacing and footwork",
-    "Deepen combat impact with richer hit stop, camera impulse and sparks"
+    "Add enemy spacing and footwork with distance-dependent attacks",
+    "Deepen combat impact with richer hit stop, camera impulse and bounded sparks",
+    "Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively"
   ]
 }
