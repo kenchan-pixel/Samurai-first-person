@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0-evolution — Mastery grading and personal best
+
+- Added a run-level mastery observer that records parry attempts/success, perfect parries, enemy guard breaks, counters, hits taken, damage dealt/taken, and clear time without changing combat resolution.
+- Added deterministic 0–100 mastery scoring and S/A/B/C/D victory grades weighted toward accurate/perfect defence, guard breaks, counters, low damage taken, and efficient clears; defeats remain D while still showing learning stats.
+- Upgraded the existing result screen to show mastery grade/score, parry accuracy, perfect-parry count, guard breaks, hits taken, clear time, and personal-best status.
+- Added local-only personal-best persistence with safe `localStorage` fallback; no account, analytics, network sync, or external API is introduced.
+- Added pure Node coverage for mastery event tracking, grading, personal-best comparison, and time formatting.
+- Extended the browser smoke gate to require the mastery observer to initialize alongside WebGL2 and the start control.
+
 ## 0.3.0-evolution — Posture and guard-break pressure
 
 - Added persistent player and enemy posture to the combat state machine without changing the four-direction parry/swipe interaction model.

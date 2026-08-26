@@ -3,23 +3,23 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 4,
+  "run_number": 5,
   "last_action_type": "FEATURE",
-  "last_action": "Added player/enemy posture pressure with guard-break counter windows, consequences, compact HUD feedback, and automated combat coverage",
-  "last_commit": "d26741621111b3b9274ec9e33288464234162870",
+  "last_action": "Added run-level mastery grading with parry accuracy, perfect-parry/guard-break/hit/clear-time feedback and local personal-best persistence",
+  "last_commit": "bdadd78ea8194d2c02e04e3c9db572c6079103ad",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/J72zXCMnub58d8FhuL4SKLp7hsZQ",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/HUhkDpuU5EkYNv2w1XrLY6RVbME5",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
+    "Add a multi-phase boss vertical slice",
     "Add enemy spacing and footwork",
-    "Deepen combat impact with richer hit stop, camera impulse and sparks",
-    "Add scoring and mastery grades that include posture breaks"
+    "Deepen combat impact with richer hit stop, camera impulse and sparks"
   ]
 }

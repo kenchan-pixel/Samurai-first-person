@@ -82,7 +82,10 @@ try {
   if (!stdout.includes('data-start-ready="true"')) {
     throw new Error('Start control was disabled after browser initialization');
   }
-  console.log(`browser smoke passed with ${browser}: WebGL2 ready and start control enabled`);
+  if (!stdout.includes('data-mastery-ready="true"')) {
+    throw new Error('Mastery observer did not initialize');
+  }
+  console.log(`browser smoke passed with ${browser}: WebGL2, start control and mastery observer ready`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

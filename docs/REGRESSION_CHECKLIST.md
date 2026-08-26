@@ -45,6 +45,15 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Reaching zero player health reaches defeat.
 - [ ] Stage transitions and restart reset posture, health, enemy, timing, and HUD state.
 
+## Mastery and replay
+
+- [ ] Mastery tracking does not change parry, counter, posture, damage, or stage-resolution behaviour.
+- [ ] Victory result shows a 0–100 mastery score and S/A/B/C/D grade.
+- [ ] Result summary shows parry accuracy, perfect parries, guard breaks, hits taken, and clear time.
+- [ ] Defeat remains D grade while still showing the run statistics.
+- [ ] A better completed victory becomes the local personal best; a worse run does not overwrite it.
+- [ ] Unavailable/blocked `localStorage` does not prevent a duel from starting, finishing, or restarting.
+
 ## Presentation and performance
 
 - [ ] WebGL scene renders a first-person arena, enemy, enemy sword, and player katana.
@@ -52,6 +61,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Player parry/attack animation matches input direction.
 - [ ] Player/enemy posture values remain visible without blocking the combat view.
 - [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
+- [ ] Result mastery summary remains readable at 320×568 portrait without obscuring the restart control.
 - [ ] Audio remains optional and starts only after user interaction.
 - [ ] Gameplay timing is based on elapsed time, not frame count.
 - [ ] No unbounded object, event-listener, particle, or audio-node growth is introduced.
@@ -61,6 +71,7 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
+- [ ] Browser smoke confirms WebGL2, enabled start control, and mastery observer initialization.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

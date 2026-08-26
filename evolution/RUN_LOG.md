@@ -100,3 +100,64 @@ The new exact HEAD must complete repository CI, including browser WebGL smoke, a
 - Add enemy spacing and footwork.
 - Deepen combat impact with richer hit stop, camera impulse and sparks.
 - Add scoring/mastery grades that include posture breaks.
+
+## Run 005 — Mastery grading and personal best
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Scope:** Turn the existing numeric score into clear replay feedback by grading how the duel was won, surfacing the player's strongest/weakest execution signals, and retaining a local personal best without accounts or network services.
+
+### Candidate selection
+
+Three materially different candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Mastery grading + personal best: **5 / 5 / 5 / 5 / 5 = 25**.
+- Enemy spacing and footwork: **5 / 5 / 5 / 3 / 3 = 21** because distance-dependent combat needs larger renderer/encounter changes and broader phone playtesting.
+- Multi-phase boss vertical slice: **5 / 5 / 5 / 2 / 2 = 19** because adding a boss immediately after a new posture system risks stacking unbalanced mechanics before replay feedback exists.
+
+Mastery won because the Product Goal explicitly calls for replayable scoring/challenge depth, the current game already produces score/combo/posture signals but gives little end-of-run interpretation, and the slice can be added without changing proven parry/damage/timing behaviour.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `bdadd78ea8194d2c02e04e3c9db572c6079103ad`: CI run `32995999850` = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged.
+- No inline review threads existed.
+- Older P1 renderer/automation findings are demonstrably fixed by later reviewed heads; the prior P2 stale browser-smoke record was cleared in Run 004. No applicable unresolved P0/P1 or blocking P2 finding remained before feature selection.
+
+### Before
+
+- The result screen showed only victory/defeat and one numeric score.
+- Players could not see parry accuracy, perfect-parry quality, guard-break execution, damage discipline, or clear time after a run.
+- There was no mastery grade and no local personal-best target to encourage replay.
+
+### After
+
+- A pure mastery module records parry attempts/success, perfect parries, enemy guard breaks, counters, hits taken, damage dealt/taken, and elapsed time from the public combat event stream.
+- Completed victories receive a deterministic 0–100 mastery score plus S/A/B/C/D grade; defeats remain D but still receive the same learning statistics.
+- The existing result screen is upgraded in place to show mastery score/grade, parry accuracy, perfect-parry count, guard breaks, hits taken, clear time, numeric score, and personal-best feedback without adding another panel over combat.
+- Better completed victories are retained in local browser storage and displayed on later results; storage failure is deliberately non-fatal.
+- No combat-resolution, enemy, posture, rendering, input, network, account, analytics, or external-service behaviour is changed.
+
+### Verification before final commit
+
+- New pure mastery module and observer adapter both passed `node --check` in an isolated local syntax check.
+- New mastery unit suite passed **3/3** locally, covering event statistics, S-grade/defeat semantics, personal-best comparison, and time formatting.
+- Browser smoke is extended to require `data-mastery-ready="true"` in addition to existing WebGL2 and start-control readiness, so missing/broken mastery module loading becomes a CI failure.
+- Existing `main.js`, `game-core.js`, WebGL shader, input listeners, and combat timings are unchanged.
+
+### Post-commit verification
+
+The new exact HEAD must reach terminal-green repository CI (`npm test` + browser smoke) and terminal-green Vercel Preview before another feature run. The Run 5 PR receipt is the authoritative post-commit SHA/CI/Preview record; no metadata-only follow-up commit should be created.
+
+### Known risks
+
+- Mastery weights are first-pass design values and may need tuning after observing real play styles.
+- The compact one-line result summary should be visually checked on a 320×568 viewport and recent iPhone portrait display.
+- Local personal best is intentionally device/browser-local and can be cleared by browser storage settings.
+- The mastery observer decorates public `CombatEngine` lifecycle/event-drain methods; browser smoke guards initialization, but a future engine API refactor should replace this with explicit observer injection.
+
+### Next-run candidates
+
+- Add a multi-phase boss vertical slice.
+- Add enemy spacing and footwork.
+- Deepen combat impact with richer hit stop, camera impulse and sparks.
