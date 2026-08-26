@@ -124,3 +124,55 @@ test('lethal enemy strike reaches defeat and keeps health at zero', () => {
   assert.equal(combat.phase, 'defeat');
   assert.equal(combat.playerHp, 0);
 });
+
+test('parry pressure breaks enemy posture and empowers the next counter', () => {
+  const enemy = {
+    id: 'posture-target', name: 'Posture Target', title: 'Test Stage', maxHp: 12, postureMax: 3,
+    gapMs: 100, recoveryMs: 300, perfectWindowMs: 20,
+    attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy] });
+  combat.start(0);
+  combat.update(1550);
+  combat.update(1650);
+  combat.attemptParry(Direction.TOP, 1660);
+  assert.equal(combat.snapshot(1660).enemyPosture, 2);
+  combat.attemptAttack(Direction.BOTTOM, 1670);
+  combat.update(1960);
+  combat.update(2060);
+  combat.update(2160);
+  const parry = combat.attemptParry(Direction.TOP, 2200);
+  assert.equal(parry.perfect, false);
+  const broken = combat.snapshot(2200);
+  assert.equal(broken.enemyPosture, 3);
+  assert.equal(broken.attack.guardBroken, true);
+  const counter = combat.attemptAttack(Direction.BOTTOM, 2210);
+  assert.equal(counter.damage, 4);
+  assert.equal(combat.snapshot(2210).enemyPosture, 0);
+  const events = combat.drainEvents();
+  assert.ok(events.some((event) => event.type === 'enemy-guard-break'));
+});
+
+test('taking repeated hits builds player posture and guard break adds one damage then resets posture', () => {
+  const enemy = {
+    id: 'pressure-enemy', name: 'Pressure Enemy', title: 'Test Stage', maxHp: 5,
+    gapMs: 100, recoveryMs: 300, perfectWindowMs: 20,
+    attacks: [{ direction: Direction.LEFT, telegraphMs: 100, strikeMs: 100, damage: 1 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy], playerMaxHp: 5, playerPostureMax: 2 });
+  combat.start(0);
+  combat.update(1550);
+  combat.update(1650);
+  combat.update(1750);
+  assert.equal(combat.playerHp, 4);
+  assert.equal(combat.snapshot(1750).playerPosture, 1);
+  combat.update(1966);
+  combat.update(2066);
+  combat.update(2166);
+  combat.update(2266);
+  assert.equal(combat.playerHp, 2);
+  assert.equal(combat.snapshot(2266).playerPosture, 0);
+  const hitEvents = combat.drainEvents().filter((event) => event.type === 'player-hit');
+  assert.equal(hitEvents.at(-1).detail.guardBroken, true);
+  assert.equal(hitEvents.at(-1).detail.damage, 2);
+});

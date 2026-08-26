@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.2.0-evolution**
+Version: **0.3.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -22,12 +22,17 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Counterattacks during recovery damage the enemy.
 - Perfect parry counters deal increased damage.
 - Wrong timing or direction can result in player damage.
+- Successful parries pressure enemy posture; perfect parries build posture faster.
+- Each enemy has a distinct posture threshold: Ashigaru Scout 3, Wandering Ronin 4, Oni Guard 5.
+- Filling enemy posture causes a guard break, extends the current counter window, and adds +2 damage to the next valid counter before posture resets.
+- Incoming hits build player posture. Heavy attacks build posture faster; when player posture reaches 4, the guard breaks, that hit gains +1 damage, and player posture resets.
+- A successful parry relieves one point of player posture, rewarding recovery through correct defence.
 
 ## Enemy differentiation
 
-- **Ashigaru Scout:** low health, broad timing windows, simple single attacks.
-- **Wandering Ronin:** faster rhythm, feints, mixed directions, higher health.
-- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns.
+- **Ashigaru Scout:** low health, broad timing windows, simple single attacks, low posture threshold.
+- **Wandering Ronin:** faster rhythm, feints, mixed directions, higher health, medium posture threshold.
+- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest posture threshold; heavy hits also pressure player posture faster.
 
 ## Presentation
 
@@ -36,7 +41,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Enemy sword telegraphs and strike motion correspond to attack direction.
 - Enemy animation is phase-driven rather than rigid: telegraphs use direction-specific anticipation, strikes use a committed body lunge and accelerated sword sweep, and recovery visibly follows through before resetting.
 - Procedural arms, stance/legs, torso lean, ground shadow, telegraph blade halo, and strike trail make the opponent silhouette and blade path easier to read without adding dense controls.
-- HUD shows player health, enemy health, stage, combat prompt, and directional feedback.
+- HUD shows player health, enemy health, stage, combat prompt, directional feedback, and compact player/enemy posture values.
+- Enemy guard break and player guard break use explicit combat prompts, stronger impact timing, audio, flash, and optional vibration feedback.
 - Generated Web Audio cues are used; no external audio assets are required.
 - Pointer input supports touch, stylus, and mouse.
 
@@ -45,5 +51,6 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Static web app with ES modules and no runtime framework dependency.
 - Combat rules separated from rendering in `src/game-core.js`.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
-- Automated Node tests cover direction mapping and combat resolution.
-- GitHub Actions runs tests on pushes to main and pull requests.
+- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, and player posture reset.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, and verifies the start control remains enabled.
+- GitHub Actions runs both Node tests and the browser WebGL smoke test on pull requests and pushes to main.

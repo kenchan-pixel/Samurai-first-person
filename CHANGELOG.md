@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0-evolution — Posture and guard-break pressure
+
+- Added persistent player and enemy posture to the combat state machine without changing the four-direction parry/swipe interaction model.
+- Successful parries now pressure enemy posture; perfect parries build it faster, while Ashigaru/Ronin/Oni use increasing posture thresholds.
+- Breaking enemy posture extends the current counter opening and grants +2 damage to the next valid counter; posture then resets.
+- Incoming hits build player posture, heavy attacks build it faster, and a full player posture break adds +1 damage to that hit before posture resets; successful parries relieve pressure.
+- Added compact posture readouts plus distinct guard-break prompts, hit-stop/shake, audio and optional vibration feedback.
+- Added Node coverage for enemy guard-break bonus/reset and player posture break/reset while preserving all existing combat tests.
+
 ## 0.2.1-evolution — Renderer correctness hardening
 
 - Fixed the foreground player-katana signed-distance mask so the blade remains localized instead of degenerating into a frame-wide tint.

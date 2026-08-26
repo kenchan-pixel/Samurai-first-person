@@ -29,21 +29,29 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Enemy attacks damage the player when not parried.
 - [ ] Counterattack can only land once per recovery window.
 - [ ] Player and enemy health never become NaN or negative in the HUD.
+- [ ] Successful parries increase enemy posture; perfect parries increase it faster.
+- [ ] Reaching enemy posture maximum creates a guard-break counter window and the next valid counter gains exactly +2 damage.
+- [ ] Enemy posture resets after a guard-break counter; an unused guard break falls back to partial posture rather than staying permanently broken.
+- [ ] Taking hits increases player posture; heavy hits increase it faster.
+- [ ] Player guard break adds exactly +1 damage to that hit and resets player posture.
+- [ ] A successful parry relieves one point of player posture.
 
 ## Progression
 
 - [ ] All three baseline enemies appear.
-- [ ] Each enemy retains distinct health and attack behaviour.
+- [ ] Each enemy retains distinct health, attack behaviour, and posture threshold.
 - [ ] Defeating one stage advances to the next stage.
 - [ ] Defeating the final enemy reaches victory.
 - [ ] Reaching zero player health reaches defeat.
-- [ ] Restart resets health, enemy, stage, timing, and HUD.
+- [ ] Stage transitions and restart reset posture, health, enemy, timing, and HUD state.
 
 ## Presentation and performance
 
 - [ ] WebGL scene renders a first-person arena, enemy, enemy sword, and player katana.
 - [ ] Telegraph animation visibly matches the incoming direction.
 - [ ] Player parry/attack animation matches input direction.
+- [ ] Player/enemy posture values remain visible without blocking the combat view.
+- [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
 - [ ] Audio remains optional and starts only after user interaction.
 - [ ] Gameplay timing is based on elapsed time, not frame count.
 - [ ] No unbounded object, event-listener, particle, or audio-node growth is introduced.
@@ -52,6 +60,7 @@ Run this checklist before marking an evolution pull request complete.
 ## Delivery
 
 - [ ] `npm test` passes.
+- [ ] `npm run test:browser` passes.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

@@ -36,8 +36,8 @@ const D = {
   [Direction.LEFT]: ['←', '左方', 3],
 };
 const P = {
-  ready: ['待命', 'READ THE BLADE', '觀察敵人起手方向'],
-  'stage-intro': ['敵人進場', 'DUEL BEGINS', '保持冷靜，先讀取動作'],
+  ready: ['待命', 'READ THE BLADE', '觀察敵人起手 · 連續格擋可破架勢'],
+  'stage-intro': ['敵人進場', 'DUEL BEGINS', '先讀動作，累積敵人架勢'],
   gap: ['觀察', 'READ THE BLADE', '等待敵人起手'],
   telegraph: ['攻擊預備', 'TRACK THE BLADE', '留意最後方向'],
   strike: ['格擋時機', 'PARRY NOW', '點擊相應畫面邊緣'],
@@ -356,8 +356,8 @@ function hud(s, n) {
   U.stage.textContent = `STAGE ${s.stage} / ${s.stageCount}`;
   U.enemy.textContent = s.enemy.name;
   U.arena.textContent = s.enemy.title;
-  U.combo.textContent = `連擊 ${s.combo}`;
-  U.score.textContent = fmt(s.score);
+  U.combo.textContent = `連擊 ${s.combo} · 架勢 ${s.playerPosture}/${s.playerPostureMax}`;
+  U.score.textContent = `敵勢 ${s.enemyPosture}/${s.enemyPostureMax} · ${fmt(s.score)}`;
   const p = P[s.phase] || P.ready;
   U.phase.textContent = p[0];
   if (msg && n < msgUntil) {
@@ -398,7 +398,15 @@ function events(n) {
       audio.cue(action === 2 ? 'perfect' : 'parry');
       flash();
       navigator.vibrate?.(action === 2 ? [18, 20, 28] : 22);
-      say(action === 2 ? 'PERFECT PARRY' : 'PARRY', '掃屏反擊', 620);
+      say(action === 2 ? 'PERFECT PARRY' : 'PARRY', `敵勢 ${d.enemyPosture}/${d.enemyPostureMax} · 掃屏反擊`, 620);
+    }
+    if (e.type === 'enemy-guard-break') {
+      shake = 1.4;
+      pause = n + 58;
+      audio.cue('perfect');
+      flash();
+      navigator.vibrate?.([24, 18, 34]);
+      say('GUARD BREAK', '敵人架勢崩潰 · 立即反擊', 760);
     }
     if (e.type === 'parry-miss') {
       zone(d.direction, true);
@@ -411,22 +419,22 @@ function events(n) {
       audio.cue('slash');
       if (e.type === 'counter') {
         hitAt = n;
-        shake = 0.65;
-        pause = n + 34;
+        shake = d.guardBroken ? 1.1 : 0.65;
+        pause = n + (d.guardBroken ? 52 : 34);
         audio.cue('enemy');
         flash();
-        say(`-${d.damage} HP`, '命中', 420);
+        say(d.guardBroken ? `BREAK -${d.damage} HP` : `-${d.damage} HP`, d.guardBroken ? '破防重擊' : '命中', 480);
       } else {
         say('NO OPENING', '先格擋再反擊', 420);
       }
     }
     if (e.type === 'player-hit') {
-      shake = 1.8;
-      pause = n + 65;
+      shake = d.guardBroken ? 2.3 : 1.8;
+      pause = n + (d.guardBroken ? 82 : 65);
       audio.cue('hit');
       flash(true);
-      navigator.vibrate?.([40, 20, 40]);
-      say(`-${d.damage} HP`, '攻擊突破防線', 620);
+      navigator.vibrate?.(d.guardBroken ? [55, 20, 55] : [40, 20, 40]);
+      say(d.guardBroken ? 'GUARD BROKEN' : `-${d.damage} HP`, d.guardBroken ? `架勢崩潰 · -${d.damage} HP` : '攻擊突破防線', 700);
     }
     if (e.type === 'enemy-defeated') say('STAGE CLEAR', '收刀，準備下一場', 1100);
     if (e.type === 'victory' || e.type === 'defeat') {

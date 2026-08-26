@@ -3,23 +3,23 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 3,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired localized player-katana rendering, removed undefined reversed smoothstep masks, and added dependency-free browser WebGL smoke coverage",
-  "last_commit": "14fe569cad03d037e9bbb5550fc10e18938e2c04",
+  "run_number": 4,
+  "last_action_type": "FEATURE",
+  "last_action": "Added player/enemy posture pressure with guard-break counter windows, consequences, compact HUD feedback, and automated combat coverage",
+  "last_commit": "d26741621111b3b9274ec9e33288464234162870",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/3zHuoc2d9d9vnwjZN5kuUGbvnHX3",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/J72zXCMnub58d8FhuL4SKLp7hsZQ",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Add posture / guard-break system",
+    "Add enemy spacing and footwork",
     "Deepen combat impact with richer hit stop, camera impulse and sparks",
-    "Add enemy spacing and footwork"
+    "Add scoring and mastery grades that include posture breaks"
   ]
 }
