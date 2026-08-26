@@ -1,8 +1,8 @@
 # Current Baseline
 
-Version: **0.1.0**
+Version: **0.2.0-evolution**
 
-These capabilities are approved and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour.
+These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
 ## Playable flow
 
@@ -34,6 +34,8 @@ These capabilities are approved and cumulative. Future work may improve or repla
 - First-person WebGL 3D arena and combatants.
 - Player katana visible in the foreground.
 - Enemy sword telegraphs and strike motion correspond to attack direction.
+- Enemy animation is phase-driven rather than rigid: telegraphs use direction-specific anticipation, strikes use a committed body lunge and accelerated sword sweep, and recovery visibly follows through before resetting.
+- Procedural arms, stance/legs, torso lean, ground shadow, telegraph blade halo, and strike trail make the opponent silhouette and blade path easier to read without adding dense controls.
 - HUD shows player health, enemy health, stage, combat prompt, and directional feedback.
 - Generated Web Audio cues are used; no external audio assets are required.
 - Pointer input supports touch, stylus, and mouse.
@@ -42,5 +44,6 @@ These capabilities are approved and cumulative. Future work may improve or repla
 
 - Static web app with ES modules and no runtime framework dependency.
 - Combat rules separated from rendering in `src/game-core.js`.
+- Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
 - Automated Node tests cover direction mapping and combat resolution.
 - GitHub Actions runs tests on pushes to main and pull requests.

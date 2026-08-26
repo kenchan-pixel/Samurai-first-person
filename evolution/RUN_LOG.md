@@ -79,3 +79,58 @@ Exact new-HEAD CI and Vercel Preview must be checked after the single final comm
 - Improve combat animation readability and impact.
 - Add posture/guard-break system.
 - Add combat juice: hit stop, camera impulse, sparks, and optional haptics.
+
+## Run 002 — Combat animation readability
+
+**Date:** 2026-08-26  
+**Action type:** FEATURE  
+**Scope:** Make enemy intent readable from body and blade motion instead of relying mainly on the directional HUD cue.
+
+### Candidate selection
+
+Three materially different candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Animation readability pass: **5 / 5 / 5 / 4 / 5 = 24**.
+- Posture / guard-break system: **5 / 5 / 5 / 3 / 3 = 21**.
+- Deeper combat-juice pass: **4 / 5 / 3 / 4 / 4 = 20**, because hit stop, shake, flash, audio and haptics already exist in the baseline.
+
+Animation readability won because it directly strengthens the Product Goal's first pillar — reading opponent intent through motion — with bounded risk to the existing combat state machine.
+
+### Before
+
+- The enemy body was essentially a rigid rectangle/head silhouette while the sword changed angle.
+- Telegraph, strike, and recovery phases had limited full-body distinction, so the HUD arrow carried too much of the directional-reading burden.
+- The sword had no short-lived motion trail or anticipation emphasis to clarify its path on a phone-sized screen.
+
+### After
+
+- Telegraphs pull the enemy body and blade into direction-specific anticipation poses.
+- Strike phase commits with a torso lean/lunge and accelerated sword sweep; recovery visibly follows through before settling.
+- Procedural shoulders, arms, hands, stance/legs, and a ground shadow give the opponent a clearer fighting silhouette.
+- A restrained telegraph blade halo and bounded two-step strike trail make blade path easier to track without adding UI panels or external assets.
+- Stage index subtly changes stance width/helmet scale while keeping all three baseline enemies and their combat timings intact.
+- Rendering remains one bounded WebGL2 fragment-shader pass; no textures, network calls, particle objects, listeners, or new runtime dependencies are introduced.
+
+### Verification before final commit
+
+- Exact previous HEAD `2e9667157f630e78c17f2e7d78249c61ab275d64`: CI run #24 completed successfully.
+- Exact previous HEAD Vercel commit status: success.
+- All Repos review on that exact HEAD reported **no new actionable P0/P1/P2 finding**; no inline review threads existed.
+- Existing game-core rules, touch/swipe input code, enemy definitions, audio events, progression, and HUD semantics were preserved.
+- `src/main.js` was syntax-checked locally with `node --check`; repository tests were inspected and remain unchanged.
+- Regression focus: four-direction tap/swipe mapping, parry/perfect timing, enemy progression, restart flow, optional audio, elapsed-time timing, and bounded rendering cost remain structurally unchanged.
+
+### Post-commit verification
+
+Exact new-HEAD CI and Vercel Preview must be terminal green before another feature run. The PR run comment records the resulting commit SHA, CI, deployment status, and any reviewer disposition without creating a second metadata-only commit.
+
+### Known risks
+
+- Static CI cannot prove WebGL shader compilation or visual quality on every mobile GPU; Preview/mobile review remains important.
+- The new shader performs more signed-distance-field segment calculations per pixel. It remains a single pass at the existing capped device-pixel ratio, but real-device responsiveness should be watched before adding more shader complexity.
+
+### Next-run candidates
+
+- Add posture / guard-break system.
+- Deepen combat impact with richer hit stop, camera impulse, and sparks.
+- Add enemy spacing and footwork.

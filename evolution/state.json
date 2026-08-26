@@ -3,23 +3,23 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 1,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Hardened exact-head CI/Preview verification and review-severity gates before feature work",
-  "last_commit": "b3f3ce1581304c22cefefcb07fda52cce8384bb2",
+  "run_number": 2,
+  "last_action_type": "FEATURE",
+  "last_action": "Added phase-driven enemy combat animation readability and blade-path motion language",
+  "last_commit": "2e9667157f630e78c17f2e7d78249c61ab275d64",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Cze5in8waXuZitCagCzZg3vf1n3q",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/2sY9ZLbHdiwJugnwi1Sr4LbFugNY",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Improve combat animation readability and impact",
     "Add posture / guard-break system",
-    "Add combat juice: hit stop, camera impulse, sparks and optional haptics"
+    "Deepen combat impact with richer hit-stop, camera impulse and sparks",
+    "Add enemy spacing and footwork"
   ]
 }
