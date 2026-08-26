@@ -13,6 +13,7 @@ Run a high-frequency, human-supervised autonomous product-evolution experiment. 
 - One scheduled run = at most one final commit.
 - One implementation commit = one Vercel Preview update once Git integration is connected.
 - Do not create a new branch or PR per run.
+- **Never merge the pull request.** Final merge remains Ken's manual gate.
 
 ## Priority order at the start of every run
 
