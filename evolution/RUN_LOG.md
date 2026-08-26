@@ -153,7 +153,7 @@ The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm ru
 
 ### Post-commit gate
 
-The new exact HEAD must reach terminal-green `npm test` + `npm run test:browser` and terminal-green Vercel Preview before any later feature run. The PR Run 10 receipt is authoritative for the created SHA and post-commit verification.
+Exact HEAD `87b36f31aae737b2042ac801b6d6bd2d24c39307` reached terminal-green CI #36 (`33022179004`) and terminal-green Vercel Preview before Run 011 feature selection. The missing Run 10 PR receipt was restored during Run 011 preflight without a Git commit.
 
 ### Known risks
 
@@ -164,3 +164,66 @@ The new exact HEAD must reach terminal-green `npm test` + `npm run test:browser`
 - Add enemy spacing and footwork with distance-dependent attacks.
 - Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
 - Add challenge mode with mastery-aware scoring and a clean restart loop.
+
+## Run 011 — Spacing, reach and timed backstep
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Scope:** Add meaningful close / mid / far engagement distance and one bounded mobility decision without replacing the directional parry/swipe combat model.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `87b36f31aae737b2042ac801b6d6bd2d24c39307`: CI #36 (`33022179004`) = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
+- Submitted reviews and top-level discussion were inspected. Earlier renderer, mastery and boss P2 findings were demonstrably closed by Runs 003, 006 and 008; no applicable unresolved P0/P1 or blocking P2 remained.
+- Run 010's required top-level PR verification receipt was missing despite green exact-head evidence, so that communication receipt was restored before feature work without changing Git history.
+
+### Candidate selection
+
+Three materially different player-visible candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Enemy spacing and footwork: **5 / 5 / 5 / 4 / 4 = 23**.
+- Combat-juice expansion: **4 / 4 / 3 / 5 / 4 = 20** because strong hit stop, shake, flash, audio and optional haptics already exist.
+- Challenge mode: **4 / 4 / 5 / 4 / 3 = 20** because it adds replay structure but less moment-to-moment combat depth than spacing.
+
+Spacing wins because it directly strengthens the Product Goal's opponent-reading and distinct-duel pillars while adding a new decision that is visible every attack.
+
+### Before
+
+- Every duel effectively happened at one fixed engagement distance.
+- Enemy attacks differed in direction, timing, feints and damage but not in whether their blade could still reach after spacing changed.
+- The player had directional block and swipe counter only; there was no bounded mobility decision during a strike.
+
+### After
+
+- `src/footwork.js` adds an idempotent close / mid / far engagement layer over public `CombatEngine` state without changing `game-core.js`.
+- Attack profiles now carry reach/setup distance. Ashigaru mixes close and committing long cuts; Ronin uses more lateral close/mid setups; Oni and Crimson Shogun heavy attacks use long tracking reach.
+- A compact mobile `STEP / 後撤` control becomes available during active combat. A correctly timed early-strike STEP increases distance by one.
+- If the new distance exceeds the current attack's reach, the strike whiffs into a recovery counter opening. The evade itself grants no perfect-parry or guard-break damage bonus.
+- Long/heavy reach-2 attacks still track at far distance, so STEP cannot replace directional reading/parry.
+- Successful evade counters pull spacing one step closer; hits and stage transitions prevent the duel from remaining artificially far.
+- A small 近 / 中 / 遠 chip and restrained first-person depth/lateral camera response make spacing readable. Reduced-motion preference disables only camera motion, not the mechanics.
+- Added Node coverage for short evade/counter, long/heavy tracking and wrong-time STEP; a 320×568 browser harness exercises the patched engine and verifies STEP/range UI initialization. The real-app browser smoke now requires footwork initialization.
+
+### Pre-commit verification
+
+- Prior exact-head CI and Vercel were terminal green and review gates clear.
+- `src/footwork.js`, `tests/footwork.test.mjs`, and the updated browser-smoke script passed `node --check` before Git object creation.
+- The implementation is additive: no change to `game-core.js`, boss HP/timing/phase rules, mastery scoring/storage, Guided Duel storage semantics, WebGL shader, edge block mapping, swipe direction mapping, networking, or dependencies.
+- Regression checklist, Current Baseline, backlog, changelog, state, and this run log are included in the same final commit.
+
+### Post-commit gate
+
+The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before a later feature run. The PR Run 11 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+
+### Known risks
+
+- The camera response intentionally transforms the single canvas as a whole; it is a restrained depth/lateral cue rather than a full spatial 3D locomotion system. Real-iPhone play should decide whether the amount feels natural.
+- STEP window/reach profiles are deterministic and covered by tests, but their difficulty and readability still need real-device play tuning.
+- The browser harness proves footwork engine outcomes and UI initialization, while a future pointer-level browser test can harden the physical STEP gesture itself if reviews expose a need.
+
+### Next-run candidates
+
+- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
+- Add challenge mode with mastery-aware scoring and a clean restart loop.
+- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.

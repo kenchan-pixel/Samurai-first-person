@@ -105,6 +105,9 @@ try {
   if (!appDom.includes('id="coach-toggle"')) {
     throw new Error('Guided first-duel toggle was not added to the start screen');
   }
+  if (!appDom.includes('data-footwork-ready="true"') || !appDom.includes('id="footwork-step"')) {
+    throw new Error('Footwork controller / STEP control did not initialize in the real application document');
+  }
 
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2600 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) {
@@ -151,7 +154,21 @@ try {
     throw new Error('Guided first-duel start-screen toggle did not initialize enabled for a first-time run');
   }
 
-  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + guided first-duel onboarding integration`);
+  const footworkDom = await dumpDom(browser, '/tests/footwork-browser-harness.html', { budget: 1800 });
+  if (!footworkDom.includes('data-footwork-integration="pass"')) {
+    throw new Error(`Footwork distance / backstep integration failed. DOM:\n${footworkDom.slice(0, 5000)}`);
+  }
+  if (!footworkDom.includes('data-footwork-short-evade="true"')) {
+    throw new Error('Short-range strike did not create a backstep evade counter opening');
+  }
+  if (!footworkDom.includes('data-footwork-long-track="true"')) {
+    throw new Error('Long/heavy strike failed to track the backstep as designed');
+  }
+  if (!footworkDom.includes('data-footwork-ui="true"')) {
+    throw new Error('Footwork STEP / distance UI did not initialize in browser harness');
+  }
+
+  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + onboarding + footwork integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

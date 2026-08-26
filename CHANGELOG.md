@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0-evolution — Spacing and footwork
+
+- Added close / mid / far engagement distance as a new combat dimension while preserving the existing four-direction edge parry and swipe-counter controls.
+- Enemy attack profiles now set up at readable engagement ranges; light attacks can approach/retreat/sidestep while long/heavy attacks can retain reach from farther away.
+- Added a compact mobile `STEP / 後撤` control. A correctly timed early-strike backstep increases distance by one; if that moves the player beyond the current attack's reach, the strike whiffs and creates a normal counter opening.
+- Long/heavy reach-2 attacks continue to track at far distance, preventing STEP from becoming universal invulnerability; directional parry remains required when the attack can still reach.
+- Successful evade counters close one distance step. Stage start/restart returns spacing to mid, and reduced-motion preference disables only the camera movement rather than the underlying reach rules.
+- Added pure Node coverage for short-range evade/counter, long/heavy tracking and wrong-time STEP rejection, plus a 320×568 browser footwork harness and real-app footwork initialization gate.
+- No network service, storage, account, asset, dependency, or framework was added.
+
 ## 0.6.1-evolution — Guided Duel CI lifecycle repair
 
 - Fixed the onboarding browser harness so it captures the first-time Guided Duel toggle before completing the tutorial instead of incorrectly asserting that the toggle should still be enabled after completion.

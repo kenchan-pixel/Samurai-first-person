@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.6.0-evolution**
+Version: **0.7.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -38,6 +38,18 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Incoming hits build player posture. Heavy attacks build posture faster; when player posture reaches 4, the guard breaks, that hit gains +1 damage, and player posture resets.
 - A successful parry relieves one point of player posture, rewarding recovery through correct defence.
 
+## Spacing and footwork
+
+- Active combat adds a compact **STEP / 後撤** control in the lower centre without changing the four edge-block zones or swipe attack mapping.
+- Enemy attack profiles now carry close / mid / long reach. Before each attack the opponent automatically closes or opens to a valid engagement distance; lighter attacks may sidestep while heavy attacks can set up from farther away.
+- The current engagement distance is shown as **近 / 中 / 遠** and drives a restrained first-person camera response so spacing changes are visible without adding dense UI.
+- A STEP input is only effective during the early strike window. It increases distance by one step.
+- If the new distance is beyond that attack's reach, the strike whiffs and creates a recovery counter opening without granting a parry/perfect-parry bonus.
+- Long/heavy tracking attacks can still reach at far distance, so STEP is not universal invulnerability; the player must still read the attack and use directional parry when distance alone will not escape it.
+- A successful counter after an evade closes one distance step again. Taking a hit also pulls the engagement back toward close/mid range.
+- Stage start/restart resets engagement distance to mid.
+- Reduced-motion preference disables the camera movement while keeping distance logic, STEP control, and reach outcomes unchanged.
+
 ## Boss encounter
 
 - **Crimson Shogun** is a fourth-stage boss after the three approved baseline enemies.
@@ -60,10 +72,10 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 ## Enemy differentiation
 
-- **Ashigaru Scout:** low health, broad timing windows, simple single attacks, low posture threshold.
-- **Wandering Ronin:** faster rhythm, feints, mixed directions, higher health, medium posture threshold.
-- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest baseline posture threshold; heavy hits also pressure player posture faster.
-- **Crimson Shogun:** multi-phase boss with a mid-fight ruleset/tempo shift, higher posture resistance, signature heavy/feint patterns, and a distinct arena atmosphere.
+- **Ashigaru Scout:** low health, broad timing windows, simple single attacks, low posture threshold; mixes close cuts with a longer committing strike.
+- **Wandering Ronin:** faster rhythm, feints, mixed directions, higher health, medium posture threshold; uses more lateral footwork and alternating close/mid reach.
+- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest baseline posture threshold; heavy hits pressure player posture faster and use long tracking reach.
+- **Crimson Shogun:** multi-phase boss with a mid-fight ruleset/tempo shift, higher posture resistance, signature heavy/feint patterns, distinct arena atmosphere, and long-reach tracking pressure on heavy attacks.
 
 ## Presentation
 
@@ -75,6 +87,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - HUD shows player health, enemy health, stage, combat prompt, directional feedback, and compact player/enemy posture values.
 - Enemy guard break and player guard break use explicit combat prompts, stronger impact timing, audio, flash, and optional vibration feedback.
 - Boss-specific blood-moon and ember presentation is bounded to a fixed DOM layer and does not add external assets.
+- Footwork adds only a small STEP control, distance chip, and bounded camera transform; the centre combat view and edge-block zones remain usable.
 - Generated Web Audio cues are used; no external audio assets are required.
 - Pointer input supports touch, stylus, and mouse.
 
@@ -85,11 +98,13 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/boss-encounter.js` installs the boss as a small idempotent encounter adapter before `src/main.js` creates the engine; baseline enemies and the core interaction model remain untouched.
 - `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere, uses explicit timers for transition-banner/deactivation cleanup, and marks readiness for browser smoke verification.
 - `src/onboarding-coach.js` observes public combat events for the guided first duel, keeps tutorial state outside the combat state machine, injects a pointer-transparent coach/toggle, and stores only a local completion preference.
+- `src/footwork.js` installs an idempotent encounter adapter over public `CombatEngine` state: it decorates attack reach/setup profiles, tracks engagement distance, adds timed backstep/evade openings, injects the STEP/range UI, and leaves directional parry/swipe rules intact.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
-- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, and guided-duel state progression/adaptive cues.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding initialization, and runs dedicated mastery, boss, and onboarding integration harnesses at a 320×568 viewport.
+- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, guided-duel state progression/adaptive cues, and footwork short-evade / long-track outcomes.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding/footwork initialization, and runs dedicated mastery, boss, onboarding, and footwork integration harnesses at a 320×568 viewport.
 - The mastery browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the viewport.
 - The boss browser integration gate runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, proves the banner cleans up while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
 - The onboarding browser integration gate drives the real opening enemy event stream through a wrong-direction correction, successful parry, and counter; it verifies coach step completion, the start-screen toggle, 320×568 containment, and pointer transparency.
+- The footwork browser integration gate proves a close-range strike can be escaped into a counter opening, a long/heavy strike still tracks STEP, and the real STEP/range UI initializes.
 - GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

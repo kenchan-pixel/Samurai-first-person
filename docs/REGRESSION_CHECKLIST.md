@@ -9,6 +9,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] iPhone portrait safe areas do not hide HUD or restart controls.
 - [ ] The primary combat view is not blocked by instructions or panels.
 - [ ] Guided-duel toggle is reachable on the start screen without pushing the primary Start control outside the viewport.
+- [ ] STEP / 後撤 and the range chip remain clear of the four edge-block regions and the primary centre combat read.
 
 ## Guided first duel
 
@@ -31,6 +32,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Swipe direction is recognised for top, right, bottom, and left.
 - [ ] Tap and swipe are not both triggered by one gesture.
 - [ ] Mouse fallback remains usable.
+- [ ] STEP captures only its own pointer gesture and does not leave the canvas pointer state stuck.
 
 ## Combat
 
@@ -48,6 +50,18 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Player guard break adds exactly +1 damage to that hit and resets player posture.
 - [ ] A successful parry relieves one point of player posture.
 
+## Spacing and footwork
+
+- [ ] Stage start and restart begin at mid engagement distance.
+- [ ] Enemy telegraphs can visibly set up at close, mid, or far distance according to the attack profile.
+- [ ] The range chip reports 近 / 中 / 遠 consistently with engine state.
+- [ ] STEP is effective only during the bounded early strike window and can be attempted at most once per attack.
+- [ ] A STEP that moves beyond a short/mid attack's reach creates an evade recovery opening.
+- [ ] A long/heavy reach-2 attack still tracks at far distance, so STEP does not become universal invulnerability.
+- [ ] Evade counter reuses the normal directional counter rules but receives no perfect-parry or guard-break bonus merely from evading.
+- [ ] A successful evade counter closes one distance step; taking a hit cannot leave the fight artificially locked at far range.
+- [ ] Reduced-motion preference removes camera movement without changing distance/reach mechanics.
+
 ## Progression
 
 - [ ] All three original baseline enemies appear before the boss.
@@ -59,7 +73,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Defeating one stage advances to the next stage.
 - [ ] Defeating Crimson Shogun reaches victory.
 - [ ] Reaching zero player health reaches defeat.
-- [ ] Stage transitions and restart reset posture, health, enemy, timing, and HUD state.
+- [ ] Stage transitions and restart reset posture, health, enemy, timing, HUD state, and engagement distance.
 
 ## Mastery and replay
 
@@ -77,19 +91,20 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Player parry/attack animation matches input direction.
 - [ ] Player/enemy posture values remain visible without blocking the combat view.
 - [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
+- [ ] Engagement distance changes produce restrained camera depth/lateral feedback without hiding the blade read or moving essential controls.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
 - [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
 - [ ] Result mastery summary remains readable at 320×568 portrait without obscuring the restart control.
 - [ ] Audio remains optional and starts only after user interaction.
 - [ ] Gameplay timing is based on elapsed time, not frame count.
-- [ ] No unbounded object, event-listener, particle, timer, or audio-node growth is introduced.
+- [ ] No unbounded object, event-listener, particle, timer, audio-node, or animation-loop growth is introduced.
 - [ ] Recent target phone remains responsive during a complete four-stage run.
 
 ## Delivery
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, boss encounter initialization, and onboarding initialization in the real app document.
+- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, boss encounter initialization, onboarding initialization, and footwork initialization in the real app document.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
@@ -97,6 +112,8 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Boss browser harness runs with reduced-motion preference, drives the patched `CombatEngine` through boss activation and Phase II, proves the transition banner hides while the fight stays active, verifies restart-to-Phase-I, and reaches final victory.
 - [ ] Onboarding Node coverage proves read/parry/counter progression, adaptive miss guidance, boss rhythm-reset cues, and disabled-state inertness.
 - [ ] Onboarding browser harness drives the real opening-enemy event stream through a wrong-direction correction, successful parry and counter, and proves toggle readiness plus 320×568 pointer-transparent coach layout.
+- [ ] Footwork Node coverage proves short-range evade + counter, long/heavy tracking, and wrong-time STEP rejection.
+- [ ] Footwork browser harness drives the patched engine through a short evade/counter and a long tracked strike, and proves the STEP/range UI initializes at mobile viewport.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Footwork Browser Harness</title>
+</head>
+<body>
+  <div id="app">
+    <canvas id="game-canvas"></canvas>
+    <div id="gesture-hint"></div>
+    <section id="start-screen"><small></small></section>
+  </div>
+  <script type="module">
+    import { CombatEngine, Direction } from '../src/game-core.js';
+    import { installFootwork } from '../src/footwork.js';
+
+    installFootwork(CombatEngine);
+
+    const shortEnemy = {
+      id: 'ashigaru-scout',
+      name: 'Short Range',
+      title: 'Harness',
+      maxHp: 4,
+      postureMax: 4,
+      gapMs: 100,
+      recoveryMs: 300,
+      perfectWindowMs: 45,
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+    };
+
+    const shortCombat = new CombatEngine({ enemies: [shortEnemy] });
+    shortCombat.start(0);
+    shortCombat.update(1550);
+    const telegraph = shortCombat.snapshot(1550);
+    shortCombat.update(1650);
+    const evade = shortCombat.attemptBackstep(1660);
+    const counter = shortCombat.attemptAttack(Direction.BOTTOM, 1670);
+
+    const heavyEnemy = {
+      ...shortEnemy,
+      id: 'oni-guard',
+      name: 'Long Range',
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 2, heavy: true }],
+    };
+    const heavyCombat = new CombatEngine({ enemies: [heavyEnemy], playerMaxHp: 5 });
+    heavyCombat.start(0);
+    heavyCombat.update(1550);
+    const heavyTelegraph = heavyCombat.snapshot(1550);
+    heavyCombat.update(1650);
+    const tracked = heavyCombat.attemptBackstep(1660);
+    heavyCombat.update(1770);
+
+    const step = document.querySelector('#footwork-step');
+    const range = document.querySelector('#footwork-range');
+    const uiReady = Boolean(step && range && document.documentElement.dataset.footworkReady === 'true');
+    const shortPassed =
+      telegraph.enemyDistance === 0 &&
+      telegraph.attack?.reachDistance === 0 &&
+      evade.accepted === true &&
+      counter.accepted === true &&
+      counter.evaded === true;
+    const longPassed =
+      heavyTelegraph.enemyDistance === 2 &&
+      heavyTelegraph.attack?.reachDistance === 2 &&
+      tracked.accepted === false &&
+      tracked.reason === 'tracked' &&
+      heavyCombat.playerHp === 3;
+
+    document.documentElement.dataset.footworkIntegration = shortPassed && longPassed && uiReady ? 'pass' : 'fail';
+    document.documentElement.dataset.footworkShortEvade = String(shortPassed);
+    document.documentElement.dataset.footworkLongTrack = String(longPassed);
+    document.documentElement.dataset.footworkUi = String(uiReady);
+  </script>
+</body>
+</html>
