@@ -99,6 +99,12 @@ try {
   if (!appDom.includes('data-boss-ready="true"')) {
     throw new Error('Boss encounter module did not initialize before the real application runtime');
   }
+  if (!appDom.includes('data-onboarding-ready="true"')) {
+    throw new Error('Guided first-duel onboarding did not initialize in the real application document');
+  }
+  if (!appDom.includes('id="coach-toggle"')) {
+    throw new Error('Guided first-duel toggle was not added to the start screen');
+  }
 
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2600 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) {
@@ -134,7 +140,18 @@ try {
     throw new Error('Boss browser harness did not reach final victory');
   }
 
-  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery integration + boss Phase II/reduced-motion/restart/victory integration`);
+  const onboardingDom = await dumpDom(browser, '/tests/onboarding-browser-harness.html', { budget: 1800 });
+  if (!onboardingDom.includes('data-onboarding-integration="pass"')) {
+    throw new Error(`Guided first-duel event integration failed. DOM:\n${onboardingDom.slice(0, 5000)}`);
+  }
+  if (!onboardingDom.includes('data-onboarding-layout="pass"')) {
+    throw new Error('Guided first-duel coach overflowed the 320x568 viewport or blocked pointer input');
+  }
+  if (!onboardingDom.includes('data-onboarding-toggle="true"')) {
+    throw new Error('Guided first-duel start-screen toggle did not initialize enabled for a first-time run');
+  }
+
+  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + guided first-duel onboarding integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

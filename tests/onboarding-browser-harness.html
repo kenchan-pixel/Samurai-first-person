@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Onboarding browser harness</title>
+  <style>
+    :root{--safe-top:12px;--safe-right:12px;--safe-bottom:12px;--safe-left:12px}
+    html,body{margin:0;width:100%;height:100%;background:#090a0d;color:white;font-family:system-ui,sans-serif}
+    #app{position:fixed;inset:0;overflow:hidden}
+    .modal{position:absolute;inset:0;display:none}.modal__content{width:280px;margin:auto}.control-demo{display:block}
+  </style>
+</head>
+<body>
+  <main id="app">
+    <section id="start-screen" class="modal"><div class="modal__content"><div class="control-demo"></div><button id="start-button">Start</button></div></section>
+    <section id="result-screen" class="modal"><div class="modal__content modal__content--result"></div></section>
+  </main>
+  <script type="module">
+    localStorage.removeItem('blade-reversal-guided-duel-v1');
+    const { CombatEngine, Direction } = await import('../src/game-core.js');
+    await import('../src/onboarding-coach.js');
+
+    const engine = new CombatEngine();
+    engine.start(0);
+    engine.drainEvents();
+
+    engine.update(1550);
+    engine.drainEvents();
+    engine.update(2430);
+    engine.drainEvents();
+
+    engine.attemptParry(Direction.LEFT, 2430);
+    engine.drainEvents();
+    const missHint = document.querySelector('.coach__hint')?.textContent || '';
+
+    engine.attemptParry(Direction.TOP, 2431);
+    engine.drainEvents();
+    engine.attemptAttack(Direction.BOTTOM, 2440);
+    engine.drainEvents();
+
+    const panel = document.querySelector('#onboarding-coach');
+    const toggle = document.querySelector('#coach-toggle');
+    const rect = panel?.getBoundingClientRect();
+    const insideViewport = Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight);
+    const pointerTransparent = panel ? getComputedStyle(panel).pointerEvents === 'none' : false;
+
+    const stepsPassed = panel?.dataset.coachStepRead === 'done' && panel?.dataset.coachStepParry === 'done' && panel?.dataset.coachStepCounter === 'done';
+    const completed = panel?.dataset.completed === 'true';
+    const adaptiveMiss = missHint.includes('方向錯誤');
+    const toggleReady = Boolean(toggle && toggle.getAttribute('aria-pressed') === 'true');
+
+    document.documentElement.dataset.onboardingIntegration = stepsPassed && completed && adaptiveMiss ? 'pass' : 'fail';
+    document.documentElement.dataset.onboardingLayout = insideViewport && pointerTransparent ? 'pass' : 'fail';
+    document.documentElement.dataset.onboardingToggle = toggleReady ? 'true' : 'false';
+  </script>
+</body>
+</html>

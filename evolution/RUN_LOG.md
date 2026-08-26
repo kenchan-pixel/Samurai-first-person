@@ -42,159 +42,86 @@ Added player/enemy posture, enemy-specific thresholds, guard-break counter bonus
 **Date:** 2026-08-27  
 **Action type:** FEATURE
 
-Added deterministic 0–100 mastery grading, S/A/B/C/D ranks, parry/perfect/guard-break/hit/clear-time feedback, and local-only best-victory persistence without accounts or network services. Exact previous HEAD `ef3022d443b80f2ac10e51348d58141712e9a44d` entered this run with CI `33000154167` success and Vercel success.
+Added deterministic 0–100 mastery grading, S/A/B/C/D ranks, parry/perfect/guard-break/hit/clear-time feedback, and local-only best-victory persistence without accounts or network services.
 
 ## Run 006 — Mastery browser integration hardening
 
 **Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX  
-**Scope:** Close the current reviewer P2 regression-detection gap at the player-visible mastery/personal-best integration seam before allowing more feature work.
+**Action type:** BLOCKER_FIX
 
-### Review disposition
-
-The current-HEAD review reported no P0/P1, but identified an actionable P2: CI proved pure mastery functions and module initialization yet did not execute the real `CombatEngine` → mastery observer → result DOM → `localStorage` path. Because mastery/personal-best behavior is now an approved player-visible baseline and the gap could let a material playability regression pass all automated gates, this P2 is treated as blocking under the repository's material-correctness/playability rule.
-
-### Before
-
-- Browser smoke proved WebGL2 startup, enabled Start control, and mastery module initialization only.
-- It did not prove victory/defeat events reached the patched mastery observer and updated the actual result fields.
-- It did not execute personal-best write/compare behavior or blocked-storage tolerance.
-- The 320×568 result-screen requirement had no executable layout fence.
-
-### After
-
-- `tests/mastery-browser-harness.html` imports the real mastery overlay and `CombatEngine`, drives deterministic victory event streams, and asserts rendered mastery fields.
-- The first completed victory must persist a best record; a deliberately worse victory must leave it unchanged.
-- A third victory runs with `Storage.prototype.setItem` throwing and must still render mastery feedback without failing.
-- The harness uses the production result-screen classes and requires result content plus Restart to remain inside a 320×568 viewport.
-- `scripts/browser-smoke.mjs` continues checking the real app WebGL/start/mastery initialization, then runs the integration harness as a second browser gate.
-- No production gameplay, mastery weights, combat timing, renderer, input, network, or storage semantics are changed.
-
-### Pre-commit verification
-
-- Exact previous HEAD `ef3022d443b80f2ac10e51348d58141712e9a44d`: CI `33000154167` = success; GitHub `Vercel` status = success.
-- Draft PR #1 remained open, Draft, mergeable, and unmerged; no inline review threads existed.
-- New `scripts/browser-smoke.mjs` passed `node --check` locally.
-- The harness module body passed `node --check` after extraction from the HTML test fixture.
-
-### Post-commit gate
-
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before the next feature run. The PR Run 6 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
-
-### Known risks
-
-- The harness drives real engine events but does not yet exercise physical pointer taps/swipes; pointer-level mobile interaction smoke remains a separate technical opportunity.
-- Headless Chromium at 320×568 is a regression gate, not a substitute for final recent-iPhone visual review.
-
-### Next-run candidates
-
-- Add a multi-phase boss vertical slice.
-- Add enemy spacing and footwork.
-- Deepen combat impact with richer hit stop, camera impulse and sparks.
+Closed the reviewer P2 regression gap at the mastery/personal-best integration seam. Browser coverage now executes the real patched `CombatEngine` event stream, verifies victory mastery rendering, personal-best preservation, blocked-storage tolerance, and 320×568 result layout. Gameplay and mastery weights unchanged.
 
 ## Run 007 — Crimson Shogun multi-phase boss
 
 **Date:** 2026-08-27  
+**Action type:** FEATURE
+
+Added Crimson Shogun as stage 4 with 12 HP, Phase I posture 6, a Blood Moon Phase II transition at 6 HP or lower after a valid counter, faster phase-two pressure, an 1100 ms breathing gap, bounded moon/ember atmosphere, restart safety, and encounter coverage.
+
+## Run 008 — Boss reduced-motion and browser integration hardening
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX
+
+Closed two reviewer P2s: the reduced-motion Phase II banner now has an explicit bounded lifetime, and a deterministic 320×568 browser harness executes boss activation, Phase II, banner cleanup, restart-to-Phase-I, and final victory. Exact HEAD `8b163f48ca805340ea5be025ad5b5a8cea304b0b` entered Run 009 with CI `33015301566` success and Vercel success.
+
+## Run 009 — Guided first duel onboarding
+
+**Date:** 2026-08-27  
 **Action type:** FEATURE  
-**Scope:** Add the first real boss duel as a complete fourth-stage vertical slice with a mid-fight phase change, distinct arena presentation and executable encounter regression coverage.
+**Scope:** Teach the real read → parry → counter loop interactively during the opening Ashigaru duel without changing combat timing, damage, input mapping, or encounter rules.
 
 ### Preflight / review disposition
 
-- Exact previous HEAD `37e0fbeaae5478bbf703b48595a381a252bc8e35`: CI run `33005455392` = success; GitHub `Vercel` status = success.
-- Draft PR #1 remained open, Draft, mergeable and unmerged; there were no inline review threads.
-- The latest actionable P2 on Run 005 was already closed by Run 006's executable mastery integration gate and Run 6 PR receipt. No applicable unresolved P0/P1 or blocking P2 remained before feature selection.
+- Exact previous HEAD `8b163f48ca805340ea5be025ad5b5a8cea304b0b`: CI run `33015301566` = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
+- The latest actionable review findings were the two Run 007 P2s, both demonstrably closed by Run 008's bounded Phase II banner and executable boss browser harness. No applicable unresolved P0/P1 or blocking P2 remained before feature selection.
 
 ### Candidate selection
 
 Three materially different candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
 
-- Multi-phase boss vertical slice: **5 / 5 / 5 / 4 / 3 = 22**.
-- Enemy spacing and footwork: **5 / 5 / 5 / 3 / 3 = 21** because distance-dependent combat needs deeper renderer/encounter coupling and broader phone playtesting.
-- Combat-juice expansion: **4 / 4 / 2 / 5 / 4 = 19** because the current baseline already has hit stop, shake, flash, audio and optional vibration.
+- Guided first-duel onboarding: **5 / 5 / 4 / 5 / 5 = 24**.
+- Enemy spacing and footwork: **5 / 5 / 5 / 3 / 3 = 21** because meaningful distance-dependent combat still needs deeper renderer/encounter coupling and real-phone tuning.
+- Combat-juice expansion: **4 / 4 / 3 / 5 / 4 = 20** because hit stop, shake, flash, audio and optional haptics already exist.
 
-Boss work wins because the Product Goal explicitly calls for memorable bosses and distinct duels, while the current engine can safely extend the campaign through a bounded encounter adapter without changing the proven four-direction interaction model.
+Guided onboarding wins because the Product Goal requires a coherent, learnable mobile experience while the current start screen still teaches mainly through static text. The public combat event stream provides a low-risk way to teach actual play rather than a separate tutorial simulation.
 
 ### Before
 
-- Victory followed the third Oni Guard stage; there was no boss duel.
-- No enemy changed attack/timing rules midway through a fight.
-- The campaign had no boss-specific arena event or phase-transition presentation.
+- New players received static control cards and generic combat prompts but no persistent learning progression.
+- Wrong-direction and wrong-time parry misses did not become contextual first-duel coaching.
+- Posture/guard-break meaning was visible in HUD numbers but not connected to the opening read/parry/counter lesson.
 
 ### After
 
-- Crimson Shogun is appended as stage 4 / 4 after the three baseline enemies.
-- Phase I has 12 HP, posture 6, deliberate heavy/feint patterns and a 72 ms perfect-parry window.
-- A valid counter that leaves the boss at 6 HP or lower triggers Blood Moon Phase II exactly once: boss posture and attack cursor reset, the used recovery becomes an 1100 ms neutral gap, and the boss earns a small transition score bonus.
-- Phase II raises posture to 7, tightens the perfect window to 58 ms, shortens gaps/recovery, and switches to a faster signature attack set with mixed feints/heavies.
-- A fixed, pointer-transparent blood moon plus bounded ember field activates only for the boss; Phase II shows an explicit banner and stronger atmosphere. Reduced-motion preference disables looping ember movement.
-- Restart always reconstructs the boss at Phase I.
-- Node tests cover boss injection, transition/reset semantics and app wiring; browser smoke now requires the boss module to initialize in the real page before `main.js`.
+- `src/onboarding-coach.js` adds an optional first-time Guided Duel layer driven by the real `CombatEngine` event stream: read the final blade path, parry the matching edge, then swipe counter.
+- Wrong-direction versus wrong-time misses receive distinct corrective hints; feints explicitly prompt a re-read of the final blade direction.
+- Successful parries expose current enemy posture inside the coach, and an enemy guard break explains the +2 counter opportunity.
+- Completing the core read/parry/counter sequence produces a short completion acknowledgement and stores only a local completion preference so later page loads default the coach off. A start-screen toggle allows manual enable/disable; blocked storage remains non-fatal.
+- If guidance remains enabled for the current run, Crimson Shogun entry and Blood Moon Phase II provide brief rhythm-reset cues without changing boss mechanics.
+- The coach is pointer-transparent, bounded to a compact lower-left card, honours reduced-motion preference, and leaves the centre combat view and existing HUD/directional indicators intact.
+- Node tests cover progression, adaptive miss guidance, boss phase cueing and disabled-state inertness. A dedicated 320×568 browser harness drives the real opening enemy event stream through wrong-direction correction → valid parry → counter and verifies completion, toggle readiness, viewport containment and pointer transparency.
+- The real-app browser smoke now requires onboarding initialization/toggle wiring in addition to the existing WebGL, mastery and boss gates.
 
 ### Pre-commit verification
 
 - Previous exact HEAD CI and Vercel were terminal green.
-- New encounter and overlay modules passed `node --check` locally before Git object creation.
-- The change preserves existing `game-core.js`, `main.js`, mastery modules, input mapping, posture formulas, WebGL shader and existing browser mastery harness.
+- Review submissions, top-level PR discussion and inline threads were inspected before feature selection.
+- New onboarding module, Node test, browser-harness module body and updated browser-smoke script passed syntax checks before Git object creation; targeted onboarding Node tests passed 3/3.
+- `game-core.js`, enemy HP/timing/damage, boss encounter rules, mastery scoring, WebGL shader, pointer mapping, audio and network boundaries are unchanged.
 
 ### Post-commit gate
 
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before another feature run. The PR Run 7 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before another feature run. The PR Run 9 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
 
 ### Known risks
 
-- Boss HP/posture/timing values are first-pass balancing and need real-phone play review.
-- The boss reuses the existing procedural combatant silhouette; the new moon/ember atmosphere makes the stage distinct, but a later visual-identity pass may add stronger boss-specific weapon/silhouette language if evidence justifies it.
-- The encounter is installed as an idempotent pre-main adapter to avoid destabilising the proven core state machine; if encounter complexity grows substantially, it should move into a dedicated first-class encounter controller rather than accumulating prototype patches.
+- Headless browser coverage proves event integration and 320×568 bounds, but a real-iPhone review is still needed to judge whether the lower-left coach feels appropriately unobtrusive during one-handed play.
+- The coach intentionally teaches only the core first-duel loop plus contextual boss rhythm reset. Deeper mastery/replay education should be added only if play evidence shows confusion rather than turning onboarding into a long tutorial.
 
 ### Next-run candidates
 
 - Add enemy spacing and footwork with distance-dependent attacks.
 - Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
-- Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively.
-
-## Run 008 — Boss reduced-motion and browser integration hardening
-
-**Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX  
-**Scope:** Close the current reviewer P2 accessibility/playability regression and the boss browser-integration coverage gap before allowing another feature run.
-
-### Preflight / review disposition
-
-- Exact previous HEAD `8d7125df3abe1aa86c0ee9ad8f8172fc69a9e51d`: CI run `33011243060` = success; GitHub `Vercel` status = success.
-- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
-- The latest All Repos review found no P0/P1, but two actionable P2 findings: reduced-motion left the Phase II banner permanently visible, and browser CI only proved boss-module readiness rather than the actual boss vertical slice. The first is a direct mobile-clarity/accessibility regression and the second allowed that regression through green CI, so both are blocking under the material playability/correctness rule.
-
-### Before
-
-- `boss-overlay.js` relied on CSS animation completion to visually hide the Phase II banner.
-- Under `prefers-reduced-motion: reduce`, animation was disabled while `.is-visible` forced `opacity:1`, so the banner stayed over the rest of Phase II.
-- Browser smoke only required `data-boss-ready="true"`; it did not execute boss activation, Phase II, restart or final victory.
-
-### After
-
-- Phase II banner visibility now has an explicit 1150 ms JavaScript lifetime. Removing `is-visible` hides it in both normal and reduced-motion paths while leaving the Blood Moon atmosphere active.
-- Boss overlay cleanup now clears stale banner/deactivation timers on stage start, phase transition, reset and defeat so later lifecycle events cannot inherit an old timer.
-- `tests/boss-browser-harness.html` runs the real patched `CombatEngine` with the boss adapter/overlay at 320×568, verifies Phase I activation, triggers Phase II, waits for banner cleanup, verifies restart-to-Phase-I, defeats the boss and confirms final victory.
-- `scripts/browser-smoke.mjs` launches the boss harness with Chromium's `--force-prefers-reduced-motion` switch and requires reduced-motion, banner cleanup, restart and victory assertions to pass.
-- Boss HP/posture/timing, directional input, mastery, renderer, persistence and network boundaries are unchanged.
-
-### Pre-commit verification
-
-- Previous exact HEAD CI and Vercel were terminal green.
-- Current review history and inline threads were inspected; no applicable P0/P1 exists beyond the two P2 findings handled here.
-- The change is bounded to boss overlay lifecycle, browser verification and durable SOT; no core combat formula is modified.
-
-### Post-commit gate
-
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before any later feature run. The PR Run 8 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
-
-### Known risks
-
-- The browser harness uses deterministic engine state setup rather than physical pointer gestures; pointer-level mobile interaction remains a separate test opportunity.
-- Headless SwiftShader and forced reduced motion are regression gates, not substitutes for real-iPhone visual/performance review.
-
-### Next-run candidates
-
-- Add enemy spacing and footwork with distance-dependent attacks.
-- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
-- Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively.
+- Add challenge mode with mastery-aware scoring and a clean restart loop.

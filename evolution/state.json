@@ -3,16 +3,16 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 8,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Fixed the reduced-motion Phase II banner lifetime and added deterministic browser integration coverage for boss activation, Phase II, restart and final victory",
-  "last_commit": "8d7125df3abe1aa86c0ee9ad8f8172fc69a9e51d",
+  "run_number": 9,
+  "last_action_type": "FEATURE",
+  "last_action": "Added an optional event-driven Guided Duel coach for the first Ashigaru fight with adaptive read/parry/counter guidance, posture teaching, a start-screen toggle and browser integration coverage",
+  "last_commit": "8b163f48ca805340ea5be025ad5b5a8cea304b0b",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/2JeSaqbWyQMp9S8CFtyCkdSkP47P",
-  "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Eu5E4xzV45DTNvqNxTHzWBKRNNSb",
+  "vercel_project_id": "prj_UC2Q7h9EPxVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
@@ -20,6 +20,6 @@
   "next_candidates": [
     "Add enemy spacing and footwork with distance-dependent attacks",
     "Deepen combat impact with richer hit stop, camera impulse and bounded sparks",
-    "Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively"
+    "Add challenge mode with mastery-aware scoring and a clean restart loop"
   ]
 }

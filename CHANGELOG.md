@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0-evolution — Guided first duel onboarding
+
+- Added an optional first-time Guided Duel coach that reacts to the real opening Ashigaru event stream and teaches read-the-blade → directional parry → swipe counter using normal combat rules rather than a separate tutorial mode.
+- Added adaptive cues for wrong direction, wrong timing, feints, enemy posture and guard break, then collapses the coach after the player demonstrates the core loop.
+- Added a compact start-screen toggle plus local-only completion preference; storage failure is non-fatal and no analytics/network service is introduced.
+- Added brief boss rhythm-reset cues for Crimson Shogun entry and Blood Moon Phase II when guidance remains enabled.
+- Added pure Node coverage for coach progression/adaptive cues and a 320×568 browser harness that drives the real `CombatEngine`, verifies wrong-direction correction → parry → counter completion, and proves the coach remains pointer-transparent and inside the viewport.
+- Extended the real-app browser smoke gate to require onboarding initialization/toggle wiring while preserving WebGL, mastery and boss integration gates.
+
 ## 0.5.1-evolution — Boss reduced-motion and browser integration hardening
 
 - Fixed the Blood Moon Phase II banner so its visibility has an explicit bounded lifetime instead of relying on CSS animation completion; reduced-motion users no longer keep the banner over the fight indefinitely.

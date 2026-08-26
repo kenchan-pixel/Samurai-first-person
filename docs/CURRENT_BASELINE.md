@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.5.1-evolution**
+Version: **0.6.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -11,6 +11,16 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Three enemies are fought sequentially as the approved baseline sequence, followed by a fourth boss duel.
 - Each stage begins, plays, resolves, and advances without reloading the page.
 - The game has victory and defeat states with restart support.
+
+## Guided first duel
+
+- A first-time browser run enables a compact **Guided Duel** coach for the opening Ashigaru fight; a start-screen toggle lets the player turn it on or off before drawing the sword.
+- The coach observes the real combat event stream rather than running a separate tutorial simulation: it progresses through **read the blade → directional parry → swipe counter** using the same controls and timings as normal play.
+- Wrong-direction and wrong-time parry attempts receive different corrective cues, feints explicitly tell the player to re-read the final blade path, and successful parries expose current enemy posture so the posture system is learned in context.
+- Enemy guard break explains the +2 counter opportunity. Completing the basic read/parry/counter sequence collapses the coach after a short acknowledgement instead of leaving a permanent overlay over combat.
+- If guidance remains enabled, the Crimson Shogun intro and Blood Moon Phase II produce brief coach cues reminding the player to discard the old rhythm and re-read the boss.
+- Completing the first guided duel stores only a local completion preference so later page loads default the coach off; storage failure is non-fatal, the toggle remains available, and no analytics/network service is introduced.
+- The coach is pointer-transparent, bounded to a compact lower-left card, and has dedicated 320×568 browser coverage for progress, adaptive miss guidance, viewport containment, and non-blocking input.
 
 ## Core combat
 
@@ -74,10 +84,12 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Combat rules separated from rendering in `src/game-core.js`.
 - `src/boss-encounter.js` installs the boss as a small idempotent encounter adapter before `src/main.js` creates the engine; baseline enemies and the core interaction model remain untouched.
 - `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere, uses explicit timers for transition-banner/deactivation cleanup, and marks readiness for browser smoke verification.
+- `src/onboarding-coach.js` observes public combat events for the guided first duel, keeps tutorial state outside the combat state machine, injects a pointer-transparent coach/toggle, and stores only a local completion preference.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
-- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, and time formatting.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss encounter initialization, and runs dedicated mastery and boss integration harnesses at a 320×568 viewport.
+- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, and guided-duel state progression/adaptive cues.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding initialization, and runs dedicated mastery, boss, and onboarding integration harnesses at a 320×568 viewport.
 - The mastery browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the viewport.
 - The boss browser integration gate runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, proves the banner cleans up while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
+- The onboarding browser integration gate drives the real opening enemy event stream through a wrong-direction correction, successful parry, and counter; it verifies coach step completion, the start-screen toggle, 320×568 containment, and pointer transparency.
 - GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

@@ -8,6 +8,18 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Start screen is usable at 320×568 CSS pixels.
 - [ ] iPhone portrait safe areas do not hide HUD or restart controls.
 - [ ] The primary combat view is not blocked by instructions or panels.
+- [ ] Guided-duel toggle is reachable on the start screen without pushing the primary Start control outside the viewport.
+
+## Guided first duel
+
+- [ ] A first-time browser session starts with Guided Duel enabled; a completed/disabled preference makes later page loads default it off without preventing manual re-enable.
+- [ ] Guided Duel observes the real stage-1 event stream and progresses through read → parry → counter without changing combat timing or damage rules.
+- [ ] The coach distinguishes wrong-direction from wrong-time parry misses and explains feints using the final displayed blade direction.
+- [ ] A successful parry exposes current enemy posture; enemy guard break explains the +2 counter opportunity.
+- [ ] Completing the read/parry/counter sequence produces a short completion acknowledgement and then clears the combat view.
+- [ ] Crimson Shogun start / Blood Moon Phase II can show brief rhythm-reset cues when guidance is enabled, without competing with the boss phase banner.
+- [ ] The coach is pointer-transparent, remains inside 320×568 portrait bounds, and does not cover the main centre combat view.
+- [ ] Unavailable/blocked `localStorage` does not prevent starting, using, completing, or toggling the coach.
 
 ## Input
 
@@ -77,12 +89,14 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, and boss encounter initialization in the real app document.
+- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, boss encounter initialization, and onboarding initialization in the real app document.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
 - [ ] Boss Node coverage proves stage injection, one-time Phase II transition, pressure reset, and restart-to-Phase-I behavior.
 - [ ] Boss browser harness runs with reduced-motion preference, drives the patched `CombatEngine` through boss activation and Phase II, proves the transition banner hides while the fight stays active, verifies restart-to-Phase-I, and reaches final victory.
+- [ ] Onboarding Node coverage proves read/parry/counter progression, adaptive miss guidance, boss rhythm-reset cues, and disabled-state inertness.
+- [ ] Onboarding browser harness drives the real opening-enemy event stream through a wrong-direction correction, successful parry and counter, and proves toggle readiness plus 320×568 pointer-transparent coach layout.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.
