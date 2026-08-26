@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1-evolution — Mastery browser integration hardening
+
+- Extended the headless browser gate beyond module initialization to exercise the real mastery observer through the actual `CombatEngine` event stream.
+- Added deterministic browser checks that a completed victory renders mastery fields, persists a personal best, and refuses to replace that best with a worse victory.
+- Added a blocked-`localStorage` browser case proving mastery result rendering remains non-fatal when storage writes throw.
+- Added a 320×568 result-layout gate that requires the mastery content and restart control to remain inside the smoke viewport.
+- Kept gameplay, scoring weights, input mapping, combat timing, rendering and production storage behavior unchanged.
+
 ## 0.4.0-evolution — Mastery grading and personal best
 
 - Added a run-level mastery observer that records parry attempts/success, perfect parries, enemy guard breaks, counters, hits taken, damage dealt/taken, and clear time without changing combat resolution.

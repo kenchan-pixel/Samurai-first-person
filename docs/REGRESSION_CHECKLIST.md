@@ -71,7 +71,10 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms WebGL2, enabled start control, and mastery observer initialization.
+- [ ] Browser smoke confirms WebGL2, enabled start control, and mastery observer initialization in the real app document.
+- [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
+- [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
+- [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

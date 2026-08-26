@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.4.0-evolution**
+Version: **0.4.1-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -62,5 +62,6 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
 - Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, mastery statistics, grading, personal-best comparison, and time formatting.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies the start control remains enabled, and verifies the mastery observer module initializes.
-- GitHub Actions runs both Node tests and the browser WebGL smoke test on pull requests and pushes to main.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies the start control and mastery observer initialize, and runs a separate 320×568 mastery integration harness through the actual patched `CombatEngine` event stream.
+- The browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the 320×568 viewport.
+- GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

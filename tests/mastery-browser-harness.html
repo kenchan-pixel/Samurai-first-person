@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Mastery browser integration harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">勝利</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/mastery-overlay.js';
+    import { CombatEngine, Direction } from '../src/game-core.js';
+
+    const BEST_KEY = 'blade-reversal-mastery-v1';
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+
+    const enemy = Object.freeze({
+      id: 'mastery-smoke',
+      name: 'Mastery Smoke',
+      title: 'Smoke Arena',
+      maxHp: 1,
+      postureMax: 4,
+      gapMs: 10,
+      recoveryMs: 20,
+      perfectWindowMs: 20,
+      attacks: Object.freeze([
+        Object.freeze({ direction: Direction.TOP, telegraphMs: 10, strikeMs: 100, damage: 1 }),
+      ]),
+    });
+
+    async function flush() {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    async function completeVictory({ missFirst = false, lateParry = false } = {}) {
+      const combat = new CombatEngine({ enemies: [enemy] });
+      combat.start(0);
+      combat.drainEvents();
+      combat.update(1550);
+      combat.update(1560);
+      if (missFirst) {
+        combat.attemptParry(Direction.RIGHT, 1561);
+        combat.drainEvents();
+      }
+      const parryAt = lateParry ? 1590 : 1561;
+      const parry = combat.attemptParry(Direction.TOP, parryAt);
+      if (!parry.accepted) throw new Error(`expected parry acceptance, got ${parry.reason}`);
+      const counter = combat.attemptAttack(Direction.BOTTOM, parryAt + 1);
+      if (!counter.accepted || !counter.defeated) throw new Error('deterministic counter did not defeat smoke enemy');
+      combat.drainEvents();
+      combat.update(parryAt + 1452);
+      combat.drainEvents();
+      await flush();
+    }
+
+    try {
+      localStorage.removeItem(BEST_KEY);
+      await completeVictory();
+
+      const firstBest = localStorage.getItem(BEST_KEY);
+      if (!firstBest) throw new Error('completed victory did not persist a personal best');
+      if (!document.querySelector('#result-eyebrow')?.textContent.includes('MASTERY')) {
+        throw new Error('mastery overlay did not render after CombatEngine victory events');
+      }
+      const firstSummary = document.querySelector('#result-summary')?.textContent || '';
+      for (const label of ['格擋', '完美', '破防', '受擊']) {
+        if (!firstSummary.includes(label)) throw new Error(`result summary missing ${label}`);
+      }
+
+      await completeVictory({ missFirst: true, lateParry: true });
+      root.dataset.masteryBestPreserved = String(localStorage.getItem(BEST_KEY) === firstBest);
+
+      localStorage.removeItem(BEST_KEY);
+      const originalSetItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function blockedSetItem() {
+        throw new DOMException('blocked for smoke test', 'SecurityError');
+      };
+      try {
+        await completeVictory();
+        root.dataset.masteryStorageFallback = String(
+          document.querySelector('#result-eyebrow')?.textContent.includes('MASTERY') &&
+          document.querySelector('#result-summary')?.textContent.includes('格擋'),
+        );
+      } finally {
+        Storage.prototype.setItem = originalSetItem;
+      }
+
+      const contentRect = document.querySelector('#result-content').getBoundingClientRect();
+      const restartRect = document.querySelector('#restart-button').getBoundingClientRect();
+      const fitsViewport = contentRect.top >= 0 && restartRect.bottom <= window.innerHeight && contentRect.width <= window.innerWidth;
+      root.dataset.resultLayout = fitsViewport ? 'pass' : 'fail';
+
+      const passed =
+        root.dataset.masteryBestPreserved === 'true' &&
+        root.dataset.masteryStorageFallback === 'true' &&
+        root.dataset.resultLayout === 'pass';
+      root.dataset.masteryIntegration = passed ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.masteryIntegration = 'fail';
+    }
+  </script>
+</body>
+</html>
