@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.5.0-evolution**
+Version: **0.5.1-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -36,6 +36,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The phase transition resets boss posture/attack cursor, creates an 1100 ms breathing gap, and awards a small transition score bonus without changing player controls.
 - Phase II raises posture to 7, tightens the perfect-parry window, shortens neutral gaps/recovery, and switches to a faster feint/heavy signature attack set.
 - The boss stage adds a bounded procedural blood-moon/ember atmosphere and an explicit Phase II banner; effects are decorative, pointer-transparent, and honour reduced-motion preference.
+- The Phase II banner has an explicit bounded lifetime, so reduced-motion users see the short transition cue without leaving a persistent panel over the fight.
 - Defeating the boss reaches the existing victory/mastery flow. Restart returns the boss to Phase I.
 
 ## Mastery and replay feedback
@@ -72,10 +73,11 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Static web app with ES modules and no runtime framework dependency.
 - Combat rules separated from rendering in `src/game-core.js`.
 - `src/boss-encounter.js` installs the boss as a small idempotent encounter adapter before `src/main.js` creates the engine; baseline enemies and the core interaction model remain untouched.
-- `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere and marks readiness for browser smoke verification.
+- `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere, uses explicit timers for transition-banner/deactivation cleanup, and marks readiness for browser smoke verification.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
 - Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, and time formatting.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss encounter initialization, and runs a separate 320×568 mastery integration harness through the actual patched `CombatEngine` event stream.
-- The browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the 320×568 viewport.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss encounter initialization, and runs dedicated mastery and boss integration harnesses at a 320×568 viewport.
+- The mastery browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the viewport.
+- The boss browser integration gate runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, proves the banner cleans up while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
 - GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

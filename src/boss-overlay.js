@@ -41,6 +41,22 @@ function installAtmosphere() {
 
 const atmosphere = installAtmosphere();
 const banner = atmosphere?.querySelector('.boss-phase-banner') ?? null;
+let phaseBannerTimer = null;
+let bossDeactivateTimer = null;
+
+function clearBossDeactivate() {
+  if (bossDeactivateTimer === null) return;
+  clearTimeout(bossDeactivateTimer);
+  bossDeactivateTimer = null;
+}
+
+function hidePhaseBanner() {
+  if (phaseBannerTimer !== null) {
+    clearTimeout(phaseBannerTimer);
+    phaseBannerTimer = null;
+  }
+  banner?.classList.remove('is-visible');
+}
 
 function setBossActive(active, phase = 1) {
   if (!app) return;
@@ -55,9 +71,13 @@ function setBossActive(active, phase = 1) {
 
 function revealPhaseTwo() {
   if (!banner) return;
-  banner.classList.remove('is-visible');
+  hidePhaseBanner();
   void banner.offsetWidth;
   banner.classList.add('is-visible');
+  phaseBannerTimer = window.setTimeout(() => {
+    banner.classList.remove('is-visible');
+    phaseBannerTimer = null;
+  }, 1150);
 }
 
 if (!CombatEngine.prototype[patched]) {
@@ -68,13 +88,23 @@ if (!CombatEngine.prototype[patched]) {
     const events = originalDrainEvents.call(this);
     for (const event of events) {
       if (event.type === 'stage-start' && event.detail?.enemyId === BOSS_ID) {
+        clearBossDeactivate();
+        hidePhaseBanner();
         setBossActive(true, 1);
       } else if (event.type === 'boss-phase') {
+        clearBossDeactivate();
         setBossActive(true, 2);
         revealPhaseTwo();
       } else if (event.type === 'enemy-defeated' && event.detail?.enemyId === BOSS_ID) {
-        setTimeout(() => setBossActive(false), 900);
+        hidePhaseBanner();
+        clearBossDeactivate();
+        bossDeactivateTimer = window.setTimeout(() => {
+          setBossActive(false);
+          bossDeactivateTimer = null;
+        }, 900);
       } else if (event.type === 'reset' || event.type === 'defeat') {
+        clearBossDeactivate();
+        hidePhaseBanner();
         setBossActive(false);
       }
     }

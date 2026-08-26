@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1-evolution — Boss reduced-motion and browser integration hardening
+
+- Fixed the Blood Moon Phase II banner so its visibility has an explicit bounded lifetime instead of relying on CSS animation completion; reduced-motion users no longer keep the banner over the fight indefinitely.
+- Added explicit boss overlay timer cleanup so restart/reset cannot inherit stale phase-banner or delayed atmosphere-deactivation timers.
+- Added a deterministic 320×568 browser boss harness that runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, verifies the banner hides while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
+- Extended `npm run test:browser` to execute the boss integration harness in addition to existing WebGL/startup and mastery integration checks.
+- Preserved all boss timings, HP/posture values, directional controls, mastery behavior, static deployment model, and owner-only merge gate.
+
 ## 0.5.0-evolution — Crimson Shogun multi-phase boss
 
 - Added Crimson Shogun as a fourth-stage boss after the three approved baseline enemies without removing or reordering the existing campaign.

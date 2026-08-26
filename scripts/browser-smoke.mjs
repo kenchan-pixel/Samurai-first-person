@@ -40,7 +40,7 @@ function findBrowser() {
   });
 }
 
-async function dumpDom(browser, path, { budget = 1800 } = {}) {
+async function dumpDom(browser, path, { budget = 1800, extraArgs = [] } = {}) {
   const child = spawn(browser, [
     '--headless=new',
     '--no-sandbox',
@@ -51,6 +51,7 @@ async function dumpDom(browser, path, { budget = 1800 } = {}) {
     '--ignore-gpu-blocklist',
     '--window-size=320,568',
     `--virtual-time-budget=${budget}`,
+    ...extraArgs,
     '--dump-dom',
     `http://127.0.0.1:4173${path}`,
   ]);
@@ -113,7 +114,27 @@ try {
     throw new Error('Mastery result content or restart control overflowed the 320x568 smoke viewport');
   }
 
-  console.log(`browser smoke passed with ${browser}: WebGL2/startup + boss encounter readiness + mastery event-stream, local best, storage fallback and 320x568 result layout`);
+  const bossDom = await dumpDom(browser, '/tests/boss-browser-harness.html', {
+    budget: 4200,
+    extraArgs: ['--force-prefers-reduced-motion'],
+  });
+  if (!bossDom.includes('data-boss-integration="pass"')) {
+    throw new Error(`Boss event-stream integration failed. DOM:\n${bossDom.slice(0, 5000)}`);
+  }
+  if (!bossDom.includes('data-boss-reduced-motion="true"')) {
+    throw new Error('Boss browser harness did not execute with reduced-motion preference enabled');
+  }
+  if (!bossDom.includes('data-boss-banner-cleanup="true"')) {
+    throw new Error('Reduced-motion Phase II banner did not clean itself up');
+  }
+  if (!bossDom.includes('data-boss-restart="true"')) {
+    throw new Error('Boss restart did not restore Phase I browser state');
+  }
+  if (!bossDom.includes('data-boss-victory="true"')) {
+    throw new Error('Boss browser harness did not reach final victory');
+  }
+
+  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery integration + boss Phase II/reduced-motion/restart/victory integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

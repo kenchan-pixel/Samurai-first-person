@@ -66,11 +66,11 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Player/enemy posture values remain visible without blocking the combat view.
 - [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
-- [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion.
+- [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
 - [ ] Result mastery summary remains readable at 320×568 portrait without obscuring the restart control.
 - [ ] Audio remains optional and starts only after user interaction.
 - [ ] Gameplay timing is based on elapsed time, not frame count.
-- [ ] No unbounded object, event-listener, particle, or audio-node growth is introduced.
+- [ ] No unbounded object, event-listener, particle, timer, or audio-node growth is introduced.
 - [ ] Recent target phone remains responsive during a complete four-stage run.
 
 ## Delivery
@@ -82,6 +82,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
 - [ ] Boss Node coverage proves stage injection, one-time Phase II transition, pressure reset, and restart-to-Phase-I behavior.
+- [ ] Boss browser harness runs with reduced-motion preference, drives the patched `CombatEngine` through boss activation and Phase II, proves the transition banner hides while the fight stays active, verifies restart-to-Phase-I, and reaches final victory.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

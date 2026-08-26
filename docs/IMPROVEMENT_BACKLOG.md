@@ -10,6 +10,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 005 — Mastery grading and personal best:** result-screen mastery score/grade, parry accuracy, perfect-parry/guard-break/hit/clear-time feedback, and local best-victory persistence without accounts or network services.
 - **Run 006 — Mastery integration hardening:** browser-level actual-`CombatEngine` mastery event-stream coverage, local-best overwrite protection, blocked-storage fallback, and 320×568 result-layout verification.
 - **Run 007 — Crimson Shogun boss:** fourth-stage multi-phase boss, Blood Moon tempo/attack transition, posture reset/breathing gap, distinct procedural arena atmosphere, restart safety, and automated encounter coverage.
+- **Run 008 — Boss accessibility/integration hardening:** bounded Phase II banner lifetime under reduced motion plus browser-level boss activation, Phase II, restart and final-victory regression coverage.
 
 ## High-value candidates
 
@@ -23,7 +24,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 
 ## Technical opportunities
 
-- Pointer-level browser interaction smoke for representative touch/parry/posture flows at mobile viewports; mastery event-stream integration is already covered.
+- Pointer-level browser interaction smoke for representative touch/parry/posture flows at mobile viewports; mastery and boss event-stream integration are already covered.
 - Performance HUD and adaptive render quality.
 - Deterministic replay of combat inputs for broader regression testing.
 - Installable PWA and offline shell.

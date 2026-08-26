@@ -151,3 +151,50 @@ The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm ru
 - Add enemy spacing and footwork with distance-dependent attacks.
 - Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
 - Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively.
+
+## Run 008 — Boss reduced-motion and browser integration hardening
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Scope:** Close the current reviewer P2 accessibility/playability regression and the boss browser-integration coverage gap before allowing another feature run.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `8d7125df3abe1aa86c0ee9ad8f8172fc69a9e51d`: CI run `33011243060` = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
+- The latest All Repos review found no P0/P1, but two actionable P2 findings: reduced-motion left the Phase II banner permanently visible, and browser CI only proved boss-module readiness rather than the actual boss vertical slice. The first is a direct mobile-clarity/accessibility regression and the second allowed that regression through green CI, so both are blocking under the material playability/correctness rule.
+
+### Before
+
+- `boss-overlay.js` relied on CSS animation completion to visually hide the Phase II banner.
+- Under `prefers-reduced-motion: reduce`, animation was disabled while `.is-visible` forced `opacity:1`, so the banner stayed over the rest of Phase II.
+- Browser smoke only required `data-boss-ready="true"`; it did not execute boss activation, Phase II, restart or final victory.
+
+### After
+
+- Phase II banner visibility now has an explicit 1150 ms JavaScript lifetime. Removing `is-visible` hides it in both normal and reduced-motion paths while leaving the Blood Moon atmosphere active.
+- Boss overlay cleanup now clears stale banner/deactivation timers on stage start, phase transition, reset and defeat so later lifecycle events cannot inherit an old timer.
+- `tests/boss-browser-harness.html` runs the real patched `CombatEngine` with the boss adapter/overlay at 320×568, verifies Phase I activation, triggers Phase II, waits for banner cleanup, verifies restart-to-Phase-I, defeats the boss and confirms final victory.
+- `scripts/browser-smoke.mjs` launches the boss harness with Chromium's `--force-prefers-reduced-motion` switch and requires reduced-motion, banner cleanup, restart and victory assertions to pass.
+- Boss HP/posture/timing, directional input, mastery, renderer, persistence and network boundaries are unchanged.
+
+### Pre-commit verification
+
+- Previous exact HEAD CI and Vercel were terminal green.
+- Current review history and inline threads were inspected; no applicable P0/P1 exists beyond the two P2 findings handled here.
+- The change is bounded to boss overlay lifecycle, browser verification and durable SOT; no core combat formula is modified.
+
+### Post-commit gate
+
+The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before any later feature run. The PR Run 8 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+
+### Known risks
+
+- The browser harness uses deterministic engine state setup rather than physical pointer gestures; pointer-level mobile interaction remains a separate test opportunity.
+- Headless SwiftShader and forced reduced motion are regression gates, not substitutes for real-iPhone visual/performance review.
+
+### Next-run candidates
+
+- Add enemy spacing and footwork with distance-dependent attacks.
+- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
+- Redesign onboarding to teach direction, timing, posture, boss pressure and mastery interactively.
