@@ -63,7 +63,7 @@ Added Crimson Shogun as stage 4 with 12 HP, Phase I posture 6, a Blood Moon Phas
 **Date:** 2026-08-27  
 **Action type:** BLOCKER_FIX
 
-Closed two reviewer P2s: the reduced-motion Phase II banner now has an explicit bounded lifetime, and a deterministic 320×568 browser harness executes boss activation, Phase II, banner cleanup, restart-to-Phase-I, and final victory. Exact HEAD `8b163f48ca805340ea5be025ad5b5a8cea304b0b` entered Run 009 with CI `33015301566` success and Vercel success.
+Closed two reviewer P2s: the reduced-motion Phase II banner now has an explicit bounded lifetime, and a deterministic 320×568 browser harness executes boss activation, Phase II, restart-to-Phase-I, and final victory. Exact HEAD `8b163f48ca805340ea5be025ad5b5a8cea304b0b` entered Run 009 with CI `33015301566` success and Vercel success.
 
 ## Run 009 — Guided first duel onboarding
 
@@ -119,6 +119,45 @@ The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm ru
 
 - Headless browser coverage proves event integration and 320×568 bounds, but a real-iPhone review is still needed to judge whether the lower-left coach feels appropriately unobtrusive during one-handed play.
 - The coach intentionally teaches only the core first-duel loop plus contextual boss rhythm reset. Deeper mastery/replay education should be added only if play evidence shows confusion rather than turning onboarding into a long tutorial.
+
+### Next-run candidates
+
+- Add enemy spacing and footwork with distance-dependent attacks.
+- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
+- Add challenge mode with mastery-aware scoring and a clean restart loop.
+
+## Run 010 — Guided Duel CI lifecycle repair
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Scope:** Restore the exact-head browser verification fence after Run 009 failed `npm run test:browser`.
+
+### Preflight / blocker
+
+- Exact HEAD `86046e230855ed0af77d43caff78ff9efb50bf45` had Vercel `success` but CI run `33021631244` failed in the onboarding browser assertion.
+- All 22 Node tests passed; only the browser gate failed.
+- The failing assertion expected the Guided Duel toggle to still be enabled **after** the harness had already completed the tutorial. Production behavior intentionally stores `completed`, sets the current-page guide default off, and updates the toggle to `aria-pressed="false"` after completion.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed. Earlier actionable review findings had already been dispositioned by prior runs, and no newer P0/P1 review applied to this exact head before the CI repair.
+
+### Repair
+
+- `tests/onboarding-browser-harness.html` now captures the initial first-time toggle state immediately after onboarding installation, before starting combat.
+- After driving the real read → parry → counter completion path, the same harness verifies that the `completed` preference was written and that the toggle correctly defaults off afterward.
+- The existing `data-onboarding-toggle="true"` browser-smoke contract now means the **full intended toggle lifecycle** passed, rather than incorrectly requiring the post-completion toggle to remain on.
+- No production code or player-facing behavior changed.
+
+### Pre-commit verification
+
+- The revised inline module passed `node --check` before Git object creation.
+- The repair is limited to the CI harness plus required SOT/state/changelog/backlog updates; combat rules, onboarding production logic, storage semantics, input, renderer, boss, mastery and deployment configuration are untouched.
+
+### Post-commit gate
+
+The new exact HEAD must reach terminal-green `npm test` + `npm run test:browser` and terminal-green Vercel Preview before any later feature run. The PR Run 10 receipt is authoritative for the created SHA and post-commit verification.
+
+### Known risks
+
+- This repair proves the expected first-time → completed preference lifecycle in headless Chromium. Real-iPhone judgement of coach placement remains the same open human visual check from Run 009.
 
 ### Next-run candidates
 

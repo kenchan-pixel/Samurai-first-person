@@ -21,6 +21,9 @@
     const { CombatEngine, Direction } = await import('../src/game-core.js');
     await import('../src/onboarding-coach.js');
 
+    const initialToggle = document.querySelector('#coach-toggle');
+    const initialToggleReady = Boolean(initialToggle && initialToggle.getAttribute('aria-pressed') === 'true');
+
     const engine = new CombatEngine();
     engine.start(0);
     engine.drainEvents();
@@ -48,11 +51,13 @@
     const stepsPassed = panel?.dataset.coachStepRead === 'done' && panel?.dataset.coachStepParry === 'done' && panel?.dataset.coachStepCounter === 'done';
     const completed = panel?.dataset.completed === 'true';
     const adaptiveMiss = missHint.includes('方向錯誤');
-    const toggleReady = Boolean(toggle && toggle.getAttribute('aria-pressed') === 'true');
+    const completionStored = localStorage.getItem('blade-reversal-guided-duel-v1') === 'completed';
+    const completionDefaultsOff = Boolean(toggle && toggle.getAttribute('aria-pressed') === 'false');
+    const toggleLifecyclePassed = initialToggleReady && completionStored && completionDefaultsOff;
 
     document.documentElement.dataset.onboardingIntegration = stepsPassed && completed && adaptiveMiss ? 'pass' : 'fail';
     document.documentElement.dataset.onboardingLayout = insideViewport && pointerTransparent ? 'pass' : 'fail';
-    document.documentElement.dataset.onboardingToggle = toggleReady ? 'true' : 'false';
+    document.documentElement.dataset.onboardingToggle = toggleLifecyclePassed ? 'true' : 'false';
   </script>
 </body>
 </html>

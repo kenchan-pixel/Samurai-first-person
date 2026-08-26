@@ -12,6 +12,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 007 — Crimson Shogun boss:** fourth-stage multi-phase boss, Blood Moon tempo/attack transition, posture reset/breathing gap, distinct procedural arena atmosphere, restart safety, and automated encounter coverage.
 - **Run 008 — Boss accessibility/integration hardening:** bounded Phase II banner lifetime under reduced motion plus browser-level boss activation, Phase II, restart and final-victory regression coverage.
 - **Run 009 — Guided first duel:** first-time interactive read/parry/counter coaching, adaptive miss/feint/posture guidance, optional start-screen toggle, boss rhythm reset cues, local completion preference, and 320×568 browser integration coverage.
+- **Run 010 — Guided Duel CI lifecycle repair:** fixed the browser gate to capture the first-time enabled toggle before combat, then verify tutorial completion persists and correctly defaults guidance off afterward.
 
 ## High-value candidates
 

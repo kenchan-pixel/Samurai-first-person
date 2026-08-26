@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1-evolution — Guided Duel CI lifecycle repair
+
+- Fixed the onboarding browser harness so it captures the first-time Guided Duel toggle before completing the tutorial instead of incorrectly asserting that the toggle should still be enabled after completion.
+- The same browser gate now verifies the complete preference lifecycle: first-time guidance starts enabled, successful read/parry/counter completion persists `completed`, and the toggle defaults off immediately afterward as designed.
+- No gameplay timing, damage, input mapping, coach copy, storage semantics, boss behavior, mastery logic, renderer, or deployment behavior changed.
+
 ## 0.6.0-evolution — Guided first duel onboarding
 
 - Added an optional first-time Guided Duel coach that reacts to the real opening Ashigaru event stream and teaches read-the-blade → directional parry → swipe counter using normal combat rules rather than a separate tutorial mode.
