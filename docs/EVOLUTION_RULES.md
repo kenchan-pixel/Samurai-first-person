@@ -15,20 +15,36 @@ Run a high-frequency, human-supervised autonomous product-evolution experiment. 
 - Do not create a new branch or PR per run.
 - **Never merge the pull request.** Final merge remains Ken's manual gate.
 
+## Exact-head verification fence
+
+Before any new feature selection, resolve the exact current `autonomous-evolution` HEAD.
+
+- Required CI and Vercel Preview for that exact SHA must both be terminal green.
+- Missing, queued, or in-progress verification means `HOLD`; make no commit and start no feature work.
+- Failed CI or Preview means `BLOCKER_FIX`.
+- Never treat an older SHA's successful verification as evidence for the current HEAD.
+
+## Review blocker semantics
+
+Review findings are machine-operational gates, not dependent on one literal keyword.
+
+- Any explicit `BLOCKER` finding blocks new feature work while applicable.
+- Any unresolved P0/P1 finding from a human reviewer or the established PR-review automations blocks new feature work while it still applies, including findings posted against an earlier HEAD.
+- Every actionable P2 finding must be inspected and explicitly dispositioned before feature selection. P2 blocks only when it represents material correctness, baseline-regression, security/privacy/data-loss, runtime, deployment, or playability risk.
+- A review finding is cleared only when the current repository state demonstrably addresses it or a concise PR disposition explains why it no longer applies.
+
 ## Priority order at the start of every run
 
-1. Failed CI/checks or broken runtime/preview.
-2. Unresolved blocker review threads/comments.
-3. Material regressions against `CURRENT_BASELINE.md` or `REGRESSION_CHECKLIST.md`.
+1. Enforce the exact-head verification fence.
+2. Repair applicable unresolved review blockers/P0/P1 and blocking P2 findings.
+3. Repair material regressions against `CURRENT_BASELINE.md` or `REGRESSION_CHECKLIST.md`.
 4. Only when the above are clear: one new high-value visible improvement.
 
-While a blocker/regression exists, **new feature work is prohibited**.
-
-A blocker includes an unresolved review thread or review/comment explicitly marked `BLOCKER`, plus any defect that breaks a baseline flow, causes data/security risk, makes the game unplayable, or causes CI/runtime failure.
+While a blocker/regression exists, or exact-head verification is not terminal green, **new feature work is prohibited**.
 
 ## Required outcome per implementation run
 
-Deliver one substantial visible vertical slice. Multiple coordinated file changes are allowed when needed to complete that slice.
+Deliver one substantial visible vertical slice, or one material blocker/regression repair that restores the safety/correctness of the delivery loop, repository baseline, deployment, or playable game. Multiple coordinated file changes are allowed when needed to complete the action.
 
 Qualifying examples:
 
@@ -36,12 +52,12 @@ Qualifying examples:
 - a posture/guard-break system with HUD, combat consequences, integration, and tests;
 - a major combat-animation/camera feedback pass;
 - a complete challenge mode with scoring and restart flow;
-- a material blocker repair that restores a broken baseline flow.
+- a material blocker repair that restores a broken baseline flow or unsafe autonomous gate.
 
 Non-qualifying examples:
 
 - colours, spacing, labels, or one icon;
-- documentation-only work;
+- documentation-only work that is not repairing a material automation/delivery blocker;
 - refactoring without visible player benefit;
 - tests without product behaviour;
 - placeholders or disabled controls;
@@ -68,22 +84,23 @@ When feature work is allowed:
 
 ## Deployment discipline
 
-- Vercel Preview is the deploy target for `autonomous-evolution` once the repo is imported into Vercel.
+- Vercel Preview is the deploy target for `autonomous-evolution`.
 - Do not deploy merely because an hourly schedule fired.
 - A real implementation/blocker-fix commit should update the preview.
 - Production deploy occurs only from `main` after Ken merges.
 - Preview deployment is allowed before reviewer clearance because reviewers need the preview to find visual/mobile blockers.
+- The next feature run must not start until the previous exact HEAD's Preview is terminal green.
 
 ## Verification
 
 Before completing an implementation run:
 
-- run repository tests;
+- run/inspect repository tests;
 - check the full regression checklist;
 - inspect changed code for runtime/schema/security issues;
 - perform a mobile-oriented browser/runtime check when tooling permits;
 - verify the Draft PR remains open and unmerged;
-- inspect deployment status when Vercel is connected.
+- inspect exact-head CI and deployment status.
 
 ## Required Draft PR run comment
 
@@ -97,7 +114,8 @@ For each implementation commit append one concise top-level PR comment:
 - Baseline regression result
 - Known risk/limitations
 - Preview deployment status/link when available
+- Review-finding disposition when the run handled reviewer feedback
 
 ## Stop / hold conditions
 
-Do not force a low-value change. If no safe qualifying improvement is available, or the next move requires a product/architecture decision that could materially redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.
+Do not force a low-value change. Missing/queued/in-progress exact-head verification is `HOLD` and must produce no commit. If no safe qualifying improvement is available, or the next move requires a product/architecture decision that could materially redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.

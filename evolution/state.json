@@ -2,17 +2,17 @@
   "protocol_version": 1,
   "branch": "autonomous-evolution",
   "base_branch": "main",
-  "status": "idle",
-  "run_number": 0,
-  "last_action_type": "SETUP",
-  "last_action": "Prepared persistent hourly autonomous-evolution workflow and verified Vercel Git deployment",
-  "last_commit": null,
+  "status": "verifying",
+  "run_number": 1,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Hardened exact-head CI/Preview verification and review-severity gates before feature work",
+  "last_commit": "b3f3ce1581304c22cefefcb07fda52cce8384bb2",
   "active_blocker": null,
-  "ci_status": "success",
-  "preview_status": "success",
-  "preview_url": null,
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/HB9eAsC7EtHiMFLRXHTDauWBXzg6",
-  "vercel_project_id": null,
+  "ci_status": "pending_self_verification",
+  "preview_status": "pending_self_verification",
+  "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Cze5in8waXuZitCagCzZg3vf1n3q",
+  "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
@@ -20,6 +20,6 @@
   "next_candidates": [
     "Improve combat animation readability and impact",
     "Add posture / guard-break system",
-    "Add automated mobile browser smoke coverage"
+    "Add combat juice: hit stop, camera impulse, sparks and optional haptics"
   ]
 }

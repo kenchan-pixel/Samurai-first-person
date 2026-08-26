@@ -12,22 +12,41 @@ At the start of every run, read the latest `autonomous-evolution` branch and the
 
 For Vercel, prefer direct project/deployment data when available. If the Vercel connector cannot enumerate the imported project, use GitHub's `Vercel` commit status on the current branch head as the authoritative deployment signal.
 
+## Exact-head verification fence
+
+Before selecting any new feature, resolve the exact current `autonomous-evolution` HEAD and inspect required CI plus Vercel Preview for that exact SHA.
+
+- CI and Preview both terminal green → feature selection may continue if review/regression gates are also clear.
+- CI or Preview missing, queued, or in progress → `HOLD`; make no commit and do not start feature work.
+- CI or Preview failed → `BLOCKER_FIX`; repair before any feature work.
+
+Do not infer success from an older SHA.
+
+## Review gate
+
+Inspect all PR review submissions, top-level comments, and inline threads, including findings posted against earlier HEADs.
+
+- Any unresolved P0/P1 finding from a human reviewer or the established PR-review automations blocks new feature work while the finding still applies, even if it does not contain the literal word `BLOCKER`.
+- Any explicit `BLOCKER` finding blocks new feature work while applicable.
+- Every actionable P2 must be inspected and explicitly dispositioned before feature selection. P2 blocks only when it represents material correctness, baseline-regression, security/privacy/data-loss, runtime, deployment, or playability risk.
+- A finding is cleared only when the current repository state demonstrably addresses it or a concise PR disposition explains why it no longer applies.
+
 ## Run decision
 
 Apply this order strictly:
 
-1. If CI/checks/runtime/preview are failing, repair the failure.
-2. Else if an unresolved blocker exists, repair the highest-value coherent blocker group.
-3. Else if a material baseline regression exists, repair it.
+1. Enforce the exact-head verification fence. Missing/queued/in-progress means `HOLD`; failed means `BLOCKER_FIX`.
+2. Else repair any applicable unresolved review blocker/P0/P1, or blocking P2.
+3. Else repair any material baseline regression.
 4. Else propose at least 3 materially different player-visible improvements, score them for impact / goal alignment / novelty / confidence / safety, and implement the strongest bounded vertical slice.
 
-Never add a new feature while a blocker, failing CI, broken preview, or material regression remains unresolved.
+Never add a new feature while a blocker, unverified/failed exact HEAD, broken preview, or material regression remains unresolved.
 
 ## Minimum work threshold
 
 A qualifying implementation must be substantial enough that a player can clearly see or feel the difference. Do not spend a run on pure refactoring, documentation, tests alone, tiny CSS/text changes, placeholder UI, trivial balance changes, or artificially split micro-work.
 
-A blocker fix counts as the run's action when it materially restores correctness or playability.
+A material blocker/regression repair counts as the run's action when it restores the safety or correctness of the autonomous delivery loop, repository baseline, deployment, or playable game.
 
 ## Git / PR protocol
 
@@ -43,13 +62,13 @@ A blocker fix counts as the run's action when it materially restores correctness
 
 Before committing, inspect/run all available tests and regression evidence. Protect mobile portrait input, first-person combat, directional parry/swipe behaviour, enemy progression, audio, and performance. Do not weaken tests to pass.
 
-After a successful implementation commit, inspect CI and Vercel Preview status. A preview may deploy before reviewer approval; production remains tied to Ken merging `main`.
+After a successful implementation commit, inspect exact-head CI and Vercel Preview status. A preview may deploy before reviewer approval; production remains tied to Ken merging `main`.
 
 ## Persistent state
 
 Update `evolution/state.json` and `evolution/RUN_LOG.md` in the same implementation commit. Increment `run_number` only for a real FEATURE / BLOCKER_FIX / REGRESSION_FIX commit. Record the chosen action, action type, tests, known risks, and next candidates. Update `docs/CURRENT_BASELINE.md`, backlog, and changelog when delivered behaviour warrants it.
 
-Do **not** create a second commit merely to write the just-created commit SHA back into state. The PR run comment is the authoritative record of that run's new SHA; state may record the previous confirmed SHA or be synchronised during a later real implementation commit.
+Do **not** create a second commit merely to write the just-created commit SHA or post-commit CI/Preview result back into state. The PR run comment is the authoritative record of the new SHA and post-commit verification; state may record the previous confirmed SHA and a `pending` self-verification state until a later real implementation commit.
 
 ## Draft PR communication
 
@@ -57,7 +76,7 @@ After an implementation commit, add one concise PR comment with:
 
 `Run N | FEATURE/BLOCKER_FIX/REGRESSION_FIX | <short outcome>`
 
-Then Before, After, Verification, Regression, Risk, commit SHA, and Preview status/link or Vercel status target.
+Then Before, After, Verification, Regression, Risk, commit SHA, Preview status/link or Vercel status target, and disposition of any review finding handled by the run.
 
 If no qualifying implementation is safe, do not commit; leave a concise PR Decision Gate comment only when human input is genuinely required.
 

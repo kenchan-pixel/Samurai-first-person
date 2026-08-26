@@ -32,9 +32,12 @@ The recurring ChatGPT Scheduled Task is intentionally different from normal feat
 - Never create a new evolution branch or PR per hourly run.
 - Never merge the Draft PR.
 - Every successful implementation run must deliver one substantial, player-visible vertical slice or one material blocker/regression repair.
-- Pure refactors, documentation-only changes, test-only changes, tiny style tweaks, placeholder controls, or low-value changes do not qualify.
+- Pure refactors, documentation-only changes, test-only changes, tiny style tweaks, placeholder controls, or low-value changes do not qualify unless they are part of a material blocker/regression repair.
 - If there is any unresolved blocker, failed CI, material regression, or broken preview, repair that before starting a new feature.
-- If a run only inspects/waits and makes no product code change, do not create a commit merely to prove the schedule ran.
+- Resolve the exact current branch HEAD before feature selection. Required CI and Vercel Preview for that exact HEAD must both be terminal green. Missing, queued, or in-progress verification means **HOLD: no commit**. Failed verification means **BLOCKER_FIX**.
+- Any unresolved P0/P1 finding from a human reviewer or the established PR-review automations blocks new feature work while the finding still applies, even if the review did not use the literal word `BLOCKER` or was posted against an earlier HEAD.
+- Every actionable P2 finding must be inspected and explicitly dispositioned before feature selection. P2 blocks only when it represents material correctness, baseline-regression, security/privacy/data-loss, runtime, deployment, or playability risk.
+- If a run only inspects/waits and makes no product code change or material blocker/regression repair, do not create a commit merely to prove the schedule ran.
 
 Full protocol: `docs/SCHEDULED_TASK_PROMPT.md` and `docs/EVOLUTION_RULES.md`.
 
