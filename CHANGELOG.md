@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.1-evolution — PlayCanvas verification gate repair
+
+- Replaced stale repository smoke assertions that were coupled to the old single-file WebGL renderer and historical three-enemy wording.
+- The source-level gate now checks the approved PlayCanvas-primary renderer adapter, preserved WebGL2 fallback, renderer-neutral four-beat motion, adaptive mobile pixel ratio, combat/input/audio integration and current four-duel SOT.
+- Kept the production browser gate unchanged so CI must still build the Vite bundle, initialize PlayCanvas rather than silently fall back, and execute the existing mobile integration harnesses.
+- No gameplay, timing, renderer behaviour, storage, network or input mapping changed.
+
 ## 0.11.0-evolution — PlayCanvas true-3D renderer foundation
 
 - Introduced PlayCanvas Engine standalone as the primary production-facing renderer behind a narrow adapter while preserving the previous custom WebGL2 renderer as a temporary fallback.

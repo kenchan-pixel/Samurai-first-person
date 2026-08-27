@@ -87,3 +87,39 @@ The PlayCanvas slice won because physical-iPhone feedback identified character/a
 - Local clearly licensed/original skinned samurai glTF/GLB + real animation clips.
 - Physical-iPhone PlayCanvas quality/performance tuning and fallback-retirement evidence.
 - Accessibility mode after the core visual migration stabilises.
+
+## Run 019 — Restore PlayCanvas verification gate
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the failed exact-head CI gate from Run 018 without weakening coverage, then allow the real Vite/PlayCanvas browser path to execute.
+
+### Preflight / blocker evidence
+
+- Exact HEAD `7663c16811b4337f3fcaca38e9dd99edd6383bc7` had Vercel `success` but CI run `33052542521` / CI #47 completed `failure`.
+- The failure occurred in `npm test`: 36/38 tests passed, while two stale `repo-smoke` assertions still expected the old renderer file itself to contain `getContext('webgl2')` and the historical phrase `Three enemies are fought sequentially`.
+- Because Node tests failed first, `npm run test:browser` was skipped, so the new production PlayCanvas bundle remained unverified.
+- Draft PR #1 remained open, Draft and unmerged; no inline review threads existed and no newer submitted review introduced a separate current-head P0/P1/P2 finding.
+
+### Before
+
+- Repository smoke coverage was structurally coupled to the retired single-file WebGL renderer and exact old baseline wording.
+- The test therefore failed after an approved architecture change even though the intended guarantees had moved to `playcanvas-view.ts`, the renderer adapter, the legacy fallback and the updated four-duel SOT.
+
+### After
+
+- Reworked the repository smoke assertion to validate the current architecture semantically: PlayCanvas primary adapter, preserved WebGL2 fallback, renderer-neutral four-beat motion, adaptive mobile pixel ratio, input/audio/combat integration and current four-duel baseline.
+- Kept the real browser gate unchanged. It must still build Vite `dist/`, initialize the PlayCanvas backend rather than silently falling back, and execute the existing mastery/boss/onboarding/footwork/impact browser integrations.
+- No gameplay rule, renderer behaviour, input mapping, timing window, storage or network behaviour changed.
+
+### Verification plan / regression boundary
+
+- The focused change removes only stale source/text coupling; it does not delete the WebGL2 compatibility guarantee or relax the production PlayCanvas browser requirement.
+- Exact new-head CI and Vercel status are intentionally verified after the single allowed commit; the PR run receipt is authoritative for those results.
+- If the newly unblocked browser step exposes a real PlayCanvas runtime defect, the following run remains `BLOCKER_FIX` before any fidelity feature work.
+
+### Next candidates
+
+- Local clearly licensed/original skinned samurai glTF/GLB + real animation clips once exact-head CI and Preview are terminal green.
+- Physical-iPhone PlayCanvas quality/frame-budget tuning.
+- Accessibility mode after the main 3D fidelity path stabilises.
