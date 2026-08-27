@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.2-evolution — PlayCanvas combat-motion verification hardening
+
+- Extended the existing real-app browser gate so it now drives a representative CombatEngine telegraph → strike → parry → counter sequence through the production PlayCanvas `View` instead of proving initialization only.
+- The smoke path asserts enemy body/blade transform progression, authoritative interrupted-recovery mapping, player parry motion and player counter-slash motion while remaining on the PlayCanvas backend.
+- Reused the existing Vite/Chromium smoke process rather than adding a parallel browser harness or broad new test suite.
+- The renderer contract smoke is dynamically imported only for the explicit browser-smoke query and is not loaded during normal gameplay.
+- No combat timing, damage, parry window, input mapping, HUD, persistence or production renderer behaviour changed.
+
 ## 0.11.1-evolution — PlayCanvas verification gate repair
 
 - Replaced stale repository smoke assertions that were coupled to the old single-file WebGL renderer and historical three-enemy wording.

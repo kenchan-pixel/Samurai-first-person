@@ -100,7 +100,7 @@ try {
   const browser = findBrowser();
   if (!browser) throw new Error('Chrome/Chromium executable not found on CI runner');
 
-  const appDom = await dumpDom(browser, '/?browser-smoke=1', { budget: 2600 });
+  const appDom = await dumpDom(browser, '/?browser-smoke=renderer-motion', { budget: 2600 });
   if (!appDom.includes('data-webgl="ready"')) {
     throw new Error(`3D renderer did not initialize successfully. DOM:\n${appDom.slice(0, 4000)}`);
   }
@@ -112,6 +112,15 @@ try {
   }
   if (!appDom.includes('data-visual-identity="playcanvas-samurai-v1"')) {
     throw new Error('PlayCanvas articulated samurai visual slice did not initialize in the real application document');
+  }
+  if (!appDom.includes('data-renderer-motion-integration="pass"')) {
+    throw new Error(`PlayCanvas combat-motion integration failed. DOM:\n${appDom.slice(0, 5000)}`);
+  }
+  if (!appDom.includes('data-renderer-motion-sequence="telegraph-strike-parry-counter"')) {
+    throw new Error('PlayCanvas smoke did not complete the representative telegraph → strike → parry → counter sequence');
+  }
+  if (!appDom.includes('data-renderer-motion-backend="playcanvas"')) {
+    throw new Error('Renderer motion smoke did not stay on the PlayCanvas backend');
   }
   if (!appDom.includes('data-mastery-ready="true"')) {
     throw new Error('Mastery observer did not initialize in the real application document');
@@ -171,7 +180,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas primary renderer + mastery + boss + onboarding + footwork + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery + boss + onboarding + footwork + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

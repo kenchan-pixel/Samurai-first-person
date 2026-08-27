@@ -123,3 +123,47 @@ The PlayCanvas slice won because physical-iPhone feedback identified character/a
 - Local clearly licensed/original skinned samurai glTF/GLB + real animation clips once exact-head CI and Preview are terminal green.
 - Physical-iPhone PlayCanvas quality/frame-budget tuning.
 - Accessibility mode after the main 3D fidelity path stabilises.
+
+## Run 020 — Prove the PlayCanvas combat-motion contract
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Goal:** Close the current-head P2 verification gap around the production PlayCanvas renderer without growing a parallel test stack or changing gameplay.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `c94421f47416af2bd54f845604bfea604a272d2b`: CI run `33053894768` / CI #48 = success; exact-head GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft and unmerged; no inline review threads existed.
+- The latest All Repos review on this exact HEAD reported one actionable **P2**: the browser gate proved PlayCanvas initialization but did not execute the renderer's representative combat-motion mapping. Because that gap covers core player-visible attack/parry motion during an active renderer migration, it is treated as a blocking playability/correctness risk before the next fidelity feature.
+
+### Before
+
+- The real Vite browser page had to initialize the PlayCanvas backend, but the production-page check stopped at readiness markers.
+- Separate subsystem harnesses proved combat, STEP, boss, onboarding and impact logic, but none drove the real PlayCanvas `View.draw()` through a representative attack/parry/counter sequence.
+- A mapping regression could therefore leave PlayCanvas initialized while enemy or player transforms stopped following combat phases.
+
+### After
+
+- Added a small renderer-contract smoke module that is dynamically imported **only** for the explicit `browser-smoke=renderer-motion` query; normal gameplay does not load it.
+- The smoke creates the production `View` adapter on a bounded offscreen canvas, requires the backend to remain PlayCanvas, and drives the real `CombatEngine` through Ashigaru telegraph → strike → directional parry → opposite-direction counter.
+- It asserts visible-state transform progression rather than pixels: wind-up weight, enemy body lunge, enemy sword rotation, authoritative interrupted recovery, player parry katana motion and counter-slash motion.
+- The existing first real-app Chromium invocation now performs this contract check, so no extra browser process or duplicate harness suite is added.
+- No combat timing, HP/damage, input mapping, renderer runtime behaviour, persistence, network or asset policy changes.
+
+### Verification before commit
+
+- New smoke module and modified browser-smoke script pass `node --check` locally.
+- Existing exact previous HEAD is terminal green for CI and Vercel before this blocker repair.
+- Full Vite/PlayCanvas execution remains delegated to exact new-head CI after the single allowed commit; any failure keeps the next run in `BLOCKER_FIX`.
+
+### Regression boundaries / risk
+
+- The new contract smoke is query-gated and dynamically imported, so it adds no normal-play render loop or per-frame instrumentation.
+- Existing mastery, boss, onboarding, footwork and impact browser coverage is retained rather than duplicated.
+- Headless Chromium still cannot prove physical-iPhone sustained 60 Hz, thermals or final visual quality; those remain human acceptance boundaries.
+
+### Next candidates
+
+- Local clearly licensed/original skinned samurai glTF/GLB + real animation clips once exact-head CI and Preview are terminal green.
+- Physical-iPhone quality/frame-budget tuning after the first skinned model lands.
+- Accessibility mode after the core visual migration stabilises.

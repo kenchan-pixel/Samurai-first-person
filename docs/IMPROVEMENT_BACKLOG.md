@@ -16,10 +16,11 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 015–017 — Four-beat motion:** elapsed-time wind-up/swing/impact/recovery, adaptive render scale and parry-authoritative dropped-frame recovery handling.
 - **Run 018 — First PlayCanvas production slice:** PlayCanvas standalone + Vite becomes the primary renderer, with a real perspective 3D courtyard, lighting, articulated original samurai/player katana and adaptive pixel ratio; legacy WebGL2 remains temporary fallback and the real production bundle is browser-gated.
 - **Run 019 — PlayCanvas verification repair:** repository smoke assertions now validate the approved PlayCanvas-primary/WebGL2-fallback architecture and current four-duel SOT instead of stale single-file WebGL source/text details, allowing the real Vite/PlayCanvas browser gate to run.
+- **Run 020 — PlayCanvas motion-contract verification:** the existing real-app browser gate now drives a representative CombatEngine telegraph → strike → parry → counter sequence through the production PlayCanvas `View`, proving enemy body/blade motion, interrupted recovery and player katana action transforms rather than only initialization.
 
 ## Highest priority — finish the rigged-character fidelity migration
 
-Run 018 proves the engine/build/renderer seam without importing an unverified character pack. The next visible step is now asset fidelity rather than more framework work, once exact-head CI and Preview are green after Run 019.
+Run 018 proves the engine/build/renderer seam without importing an unverified character pack. Run 020 closes the remaining current-head browser verification gap around actual PlayCanvas combat-motion mapping. Once Run 020 exact-head CI and Preview are terminal green, the next visible step is asset fidelity rather than more framework or test work.
 
 Preferred next slice:
 
