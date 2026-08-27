@@ -154,3 +154,59 @@ The skinned-character slice won because physical-phone feedback identified model
 - No combat rules, timing windows, damage, input mapping, STEP, boss, mastery, onboarding, persistence, model geometry, asset provenance or deployment architecture changed.
 - Primitive PlayCanvas and legacy WebGL2 fallbacks remain available for genuine asset/runtime failure.
 - Exact new-head CI must pass both `npm test` and `npm run test:browser`; exact-head Vercel must be terminal green before feature work resumes.
+
+## Run 024 — Directional skinned combat readability
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Goal:** Make top/right/bottom/left enemy attacks readable from the moving 3D body and weapon itself, without multiplying assets or changing combat authority.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `c1f2e3f8257ff9a6cdca0eebb5336ec5bc8443e1`: CI run `33077417561` / CI #52 = success; exact-head GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft and unmerged.
+- No inline review threads existed.
+- Latest established All Repos review on this exact previous HEAD reported **no actionable P0/P1/P2 finding** and confirmed the Run 023 production GLB binding P1 was fixed.
+
+### Candidate selection
+
+Candidates scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Direction-specific skinned body/blade choreography: **5 / 5 / 5 / 4 / 4 = 23**.
+- Enemy-specific silhouette/weapon language: **5 / 5 / 4 / 3 / 4 = 21**.
+- First-person player hands/katana fidelity: **4 / 4 / 4 / 4 / 4 = 20**.
+
+Physical-iPhone tuning remains highest-value evidence work, but lack of a physical device in this run is explicitly not a HOLD condition. The directional read won as the strongest bounded implementation because opponent motion is gameplay information and the current skinned pipeline already provides a safe renderer-only seam.
+
+### Before
+
+- The skinned samurai correctly loaded and played the five authored skeletal clips.
+- Top/right/bottom/left attacks still shared the same full-body clip pose; direction was differentiated mainly by a small whole-model lean plus the HUD indicator.
+- The actual skinned sword had no in-world telegraph trail.
+
+### After
+
+- Added direction-specific full-body pose envelopes around the existing skinned animation: top retains the overhead read; right/left attacks coil with opposite yaw/roll and lateral commitment; bottom attacks visibly crouch before driving through the strike.
+- The same loaded rig and five clips remain authoritative for phase timing; the direction layer only changes presentation transforms.
+- Added one bounded translucent additive trail as a child of the real skinned `Sword` joint. It appears only during readable telegraph/strike motion and scales with existing motion weights.
+- No separate model, texture, motion pack, physics system or extra network asset is introduced.
+- Extended the existing renderer-contract smoke rather than adding a new harness. It now checks mirrored right/left body reads, lower bottom stance and sword-bone trail while retaining the real CombatEngine telegraph → strike → parry → counter sequence.
+
+### Verification / regression boundary
+
+- Modified renderer and smoke files pass local JavaScript syntax checks.
+- Exact previous HEAD was terminal-green for both CI and Vercel before feature selection.
+- No HP, damage, timing window, attack sequence, reach, STEP, boss, mastery, onboarding, persistence, input mapping or network behaviour is changed.
+- Primitive PlayCanvas and legacy WebGL2 fallbacks remain unchanged.
+- Exact new-head `npm test` + `npm run test:browser` and Vercel Preview are the post-commit gate; any failure blocks the next run.
+
+### Risk / human acceptance
+
+- Headless transform assertions prove the direction mapping contract but not whether every pose reads strongly enough on a physical iPhone.
+- The added sword trail is one bounded skinned-bone child and direction poses reuse the same rig, so runtime cost is deliberately small; sustained 60 Hz, heat and final visual feel remain physical-phone acceptance evidence.
+
+### Next candidates
+
+- Physical-iPhone model/material/shadow/pixel-ratio tuning.
+- Stronger stage-specific helmet/armour/weapon silhouette and rhythm.
+- First-person player hand/katana fidelity once enemy readability and mobile budget remain stable.

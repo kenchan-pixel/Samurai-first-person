@@ -19,12 +19,12 @@ document.body.append(canvas);
 
 let view;
 
-function render(engine, now, playerAction = 0, playerDirection = Direction.TOP) {
+function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, attackDirectionIndex = null) {
   const snapshot = engine.snapshot(now);
   const motionPhase = motionPhaseForSnapshot(snapshot);
   const renderState = motionPhase === snapshot.phase ? snapshot : { ...snapshot, phase: motionPhase };
   view.draw(renderState, now, {
-    attackDirectionIndex: DIRECTION_INDEX[snapshot.attack?.displayedDirection] ?? 0,
+    attackDirectionIndex: attackDirectionIndex ?? DIRECTION_INDEX[snapshot.attack?.displayedDirection] ?? 0,
     playerAction,
     playerDirectionIndex: DIRECTION_INDEX[playerDirection] ?? 0,
     hitAge: 999,
@@ -34,6 +34,7 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP) 
   const sword = impl.sword.getLocalEulerAngles();
   const playerSword = impl.playerRig.getLocalEulerAngles();
   const enemy = impl.enemy.getLocalPosition();
+  const character = impl.skinnedModel?.getLocalEulerAngles();
   return {
     backend: view.backend,
     phase: snapshot.phase,
@@ -41,12 +42,16 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP) 
     interruptedRecovery: impl.motion.interruptedRecovery === true,
     wind: Number(impl.motion.wind) || 0,
     swing: Number(impl.motion.swing) || 0,
+    enemyY: enemy.y,
     enemyZ: enemy.z,
     swordZ: sword.z,
     playerAction: impl.playerAction,
     playerSwordZ: playerSword.z,
     characterReady: Boolean(impl.skinnedModel),
     characterClip: impl.characterClip,
+    characterYaw: Number(character?.y) || 0,
+    characterRoll: Number(character?.z) || 0,
+    readTrailEnabled: Boolean(impl.skinnedReadTrail?.enabled),
   };
 }
 
@@ -68,11 +73,23 @@ try {
   const wind = render(engine, 2150);
   assert(wind.phase === 'telegraph' && wind.wind > 0.35, 'Telegraph did not reach a readable wind-up pose');
   assert(wind.characterReady && wind.characterClip === 'Windup', 'Skinned rig did not enter the Windup clip');
+  assert(wind.readTrailEnabled, 'Skinned sword did not expose the in-world blade-read trail during telegraph');
+
+  const windRight = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
+  const windLeft = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
+  const windBottom = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
+  assert(windRight.characterYaw < -8 && windLeft.characterYaw > 8, 'Right/left telegraphs did not produce mirrored full-body skeletal orientation');
+  assert(Math.abs(windRight.characterYaw - windLeft.characterYaw) > 20, 'Right/left directional body language was not materially distinct');
+  assert(windBottom.enemyY < wind.enemyY - 0.04, 'Bottom telegraph did not lower the opponent stance');
+
+  // Restore the authoritative top direction before continuing the real combat sequence.
+  render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
 
   engine.update(2430);
   const strike = render(engine, 2580);
   assert(strike.phase === 'strike' && strike.swing > 0.2, 'Strike motion did not progress on the PlayCanvas rig');
   assert(strike.characterClip === 'Strike', 'Skinned rig did not enter the Strike clip');
+  assert(strike.readTrailEnabled, 'Skinned sword trail did not persist through the strike path');
   assert(Math.abs(strike.swordZ - wind.swordZ) > 12, 'Enemy sword transform did not move from telegraph into strike');
   assert(Math.abs(strike.enemyZ - wind.enemyZ) > 0.08, 'Enemy body transform did not commit into the strike');
 
@@ -98,6 +115,7 @@ try {
   root.dataset.rendererMotionBackend = view.backend;
   root.dataset.rendererCharacterPipeline = 'skinned-gltf-v1';
   root.dataset.rendererCharacterClips = 'Windup,Strike,Parry';
+  root.dataset.rendererDirectionalRead = 'top-right-bottom-left';
 } catch (error) {
   console.error('PlayCanvas renderer contract smoke failed', error);
   root.dataset.rendererMotionIntegration = 'fail';

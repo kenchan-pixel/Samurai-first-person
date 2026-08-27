@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.0-evolution — Directional skinned combat readability
+
+- Added distinct top/right/bottom/left full-body choreography on the loaded skinned samurai while keeping the same combat-authoritative `Windup / Strike / Recovery / Parry` clip pipeline.
+- Right and left attacks now visibly coil in opposite directions; bottom attacks lower the stance; top attacks retain the overhead read, with direction-specific lateral/forward body commitment through the strike.
+- Added one bounded translucent read trail attached to the actual skinned sword bone during telegraph/strike so weapon motion carries the cue in-world without another HUD panel.
+- Extended the existing production renderer-contract smoke only enough to prove mirrored right/left body reads, lower bottom stance and the sword-bone trail; no new broad test harness was added.
+
 ## 0.12.2-evolution — Skinned GLB runtime binding repair
 
 - Fixed the production PlayCanvas character loader to unwrap container animation Assets to real `AnimTrack` resources before assigning clips.

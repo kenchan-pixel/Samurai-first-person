@@ -19,17 +19,19 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 020 — PlayCanvas motion-contract verification:** real production View driven through telegraph → strike → parry → counter.
 - **Run 021 — Original skinned samurai vertical slice:** deterministic local GLB generated from repository source, 19-joint skin, layered armour and five real skeletal clips; combat phase progress remains authoritative and the primitive renderer character remains fallback.
 - **Run 022 — Current-baseline CI gate repair:** removed stale sentence-coupled SOT assertions so the existing Node + production PlayCanvas browser gate can verify the skinned-character baseline again without adding a new test harness.
+- **Run 023 — Skinned animation binding repair:** unwrapped PlayCanvas container animation Assets to real AnimTracks, created the combat layer and restored the fail-closed GLB runtime path.
+- **Run 024 — Directional skinned combat read:** top/right/bottom/left attacks now use distinct full-body rig orientation, lower-body stance and an in-world sword-bone read trail while preserving the same combat-authoritative skeletal clips.
 
-## Highest priority — physical-phone quality and animation refinement
+## Highest priority — physical-phone quality and enemy differentiation
 
-The engine migration and first skinned-character slice are now production-facing. Do not spend another run building framework infrastructure unless phone evidence exposes a real bottleneck.
+The engine migration and skinned-character path are production-facing. Do not spend another run building framework infrastructure unless phone evidence exposes a real bottleneck.
 
 Preferred next work:
 
-1. **Physical-iPhone visual/performance tuning** — inspect normal combat distance, sustained frame time, heat and load time; tune model/material/shadow/pixel-ratio budget based on evidence.
-2. **Directional skeletal attack variants** — expand left/right/bottom attack body language so blade direction is readable primarily from pose, not UI. Reuse the same combat-authoritative timing contract.
-3. **Enemy-specific visual language** — vary helmet/armour/weapon silhouette or animation rhythm per stage without creating four heavyweight duplicate assets.
-4. **First-person weapon fidelity** — upgrade player hands/katana only after enemy readability and frame budget are stable.
+1. **Physical-iPhone visual/performance tuning** — inspect normal combat distance, sustained frame time, heat and load time; tune material/shadow/pixel-ratio budget from evidence.
+2. **Enemy-specific visual language** — vary helmet/armour/weapon silhouette or animation rhythm per stage without creating four heavyweight duplicate assets.
+3. **First-person weapon fidelity** — improve player hands/katana once enemy readability and frame budget are stable.
+4. **Directional clip authoring only if needed** — the new runtime body/blade choreography provides distinct four-direction reads without multiplying assets; add separate imported clips later only if physical play shows the shared base clips still limit readability.
 
 ## High-value product candidates after the core fidelity path
 

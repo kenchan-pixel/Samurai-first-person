@@ -2,17 +2,28 @@ import * as pc from 'playcanvas';
 import { adaptiveRenderScale, enemyMotionFrame, smoothMotionFrame } from './animation-motion.js';
 
 const DIR_Z = [0, -90, 180, 90];
+const DIRECTION_BODY_POSES = Object.freeze([
+  { windPitch: -7, windYaw: 0, windRoll: 0, strikePitch: 10, strikeYaw: 0, strikeRoll: 0, crouch: 0.00 },
+  { windPitch: -4, windYaw: -24, windRoll: -11, strikePitch: 8, strikeYaw: 24, strikeRoll: 14, crouch: 0.03 },
+  { windPitch: 12, windYaw: 0, windRoll: 4, strikePitch: -10, strikeYaw: 0, strikeRoll: -8, crouch: 0.16 },
+  { windPitch: -4, windYaw: 24, windRoll: 11, strikePitch: 8, strikeYaw: -24, strikeRoll: -14, crouch: 0.03 },
+]);
 const clamp01 = (v) => Math.max(0, Math.min(1, Number.isFinite(v) ? v : 0));
 const CHARACTER_URL = '/assets/samurai-v1.glb';
 const CHARACTER_CLIPS = Object.freeze(['Idle', 'Windup', 'Strike', 'Recovery', 'Parry']);
 
-function mat(rgb, { metal = 0, gloss = 0.45, emissive = null } = {}) {
+function mat(rgb, { metal = 0, gloss = 0.45, emissive = null, opacity = 1, additive = false } = {}) {
   const m = new pc.StandardMaterial();
   m.diffuse = new pc.Color(...rgb);
   m.useMetalness = metal > 0;
   m.metalness = metal;
   m.gloss = gloss;
   if (emissive) m.emissive = new pc.Color(...emissive);
+  if (opacity < 1 || additive) {
+    m.opacity = opacity;
+    m.blendType = additive ? pc.BLEND_ADDITIVE : pc.BLEND_NORMAL;
+    m.depthWrite = false;
+  }
   m.update();
   return m;
 }
@@ -61,6 +72,7 @@ export class PlayCanvasView {
       cloth: mat([0.12, 0.07, 0.045], { gloss: 0.15 }),
       metal: mat([0.58, 0.56, 0.50], { metal: 0.9, gloss: 0.75 }),
       blade: mat([0.78, 0.84, 0.86], { metal: 0.95, gloss: 0.9, emissive: [0.06, 0.08, 0.09] }),
+      bladeRead: mat([0.95, 0.34, 0.08], { gloss: 0.2, emissive: [0.72, 0.12, 0.015], opacity: 0.18, additive: true }),
       accent: mat([0.72, 0.18, 0.08], { metal: 0.35, gloss: 0.5 }),
       lantern: mat([0.55, 0.23, 0.05], { gloss: 0.3, emissive: [0.25, 0.08, 0.01] }),
     };
@@ -83,6 +95,8 @@ export class PlayCanvasView {
     this.stageStyle = null;
     this.skinnedModel = null;
     this.skinnedMaterials = new Map();
+    this.skinnedSword = null;
+    this.skinnedReadTrail = null;
     this.characterClip = 'PrimitiveFallback';
     this.characterDirection = 0;
 
@@ -90,6 +104,7 @@ export class PlayCanvasView {
     this.characterReady = this.loadSkinnedEnemy();
     document.documentElement.dataset.animationPipeline = 'playcanvas-four-beat-v1';
     document.documentElement.dataset.renderProfile = 'playcanvas-adaptive-60-v1';
+    document.documentElement.dataset.directionalChoreography = 'body-blade-v1';
   }
 
   createScene() {
@@ -229,6 +244,22 @@ export class PlayCanvasView {
           const layer = model.anim.baseLayer || model.anim.addLayer('combat');
           for (const track of tracks) layer.assignAnimation(track.name, track, 1, track.name === 'Idle');
           layer.play('Idle');
+
+          this.skinnedSword = model.findByName('Sword');
+          if (this.skinnedSword) {
+            this.skinnedReadTrail = part(
+              this.skinnedSword,
+              'box',
+              'SkinnedBladeReadTrail',
+              this.materials.bladeRead,
+              [0, 0.95, 0.055],
+              [0.13, 1.42, 0.055],
+              [0, 0, 0],
+              false,
+            );
+            this.skinnedReadTrail.enabled = false;
+          }
+
           this.skinnedModel = model;
           this.characterClip = 'Idle';
           this.hips.enabled = false;
@@ -324,9 +355,27 @@ export class PlayCanvasView {
     if (layer.activeState === clip && Number.isFinite(layer.activeStateDuration)) {
       layer.activeStateCurrentTime = Math.max(0, Math.min(layer.activeStateDuration, progress * layer.activeStateDuration));
     }
+
     this.characterDirection = directionIndex;
-    const directionalLean = directionIndex === 1 ? -5 : directionIndex === 3 ? 5 : directionIndex === 2 ? 3 : 0;
-    this.skinnedModel.setLocalEulerAngles(0, 0, directionalLean * Math.sin(Math.PI * clamp01(this.motion.swing)));
+    const pose = DIRECTION_BODY_POSES[directionIndex] || DIRECTION_BODY_POSES[0];
+    const wind = clamp01(this.motion.wind);
+    const strike = Math.sin(Math.PI * clamp01(this.motion.swing));
+    const follow = clamp01(this.motion.follow);
+    const followWeight = follow * 0.55;
+    const pitch = pose.windPitch * wind + pose.strikePitch * (strike + followWeight);
+    const yaw = pose.windYaw * wind + pose.strikeYaw * (strike + followWeight);
+    const roll = pose.windRoll * wind + pose.strikeRoll * (strike + followWeight);
+    this.skinnedModel.setLocalEulerAngles(pitch, yaw, roll);
+
+    if (this.skinnedReadTrail) {
+      const read = phase === 'telegraph' && clamp01(this.motion.read) > 0.12;
+      const slash = phase === 'strike' && clamp01(this.motion.trail) > 0.08;
+      this.skinnedReadTrail.enabled = read || slash;
+      if (this.skinnedReadTrail.enabled) {
+        const strength = read ? clamp01(this.motion.read) : clamp01(this.motion.trail);
+        this.skinnedReadTrail.setLocalScale(0.10 + strength * 0.07, 1.28 + strength * 0.22, 0.045 + strength * 0.025);
+      }
+    }
   }
 
   draw(s, n, m = {}) {
@@ -348,7 +397,9 @@ export class PlayCanvasView {
     const commit = Math.sin(Math.PI * clamp01(this.motion.swing));
     const lunge = -0.12 * this.motion.wind + 0.34 * commit + 0.18 * this.motion.follow;
     const side = idx === 1 ? 0.12 : idx === 3 ? -0.12 : 0;
-    this.enemy.setLocalPosition(side * commit, 0, lunge);
+    const pose = DIRECTION_BODY_POSES[idx] || DIRECTION_BODY_POSES[0];
+    const crouch = pose.crouch * (0.65 * clamp01(this.motion.wind) + commit);
+    this.enemy.setLocalPosition(side * (0.55 * clamp01(this.motion.wind) + commit), -crouch, lunge);
 
     this.hips.setLocalEulerAngles(0, side * 18 * commit, (idx === 1 ? -1 : idx === 3 ? 1 : 0) * 6 * commit);
     this.torso.setLocalEulerAngles(-4 * this.motion.wind + 11 * commit, side * 38 * commit, (idx === 1 ? -1 : idx === 3 ? 1 : 0) * 11 * (this.motion.wind + commit));

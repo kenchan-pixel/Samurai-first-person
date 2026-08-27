@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 23,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the production PlayCanvas skinned-GLB animation binding by unwrapping container animation Assets to AnimTrack resources and creating the combat animation layer before assigning Idle/Windup/Strike/Recovery/Parry",
-  "last_commit": "3c5eb050c00bb0c317eea7292edfefc4b4782ec2",
+  "run_number": 24,
+  "last_action_type": "FEATURE",
+  "last_action": "Added direction-specific full-body skinned-samurai choreography for top/right/bottom/left attacks plus a bounded in-world sword-bone read trail while keeping combat timing and the existing five skeletal clips authoritative",
+  "last_commit": "c1f2e3f8257ff9a6cdca0eebb5336ec5bc8443e1",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Tune the skinned samurai camera/material/animation blend budget from physical-iPhone evidence, prioritising sustained 60 Hz and attack readability",
-    "Add richer directional skeletal attack variants and stronger enemy-specific silhouette/weapon language without changing combat authority",
-    "Upgrade the first-person player katana/arms presentation after the enemy fidelity path is stable"
+    "Tune the skinned samurai camera/material/shadow/pixel-ratio budget from physical-iPhone evidence, prioritising sustained 60 Hz and attack readability",
+    "Strengthen stage-specific helmet/armour/weapon silhouette and animation rhythm without duplicating heavyweight character assets",
+    "Upgrade the first-person player hands/katana presentation after enemy readability and phone budget remain stable"
   ]
 }
