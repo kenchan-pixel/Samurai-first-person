@@ -35,6 +35,7 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
   const playerSword = impl.playerRig.getLocalEulerAngles();
   const enemy = impl.enemy.getLocalPosition();
   const character = impl.skinnedModel?.getLocalEulerAngles();
+  const trajectory = impl.bladeTrajectoryState || {};
   return {
     backend: view.backend,
     phase: snapshot.phase,
@@ -52,6 +53,11 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
     characterYaw: Number(character?.y) || 0,
     characterRoll: Number(character?.z) || 0,
     readTrailEnabled: Boolean(impl.skinnedReadTrail?.enabled),
+    bladeTipX: Number(trajectory.tipX) || 0,
+    bladeTipY: Number(trajectory.tipY) || 0,
+    bladeTipZ: Number(trajectory.tipZ) || 0,
+    bladeCrossedPlane: trajectory.crossedPlane === true,
+    worldTrailSegments: Number(trajectory.trailSegments) || 0,
   };
 }
 
@@ -64,6 +70,8 @@ try {
   assert(view.backend === 'playcanvas', 'PlayCanvas backend was not active');
   const characterReady = await view.impl.characterReady;
   assert(characterReady && view.impl.skinnedModel, 'Skinned GLB samurai did not load on the PlayCanvas backend');
+  await view.impl.bladeTrajectoryReady;
+  assert(root.dataset.bladeTrajectory === 'worldspace-v2', 'World-space enemy blade trajectory adapter was not installed');
 
   const identities = [];
   const activeCounts = [];
@@ -82,6 +90,14 @@ try {
   assert(enemyScales[3] > enemyScales[2] && enemyScales[2] > enemyScales[1], 'Oni/Shogun silhouettes did not increase body mass distinctly');
   view.impl.applyStage(0);
 
+  const step = document.querySelector('#footwork-step');
+  const range = document.querySelector('#footwork-range');
+  assert(step && range, 'STEP/range controls were not installed in the production page');
+  const stepStyle = getComputedStyle(step);
+  const stepSecondary = step.querySelector('span');
+  assert(parseFloat(stepStyle.fontSize) >= 14, 'STEP primary label remained too small for the 320px phone acceptance viewport');
+  assert(!stepSecondary || getComputedStyle(stepSecondary).display === 'none', 'STEP retained tiny secondary copy after the phone readability repair');
+
   const engine = new CombatEngine();
   engine.start(0);
   engine.drainEvents();
@@ -98,18 +114,34 @@ try {
   assert(windRight.characterYaw < -8 && windLeft.characterYaw > 8, 'Right/left telegraphs did not produce mirrored full-body skeletal orientation');
   assert(Math.abs(windRight.characterYaw - windLeft.characterYaw) > 20, 'Right/left directional body language was not materially distinct');
   assert(windBottom.enemyY < wind.enemyY - 0.04, 'Bottom telegraph did not lower the opponent stance');
+  assert(windRight.bladeTipX > 0.7 && windLeft.bladeTipX < -0.7, 'Right/left wind-up blade tips did not occupy opposite sides in world space');
+  assert(windBottom.bladeTipY < wind.bladeTipY - 0.55, 'Bottom wind-up blade tip did not start materially below the top attack');
 
-  // Restore the authoritative top direction before continuing the real combat sequence.
-  render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
+  const topWind = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
 
   engine.update(2430);
+  const strikeEarly = render(engine, 2470);
+  render(engine, 2525);
   const strike = render(engine, 2580);
   assert(strike.phase === 'strike' && strike.swing > 0.2, 'Strike motion did not progress on the PlayCanvas rig');
   assert(strike.characterClip === 'Strike', 'Skinned rig did not enter the Strike clip');
   assert(strike.readTrailEnabled, 'Skinned sword trail did not persist through the strike path');
   assert(Math.abs(strike.swordZ - wind.swordZ) > 12, 'Enemy sword transform did not move from telegraph into strike');
   assert(Math.abs(strike.enemyZ - wind.enemyZ) > 0.08, 'Enemy body transform did not commit into the strike');
+  assert(strikeEarly.bladeTipZ > topWind.bladeTipZ + 0.25 && strike.bladeTipZ > strikeEarly.bladeTipZ + 0.45, 'Top strike blade tip did not advance continuously toward the player');
+  assert(strike.bladeCrossedPlane, 'Top strike blade tip never crossed the player-facing parry plane');
+  assert(strike.bladeTipY < topWind.bladeTipY - 0.45, 'Top strike did not visibly cut downward from the overhead wind-up');
+  assert(strike.worldTrailSegments >= 2, 'World-space blade trail did not record the actual strike path');
 
+  const strikeRight = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
+  const strikeLeft = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
+  const strikeBottom = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
+  assert(strikeRight.bladeCrossedPlane && strikeLeft.bladeCrossedPlane && strikeBottom.bladeCrossedPlane, 'One or more directional strikes failed to cross the player-facing parry plane');
+  assert(strikeRight.bladeTipX < windRight.bladeTipX - 0.20, 'Right strike did not travel inward/across from its wind-up side');
+  assert(strikeLeft.bladeTipX > windLeft.bladeTipX + 0.20, 'Left strike did not travel inward/across from its wind-up side');
+  assert(strikeBottom.bladeTipY > windBottom.bladeTipY + 0.35, 'Bottom strike did not rise through its player-facing cut path');
+
+  render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
   const parry = engine.attemptParry(Direction.TOP, 2580);
   assert(parry.accepted, 'Representative directional parry was rejected');
   render(engine, 2620, 1, Direction.TOP);
@@ -133,6 +165,7 @@ try {
   root.dataset.rendererCharacterPipeline = 'skinned-gltf-v1';
   root.dataset.rendererCharacterClips = 'Windup,Strike,Parry';
   root.dataset.rendererDirectionalRead = 'top-right-bottom-left';
+  root.dataset.rendererBladeTrajectory = 'worldspace-v2';
   root.dataset.rendererStageIdentity = identities.join(',');
 } catch (error) {
   console.error('PlayCanvas renderer contract smoke failed', error);

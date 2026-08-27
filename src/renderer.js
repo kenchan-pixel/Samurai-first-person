@@ -1,12 +1,17 @@
 import { PlayCanvasView } from './playcanvas-view.ts';
 import { installStageIdentity } from './stage-identity.js';
 import { installMobileCombatReadabilityView } from './mobile-combat-readability.js';
+import { installBladeTrajectoryView } from './blade-trajectory.js';
+import { installMobileControlReadability } from './mobile-control-readability.js';
 import { View as LegacyWebGLView } from './legacy-renderer.js';
 
 export class View {
   constructor(canvas) {
     try {
-      this.impl = installMobileCombatReadabilityView(installStageIdentity(new PlayCanvasView(canvas)));
+      installMobileControlReadability();
+      this.impl = installBladeTrajectoryView(
+        installMobileCombatReadabilityView(installStageIdentity(new PlayCanvasView(canvas))),
+      );
       this.backend = 'playcanvas';
       document.documentElement.dataset.rendererBackend = 'playcanvas';
       queueMicrotask(() => {

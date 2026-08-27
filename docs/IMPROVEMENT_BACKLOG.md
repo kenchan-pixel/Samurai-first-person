@@ -1,58 +1,48 @@
 # Improvement Backlog
 
-This is a candidate pool, not a fixed roadmap. Each evolution run should re-evaluate priority against the latest product state and direct user feedback.
+This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates priority against current SOT, exact-head verification, PR findings and direct physical-phone evidence.
 
 ## Recently delivered
 
-- **Run 002 — Animation readability:** anticipation, body commitment, articulated stance and blade trails.
-- **Run 003 — Renderer/WebGL correctness:** katana SDF/GLSL fixes and executable WebGL browser smoke.
-- **Run 004 — Posture / guard break:** player/enemy posture, thresholds and counter consequences.
-- **Run 005–006 — Mastery:** grading, local best and browser/storage/layout hardening.
-- **Run 007–008 — Crimson Shogun:** multi-phase boss plus reduced-motion/browser hardening.
-- **Run 009–010 — Guided Duel:** read/parry/counter onboarding plus lifecycle repair.
-- **Run 011–012 — Spacing/STEP:** close/mid/far engagement and safe onboarding/pointer integration.
-- **Run 013 — Impact choreography:** bounded direction-aware contact feedback with reduced-motion fallback.
-- **Run 014 — Wide visual redraw:** readable full-body framing and stronger procedural samurai/dojo depth.
-- **Run 015–017 — Four-beat motion:** elapsed-time wind-up/swing/impact/recovery, adaptive render scale and authoritative parry interruption handling.
-- **Run 018 — First PlayCanvas production slice:** PlayCanvas standalone + Vite primary renderer, true perspective scene, articulated original primitive samurai and legacy WebGL2 fallback.
-- **Run 019 — PlayCanvas verification repair:** current architecture/browser gate restored after stale smoke assertions.
-- **Run 020 — PlayCanvas motion-contract verification:** real production View driven through telegraph → strike → parry → counter.
-- **Run 021 — Original skinned samurai vertical slice:** deterministic local GLB, 19-joint skin, layered armour and five skeletal clips.
-- **Run 022 — Current-baseline CI gate repair:** stale sentence-coupled assertions repaired without adding another harness.
-- **Run 023 — Skinned animation binding repair:** PlayCanvas animation Assets unwrapped to real AnimTracks and the production GLB path restored.
-- **Run 024 — Directional skinned combat read:** four-direction full-body choreography plus an in-world sword-bone read trail.
-- **Run 025 — Stage-specific skinned identities:** four clearly different opponent silhouettes/weapon profiles on the same rig, with bounded bone-attached accessories and no duplicate character downloads.
-- **Run 026 — Physical-iPhone combat readability repair:** smoother strike playback/body whip with bounded blade afterimages, stronger parry clash, quieter/larger live HUD cues, and STEP/range moved out of the lower block region.
+- **Runs 002–003:** readable combat motion plus renderer/WebGL correctness.
+- **Runs 004–006:** posture/guard break and mastery with browser/storage hardening.
+- **Runs 007–010:** Crimson Shogun and Guided Duel with integration repairs.
+- **Runs 011–014:** spacing/STEP, impact choreography and wider samurai/dojo framing.
+- **Runs 015–020:** elapsed-time four-beat motion, PlayCanvas production renderer and production combat-motion browser contract.
+- **Runs 021–023:** original local skinned GLB pipeline plus animation-binding/CI repairs.
+- **Runs 024–025:** direction-specific skinned body reads and four stage-specific enemy silhouettes.
+- **Run 026:** physical-iPhone readability repair: stronger parry clash, quieter HUD, STEP relocation and initial strike smoothing.
+- **Run 027:** owner P1 repair: real world-space 3D blade-tip cuts toward/crossing the player-facing plane, bounded actual-path trail, larger STEP presentation, and Perfect Parry automatic light riposte without increasing the existing perfect+manual damage budget.
 
-## Highest priority — physical-phone confirmation and player weapon fidelity
+## Highest priority — physical-phone acceptance
 
-Direct iPhone evidence now drives the near-term queue. Do not add unrelated combat systems until the Run 026 readability repair has been re-checked on a physical phone.
+Do not add unrelated combat systems until Run 027 is checked on the target phone.
 
-Preferred next work:
+1. **Physical-iPhone re-check** — verify the enemy katana now visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
+2. **Perfect Parry feel** — confirm the automatic light riposte is immediate/obvious but does not make normal parry or manual swipe follow-up feel redundant.
+3. **STEP readability/layout** — confirm the enlarged STEP label and feedback are readable without entering bottom/right block regions.
+4. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
+5. **First-person player weapon fidelity** — improve hands/katana grip, silhouette and motion after opponent blade acceptance is stable.
 
-1. **Physical-iPhone re-check** — compare enemy swing flow, parry visibility, HUD density and STEP placement directly against the screenshots that triggered Run 026; tune only if evidence still shows a material problem.
-2. **Sustained phone performance tuning** — inspect normal combat distance, frame time, heat and load time; tune material/shadow/pixel-ratio budget without weakening blade readability.
-3. **First-person weapon fidelity** — improve player hands/katana silhouette, grip and motion while keeping the opponent read clear.
-4. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
+## High-value candidates after core acceptance
 
-## High-value product candidates after the core fidelity path
-
-1. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and clean restart.
-2. **Boss refinement** — stronger signature animation/phase language and tuning from play evidence.
-3. **Onboarding follow-through** — only if player evidence shows remaining confusion.
+- Accessibility: timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
+- Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
+- Boss refinement: stronger signature motion/phase language using play evidence.
+- Onboarding follow-through only if physical/user testing still shows confusion.
 
 ## Technical opportunities
 
-- Compact physical-device performance readout only if needed to tune the 60 Hz budget.
+- Compact physical-device performance readout only if needed for 60 Hz tuning.
 - KTX2/Basis only when textured materials are introduced and memory/transfer evidence justifies it.
-- Deterministic replay of combat inputs only if future complexity makes current focused regressions insufficient.
-- Installable PWA/offline shell after renderer/asset loading stabilises.
+- Deterministic replay only if future combat complexity exceeds current focused regressions.
+- PWA/offline shell after renderer/asset loading stabilises.
 
 ## Avoid until justified
 
-- Multiplayer, accounts/cloud saves, monetisation, large inventory systems or open-world navigation.
+- Multiplayer, accounts/cloud saves, monetisation, inventory/open-world expansion.
 - React migration solely to host the renderer.
 - Physics engine without a gameplay requirement.
 - Downloaded 3D assets without explicit provenance/licence review.
-- Retiring the primitive or legacy WebGL2 fallbacks before physical-phone evidence is adequate.
-- Test/refactor work that does not protect a real risk or unlock a visible result.
+- Retiring primitive/WebGL2 fallbacks before physical-phone evidence is adequate.
+- Test/refactor work that does not protect a demonstrated risk or unlock visible player value.

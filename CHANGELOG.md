@@ -1,65 +1,58 @@
 # Changelog
 
+## 0.14.2-evolution — Real blade trajectory + Perfect Parry riposte
+
+- Replaced pose/echo-based enemy weapon implication with four real world-space 3D blade-tip paths on the actual skinned `Sword` joint. Top/right/bottom/left strikes now advance into camera depth, cross a player-facing parry plane, follow through and recover.
+- Added a bounded strike depth lunge plus six reusable world-space trail segments sampled from the actual blade-tip history; old attached swing echoes are suppressed while this path is active.
+- Enlarged STEP primary text materially for phone play, removed its tiny secondary label, and enlarged range/temporary feedback while retaining the lower-right non-overlap layout.
+- Perfect Parry now immediately deals 1 automatic light-riposte damage and produces the existing player counter-slash feedback. The player can still swipe once in the same recovery opening.
+- Moved the previous +1 perfect damage bonus from the later manual counter into the automatic riposte so a normal perfect + opposite-direction follow-up keeps approximately the same total damage instead of stacking a new free bonus.
+- Added focused Node coverage for perfect/normal parry behaviour and extended the existing production PlayCanvas browser contract to verify four-direction blade-tip movement, player-facing plane crossing, bounded world-space trail and STEP text readability.
+
 ## 0.14.1-evolution — Physical-iPhone combat readability repair
 
 - Re-timed the existing skinned `Strike` presentation with a smootherstep playback curve, small full-body whip and two bounded sword-bone afterimages so the cut reads as a continuous accelerating swing instead of pose changes; combat timing remains authoritative in `game-core.js`.
 - Added a stronger direction-aware successful-parry clash with a short contact wash, expanding ring and crossed blade flash; perfect parry remains visibly stronger and reduced-motion retains a compact cue.
 - Reduced live-fight instruction density by suppressing quiet read/track prompts, hiding persistent prompt subtitles/passive edge labels/gesture copy, and enlarging the critical direction indicator and core HUD type.
 - Moved STEP and its range chip to the lower-right safe corner, outside the bottom-block and right-block regions at the 320×568 acceptance viewport, without changing STEP mechanics or pointer isolation.
-- Added the repair as one bounded presentation adapter around the existing PlayCanvas/CombatEngine seams; no new network asset, gameplay rule, account, analytics or paid dependency was introduced.
 
 ## 0.14.0-evolution — Stage-specific skinned enemy identities
 
 - Gave all four duels distinct opponent silhouettes while reusing the same locally generated skinned GLB and five combat-authoritative skeletal clips.
-- Ashigaru now reads through a broad jingasa; Ronin through a headband/sash and altered tsuba; Oni through horned heavy armour and a heavier blade profile; Crimson Shogun through tall antlers, sashimono and an enlarged crimson weapon silhouette.
-- Identity parts attach once to the real `Head` / `Chest` / `Sword` bones and toggle per stage; 17 simple accessories are created after model load with at most six active at once, so no duplicate character asset, texture download or per-frame allocation is introduced.
-- Stage-specific body/weapon scale and commitment are presentation-only and do not change hitboxes, reach, timing, parry windows, damage or encounter rules.
-- Extended the existing production renderer-contract smoke to verify four distinct identity groups, bounded active accessory counts and heavier Oni/Shogun silhouettes without adding another broad test harness.
+- Ashigaru uses a broad jingasa; Ronin a headband/sash and altered tsuba; Oni horned heavy armour and heavier blade; Crimson Shogun tall antlers, sashimono and enlarged crimson weapon silhouette.
 
 ## 0.13.0-evolution — Directional skinned combat readability
 
-- Added distinct top/right/bottom/left full-body choreography on the loaded skinned samurai while keeping the same combat-authoritative `Windup / Strike / Recovery / Parry` clip pipeline.
-- Right and left attacks now visibly coil in opposite directions; bottom attacks lower the stance; top attacks retain the overhead read, with direction-specific lateral/forward body commitment through the strike.
-- Added one bounded translucent read trail attached to the actual skinned sword bone during telegraph/strike so weapon motion carries the cue in-world without another HUD panel.
-- Extended the existing production renderer-contract smoke only enough to prove mirrored right/left body reads, lower bottom stance and the sword-bone trail; no new broad test harness was added.
+- Added distinct top/right/bottom/left full-body choreography around the loaded skinned samurai while keeping the same `Windup / Strike / Recovery / Parry` clip pipeline.
+- Added a bounded translucent read trail attached to the actual skinned sword bone during telegraph/strike.
 
 ## 0.12.2-evolution — Skinned GLB runtime binding repair
 
-- Fixed the production PlayCanvas character loader to unwrap container animation Assets to real `AnimTrack` resources before assigning clips.
-- Added the missing combat animation layer for a fresh `anim` component, then validated and bound `Idle`, `Windup`, `Strike`, `Recovery` and `Parry` by their actual track names.
-- Kept the existing fail-closed production browser gate unchanged; no extra broad test suite, combat-rule change or asset substitution was introduced.
+- Unwrapped PlayCanvas container animation Assets to real `AnimTrack` resources, created the missing combat layer and restored the fail-closed skinned production path.
 
 ## 0.12.1-evolution — Current-baseline CI gate repair
 
-- Repaired stale repository-smoke assertions that still depended on superseded SOT sentence wording after the skinned-samurai baseline landed.
-- Kept the existing Node and production Vite/PlayCanvas browser verification architecture unchanged; no parallel test harness or runtime behaviour was added.
-- The gate now checks the current skeletal animation vocabulary and PlayCanvas-primary renderer statement semantically, allowing browser verification to run again without weakening gameplay/runtime coverage.
+- Repaired stale repository-smoke wording assertions so the real Vite/PlayCanvas browser gate could execute without weakening coverage.
 
 ## 0.12.0-evolution — Original skinned samurai and skeletal combat clips
 
-- Replaced the visible Run 018 primitive opponent, after asset readiness, with an original **skinned glTF/GLB samurai** generated locally from repository source.
-- Added a 19-joint rig and more detailed layered lamellar armour, shoulder/waist plates, greaves, menpo, helmet/crest, hands and katana while keeping a conservative mobile geometry budget and no texture downloads.
-- Added real `Idle`, `Windup`, `Strike`, `Recovery` and `Parry` skeletal animation clips. Clip selection and sampling follow existing combat phase progress; animation does not own parry windows, damage or encounter timing.
-- Added short bounded clip transitions and directional lean while keeping the wider full-body portrait framing.
-- Preserved the previous articulated PlayCanvas character as character-level fallback and the legacy custom WebGL2 renderer as renderer-level fallback.
-- Added deterministic build-time GLB generation through `vite.config.js` and `tools/generate-samurai-glb.mjs`; provenance is recorded in `docs/ASSET_PROVENANCE.md` and the generated binary is not committed.
-- Extended the existing renderer-contract smoke only enough to require the skinned asset and verify Windup → Strike → Parry clip mapping through the real combat sequence.
+- Added a deterministic repository-authored 19-joint skinned GLB samurai, layered armour and real `Idle`, `Windup`, `Strike`, `Recovery`, `Parry` clips; primitive and WebGL2 fallbacks remained.
 
 ## 0.11.2-evolution — PlayCanvas combat-motion verification hardening
 
-- Real-app browser gate drives CombatEngine telegraph → strike → parry → counter through the production PlayCanvas `View`, including enemy/player transform progression and interrupted recovery.
+- Real-app browser gate drives CombatEngine telegraph → strike → parry → counter through the production PlayCanvas View.
 
 ## 0.11.1-evolution — PlayCanvas verification gate repair
 
-- Replaced stale single-file WebGL/text assertions with semantic checks for the approved PlayCanvas-primary/WebGL2-fallback architecture while retaining the real Vite browser gate.
+- Replaced stale single-file WebGL/text assertions with semantic checks for PlayCanvas-primary/WebGL2-fallback architecture.
 
 ## 0.11.0-evolution — PlayCanvas true-3D renderer foundation
 
-- Introduced PlayCanvas standalone + Vite as the primary renderer/build path, true perspective courtyard/lighting/shadows, original articulated primitive samurai and first-person katana; legacy WebGL2 remained fallback.
+- Introduced PlayCanvas standalone + Vite as primary renderer/build path with perspective courtyard, lighting/shadows, articulated samurai and first-person katana; legacy WebGL2 remained fallback.
 
 ## 0.10.1-evolution — Phase-aware motion follow-through
 
-- Removed persistent normal-motion smoothing lag and made interrupted recovery depend on authoritative `attack.parried` state so dropped frames catch up correctly.
+- Made interrupted recovery depend on authoritative `attack.parried` state so dropped frames catch up correctly.
 
 ## 0.10.0-evolution — Four-beat combat motion and adaptive phone rendering
 
@@ -83,7 +76,7 @@
 
 ## 0.6.1-evolution — Guided Duel CI lifecycle repair
 
-- Corrected the onboarding browser lifecycle assertion after tutorial completion.
+- Corrected onboarding browser lifecycle assertion after tutorial completion.
 
 ## 0.6.0-evolution — Guided first duel onboarding
 

@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 26,
+  "run_number": 27,
   "last_action_type": "REGRESSION_FIX",
-  "last_action": "Repaired physical-iPhone combat readability: eased enemy strike playback with bounded blade afterimages/body whip, added unmistakable parry clash feedback, reduced persistent combat copy, enlarged critical direction/HUD cues, and moved STEP/range controls to the lower-right safe corner outside edge-block regions",
-  "last_commit": "c2aae51c00fc91bbbbc5777f0765317d916486da",
+  "last_action": "Repaired owner physical-iPhone P1 findings by driving the real skinned Sword through four world-space blade-tip paths toward/crossing the player-facing plane with a bounded actual-path trail, materially enlarging STEP presentation, and adding a 1-damage automatic Perfect Parry riposte while preserving the manual swipe follow-up and prior total damage budget",
+  "last_commit": "793c456596aa99e3c2a61f867a23589e202f9250",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Re-check the repaired swing/parry/HUD/STEP pass on a physical iPhone and tune only from direct device evidence",
-    "Tune material/shadow/pixel-ratio budget for sustained phone smoothness without weakening attack readability",
-    "Upgrade first-person player hands/katana silhouette and motion after the opponent readability regression is confirmed fixed"
+    "Re-check all four real blade trajectories, Perfect Parry auto-riposte feel, and STEP readability on the same physical iPhone before unrelated feature work",
+    "Tune sustained phone frame-time, shadows and pixel-ratio budget without weakening blade readability",
+    "Upgrade first-person player hands/katana fidelity after opponent trajectory acceptance is confirmed"
   ]
 }
