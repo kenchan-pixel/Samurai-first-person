@@ -32,11 +32,11 @@ This file keeps the autonomous-evolution history concise. Full implementation de
 - Draft PR #1 remained open, Draft and unmerged.
 - No inline review threads existed.
 - Latest current-HEAD All Repos review reported **no actionable P0/P1/P2 finding**.
-- Physical iPhone evidence is treated as new direct-user product evidence: visual fidelity remains insufficient and motion needs complete wind-up / swing / impact / recovery presentation.
+- Physical iPhone evidence was treated as new direct-user product evidence: visual fidelity remained insufficient and motion needed complete wind-up / swing / impact / recovery presentation.
 
 ### Decision baseline
 
-The repository rule prohibits silently replacing the renderer stack. The user's wording asked to **consider** an open-source 3D engine, not to approve a migration. Therefore this run separates two layers:
+The repository rule prohibits silently replacing the renderer stack. The user's wording asked to **consider** an open-source 3D engine, not to approve a migration. Therefore Run 015 separated two layers:
 
 1. **Immediate player-visible motion problem:** safe to improve inside the existing renderer.
 2. **Higher-detail rigged 3D character pipeline:** architecture/asset Decision Gate requiring a bounded prototype and explicit approval.
@@ -47,9 +47,9 @@ Candidates were scored 1–5 for visible impact / goal alignment / novelty / con
 
 - Four-beat continuous motion + adaptive phone render budget: **5 / 5 / 5 / 4 / 5 = 24**.
 - Accessibility settings surface: **4 / 5 / 4 / 4 / 4 = 21**.
-- Immediate open-source-engine + rigged-model migration: **5 / 5 / 5 / 2 / 2 = 19** because asset provenance, migration cost and real-phone performance are not yet evidenced.
+- Immediate open-source-engine + rigged-model migration: **5 / 5 / 5 / 2 / 2 = 19** because asset provenance, migration cost and real-phone performance were not yet evidenced.
 
-The four-beat motion slice wins; the 3D-engine/model path is documented separately as an open Decision Gate.
+The four-beat motion slice won; the 3D-engine/model path was documented separately as an open Decision Gate.
 
 ### Before
 
@@ -80,10 +80,10 @@ The four-beat motion slice wins; the 3D-engine/model path is documented separate
 
 ### Pre-commit verification
 
-- New `animation-motion.js` and renderer passed `node --check`.
+- New `animation-motion.js` and renderer passed syntax checks.
 - New animation-motion Node tests passed locally 5/5.
 - Previous exact HEAD had terminal-green full CI and Vercel Preview.
-- The new exact HEAD must still pass the repository's complete `npm test` + browser/WebGL gate and Vercel Preview before the next feature run.
+- Exact Run 015 HEAD later passed full CI #43 and Vercel Preview, as recorded in the PR receipt.
 
 ### Known risks / human acceptance
 
@@ -91,8 +91,57 @@ The four-beat motion slice wins; the 3D-engine/model path is documented separate
 - Procedural character geometry is still not a substitute for a properly rigged detailed model. The new Decision Gate intentionally prevents an unmeasured engine migration.
 - A future model prototype must prove material visual gain, licence/provenance, load size and physical-phone performance before replacing the current renderer.
 
+## Run 016 — Phase-aware motion follow-through
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Scope:** Remove an animation-latency flaw in the new four-beat pipeline so the fastest attacks can actually display their intended elapsed-time pose on a 60 Hz-oriented phone, while preserving smoothing only for genuine early-parry interruptions.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `d31d639646e3df7b340298a4786628f7001387e8`: CI #43 (`33038662176`) = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft and unmerged.
+- No inline review threads existed.
+- Submitted reviews contained no current-head actionable P0/P1/P2 finding; prior findings were already dispositioned by later green heads.
+- The 3D fidelity Decision Gate remains open and unapproved, so this run does not add a 3D engine or downloaded model.
+
+### Candidate selection
+
+Candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Phase-aware motion follower that removes normal-frame smoothing lag: **5 / 5 / 4 / 5 / 5 = 24**.
+- Accessibility mode: **4 / 5 / 4 / 4 / 4 = 21**.
+- Challenge mode: **4 / 4 / 5 / 3 / 3 = 19**.
+- Immediate rigged-engine migration remained ineligible because its Decision Gate is not approved.
+
+### Problem found
+
+Run 015 correctly made motion elapsed-time based, but the renderer still called `smoothMotionFrame(..., 82ms)` on **every frame**. That means even normal strike frames were low-pass filtered behind their own target. On the fastest 175–330 ms attacks, an 82 ms response delay is large enough to make the rendered swing feel late or incomplete even when the phase data itself is correct.
+
+### After
+
+- `enemyMotionFrame()` now tags its caller-owned frame object with the current phase.
+- Normal telegraph, strike and recovery frames copy the current elapsed-time target directly; a slow/dropped frame catches up rather than adding another smoothing delay.
+- Only a materially interrupted `strike → recovery` transition, such as an early successful parry, receives bounded exponential damping.
+- A natural completed strike enters recovery directly because its visible sword/follow-through boundary is already aligned.
+- No renderer, combat state machine, attack duration or input rule was changed.
+- Added tests proving same-phase direct tracking, natural-boundary direct follow, multi-frame early-parry damping, object reuse and adaptive render-scale behaviour.
+
+### Regression boundaries
+
+- No HP, damage, parry/perfect window, posture, reach, STEP, boss, mastery, onboarding, scoring or persistence rule changed.
+- The renderer remains custom WebGL2 with no third-party runtime engine/model dependency.
+- Motion remains elapsed-time driven and reuses caller-owned objects.
+- Sustained 60 Hz still requires physical-iPhone acceptance; this change removes avoidable render latency but cannot certify device GPU performance.
+
+### Pre-commit verification
+
+- Focused Node suite for the revised motion controller passed locally 8/8.
+- Previous exact HEAD was terminal green in CI and Vercel before feature selection.
+- Exact new HEAD must pass the repository's full `npm test` + browser/WebGL CI and Vercel Preview before the next feature run.
+
 ### Next candidates
 
-- Run a bounded Three.js vs Babylon/custom prototype only after the 3D pipeline Decision Gate is explicitly approved.
-- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
-- Add challenge mode after the core visual/animation direction is stable.
+- Resolve the open 3D pipeline Decision Gate before any rigged-engine/model prototype.
+- Accessibility mode for timing/readability/left-handed support.
+- Challenge mode after visual direction is stable.

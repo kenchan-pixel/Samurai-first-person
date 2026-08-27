@@ -18,10 +18,11 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 013 — Directional impact choreography:** bounded direction-aware contact rings, slash afterimages and sparks with reduced-motion fallback.
 - **Run 014 — Wide-framed 3D visual redraw:** pulled the opponent farther back, strengthened procedural samurai silhouettes/armour, dojo depth and anticipation readability.
 - **Run 015 — Four-beat motion / adaptive phone rendering:** continuous wind-up → swing → impact/follow-through → recovery animation, interruption damping, action-local player sword timing and bounded adaptive internal resolution.
+- **Run 016 — Phase-aware motion follow-through:** normal elapsed-time motion now follows its target directly while only interrupted strike → recovery transitions are damped, removing accumulated visual lag from fast attacks.
 
 ## Highest-priority Decision Gate — rigged 3D character pipeline
 
-Physical iPhone evidence after Run 014 shows that the procedural shader character is still not detailed enough. The next fidelity step should therefore be evaluated as a deliberate architecture/asset decision rather than another small shader repaint.
+Physical iPhone evidence shows that the procedural shader character is still not detailed enough. The next fidelity step should therefore be evaluated as a deliberate architecture/asset decision rather than another small shader repaint.
 
 **Status: OPEN — migration not approved.** See `docs/3D_PIPELINE_DECISION_GATE.md`.
 

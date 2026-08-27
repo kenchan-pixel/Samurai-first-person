@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.10.0-evolution**
+Version: **0.10.1-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -69,10 +69,11 @@ These capabilities are approved for the current evolution branch and cumulative.
 - **Wide-framed enemy baseline:** the enemy is rendered materially farther back than the earlier near-camera presentation. The full body from helmet to feet remains visible in normal portrait framing, with more negative space around the sword path.
 - The opponent retains the Run 014 procedural layered samurai armour and stage-specific silhouette language.
 - The dojo retains stronger visual depth through a receding roof/gate, pillars, lanterns and perspective floor lines while keeping the centre combat lane clear.
-- **Four-beat combat motion:** enemy attacks now present a continuous **wind-up / swing / impact-follow-through / recovery** visual flow. Motion weights share matching boundary poses instead of resetting at each combat phase.
-- If a parry changes the game state before the strike animation has naturally completed, the renderer dampens toward the recovery pose over multiple frames instead of teleporting the sword/body directly to a new pose.
+- **Four-beat combat motion:** enemy attacks present a continuous **wind-up / swing / impact-follow-through / recovery** visual flow. Motion weights share matching boundary poses instead of resetting at each combat phase.
+- **Phase-aware motion follow-through:** normal telegraph/strike/recovery frames now track the elapsed-time target directly rather than carrying a persistent smoothing delay. Fast 175–330 ms strike phases therefore keep their intended visual progression even after a slower frame.
+- Only a materially interrupted strike → recovery transition (for example an early successful parry) keeps bounded multi-frame damping; a natural completed strike enters recovery directly because its visible boundary pose already matches.
 - Enemy stance, torso, arms, hilt, sword trail and cape/weight shift are driven by the same elapsed-time motion frame so the whole body commits to the attack rather than only rotating the blade.
-- Player parry and slash animation now use action-local elapsed progress; the foreground katana no longer depends on a wrapping global-clock animation that could visibly jump mid-action.
+- Player parry and slash animation uses action-local elapsed progress; the foreground katana no longer depends on a wrapping global-clock animation that could visibly jump mid-action.
 - Normal/perfect parries, counters, guard-break contacts and player damage keep bounded direction-aware contact FX. Reduced-motion removes traveling sparks/slashes but retains the contact ring/core.
 - Impact nodes remain pointer-transparent, capped to three and self-cleaning.
 - Boss blood-moon presentation, footwork range chip, posture HUD and Guided Duel remain additive overlays that must not obscure the enemy body/blade read.
@@ -81,6 +82,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 ## Mobile performance baseline
 
 - Combat and animation timing continue to use elapsed time rather than assuming a fixed frame count.
+- Normal animation frames are not recursively low-pass filtered; the render pose follows the current elapsed-time target so a dropped/slow frame catches up instead of accumulating extra visual latency.
 - The renderer maintains a rolling frame-time estimate and adapts **internal render resolution only** within a bounded scale (approximately 1.0–1.6 device pixels per CSS pixel) to protect a 60 Hz-oriented phone experience under load.
 - Adaptive resolution never changes parry windows, strike timing, damage, engine updates, input mapping or encounter rules.
 - The motion controller reuses caller-owned state objects; no per-frame animation-node or DOM allocation is introduced by the four-beat choreography.
@@ -91,7 +93,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Static ES-module web app with no runtime framework dependency.
 - Combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact are additive adapters/observers.
 - Rendering remains isolated in `src/renderer.js`; `src/main.js` owns gameplay/input/HUD orchestration and passes render-state values into the renderer.
-- `src/animation-motion.js` owns deterministic four-beat visual pose weights, transition damping and bounded adaptive render-scale decisions; it does not mutate combat state.
+- `src/animation-motion.js` owns deterministic four-beat visual pose weights, phase-aware interrupted-recovery damping and bounded adaptive render-scale decisions; it does not mutate combat state.
 - The renderer remains one bounded WebGL2 pass with procedural geometry/shading and no texture/model downloads, network calls, per-frame DOM allocation or third-party 3D engine.
 - Browser smoke executes the real app under headless Chromium/SwiftShader and requires shader compile/link, enabled start control and `wide-samurai-v2` renderer initialization.
 - Existing mastery, boss, onboarding, footwork and impact browser harnesses remain required at 320×568.

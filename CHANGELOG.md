@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.1-evolution — Phase-aware motion follow-through
+
+- Removed persistent EMA-style smoothing from normal elapsed-time enemy motion so the fastest 175–330 ms strike phases can visually reach their intended pose instead of trailing behind the game timeline.
+- Normal telegraph, strike and recovery frames now follow the deterministic motion target directly, including after a slow frame, preventing accumulated animation latency.
+- Early successful parries still receive bounded multi-frame strike → recovery damping so interruption remains smooth rather than teleporting.
+- Added regression coverage for same-phase direct tracking, natural phase boundaries, multi-frame interrupted recovery, object reuse and adaptive render scaling.
+- No combat timing, parry window, damage, posture, reach, STEP, boss, mastery, onboarding or renderer-stack rule changed.
+
 ## 0.10.0-evolution — Four-beat combat motion and adaptive phone rendering
 
 - Reworked enemy visual motion around continuous wind-up → swing → impact/follow-through → recovery pose weights instead of phase-local pose resets.

@@ -18,6 +18,7 @@ export function smoother(value) {
 
 export function enemyMotionFrame(phase, progress, out = {}) {
   const p = clamp01(progress);
+  out.phase = phase;
   for (const key of MOTION_KEYS) out[key] = 0;
 
   if (phase === 'telegraph') {
@@ -50,7 +51,36 @@ export function enemyMotionFrame(phase, progress, out = {}) {
   return out;
 }
 
+function copyMotionFrame(target, out) {
+  for (const key of MOTION_KEYS) {
+    out[key] = Number.isFinite(target?.[key]) ? target[key] : 0;
+  }
+  out.phase = target?.phase ?? 'ready';
+  return out;
+}
+
+function recoveryPoseGap(current, target) {
+  return Math.max(
+    Math.abs((target?.sword ?? 0) - (current?.sword ?? 0)),
+    Math.abs((target?.follow ?? 0) - (current?.follow ?? 0)),
+    Math.abs((target?.wind ?? 0) - (current?.wind ?? 0)),
+  );
+}
+
 export function smoothMotionFrame(current, target, frameMs, responseMs = 72, out = current) {
+  const fromPhase = current?.phase;
+  const toPhase = target?.phase;
+  const interruptedRecovery = fromPhase === 'strike'
+    && toPhase === 'recovery'
+    && ((current?.sword ?? 0) < 0.72 || (current?.follow ?? 0) < 0.72);
+
+  // Normal elapsed-time motion already has continuous boundary poses, so track
+  // it exactly. Smoothing every frame adds avoidable latency to the fastest
+  // 175–330 ms strikes and can stop the visible swing from completing.
+  if (!interruptedRecovery || recoveryPoseGap(current, target) < 0.22) {
+    return copyMotionFrame(target, out);
+  }
+
   const dt = Math.max(0, Math.min(50, Number.isFinite(frameMs) ? frameMs : 16.67));
   const response = Math.max(1, responseMs);
   const alpha = 1 - Math.exp(-dt / response);
@@ -60,6 +90,7 @@ export function smoothMotionFrame(current, target, frameMs, responseMs = 72, out
     const to = Number.isFinite(target?.[key]) ? target[key] : 0;
     out[key] = from + (to - from) * alpha;
   }
+  out.phase = fromPhase;
   return out;
 }
 

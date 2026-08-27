@@ -36,14 +36,42 @@ test('strike exposes distinct swing impact and follow-through beats', () => {
   assert.ok(late.sword > impact.sword);
 });
 
-test('early parry smoothing cannot teleport directly to recovery pose in one 60Hz frame', () => {
-  const current = enemyMotionFrame('strike', 0.12, {});
-  const before = current.sword;
-  const target = enemyMotionFrame('recovery', 0, {});
+test('normal strike frames track the exact elapsed-time pose without EMA lag', () => {
+  const current = enemyMotionFrame('strike', 0.32, {});
+  const target = enemyMotionFrame('strike', 0.50, {});
+  smoothMotionFrame(current, target, 33.34, 82, current);
+  assert.deepEqual(current, target);
+});
+
+test('normal phase boundaries do not add a second animation delay', () => {
+  const current = enemyMotionFrame('telegraph', 1, {});
+  const target = enemyMotionFrame('strike', 0.12, {});
   smoothMotionFrame(current, target, 16.67, 82, current);
+  assert.deepEqual(current, target);
+});
+
+test('early parry recovery is damped across multiple 60Hz frames instead of teleporting', () => {
+  const current = enemyMotionFrame('strike', 0.12, {});
+  const target = enemyMotionFrame('recovery', 0, {});
+  const before = current.sword;
+
+  smoothMotionFrame(current, target, 16.67, 82, current);
+  assert.equal(current.phase, 'strike');
   assert.ok(current.sword > before);
   assert.ok(current.sword < 0.2, `one frame jumped too far: ${current.sword}`);
   assert.ok(current.follow < 0.3);
+
+  const afterOne = current.sword;
+  smoothMotionFrame(current, target, 16.67, 82, current);
+  assert.ok(current.sword > afterOne);
+  assert.ok(current.sword < target.sword);
+});
+
+test('natural strike end can enter recovery directly because its visible pose already matches', () => {
+  const current = enemyMotionFrame('strike', 1, {});
+  const target = enemyMotionFrame('recovery', 0, {});
+  smoothMotionFrame(current, target, 16.67, 82, current);
+  assert.deepEqual(current, target);
 });
 
 test('motion helpers reuse caller-owned output objects', () => {
