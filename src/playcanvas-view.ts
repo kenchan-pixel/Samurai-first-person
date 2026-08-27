@@ -222,11 +222,13 @@ export class PlayCanvasView {
             }
           }
           model.addComponent('anim', { activate: true, speed: 1 });
-          const tracks = asset.resource.animations || [];
+          const animationAssets = asset.resource.animations || [];
+          const tracks = animationAssets.map((animationAsset) => animationAsset?.resource).filter(Boolean);
           const available = new Set(tracks.map((track) => track.name));
           for (const clip of CHARACTER_CLIPS) if (!available.has(clip)) throw new Error(`Missing GLB animation clip: ${clip}`);
-          for (const track of tracks) model.anim.baseLayer.assignAnimation(track.name, track, 1, track.name === 'Idle');
-          model.anim.baseLayer.play('Idle');
+          const layer = model.anim.baseLayer || model.anim.addLayer('combat');
+          for (const track of tracks) layer.assignAnimation(track.name, track, 1, track.name === 'Idle');
+          layer.play('Idle');
           this.skinnedModel = model;
           this.characterClip = 'Idle';
           this.hips.enabled = false;

@@ -124,3 +124,33 @@ The skinned-character slice won because physical-phone feedback identified model
 - Physical-iPhone model/material/shadow/pixel-ratio tuning.
 - Direction-specific skeletal attack variants and stronger stage-specific silhouette/weapon language.
 - First-person player katana/hand fidelity once enemy readability and phone budget are stable.
+
+## Run 023 — Repair PlayCanvas skinned-animation binding
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Goal:** Restore the required production browser gate by making the generated skinned GLB reach the live PlayCanvas animation pipeline instead of silently falling back to the primitive opponent.
+
+### Preflight / blocker evidence
+
+- Exact HEAD `92a8ee787817c1ca3772ab511ead34eab4d79496`: Vercel = success, CI run `33072851683` / CI #51 = failure.
+- All 38 Node tests passed; `npm run test:browser` failed closed because the real page reported `data-character-pipeline="primitive-fallback"` and `Skinned GLB samurai did not load on the PlayCanvas backend`.
+- The latest established All Repos review on this exact HEAD raised one applicable **P1** for the same production GLB load/animation path; no inline review threads existed.
+
+### Root cause
+
+- PlayCanvas `ContainerResource.animations` contains animation **Asset** objects. The renderer treated those Assets as if they were `AnimTrack` objects, checked the generated sub-asset names instead of the embedded clip names, and passed the Asset object directly to `assignAnimation()`.
+- A fresh `anim` component also has no base animation layer until a state graph or layer is created. The loader assumed `baseLayer` already existed.
+- PlayCanvas 2.21.4 requires `AnimTrack` resources for `assignAnimation()`; the engine's own examples unwrap container animation assets through `.resource`.
+
+### Repair
+
+- Unwrap every container animation Asset to its `AnimTrack` resource and validate the actual track names `Idle / Windup / Strike / Recovery / Parry`.
+- Create a compact `combat` animation layer when no base layer exists, then assign the real tracks and start `Idle`.
+- Keep the existing production browser smoke unchanged and fail-closed; it already covers the exact regression, so no extra test suite was added.
+
+### Regression boundary / verification
+
+- No combat rules, timing windows, damage, input mapping, STEP, boss, mastery, onboarding, persistence, model geometry, asset provenance or deployment architecture changed.
+- Primitive PlayCanvas and legacy WebGL2 fallbacks remain available for genuine asset/runtime failure.
+- Exact new-head CI must pass both `npm test` and `npm run test:browser`; exact-head Vercel must be terminal green before feature work resumes.

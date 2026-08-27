@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.2-evolution — Skinned GLB runtime binding repair
+
+- Fixed the production PlayCanvas character loader to unwrap container animation Assets to real `AnimTrack` resources before assigning clips.
+- Added the missing combat animation layer for a fresh `anim` component, then validated and bound `Idle`, `Windup`, `Strike`, `Recovery` and `Parry` by their actual track names.
+- Kept the existing fail-closed production browser gate unchanged; no extra broad test suite, combat-rule change or asset substitution was introduced.
+
 ## 0.12.1-evolution — Current-baseline CI gate repair
 
 - Repaired stale repository-smoke assertions that still depended on superseded SOT sentence wording after the skinned-samurai baseline landed.
