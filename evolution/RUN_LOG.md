@@ -192,3 +192,29 @@ Chosen slice: candidate 1. It is player-visible, directly addresses the owner ev
 - This repair does not relax or remove any player-facing browser assertion. Its purpose is to let the existing full Node + browser gate execute again on the exact new HEAD.
 - Post-commit exact-head CI and Vercel results are recorded in the Draft PR run receipt; no second metadata-only commit is allowed.
 - Once the new HEAD is terminal green, the next product decision remains physical-iPhone evidence: re-test Stage 2 Ronin after the clarity pass, then tune Stage 2 only if it still behaves as a difficulty wall.
+
+## Run 032 — Gameplay-clarity browser gate repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Restore the remaining failed browser half of the exact-head gameplay-clarity verification fence without weakening the real phone-facing cue contract.
+
+### Preflight / blocker evidence
+
+- Exact HEAD `37694cab1f2ee6fed60bebfdd5511237585c5b51`: Vercel commit status = success, but CI #60 / run `33113437624` failed.
+- `npm test` passed 42/42. `npm run test:browser` failed because `tests/onboarding-browser-harness.html` still required the obsolete contiguous wording fragment `再掃`, while the production Perfect-riposte cue is `仲有一次掃屏反擊`.
+- The harness therefore reported `data-gameplay-guide-riposte="false"` and `data-onboarding-integration="fail"` even though the actual cue title was `自動補刀 -1` and its follow-up still told the player to swipe-counter.
+- The current-head Second Hourly review classified the stale browser assertion as the actionable P2/exact-head blocker. No inline review threads existed; Draft PR #1 remained open/Draft/unmerged and `main` remained untouched.
+
+### Root cause / repair
+
+- Run 031 corrected the Node semantic assertion but missed the duplicated copy-specific assertion in the existing browser integration harness.
+- Updated only that browser assertion to require the stable semantic contract `掃屏反擊` while retaining the stronger checks that the event is a real accepted Perfect Parry with `autoRiposte === true` and that the visible cue title identifies the automatic follow-up.
+- No production runtime file, Ronin balance value, combat timing/damage, STEP rule, input mapping, renderer/asset, persistence, network or privacy behavior changes.
+- No analytics/telemetry backend is introduced; the owner proposal remains behind the existing privacy Decision Gate.
+
+### Verification boundary / next gate
+
+- The real onboarding browser path remains fully exercised; the test is not removed, skipped or weakened to a readiness-only marker.
+- Post-commit exact-head CI and Vercel results are authoritative in the Draft PR receipt. State intentionally remains `pending_self_verification` inside this one commit until those external checks finish.
+- Once this exact HEAD is terminal green, the next product decision returns to physical-phone evidence: Stage 2 Ronin difficulty after the clarity pass, plus blade/Perfect-riposte/STEP feel.
