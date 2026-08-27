@@ -1,72 +1,67 @@
 # Current Baseline
 
-Version: **0.15.0-evolution**
+Version: **0.16.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
 ## Playable flow
 
 - Mobile-first portrait start screen → **four sequential duels** → victory/defeat → restart without page reload.
-- **Three baseline enemies are followed by the Crimson Shogun boss.**
+- Three baseline enemies are followed by the Crimson Shogun boss.
 - Touch, stylus and mouse input remain supported.
 
-## Guided first duel
+## Guided first duel and combat clarity
 
 - First-time players may use the compact Guided Duel coach for read the blade → directional parry → manual swipe counter using the real combat event stream.
 - Wrong-direction, wrong-time and feint guidance remains contextual; successful parries expose posture and guard-break opportunity.
 - Clearing Ashigaru through STEP/evade counters without a demonstrated parry/manual counter does not persist tutorial completion.
 - A Perfect Parry automatic riposte is a reward, not proof of the Guided Duel manual swipe-counter step.
 - Completion stores only a local preference; blocked storage is non-fatal and the start-screen toggle remains available.
-- Boss entry/Phase II may provide brief rhythm-reset cues when guidance remains enabled.
-
-## Combat guide and contextual clarity
-
-- The start screen now includes a prominent **玩法** button that opens a phone-first, scrollable combat guide without covering normal live combat.
-- The guide explicitly explains the complete core loop: read the final blade direction → tap the matching edge to parry → swipe during recovery to deal normal counter damage.
-- It also explains Perfect Parry's immediate 1-damage automatic riposte plus the remaining manual swipe, the opposite-direction swipe +1 damage bonus, enemy posture/guard break and its +2 manual-counter bonus, and STEP's early-window/range-limited role.
-- Entering Stage 2 now gives one short Ronin cue telling the player to wait for the **final** blade direction because feints can change the initial read.
-- Successful parry, Perfect Parry/automatic riposte, successful STEP evade and guard break produce short, large, pointer-transparent action cues that state the immediate follow-up instead of relying on tiny persistent instruction text.
-- Live combat remains visually quiet: the new explanations are transient, and the long-form guide is opt-in from the start screen.
-- No Stage 2 timing, damage, health, posture or score values are changed by this clarity pass. Ronin balance should be adjusted only after another physical-phone play check confirms that difficulty remains excessive once the hidden rules are learnable.
-- No remote gameplay analytics/telemetry backend is added in this baseline. The existing repo policy treats analytics/external tracking as a privacy Decision Gate; until schema, retention, notice/consent and backend are approved, gameplay data remains local-only.
+- The start screen includes a prominent **玩法** button with the complete core loop, Perfect Parry, counter direction bonus, posture/guard break, normal STEP, **Perfect STEP**, and Ronin feints.
+- Entering Stage 2 gives one short Ronin cue telling the player to wait for the final blade direction because feints can change the initial read.
+- Successful parry, automatic ripostes, STEP evade and guard break use short pointer-transparent action cues instead of dense persistent text.
+- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
+- No remote gameplay analytics/telemetry backend is added. Gameplay statistics remain local-only until a separate privacy/data-retention/backend Decision Gate is approved.
 
 ## Core combat
 
-- **Four defensive directions:** top, right, bottom, left.
+- Four defensive directions: top, right, bottom, left.
 - Edge tap attempts a matching directional block; correct timing/direction parries, with a smaller perfect-parry window.
 - Four-direction swipe attacks remain the normal/manual counter during recovery.
 - Wrong direction/timing can result in damage; a manual counterattack can land once per recovery opening.
-- Enemy posture rises on parry, faster on Perfect Parry. Ashigaru/Ronin/Oni thresholds remain 3/4/5.
+- Enemy posture rises on parry and rises faster on Perfect Parry. Ashigaru/Ronin/Oni thresholds remain 3/4/5.
 - Enemy guard break extends the counter opening and grants +2 damage to the next valid manual counter before posture resets.
 - Incoming hits build player posture; heavy hits build faster. Player guard break at 4 adds +1 damage to that hit and resets posture.
 - Successful parry relieves one player-posture point.
-- **Perfect Parry immediately performs a 1-damage automatic light riposte.** The player may still swipe once during the same recovery opening unless that riposte itself crosses the Crimson Shogun Phase II threshold, where the boss transition takes priority. The previous +1 perfect bonus on the later manual counter is removed when the automatic riposte has fired, so the normal perfect-parry + opposite-direction follow-up damage budget stays approximately unchanged rather than stacking free damage.
+- **Perfect Parry immediately performs a 1-damage automatic light riposte.** The player may still swipe once during the same recovery opening unless that riposte crosses the Crimson Shogun Phase II threshold. The old +1 perfect bonus on the later manual counter is suppressed for that opening, keeping the normal perfect + opposite-direction follow-up damage budget approximately unchanged.
 - Normal parry does not auto-attack and still requires a manual swipe counter.
 
-## Spacing and footwork
+## Spacing, STEP and Perfect STEP
 
 - Combat tracks close / mid / far engagement distance and shows a compact 近 / 中 / 遠 chip.
 - Enemy attacks have reach/setup distance and can approach, retreat or sidestep before attacking.
-- STEP / 後撤 works only in the bounded early strike window, moves one distance step, and creates an evade-recovery opening only when the attack no longer reaches.
-- Long/heavy tracking attacks still reach at far distance, so STEP does not replace directional reading/parry.
+- **Normal STEP / 後撤** works only in the bounded early strike window, moves one distance step, and creates an evade-recovery opening only when the attack no longer reaches. It deals no automatic damage; the player must swipe to counter.
+- **Perfect STEP** is a narrower timing subset inside a successful normal STEP: roughly the first 48–68 ms of the strike depending on strike duration. It immediately performs a 1-damage automatic sidestep riposte, adds **no enemy posture**, and still leaves the one normal manual swipe counter available in that recovery opening.
+- Perfect STEP therefore differs from Perfect Parry: it trades directional reading for strict spacing/reach limits and does not help break enemy posture. Perfect Parry remains the posture-breaking route.
+- Long/heavy tracking attacks still reach at far distance, so neither normal nor Perfect STEP becomes universal invulnerability.
 - Evade counter closes one distance step; stage start/restart resets to mid.
-- STEP remains in the lower-right safe corner outside the centre/bottom block region and right block region at the 320×568 acceptance viewport.
-- The STEP primary label is materially larger on phone; the tiny secondary label is removed, while distance/temporary feedback text is enlarged.
-- STEP pointer capture/isolation, drag rejection and gameplay semantics are unchanged.
+- STEP stays in the lower-right safe corner outside the centre/bottom and right block regions at the 320×568 acceptance viewport. Primary STEP text remains phone-readable and its tiny secondary label stays removed.
+- STEP pointer capture/isolation and drag rejection remain unchanged.
 
 ## Boss encounter
 
 - Crimson Shogun is stage 4 with 12 HP and Phase I posture 6.
-- At 6 HP or lower after any accepted player damage source — manual counter or Perfect Parry automatic riposte — Blood Moon Phase II triggers once before another counter/attack can resolve, resets posture/attack cursor, creates an 1100 ms breathing gap and switches to faster/tighter pressure.
+- At 6 HP or lower after any accepted player damage source — manual counter, Perfect Parry automatic riposte, or Perfect STEP automatic riposte — Blood Moon Phase II triggers once before another counter can resolve, resets posture/attack cursor, creates the existing 1100 ms breathing gap, and switches to the Phase II pressure set.
 - Phase II posture is 7, perfect-parry timing tightens and the attack set changes.
 - Boss blood-moon/ember atmosphere remains bounded, pointer-transparent and honours reduced motion.
 - Restart restores Phase I; victory flows into mastery.
 
 ## Mastery and replay feedback
 
-- Duel telemetry tracks parry attempts/success, perfect parries, guard breaks, manual counters, hits, damage and elapsed time **locally** without changing combat resolution.
-- Victory produces a 0–100 mastery score and S/A/B/C/D grade; defeat remains D while still showing learning stats.
-- Result screen shows mastery, parry accuracy, perfect parries, guard breaks, hits taken, clear time and numeric score.
+- Duel telemetry tracks parry attempts/success, Perfect Parries, guard breaks, manual counters, hits, damage and elapsed time **locally** without changing combat resolution.
+- Automatic Perfect Parry / Perfect STEP riposte damage now contributes to local `damageDealt`, while `counters` remains a count of manual swipe counters only.
+- Victory produces a 0–100 mastery score and S/A/B/C/D grade; defeat remains D while still showing run statistics.
+- Result screen shows mastery, parry accuracy, Perfect Parries, guard breaks, hits taken, clear time and numeric score.
 - Better victories may replace a local personal best; worse runs do not. Storage failure is non-fatal.
 - No account, network sync, remote analytics or external gameplay-data service is used.
 
@@ -76,46 +71,39 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Wandering Ronin: faster rhythm, feints, mixed directions, lateral footwork, close/mid reach.
 - Oni Guard: heavy damage, shorter strike windows, higher HP/posture, strong tracking/heavy posture pressure.
 - Crimson Shogun: multi-phase boss, higher posture resistance, heavy/feint signatures, Blood Moon ruleset shift and long-reach pressure.
-- The shared skinned GLB adds distinct stage silhouettes on the actual Head / Chest / Sword bones: jingasa Ashigaru, headband/sash Ronin, horned heavy Oni, and antler/sashimono Crimson Shogun.
-- Identity parts are presentation-only and do not change reach, hitboxes, timing, parry windows or damage.
+- The shared skinned GLB adds distinct stage silhouettes on the actual Head / Chest / Sword bones. Identity parts are presentation-only and do not change reach, hitboxes, timing, parry windows or damage.
 
 ## Presentation and visual identity
 
-- **PlayCanvas Engine standalone remains the primary production-facing renderer.** The older custom WebGL2 renderer remains the compatibility fallback.
+- PlayCanvas Engine standalone remains the primary production-facing renderer; the older custom WebGL2 renderer remains the compatibility fallback.
 - The visible opponent is an original locally generated skinned glTF/GLB samurai once the asset loads; the articulated primitive remains character-level fallback.
 - The generated model has a 19-joint skin, layered armour and real `Idle / Windup / Strike / Recovery / Parry` clips. Combat authority remains renderer-neutral.
 - Enemy full-body framing remains far enough back to keep helmet-to-feet silhouette and weapon path readable in portrait.
-- Direction-specific body choreography remains additive, but **the weapon no longer relies on whole-body pose rotation to imply a cut**.
-- On the production skinned path, top/right/bottom/left attacks drive the actual `Sword` bone through a direction-specific **3D blade-tip trajectory**. During commitment, the opponent adds a bounded depth lunge, the katana points toward the camera/player, crosses a defined player-facing parry plane, follows through, then blends back into recovery.
-- The old Run 026 bone-attached swing echoes are disabled by the trajectory layer. A bounded set of reused world-space trail segments is built from actual blade-tip history so the trail follows the real cut path rather than decorating an incorrect orientation.
-- Telegraph/read glow still follows the real sword bone. No new model, texture, physics system or network asset is introduced.
-- Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash; Perfect Parry remains visibly stronger and immediately transitions into the automatic player riposte animation/feedback.
-- Live combat text stays intentionally quiet: passive edge labels/persistent gesture sentence remain hidden and critical direction cues remain larger than the original prototype.
-- Reduced-motion continues to suppress traveling effects while preserving a short readable contact cue.
+- Top/right/bottom/left attacks drive the actual `Sword` bone through direction-specific 3D blade-tip trajectories that advance toward/cross the player-facing parry plane and follow through before recovery.
+- The bounded world-space trail follows actual blade-tip history rather than decorating a body pose; the old attached swing echoes remain suppressed by the trajectory layer.
+- Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
+- Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
 
 ## Mobile performance baseline
 
 - Gameplay and animation timing remain elapsed-time based rather than frame-count based.
 - PlayCanvas adapts internal pixel ratio conservatively from rolling frame time; quality may fall before gameplay timing/responsiveness does.
-- The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities and create no per-frame model/trail objects.
-- The world-space blade trail allocates a maximum of six segment entities once after character readiness and only repositions/reuses them during strike.
-- Generated GLB remains deliberately lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
+- The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
+- The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
+- Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
 
 ## Technical baseline
 
-- `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact and Perfect Parry riposte are bounded adapters around that core.
-- `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old manual perfect damage bonus only for that same opening. It deliberately exposes the automatic visual hit to the main runtime after onboarding/mastery observers have processed the raw event, so Guided Duel still requires a real swipe counter.
-- `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II threshold transition. Manual counter damage and Perfect Parry automatic-riposte damage both invoke the same authoritative HP gate so Phase I cannot be defeated by bypassing Blood Moon.
-- `src/onboarding-coach.js` now owns both the original optional Guided Duel and the non-intrusive gameplay-clarity layer: start-screen combat guide plus bounded event-driven follow-up/Ronin cues. It observes combat events only and does not change combat authority.
+- `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact and automatic-riposte systems are bounded adapters around that core.
+- `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old later perfect damage bonus only for the same opening.
+- `src/perfect-step.js` wraps the existing footwork seam only after a STEP has genuinely escaped attack reach. It owns the narrower Perfect STEP timing grade, 1-damage automatic sidestep riposte, guide/cue integration and conversion of its raw event into the existing visible counter event. It does not change normal STEP reach, timing window, posture or manual-counter rules.
+- `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II HP threshold. Manual counter, Perfect Parry auto-riposte and Perfect STEP auto-riposte all invoke the same gate.
+- `src/onboarding-coach.js` owns the Guided Duel and phone-first gameplay-clarity sheet; Perfect STEP appends one additional guide card without changing combat authority.
+- `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
-- `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, Run 026 readability, the world-space blade trajectory, and phone control readability.
-- `src/blade-trajectory.js` is presentation-only: it overrides the real skinned Sword world orientation late enough to survive skeletal sampling, applies bounded strike depth, and reuses world-space blade-tip trail segments. It cannot change hit/parry timing or damage.
-- `src/mobile-control-readability.js` enlarges STEP/range/temporary feedback presentation only; STEP mechanics remain in `src/footwork.js`.
-- `tools/generate-samurai-glb.mjs` remains the auditable source for the local skinned model/rig/clips; Vite generates the binary for CI/Vercel.
-- The real-app browser gate still requires PlayCanvas + the skinned GLB and drives a representative CombatEngine sequence. It additionally verifies all four world-space blade paths move through the player-facing plane, the actual tip advances toward the player, world-space trail history is bounded, and the STEP primary label meets the phone readability floor.
-- Focused Node coverage verifies Perfect Parry auto-riposte damage plus preservation of the manual swipe follow-up, unchanged normal-parry behavior, and the cross-module Crimson Shogun Phase II threshold when automatic riposte damage reaches 6 HP.
-- Existing onboarding Node/browser coverage now also verifies the gameplay guide's critical rule copy, Stage 2 Ronin final-direction cue and Perfect-Parry automatic-riposte follow-up cue at the 320×568 phone acceptance viewport.
+- `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory and phone control readability.
+- Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and now requires the visible Perfect STEP auto-riposte/guide contract.
 
 ## Approved 3D direction
 

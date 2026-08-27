@@ -29,6 +29,8 @@ export function observeMasteryEvent(session, event) {
   } else if (event.type === 'counter') {
     session.counters += 1;
     session.damageDealt += Math.max(0, Number(detail.damage) || 0);
+  } else if (event.type === 'perfect-riposte' || event.type === 'perfect-step-riposte') {
+    session.damageDealt += Math.max(0, Number(detail.damage) || 0);
   } else if (event.type === 'player-hit') {
     session.hitsTaken += 1;
     session.damageTaken += Math.max(0, Number(detail.damage) || 0);

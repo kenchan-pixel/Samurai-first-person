@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.0-evolution — Perfect STEP sidestep riposte
+
+- Split STEP into two clearly different skill outcomes without removing the existing evade route: a normal successful STEP still only creates a manual swipe-counter opening, while a narrower 48–68 ms **Perfect STEP** window immediately performs a 1-damage sidestep riposte.
+- Perfect STEP adds no enemy posture, so Perfect Parry remains the posture-breaking route; long/heavy tracking attacks still cannot be escaped merely by perfect timing.
+- The same Perfect STEP recovery still allows one manual swipe counter. Automatic damage uses the existing player counter-slash feedback and gets a concise `PERFECT STEP` cue plus a new gameplay-guide card.
+- Perfect STEP automatic damage now uses the same Crimson Shogun Phase II HP gate as manual counters and Perfect Parry ripostes, preventing Blood Moon bypass.
+- Local mastery now includes automatic Perfect Parry / Perfect STEP riposte damage in `damageDealt` without counting either as a manual counter.
+- Added focused Node/browser coverage for normal-vs-perfect STEP timing, tracking attacks, manual follow-up, actual STEP pointer integration, and the boss 7→6 HP Perfect STEP threshold path.
+
 ## 0.15.1-evolution — Gameplay-clarity verification gate repair
 
 - Repaired the Run 030 onboarding cue regression assertion that expected the obsolete wording fragment `再掃` while the intended production cue says `仲有一次掃屏反擊`.

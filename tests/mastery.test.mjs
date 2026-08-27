@@ -9,12 +9,14 @@ import {
   observeMasteryEvent,
 } from '../src/mastery.js';
 
-test('mastery tracks parry quality, guard breaks, counters and damage taken', () => {
+test('mastery tracks manual counters plus automatic riposte damage without counting auto hits as manual counters', () => {
   const session = createMasterySession(1000);
   observeMasteryEvent(session, { type: 'perfect-parry' });
+  observeMasteryEvent(session, { type: 'perfect-riposte', detail: { damage: 1 } });
   observeMasteryEvent(session, { type: 'parry' });
   observeMasteryEvent(session, { type: 'parry-miss' });
   observeMasteryEvent(session, { type: 'enemy-guard-break' });
+  observeMasteryEvent(session, { type: 'perfect-step-riposte', detail: { damage: 1 } });
   observeMasteryEvent(session, { type: 'counter', detail: { damage: 4 } });
   observeMasteryEvent(session, { type: 'player-hit', detail: { damage: 2 } });
 
@@ -26,7 +28,7 @@ test('mastery tracks parry quality, guard breaks, counters and damage taken', ()
   assert.equal(report.counters, 1);
   assert.equal(report.hitsTaken, 1);
   assert.equal(report.damageTaken, 2);
-  assert.equal(report.damageDealt, 4);
+  assert.equal(report.damageDealt, 6);
   assert.equal(report.elapsedMs, 60000);
 });
 

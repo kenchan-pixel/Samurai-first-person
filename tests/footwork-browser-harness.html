@@ -10,17 +10,23 @@
     <canvas id="game-canvas"></canvas>
     <div id="gesture-hint"></div>
     <section id="start-screen"><small></small></section>
+    <div class="combat-guide__cards"></div>
+    <div id="combat-action-cue" hidden><strong></strong><span></span></div>
   </div>
   <script type="module">
     import { CombatEngine, Direction } from '../src/game-core.js';
     import { installFootwork } from '../src/footwork.js';
+    import { installPerfectStep } from '../src/perfect-step.js';
 
     installFootwork(CombatEngine);
+    installPerfectStep(CombatEngine);
 
     const app = document.querySelector('#app');
     const canvas = document.querySelector('#game-canvas');
     const step = document.querySelector('#footwork-step');
     const range = document.querySelector('#footwork-range');
+    const feedback = document.querySelector('#footwork-feedback');
+    const actionCue = document.querySelector('#combat-action-cue');
     let stepBubbleCount = 0;
     let capturedPointer = null;
     let canvasPointer = null;
@@ -77,8 +83,18 @@
     shortCombat.update(1550);
     const telegraph = shortCombat.snapshot(1550);
     shortCombat.update(1650);
+    const postureBeforePerfectStep = shortCombat.enemyPosture;
     dispatchStep(41, 100, 100, 103, 102);
     const evadeSnapshot = shortCombat.snapshot(1660);
+    const autoHp = shortCombat.enemyHp;
+    const autoEvents = shortCombat.drainEvents();
+    const perfectStepVisible =
+      autoHp === 3 &&
+      shortCombat.enemyPosture === postureBeforePerfectStep &&
+      autoEvents.some((event) => event.type === 'counter' && event.detail?.automatic && event.detail?.perfectStep) &&
+      feedback?.textContent.includes('PERFECT STEP') &&
+      actionCue?.querySelector('strong')?.textContent.includes('PERFECT STEP') &&
+      actionCue?.querySelector('span')?.textContent.includes('仲可掃屏');
     const counter = shortCombat.attemptAttack(Direction.BOTTOM, 1670);
 
     const thresholdCombat = new CombatEngine({ enemies: [shortEnemy] });
@@ -103,37 +119,47 @@
     heavyCombat.update(1650);
     dispatchStep(43, 100, 100, 101, 101);
     const trackedSnapshot = heavyCombat.snapshot(1660);
+    const heavyEventsBeforeHit = heavyCombat.drainEvents();
     heavyCombat.update(1770);
 
     canvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 77, clientX: 10, clientY: 10 }));
     canvas.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 77, clientX: 12, clientY: 12 }));
 
     const uiReady = Boolean(step && range && document.documentElement.dataset.footworkReady === 'true');
+    const guideReady =
+      document.documentElement.dataset.perfectStepReady === 'true' &&
+      document.documentElement.dataset.perfectStepGuide === 'true' &&
+      document.querySelector('[data-perfect-step-guide]')?.textContent.includes('PERFECT STEP');
     const shortPassed =
       telegraph.enemyDistance === 0 &&
       telegraph.attack?.reachDistance === 0 &&
       evadeSnapshot.phase === 'recovery' &&
       evadeSnapshot.attack?.evaded === true &&
+      perfectStepVisible &&
       counter.accepted === true &&
-      counter.evaded === true;
+      counter.evaded === true &&
+      counter.damage === 2 &&
+      shortCombat.enemyHp === 1;
     const longPassed =
       heavyTelegraph.enemyDistance === 2 &&
       heavyTelegraph.attack?.reachDistance === 2 &&
       trackedSnapshot.phase === 'strike' &&
       trackedSnapshot.attack?.evaded === false &&
+      !heavyEventsBeforeHit.some((event) => event.type === 'counter' && event.detail?.perfectStep) &&
       heavyCombat.playerHp === 3;
     const pointerPathPassed = capturedPointer === 43 && stepBubbleCount === 0 && canvasPointer === null;
     const travelThresholdPassed =
       thresholdSnapshot.phase === 'strike' &&
       thresholdSnapshot.attack?.evaded === false &&
-      !thresholdEvents.some((event) => event.type === 'backstep-evade' || event.type === 'footwork-miss');
+      !thresholdEvents.some((event) => event.type === 'backstep-evade' || event.type === 'footwork-miss' || event.detail?.perfectStep);
 
-    document.documentElement.dataset.footworkIntegration = shortPassed && longPassed && uiReady ? 'pass' : 'fail';
+    document.documentElement.dataset.footworkIntegration = shortPassed && longPassed && uiReady && guideReady ? 'pass' : 'fail';
     document.documentElement.dataset.footworkShortEvade = String(shortPassed);
     document.documentElement.dataset.footworkLongTrack = String(longPassed);
     document.documentElement.dataset.footworkUi = String(uiReady);
     document.documentElement.dataset.footworkPointer = String(pointerPathPassed);
     document.documentElement.dataset.footworkTravelThreshold = String(travelThresholdPassed);
+    document.documentElement.dataset.perfectStepIntegration = String(perfectStepVisible && guideReady);
   </script>
 </body>
 </html>

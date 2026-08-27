@@ -18,13 +18,14 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 030:** gameplay clarity pass: phone-first 玩法 guide, large transient follow-up cues and explicit Stage 2 Ronin feint/final-direction lesson without changing combat balance values.
 - **Run 031:** first exact-head gameplay-clarity gate repair: aligned the Node Perfect-riposte assertion with the intended `掃屏反擊` semantic cue; the browser harness then exposed the same remaining stale wording check.
 - **Run 032:** completed the exact-head gameplay-clarity gate repair by aligning the existing browser integration assertion with the same semantic `掃屏反擊` contract, without changing production gameplay.
+- **Run 033:** separated STEP into normal evade and a narrower **Perfect STEP** skill reward: automatic 1-damage sidestep riposte, no posture damage, manual swipe still available, tracking attacks still punish STEP, and boss Phase II remains authoritative.
 
 ## Highest priority — physical-phone acceptance
 
 1. **Stage 2 Ronin re-check after the clarity pass** — confirm whether the difficulty wall remains after the player is explicitly taught that normal parry needs a swipe counter, opposite-direction swipe gains +1, STEP is range-limited, and Ronin feints require waiting for the final blade direction.
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
-3. **Perfect Parry feel** — confirm automatic light riposte is immediate/obvious and the short cue makes the remaining manual swipe understandable without making normal parry redundant.
-4. **STEP readability/layout** — confirm the enlarged STEP label and short evade cue are readable without entering bottom/right block regions.
+3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
+4. **STEP readability/layout** — confirm normal STEP vs Perfect STEP feedback is readable without entering bottom/right block regions and without restoring dense combat text.
 5. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
 
 ## High-value candidates after core acceptance
