@@ -68,8 +68,8 @@ test('evolution source of truth is present', async () => {
   assert.match(baseline, /Four defensive directions/);
   assert.match(baseline, /four sequential duels/i);
   assert.match(baseline, /Three baseline enemies are followed by the Crimson Shogun boss/);
-  assert.match(baseline, /wind-up.*swing.*impact.*recovery/is);
-  assert.match(baseline, /PlayCanvas Engine standalone is now the primary production-facing renderer/);
+  assert.match(baseline, /Windup.*Strike.*Recovery.*Parry/is);
+  assert.match(baseline, /PlayCanvas Engine standalone.*primary production-facing renderer/is);
   assert.match(rules, /substantial visible vertical slice/i);
   assert.match(rules, /Never merge the pull request/i);
 });

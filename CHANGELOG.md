@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.1-evolution — Current-baseline CI gate repair
+
+- Repaired stale repository-smoke assertions that still depended on superseded SOT sentence wording after the skinned-samurai baseline landed.
+- Kept the existing Node and production Vite/PlayCanvas browser verification architecture unchanged; no parallel test harness or runtime behaviour was added.
+- The gate now checks the current skeletal animation vocabulary and PlayCanvas-primary renderer statement semantically, allowing browser verification to run again without weakening gameplay/runtime coverage.
+
 ## 0.12.0-evolution — Original skinned samurai and skeletal combat clips
 
 - Replaced the visible Run 018 primitive opponent, after asset readiness, with an original **skinned glTF/GLB samurai** generated locally from repository source.

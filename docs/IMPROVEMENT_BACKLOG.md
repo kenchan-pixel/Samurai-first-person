@@ -18,6 +18,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 019 — PlayCanvas verification repair:** current architecture/browser gate restored after stale smoke assertions.
 - **Run 020 — PlayCanvas motion-contract verification:** real production View driven through telegraph → strike → parry → counter.
 - **Run 021 — Original skinned samurai vertical slice:** deterministic local GLB generated from repository source, 19-joint skin, layered armour and five real skeletal clips; combat phase progress remains authoritative and the primitive renderer character remains fallback.
+- **Run 022 — Current-baseline CI gate repair:** removed stale sentence-coupled SOT assertions so the existing Node + production PlayCanvas browser gate can verify the skinned-character baseline again without adding a new test harness.
 
 ## Highest priority — physical-phone quality and animation refinement
 

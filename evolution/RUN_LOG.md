@@ -87,3 +87,40 @@ The skinned-character slice won because physical-phone feedback identified model
 - Physical-iPhone model/material/shadow/pixel-ratio tuning.
 - Direction-specific skeletal attack variants and stage-specific silhouette language.
 - First-person player katana/hand fidelity after the enemy path stabilises.
+
+## Run 022 — Restore current-baseline CI gate
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the exact-head CI failure introduced after Run 021 so the production PlayCanvas/skinned-character browser gate can execute again without weakening coverage.
+
+### Preflight / review disposition
+
+- Exact HEAD `5fce1f055d44d4d6e2f8328f82d4fd7959b4d6a8`: Vercel status = success, but CI run `33070780364` / CI #50 = failure, so feature work was prohibited.
+- CI failed in `npm test` before browser verification. The single failing assertion was a repository-smoke wording check that still required historical `wind-up → swing → impact → recovery` text after the baseline had moved to the current skeletal clip vocabulary.
+- Draft PR #1 remained open, Draft and unmerged; no inline review threads existed.
+- Latest established review on previous verified HEAD `3c5eb050c00bb0c317eea7292edfefc4b4782ec2` reported no actionable P0/P1/P2 finding. No newer submitted review covered the failed Run 021 HEAD before this repair.
+
+### Before
+
+- Runtime and deployment had advanced to the skinned GLB pipeline, but `tests/repo-smoke.test.mjs` still coupled SOT verification to superseded sentence wording.
+- The same test also depended on the old phrase `is now the primary` even though the approved baseline now correctly says PlayCanvas `remains` primary.
+- Because `npm test` failed first, the real Vite/Chromium PlayCanvas browser gate was skipped.
+
+### After
+
+- Kept the same repository smoke test and changed only the brittle SOT wording assertions to semantic checks for the current skeletal sequence (`Windup / Strike / Recovery / Parry`) and PlayCanvas-primary renderer statement.
+- Runtime, combat timing, asset generation, renderer, input and browser harness behaviour are unchanged.
+- No new test suite or parallel harness was added; this restores the existing risk-proportionate gate instead of expanding process volume.
+
+### Verification / regression boundary
+
+- The prior failure was isolated from GitHub Actions logs to one stale SOT assertion; 37/38 Node tests passed before the fix.
+- Exact new-head CI must pass both `npm test` and the existing `npm run test:browser`; exact-head Vercel must remain terminal green before the next feature run.
+- No gameplay, damage, timing, parry, STEP, boss, mastery, onboarding, persistence, network, asset provenance or renderer behaviour changed.
+
+### Next candidates
+
+- Physical-iPhone model/material/shadow/pixel-ratio tuning.
+- Direction-specific skeletal attack variants and stronger stage-specific silhouette/weapon language.
+- First-person player katana/hand fidelity once enemy readability and phone budget are stable.
