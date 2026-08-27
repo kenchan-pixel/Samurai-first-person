@@ -48,6 +48,18 @@ A qualifying implementation must be substantial enough that a player can clearly
 
 A material blocker/regression repair counts as the run's action when it restores the safety or correctness of the autonomous delivery loop, repository baseline, deployment, or playable game.
 
+## Outcome-first engineering discretion
+
+Ken has delegated the detailed sequencing of testing, refactoring and continued improvement to the agent. Use that discretion to maximise playable outcomes rather than process volume.
+
+- Treat tests as evidence, not as the product. Add only the smallest risk-proportionate verification needed for the changed behaviour and critical baseline; do not add tests merely to increase coverage or test count.
+- Refactor only when it directly unlocks, simplifies or de-risks the current player-visible slice. Prefer incremental seams/adapters over broad rewrites.
+- A run should not be consumed by a disposable spike when a bounded production-facing vertical slice can provide the same evidence.
+- Preserve deterministic combat/timing logic independently from rendering/animation so visual upgrades do not silently change parry windows or encounter rules.
+- The PlayCanvas-first 3D direction documented in `docs/3D_PIPELINE_DECISION_GATE.md` is approved for incremental implementation. The agent may introduce the approved renderer/build/asset pipeline without a new human gate, provided hard constraints remain satisfied.
+- Stop for a new Decision Gate only when evidence would require changing the approved product direction, introducing material cost/privacy/licensing risk, removing cumulative behaviour, or adopting a substantially different stack than the approved 3D direction.
+- Physical iPhone evidence remains the primary performance acceptance signal, but lack of immediate device access must not force a HOLD for bounded implementation work. Use browser/runtime evidence, conservative budgets and a graceful fallback until the next physical-device check.
+
 ## Git / PR protocol
 
 - Work only on the persistent `autonomous-evolution` branch.
@@ -61,6 +73,8 @@ A material blocker/regression repair counts as the run's action when it restores
 ## Verification / deployment
 
 Before committing, inspect/run all available tests and regression evidence. Protect mobile portrait input, first-person combat, directional parry/swipe behaviour, enemy progression, audio, and performance. Do not weaken tests to pass.
+
+Verification should be proportionate to the change. Reuse existing coverage when it already proves an unchanged path; add focused tests only for new high-risk behaviour or a regression that previously escaped. Do not build parallel test harnesses for the same behaviour without a concrete failure mode.
 
 After a successful implementation commit, inspect exact-head CI and Vercel Preview status. A preview may deploy before reviewer approval; production remains tied to Ken merging `main`.
 
@@ -82,4 +96,4 @@ If no qualifying implementation is safe, do not commit; leave a concise PR Decis
 
 ## Hard constraints
 
-All prior approved requirements are cumulative. Do not silently delete functionality. Do not change the stack, introduce login/payment/analytics/tracking/paid APIs, or import copyrighted game assets without approval. Optimise for a maintainable, low-dependency web game and a smooth mobile experience.
+All prior approved requirements are cumulative. Do not silently delete functionality. Do not change the stack outside an approved Decision Gate, introduce login/payment/analytics/tracking/paid APIs, or import copyrighted game assets without approval. Optimise for a maintainable, low-dependency web game and a smooth mobile experience.

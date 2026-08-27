@@ -20,21 +20,34 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 015 — Four-beat motion / adaptive phone rendering:** continuous wind-up → swing → impact/follow-through → recovery animation, interruption damping, action-local player sword timing and bounded adaptive internal resolution.
 - **Run 016 — Phase-aware motion follow-through:** normal elapsed-time motion now follows its target directly while only interrupted strike → recovery transitions are damped, removing accumulated visual lag from fast attacks.
 
-## Highest-priority Decision Gate — rigged 3D character pipeline
+## Highest-priority implementation — rigged 3D character pipeline
 
-Physical iPhone evidence shows that the procedural shader character is still not detailed enough. The next fidelity step should therefore be evaluated as a deliberate architecture/asset decision rather than another small shader repaint.
+Physical iPhone evidence shows that the procedural shader character is still not detailed enough. The 3D architecture direction is now approved rather than blocked on another selection round.
 
-**Status: OPEN — migration not approved.** See `docs/3D_PIPELINE_DECISION_GATE.md`.
+**Approved direction:** **PlayCanvas Engine standalone + incremental Vite/TypeScript 3D layer + local Blender-authored/licensed glTF/GLB rigged characters + KTX2/Basis textures where useful.** See `docs/3D_PIPELINE_DECISION_GATE.md`.
 
-Candidate prototype order:
+### Preferred next vertical slice
 
-1. **Three.js + local glTF/GLB rigged character** — tentative first prototype because it is a focused browser 3D library with a large ecosystem and MIT licence.
-2. **Babylon.js + local glTF/GLB rigged character** — stronger full game-engine/tooling option; evaluate if its extra scene/animation tooling materially reduces implementation cost.
-3. **Stay on custom WebGL2 + build our own rig/model loader** — lowest dependency count but highest engineering burden; only retain if engine/library overhead is proven unacceptable.
+Deliver a production-facing first PlayCanvas duel slice rather than a throwaway demo:
 
-Before approving a migration, one bounded prototype must compare: load size, first-load time, animation quality, sustained physical-phone frame timing, memory/GPU symptoms, asset provenance/licence, mobile Safari compatibility, and integration cost with the existing combat state machine.
+1. introduce a narrow renderer adapter/fallback seam without moving deterministic combat rules into the engine;
+2. load one clearly licensed/original rigged samurai at the current wide combat framing;
+3. drive a complete wind-up → swing → impact/follow-through → recovery animation from the existing combat phase/timing state;
+4. preserve real parry/swipe/STEP behaviour and stage/restart flow;
+5. keep the procedural renderer as a temporary fallback until the new path is proven stable;
+6. deploy to the existing Vercel Preview for immediate physical-iPhone quality/performance feedback.
 
-## High-value candidates after the Decision Gate
+Testing/refactoring should be proportionate to the risks of this slice. Reuse existing regression coverage, add only focused integration evidence for new engine/model/animation failure modes, and avoid spending a run on test-count growth or broad cleanup without visible gameplay payoff.
+
+### Fallback order if evidence rejects PlayCanvas
+
+1. **Babylon.js + local glTF/GLB rigged character** — strongest full-engine alternative if it provides a material animation/performance/maintenance advantage.
+2. **Three.js + local glTF/GLB rigged character** — focused rendering-library alternative if a thinner engine layer proves preferable.
+3. **Stay on custom WebGL2 + build our own rig/model loader** — only if third-party engine overhead is proven unacceptable; highest engineering burden.
+
+A new human Decision Gate is needed only if evidence points to a substantially different direction or introduces new material cost/privacy/licensing risk.
+
+## High-value candidates after / alongside the 3D migration
 
 1. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and a clean restart loop.
@@ -58,3 +71,4 @@ Before approving a migration, one bounded prototype must compare: load size, fir
 - Open-world navigation.
 - Framework migration solely for fashion or preference.
 - Downloaded 3D asset packs without explicit provenance/licence review and mobile performance evidence.
+- Test or refactor work that does not protect a real risk or unlock a player-visible result.

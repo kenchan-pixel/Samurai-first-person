@@ -14,6 +14,8 @@
 - Preserve the current playable baseline before adding features.
 - Do not merge pull requests. Final merge belongs to Ken.
 - Do not replace the technology stack without a documented Decision Gate.
+- An approved Decision Gate may be executed incrementally without asking again for each internal refactor/test/migration step; stop for human input only if the approved assumptions, hard constraints, licensing/cost/privacy boundary, or product direction materially changes.
+- Testing and refactoring are supporting tools, not delivery goals. Prefer the smallest risk-proportionate verification set that proves the changed behaviour and protects the critical playable baseline. Do not inflate test count or spend an evolution run on test/refactor-only work unless it repairs a material blocker/regression.
 - Do not add login, payments, analytics, advertising, external tracking, paid APIs, or sensitive permissions without approval.
 - Do not use copyrighted game assets, character likenesses, music, logos, or copied level designs.
 

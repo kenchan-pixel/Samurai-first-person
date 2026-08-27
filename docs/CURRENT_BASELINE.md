@@ -100,8 +100,10 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Impact browser coverage runs under `prefers-reduced-motion` and proves ring feedback remains while sparks/slash travel are absent and cleanup remains bounded.
 - GitHub Actions runs Node tests plus browser/WebGL integration on pull requests and pushes to `main`.
 
-## Open 3D fidelity Decision Gate
+## Approved 3D fidelity direction — migration not yet delivered
 
-The physical-phone review confirms that procedural shader art is still below the desired character fidelity. A rigged-model/open-source-engine path is now an **open Decision Gate**, not an approved stack migration. See `docs/3D_PIPELINE_DECISION_GATE.md`.
+Physical-phone review confirms that procedural shader art is still below the desired character fidelity. The approved next direction is now **PlayCanvas Engine standalone + incremental Vite/TypeScript 3D layer + local rigged glTF/GLB assets, with KTX2/Basis textures where useful**. See `docs/3D_PIPELINE_DECISION_GATE.md`.
 
-Until that gate is approved, the current static ES-module/WebGL2 architecture remains authoritative and no downloaded character pack or unverified third-party model may silently replace it.
+This approval does **not** mean the baseline has already migrated. Until a production-facing PlayCanvas slice lands and passes its regression/performance checks, the current static ES-module/WebGL2 renderer above remains the active playable implementation and fallback.
+
+The autonomous agent may execute the approved migration incrementally without reopening a human gate for routine testing/refactoring decisions. Core combat/timing must remain renderer-independent, and a new Decision Gate is required only if evidence points outside the approved direction or changes a hard product/cost/privacy/licensing constraint.
