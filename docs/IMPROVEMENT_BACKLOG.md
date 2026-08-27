@@ -14,6 +14,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 009 — Guided first duel:** first-time interactive read/parry/counter coaching, adaptive miss/feint/posture guidance, optional start-screen toggle, boss rhythm reset cues, local completion preference, and 320×568 browser integration coverage.
 - **Run 010 — Guided Duel CI lifecycle repair:** fixed the browser gate to capture the first-time enabled toggle before combat, then verify tutorial completion persists and correctly defaults guidance off afterward.
 - **Run 011 — Spacing and footwork:** close/mid/far engagement distance, enemy approach/retreat/sidestep setup, attack reach, a timed STEP backstep that only evades attacks moved beyond their reach, and mobile browser/Node verification.
+- **Run 012 — Guided Duel / STEP integration hardening:** evade-only stage clears no longer persist Guided Duel completion; browser coverage now drives the real STEP pointer path with capture/isolation/drag-threshold checks and current four-stage copy is restored.
 
 ## High-value candidates
 
@@ -26,7 +27,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 
 ## Technical opportunities
 
-- Pointer-level browser interaction smoke for representative physical touch/parry/STEP flows at mobile viewports; event-stream footwork outcomes are covered but the actual button gesture can be hardened further.
+- Pointer-level browser interaction smoke for representative physical edge-parry/swipe gestures at mobile viewports; the STEP pointer path is now covered.
 - Performance HUD and adaptive render quality.
 - Deterministic replay of combat inputs for broader regression testing.
 - Installable PWA and offline shell.

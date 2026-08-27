@@ -442,7 +442,7 @@ function events(n) {
       if (win) audio.cue('victory');
       U.re.textContent = win ? 'TRIAL COMPLETE' : 'THE BLADE FALLS';
       U.rt.textContent = win ? '勝利' : '敗北';
-      U.rs.textContent = win ? '你已擊敗三名敵人。' : '觀察敵人最後一刻嘅刀路。';
+      U.rs.textContent = win ? '你已完成四場決鬥。' : '觀察敵人最後一刻嘅刀路。';
       U.rscore.textContent = fmt(d.score);
       result.classList.add('modal--visible');
       run = false;

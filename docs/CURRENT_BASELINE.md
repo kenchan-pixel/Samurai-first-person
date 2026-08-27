@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.7.0-evolution**
+Version: **0.7.1-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -18,9 +18,10 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The coach observes the real combat event stream rather than running a separate tutorial simulation: it progresses through **read the blade → directional parry → swipe counter** using the same controls and timings as normal play.
 - Wrong-direction and wrong-time parry attempts receive different corrective cues, feints explicitly tell the player to re-read the final blade path, and successful parries expose current enemy posture so the posture system is learned in context.
 - Enemy guard break explains the +2 counter opportunity. Completing the basic read/parry/counter sequence collapses the coach after a short acknowledgement instead of leaving a permanent overlay over combat.
+- Clearing the opening Ashigaru through STEP/evade counters without demonstrating a parry does **not** mark Guided Duel complete; the coach stays eligible on the next run so the core parry lesson cannot be skipped permanently.
 - If guidance remains enabled, the Crimson Shogun intro and Blood Moon Phase II produce brief coach cues reminding the player to discard the old rhythm and re-read the boss.
 - Completing the first guided duel stores only a local completion preference so later page loads default the coach off; storage failure is non-fatal, the toggle remains available, and no analytics/network service is introduced.
-- The coach is pointer-transparent, bounded to a compact lower-left card, and has dedicated 320×568 browser coverage for progress, adaptive miss guidance, viewport containment, and non-blocking input.
+- The coach is pointer-transparent, bounded to a compact lower-left card, and has dedicated 320×568 browser coverage for progress, adaptive miss guidance, viewport containment, non-blocking input, and the evade-only non-completion lifecycle.
 
 ## Core combat
 
@@ -48,6 +49,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Long/heavy tracking attacks can still reach at far distance, so STEP is not universal invulnerability; the player must still read the attack and use directional parry when distance alone will not escape it.
 - A successful counter after an evade closes one distance step again. Taking a hit also pulls the engagement back toward close/mid range.
 - Stage start/restart resets engagement distance to mid.
+- The real STEP button's pointerdown/pointerup path now has browser coverage for pointer capture, stop-propagation isolation, drag-distance rejection, short-range evade and long-range tracking outcomes.
 - Reduced-motion preference disables the camera movement while keeping distance logic, STEP control, and reach outcomes unchanged.
 
 ## Boss encounter
@@ -88,6 +90,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Enemy guard break and player guard break use explicit combat prompts, stronger impact timing, audio, flash, and optional vibration feedback.
 - Boss-specific blood-moon and ember presentation is bounded to a fixed DOM layer and does not add external assets.
 - Footwork adds only a small STEP control, distance chip, and bounded camera transform; the centre combat view and edge-block zones remain usable.
+- The victory copy reflects the complete four-duel campaign rather than the older three-enemy baseline.
 - Generated Web Audio cues are used; no external audio assets are required.
 - Pointer input supports touch, stylus, and mouse.
 
@@ -97,14 +100,14 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Combat rules separated from rendering in `src/game-core.js`.
 - `src/boss-encounter.js` installs the boss as a small idempotent encounter adapter before `src/main.js` creates the engine; baseline enemies and the core interaction model remain untouched.
 - `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere, uses explicit timers for transition-banner/deactivation cleanup, and marks readiness for browser smoke verification.
-- `src/onboarding-coach.js` observes public combat events for the guided first duel, keeps tutorial state outside the combat state machine, injects a pointer-transparent coach/toggle, and stores only a local completion preference.
+- `src/onboarding-coach.js` observes public combat events for the guided first duel, keeps tutorial state outside the combat state machine, injects a pointer-transparent coach/toggle, and stores only a local completion preference after the full read/parry/counter proof is complete.
 - `src/footwork.js` installs an idempotent encounter adapter over public `CombatEngine` state: it decorates attack reach/setup profiles, tracks engagement distance, adds timed backstep/evade openings, injects the STEP/range UI, and leaves directional parry/swipe rules intact.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
 - Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
-- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, guided-duel state progression/adaptive cues, and footwork short-evade / long-track outcomes.
+- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, guided-duel progression/non-completion/adaptive cues, and footwork short-evade / long-track outcomes.
 - A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding/footwork initialization, and runs dedicated mastery, boss, onboarding, and footwork integration harnesses at a 320×568 viewport.
 - The mastery browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the viewport.
 - The boss browser integration gate runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, proves the banner cleans up while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
-- The onboarding browser integration gate drives the real opening enemy event stream through a wrong-direction correction, successful parry, and counter; it verifies coach step completion, the start-screen toggle, 320×568 containment, and pointer transparency.
-- The footwork browser integration gate proves a close-range strike can be escaped into a counter opening, a long/heavy strike still tracks STEP, and the real STEP/range UI initializes.
+- The onboarding browser integration gate drives the real opening enemy event stream through both an evade-only clear and the intended wrong-direction correction → successful parry → counter path; it proves evade-only play does not persist completion and that a fresh run still enables guidance.
+- The footwork browser integration gate drives the real STEP pointerdown/pointerup path, checks pointer capture/isolation and drag rejection, proves a close-range strike can be escaped into a counter opening, and proves a long/heavy strike still tracks STEP.
 - GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

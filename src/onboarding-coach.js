@@ -93,11 +93,19 @@ export function applyCoachEvent(previous, event) {
       next.hint = '完美格擋加快破勢；之後主要靠睇動作判斷';
     }
   } else if (event.type === 'enemy-defeated' && next.stage === 1 && !next.completed) {
-    next.completed = true;
-    next.mode = 'complete';
-    next.visible = true;
-    next.headline = '第一關完成';
-    next.hint = '記住：讀刀 → 格擋 → 反擊；連續格擋會破勢';
+    const learnedCoreLoop = next.steps.read && next.steps.parry && next.steps.counter;
+    next.completed = learnedCoreLoop;
+    if (learnedCoreLoop) {
+      next.mode = 'complete';
+      next.visible = true;
+      next.headline = '第一關完成';
+      next.hint = '記住：讀刀 → 格擋 → 反擊；連續格擋會破勢';
+    } else {
+      next.mode = null;
+      next.visible = false;
+      next.headline = '第一關完成';
+      next.hint = '未完成格擋練習；下次首戰會繼續引導';
+    }
   } else if (event.type === 'boss-phase') {
     next.mode = 'boss';
     next.visible = true;

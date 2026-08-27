@@ -227,3 +227,46 @@ The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm ru
 - Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
 - Add challenge mode with mastery-aware scoring and a clean restart loop.
 - Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
+
+## Run 012 — Guided Duel completion and STEP pointer hardening
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Scope:** Repair the current-head reviewer P1 that allowed STEP to permanently bypass the core parry lesson, close the related pointer-path P2, and synchronize stale four-stage copy.
+
+### Preflight / blocker
+
+- Exact previous HEAD `30f795186372633dc248d8baa9353018ffb00818`: CI #37 (`33024187730`) = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; there were no inline review threads.
+- The exact-head review identified one applicable P1: Ashigaru could be defeated through evade counters without a parry, while `enemy-defeated` still forced Guided Duel `completed`, permanently disabling the core read → parry → counter lesson.
+- The same review identified a P2 at the physical STEP control boundary: browser coverage called `attemptBackstep()` directly and did not execute the real pointerdown/pointerup/capture/travel/isolation path.
+- A second P2 noted stale three-enemy copy in the runtime/README. This is low-risk but coherent to repair in the same bounded blocker-fix commit.
+
+### Repair
+
+- Guided Duel now marks completion only when `read && parry && counter` are all demonstrated. If stage 1 ends first through STEP/evade counters, the coach hides for the rest of that stage but keeps the local preference uncompleted so a fresh run remains guided.
+- Added a Node regression for stage clear with read + counter but no parry.
+- The onboarding browser harness now clears a low-HP Ashigaru through the real footwork evade/counter path, proves no `completed` preference is stored, starts a fresh engine and proves the basics coach returns, then still verifies the intended parry-completion lifecycle.
+- The footwork browser harness now dispatches real STEP pointerdown/pointerup events. It observes pointer capture, requires the events not to bubble beyond the control, rejects travel over 18 px without a backstep attempt, proves short-range evade and long-range tracking outcomes, then verifies a subsequent canvas pointer pair resets cleanly.
+- Browser smoke promotes both new lifecycle checks to CI gates.
+- Runtime victory copy and README now describe the current four-duel campaign and STEP control instead of the older three-enemy baseline.
+
+### Regression boundaries
+
+- No change to `game-core.js`, enemy HP/damage/timing, posture math, reach values, boss phase rules, mastery scoring/storage, WebGL shader, edge parry mapping, swipe mapping, networking, dependencies, or deployment configuration.
+- The Guided Duel storage schema/key is unchanged; only the condition that is allowed to persist `completed` is corrected to the already-documented core lesson.
+
+### Post-commit gate
+
+The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before a later feature run. The PR Run 12 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+
+### Known risks
+
+- Programmatically dispatched pointer events validate the STEP control's browser event wiring but cannot fully reproduce iOS Safari's physical touch feel or gesture heuristics; real-iPhone play remains the final tactile check.
+- Canvas edge-parry/swipe still has source-level and game-core direction coverage; a dedicated physical pointer browser harness remains a technical opportunity.
+
+### Next-run candidates
+
+- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
+- Add challenge mode with mastery-aware scoring and a clean restart loop.
+- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.

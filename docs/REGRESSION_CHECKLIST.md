@@ -15,6 +15,7 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] A first-time browser session starts with Guided Duel enabled; a completed/disabled preference makes later page loads default it off without preventing manual re-enable.
 - [ ] Guided Duel observes the real stage-1 event stream and progresses through read → parry → counter without changing combat timing or damage rules.
+- [ ] Clearing stage 1 through STEP/evade counters without a successful parry does not persist Guided Duel completion, and a fresh run still enables the lesson.
 - [ ] The coach distinguishes wrong-direction from wrong-time parry misses and explains feints using the final displayed blade direction.
 - [ ] A successful parry exposes current enemy posture; enemy guard break explains the +2 counter opportunity.
 - [ ] Completing the read/parry/counter sequence produces a short completion acknowledgement and then clears the combat view.
@@ -32,7 +33,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Swipe direction is recognised for top, right, bottom, and left.
 - [ ] Tap and swipe are not both triggered by one gesture.
 - [ ] Mouse fallback remains usable.
-- [ ] STEP captures only its own pointer gesture and does not leave the canvas pointer state stuck.
+- [ ] STEP pointerdown/pointerup captures its own pointer, stops propagation outside the control, rejects dragged gestures beyond the travel threshold, and leaves subsequent canvas pointer state clear.
 
 ## Combat
 
@@ -94,6 +95,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Engagement distance changes produce restrained camera depth/lateral feedback without hiding the blade read or moving essential controls.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
 - [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
+- [ ] Victory copy reflects the complete four-stage campaign.
 - [ ] Result mastery summary remains readable at 320×568 portrait without obscuring the restart control.
 - [ ] Audio remains optional and starts only after user interaction.
 - [ ] Gameplay timing is based on elapsed time, not frame count.
@@ -110,10 +112,10 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
 - [ ] Boss Node coverage proves stage injection, one-time Phase II transition, pressure reset, and restart-to-Phase-I behavior.
 - [ ] Boss browser harness runs with reduced-motion preference, drives the patched `CombatEngine` through boss activation and Phase II, proves the transition banner hides while the fight stays active, verifies restart-to-Phase-I, and reaches final victory.
-- [ ] Onboarding Node coverage proves read/parry/counter progression, adaptive miss guidance, boss rhythm-reset cues, and disabled-state inertness.
-- [ ] Onboarding browser harness drives the real opening-enemy event stream through a wrong-direction correction, successful parry and counter, and proves toggle readiness plus 320×568 pointer-transparent coach layout.
+- [ ] Onboarding Node coverage proves read/parry/counter progression, evade-only non-completion, adaptive miss guidance, boss rhythm-reset cues, and disabled-state inertness.
+- [ ] Onboarding browser harness proves an evade-only Ashigaru clear does not write `completed`, a fresh run remains guided, then drives wrong-direction correction → successful parry → counter and verifies normal completion/toggle lifecycle plus 320×568 pointer-transparent coach layout.
 - [ ] Footwork Node coverage proves short-range evade + counter, long/heavy tracking, and wrong-time STEP rejection.
-- [ ] Footwork browser harness drives the patched engine through a short evade/counter and a long tracked strike, and proves the STEP/range UI initializes at mobile viewport.
+- [ ] Footwork browser harness drives actual STEP pointerdown/pointerup, observes pointer capture/isolation, rejects a dragged STEP, proves a short evade/counter, proves a long tracked strike, and confirms later canvas pointer state resets cleanly.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

@@ -23,6 +23,23 @@ test('guided first duel progresses from read to parry to counter', () => {
   assert.equal(state.mode, 'complete');
 });
 
+test('stage clear without a demonstrated parry does not complete Guided Duel', () => {
+  let state = createCoachProgress(true);
+  state = applyCoachEvent(state, { type: 'stage-start', detail: { stage: 1, enemyId: 'ashigaru-scout' } });
+  state = applyCoachEvent(state, { type: 'strike', detail: { direction: 'top' } });
+  state = applyCoachEvent(state, { type: 'counter', detail: { damage: 2, evaded: true } });
+  assert.equal(state.steps.read, true);
+  assert.equal(state.steps.parry, false);
+  assert.equal(state.steps.counter, true);
+  assert.equal(state.completed, false);
+
+  state = applyCoachEvent(state, { type: 'enemy-defeated', detail: { stage: 1, enemyId: 'ashigaru-scout' } });
+  assert.equal(state.completed, false);
+  assert.equal(state.mode, null);
+  assert.equal(state.visible, false);
+  assert.match(state.hint, /下次首戰會繼續引導/);
+});
+
 test('coach gives adaptive miss guidance and a boss phase reset cue', () => {
   let state = createCoachProgress(true);
   state = applyCoachEvent(state, { type: 'stage-start', detail: { stage: 1, enemyId: 'ashigaru-scout' } });

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1-evolution — Guided Duel / STEP integration hardening
+
+- Fixed Guided Duel completion so clearing the opening Ashigaru through STEP/evade counters without a demonstrated parry no longer persists the tutorial as completed; the lesson remains eligible on the next run.
+- Added Node and 320×568 browser regressions proving evade-only stage clear does not write the completion preference and a fresh run still enables guidance.
+- Hardened the real STEP button browser path with pointerdown/pointerup dispatch, pointer-capture observation, stop-propagation isolation, drag-distance rejection, short-range evade, long-range tracking, and post-STEP canvas pointer reset checks.
+- Updated the visible victory summary and README from the older three-enemy description to the current four-duel campaign and STEP baseline.
+- No combat timing, damage, reach values, boss rules, mastery scoring, storage schema, network service, dependency, framework, or merge policy changed.
+
 ## 0.7.0-evolution — Spacing and footwork
 
 - Added close / mid / far engagement distance as a new combat dimension while preserving the existing four-direction edge parry and swipe-counter controls.

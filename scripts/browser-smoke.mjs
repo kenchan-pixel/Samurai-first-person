@@ -48,6 +48,7 @@ async function dumpDom(browser, path, { budget = 1800, extraArgs = [] } = {}) {
     '--use-gl=angle',
     '--use-angle=swiftshader',
     '--enable-webgl',
+    '--enable-unsafe-swiftshader',
     '--ignore-gpu-blocklist',
     '--window-size=320,568',
     `--virtual-time-budget=${budget}`,
@@ -143,7 +144,7 @@ try {
     throw new Error('Boss browser harness did not reach final victory');
   }
 
-  const onboardingDom = await dumpDom(browser, '/tests/onboarding-browser-harness.html', { budget: 1800 });
+  const onboardingDom = await dumpDom(browser, '/tests/onboarding-browser-harness.html', { budget: 2200 });
   if (!onboardingDom.includes('data-onboarding-integration="pass"')) {
     throw new Error(`Guided first-duel event integration failed. DOM:\n${onboardingDom.slice(0, 5000)}`);
   }
@@ -153,8 +154,11 @@ try {
   if (!onboardingDom.includes('data-onboarding-toggle="true"')) {
     throw new Error('Guided first-duel start-screen toggle did not initialize enabled for a first-time run');
   }
+  if (!onboardingDom.includes('data-onboarding-skip-parry="true"')) {
+    throw new Error('Guided Duel was incorrectly persisted complete after an evade-only stage clear');
+  }
 
-  const footworkDom = await dumpDom(browser, '/tests/footwork-browser-harness.html', { budget: 1800 });
+  const footworkDom = await dumpDom(browser, '/tests/footwork-browser-harness.html', { budget: 2200 });
   if (!footworkDom.includes('data-footwork-integration="pass"')) {
     throw new Error(`Footwork distance / backstep integration failed. DOM:\n${footworkDom.slice(0, 5000)}`);
   }
@@ -166,6 +170,12 @@ try {
   }
   if (!footworkDom.includes('data-footwork-ui="true"')) {
     throw new Error('Footwork STEP / distance UI did not initialize in browser harness');
+  }
+  if (!footworkDom.includes('data-footwork-pointer="true"')) {
+    throw new Error('STEP pointerdown/pointerup path failed capture/isolation checks');
+  }
+  if (!footworkDom.includes('data-footwork-travel-threshold="true"')) {
+    throw new Error('STEP pointer travel threshold allowed a dragged gesture to trigger a backstep');
   }
 
   console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + onboarding + footwork integration`);

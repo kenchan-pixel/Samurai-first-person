@@ -17,12 +17,54 @@
     <section id="result-screen" class="modal"><div class="modal__content modal__content--result"></div></section>
   </main>
   <script type="module">
-    localStorage.removeItem('blade-reversal-guided-duel-v1');
+    const preferenceKey = 'blade-reversal-guided-duel-v1';
+    localStorage.removeItem(preferenceKey);
     const { CombatEngine, Direction } = await import('../src/game-core.js');
     await import('../src/onboarding-coach.js');
+    await import('../src/footwork.js');
 
     const initialToggle = document.querySelector('#coach-toggle');
     const initialToggleReady = Boolean(initialToggle && initialToggle.getAttribute('aria-pressed') === 'true');
+
+    const evadeEnemy = {
+      id: 'ashigaru-scout',
+      name: 'Evade Ashigaru',
+      title: 'Harness',
+      maxHp: 2,
+      postureMax: 3,
+      gapMs: 100,
+      recoveryMs: 300,
+      perfectWindowMs: 45,
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+    };
+
+    const evadeEngine = new CombatEngine({ enemies: [evadeEnemy] });
+    evadeEngine.start(0);
+    evadeEngine.drainEvents();
+    evadeEngine.update(1550);
+    evadeEngine.drainEvents();
+    evadeEngine.update(1650);
+    evadeEngine.drainEvents();
+    const evade = evadeEngine.attemptBackstep(1660);
+    evadeEngine.drainEvents();
+    const evadeCounter = evadeEngine.attemptAttack(Direction.BOTTOM, 1670);
+    evadeEngine.drainEvents();
+
+    const noPrematureCompletion =
+      evade.accepted === true &&
+      evadeCounter.accepted === true &&
+      evadeCounter.defeated === true &&
+      localStorage.getItem(preferenceKey) !== 'completed' &&
+      initialToggle?.getAttribute('aria-pressed') === 'true';
+
+    const freshEngine = new CombatEngine({ enemies: [evadeEnemy] });
+    freshEngine.start(0);
+    freshEngine.drainEvents();
+    const freshPanel = document.querySelector('#onboarding-coach');
+    const guidanceReturns =
+      freshPanel?.dataset.mode === 'basics' &&
+      freshPanel?.dataset.completed === 'false' &&
+      initialToggle?.getAttribute('aria-pressed') === 'true';
 
     const engine = new CombatEngine();
     engine.start(0);
@@ -51,13 +93,14 @@
     const stepsPassed = panel?.dataset.coachStepRead === 'done' && panel?.dataset.coachStepParry === 'done' && panel?.dataset.coachStepCounter === 'done';
     const completed = panel?.dataset.completed === 'true';
     const adaptiveMiss = missHint.includes('方向錯誤');
-    const completionStored = localStorage.getItem('blade-reversal-guided-duel-v1') === 'completed';
+    const completionStored = localStorage.getItem(preferenceKey) === 'completed';
     const completionDefaultsOff = Boolean(toggle && toggle.getAttribute('aria-pressed') === 'false');
     const toggleLifecyclePassed = initialToggleReady && completionStored && completionDefaultsOff;
 
     document.documentElement.dataset.onboardingIntegration = stepsPassed && completed && adaptiveMiss ? 'pass' : 'fail';
     document.documentElement.dataset.onboardingLayout = insideViewport && pointerTransparent ? 'pass' : 'fail';
     document.documentElement.dataset.onboardingToggle = toggleLifecyclePassed ? 'true' : 'false';
+    document.documentElement.dataset.onboardingSkipParry = noPrematureCompletion && guidanceReturns ? 'true' : 'false';
   </script>
 </body>
 </html>
