@@ -1,3 +1,5 @@
+import { adaptiveRenderScale, enemyMotionFrame, smoothMotionFrame } from './animation-motion.js';
+
 export class View {
   constructor(c) {
     this.c = c;
@@ -14,7 +16,8 @@ void main(){
 precision highp float;
 out vec4 O;
 uniform vec2 R;
-uniform float T,phase,prog,adir,pact,pdir,hit,stage,shake;
+uniform float T,adir,pact,pdir,pprog,hit,stage,shake;
+uniform float wind,swing,impact,follow,settle,readBeat,trailBeat,swordPose;
 
 float box(vec2 p,vec2 b){
   vec2 d=abs(p)-b;
@@ -36,13 +39,12 @@ float rbox(vec2 p,vec2 b,float a){
   return box(rot(p,a),b);
 }
 
-float ease(float x){
-  x=clamp(x,0.,1.);
-  return x*x*(3.-2.*x);
-}
-
 float mask(float d,float feather){
   return 1.-smoothstep(0.,feather,d);
+}
+
+float pulse(float x){
+  return sin(clamp(x,0.,1.)*3.1415926);
 }
 
 vec3 armourBase(float s){
@@ -68,7 +70,7 @@ vec3 paint(vec2 uv){
   vec3 sky=mix(vec3(.055,.075,.095),vec3(.13,.035,.035),boss);
   vec3 c=mix(vec3(.012,.014,.018),sky,clamp(uv.y+.55,0.,1.));
 
-  // Receding dojo architecture gives the opponent breathing room in portrait view.
+  // Receding architecture preserves negative space around the full opponent.
   float horizon=-.19;
   float roof=box(uv-vec2(0.,.28),vec2(.55,.065));
   c=mix(c,mix(vec3(.055,.06,.065),vec3(.10,.035,.03),boss),mask(roof,.025));
@@ -93,23 +95,24 @@ vec3 paint(vec2 uv){
   }
 
   float hitGlow=exp(-max(0.,hit)*5.);
-  float tele=phase>.5&&phase<1.5?ease(prog):0.;
-  float strike=phase>1.5&&phase<2.5?ease(prog):0.;
-  float recover=phase>2.5&&phase<3.5?ease(prog):0.;
   float a=adir*1.5707963;
   vec2 attackAxis=vec2(sin(a),cos(a));
   vec2 sideAxis=vec2(attackAxis.y,-attackAxis.x);
-  float attackPulse=sin(strike*3.1415926);
+  float commit=pulse(swing);
+  float idleAmount=1.-clamp(wind+swing+follow,0.,1.);
 
-  // Wider framing: enemy occupies roughly 62% of portrait height instead of almost the full view.
-  float enemyScale=.72 + min(stage,3.)*.012;
-  vec2 bodyShift=-attackAxis*.040*tele+attackAxis*.060*attackPulse;
-  bodyShift+=sideAxis*.014*sin(T*2.0+stage*1.7)*(1.-min(1.,tele+strike));
-  bodyShift.y-=max(0.,-attackAxis.y)*.035*tele;
-  bodyShift+=vec2(hitGlow*.055,0.);
+  // Continuous four-beat body choreography: wind-up -> swing/impact -> follow-through -> recovery.
+  float enemyScale=.70+min(stage,3.)*.012;
+  vec2 bodyShift=-attackAxis*.044*wind;
+  bodyShift+=attackAxis*(.052*commit+.048*follow);
+  bodyShift+=sideAxis*.013*sin(T*2.0+stage*1.7)*idleAmount;
+  bodyShift+=sideAxis*.018*commit*sign(attackAxis.x+.001);
+  bodyShift.y-=max(0.,-attackAxis.y)*.035*wind;
+  bodyShift+=vec2(hitGlow*.050,0.);
   vec2 e=(uv-bodyShift)/enemyScale;
 
-  float torsoTilt=-attackAxis.x*.12*tele+attackAxis.x*.17*attackPulse;
+  float torsoTilt=-attackAxis.x*.14*wind+attackAxis.x*(.17*commit+.09*follow);
+  float stance=.012*wind+.020*commit+.010*follow;
   float shadow=length(vec2(e.x*.9,(e.y+.39)*3.0))-.19;
   c=mix(c,vec3(.008,.007,.007),mask(shadow,.08)*.72);
 
@@ -119,51 +122,47 @@ vec3 paint(vec2 uv){
   vec3 cloth=clothBase(stage);
   vec3 metal=metalBase(stage);
 
-  // Legs / hakama / greaves.
-  float hakamaL=rbox(e-vec2(-.075,-.20),vec2(.075,.15),-.09);
-  float hakamaR=rbox(e-vec2(.075,-.20),vec2(.075,.15),.09);
+  // Legs, hakama and greaves stay readable while weight shifts through the cut.
+  float hakamaL=rbox(e-vec2(-.075-stance,-.20),vec2(.075,.15),-.09-.08*commit);
+  float hakamaR=rbox(e-vec2(.075+stance,-.20),vec2(.075,.15),.09+.08*commit);
   c=mix(c,cloth,mask(min(hakamaL,hakamaR),.018));
-  float shinL=seg(e,vec2(-.085,-.28),vec2(-.13,-.40),.047);
-  float shinR=seg(e,vec2(.085,-.28),vec2(.13,-.40),.047);
+  float shinL=seg(e,vec2(-.085-stance,-.28),vec2(-.13-stance*.8,-.40),.047);
+  float shinR=seg(e,vec2(.085+stance,-.28),vec2(.13+stance*.8,-.40),.047);
   c=mix(c,armourDark,mask(min(shinL,shinR),.017));
-  float greaveL=box(rot(e-vec2(-.115,-.34),-.10),vec2(.055,.065));
-  float greaveR=box(rot(e-vec2(.115,-.34),.10),vec2(.055,.065));
+  float greaveL=box(rot(e-vec2(-.115-stance*.7,-.34),-.10),vec2(.055,.065));
+  float greaveR=box(rot(e-vec2(.115+stance*.7,-.34),.10),vec2(.055,.065));
   c=mix(c,metal*.48,mask(min(greaveL,greaveR),.015));
 
-  // Lamellar skirt plates create a stronger, recognisable samurai silhouette.
   for(float i=-2.;i<=2.;i+=1.){
     float plate=box(e-vec2(i*.052,-.105-abs(i)*.006),vec2(.032,.105));
-    float plateMask=mask(plate,.014);
     vec3 plateCol=mix(armourDark,armour,.52+.09*i);
-    c=mix(c,plateCol,plateMask);
+    c=mix(c,plateCol,mask(plate,.014));
+    float plateRidge=box(e-vec2(i*.052,-.105-abs(i)*.006),vec2(.004,.095));
+    c=mix(c,metal*.32,mask(plateRidge,.008)*.55);
   }
 
-  // Torso and layered chest plates with faux directional lighting.
   vec2 chestLocal=rot(e-vec2(0.,.095),torsoTilt);
   float torso=rbox(e-vec2(0.,.09),vec2(.145,.19),torsoTilt);
-  float torsoM=mask(torso,.02);
   float lightBand=clamp(.48+.55*(chestLocal.x*.9+chestLocal.y*.35),0.,1.);
-  c=mix(c,mix(armourDark,armourLight,lightBand),torsoM);
-  for(float y=0.;y<3.;y+=1.){
-    float chestPlate=box(chestLocal-vec2(0.,.08-y*.055),vec2(.14,.012));
-    c=mix(c,metal*.58,mask(chestPlate,.012)*.7);
+  c=mix(c,mix(armourDark,armourLight,lightBand),mask(torso,.02));
+  for(float y=0.;y<4.;y+=1.){
+    float chestPlate=box(chestLocal-vec2(0.,.092-y*.045),vec2(.14,.009));
+    c=mix(c,metal*.58,mask(chestPlate,.010)*.66);
   }
 
-  // Shoulder armour broadens the read without making the body fill the screen.
   float shoulderL=rbox(e-vec2(-.17,.18),vec2(.082,.045),-.18-torsoTilt*.4);
   float shoulderR=rbox(e-vec2(.17,.18),vec2(.082,.045),.18-torsoTilt*.4);
   c=mix(c,mix(armourDark,armourLight,.45),mask(min(shoulderL,shoulderR),.018));
-
-  // Waist sash and stage-specific cloth accents.
   float sash=box(rot(e-vec2(0.,-.015),torsoTilt),vec2(.16,.028));
   c=mix(c,cloth*.75,mask(sash,.015));
   if(stage>2.5){
-    float cape=seg(e,vec2(.13,.10),vec2(.27,-.22),.105);
+    vec2 capeEnd=vec2(.27+.035*follow,-.22-.025*commit);
+    float cape=seg(e,vec2(.13,.10),capeEnd,.105);
     c=mix(c,vec3(.24,.025,.04),mask(cape,.04)*.88);
   }
 
-  // Head, menpo and helmet. Stage silhouettes differ without external assets.
-  vec2 headPos=vec2(attackAxis.x*.014*tele,.355+attackAxis.y*.006*tele);
+  // Head and helmet keep stage identity while following the torso commitment.
+  vec2 headPos=vec2(attackAxis.x*(.014*wind+.010*follow),.355+attackAxis.y*.006*wind);
   float neck=box(e-headPos+vec2(0.,.105),vec2(.045,.055));
   c=mix(c,cloth*.72,mask(neck,.015));
   float face=length((e-headPos)*vec2(1.,1.08))-.082;
@@ -171,7 +170,7 @@ vec3 paint(vec2 uv){
   float menpo=box(e-headPos+vec2(0.,.018),vec2(.07,.045));
   c=mix(c,stage>1.5?vec3(.11,.018,.018):vec3(.045,.042,.04),mask(menpo,.014));
   float eyeBand=box(e-headPos-vec2(0.,.018),vec2(.062,.008));
-  c=mix(c,vec3(.82,.50,.20),mask(eyeBand,.008)*(.65+.18*tele));
+  c=mix(c,vec3(.82,.50,.20),mask(eyeBand,.008)*(.62+.22*readBeat));
 
   float helmCrown=box(e-headPos-vec2(0.,.072),vec2(.09,.055));
   c=mix(c,vec3(.04,.045,.05),mask(helmCrown,.018));
@@ -193,22 +192,17 @@ vec3 paint(vec2 uv){
     c=mix(c,vec3(.86,.58,.16),mask(crest,.012));
   }
 
-  // Two-handed sword animation. Hands travel farther during anticipation for readability.
-  float swordAngle=a-.38;
-  if(phase>.5&&phase<1.5){
-    swordAngle=mix(a-.38,a-1.08,tele);
-  }else if(phase>1.5&&phase<2.5){
-    float cut=ease(clamp(prog*1.16,0.,1.));
-    swordAngle=mix(a-1.08,a+1.18,cut);
-  }else if(phase>2.5&&phase<3.5){
-    swordAngle=mix(a+1.18,a+.28,recover);
-  }
-
-  vec2 hilt=vec2(.105,.205)-attackAxis*.13*tele+attackAxis*.045*attackPulse+sideAxis*.035;
+  // Sword pose is continuous across phase boundaries, including interrupted parries.
+  float swordOffset=swordPose<0.
+    ? mix(-.38,-1.08,-swordPose)
+    : mix(-.38,1.18,swordPose);
+  float swordAngle=a+swordOffset;
+  vec2 hilt=vec2(.105,.205)-attackAxis*.13*wind;
+  hilt+=attackAxis*(.045*commit+.052*follow)+sideAxis*.035;
   vec2 shoulderA=vec2(.13,.19);
   vec2 shoulderB=vec2(-.13,.19);
-  vec2 elbowA=hilt-sideAxis*.14-attackAxis*.055;
-  vec2 elbowB=hilt+sideAxis*.09-attackAxis*.04;
+  vec2 elbowA=hilt-sideAxis*(.14+.025*wind)-attackAxis*(.055+.018*wind);
+  vec2 elbowB=hilt+sideAxis*(.09+.022*wind)-attackAxis*(.04+.012*wind);
   float armA=seg(e,shoulderA,elbowA,.035);
   float foreA=seg(e,elbowA,hilt,.032);
   float armB=seg(e,shoulderB,elbowB,.034);
@@ -220,35 +214,42 @@ vec3 paint(vec2 uv){
   vec2 bladeDir=vec2(sin(swordAngle),cos(swordAngle));
   float blade=seg(e,hilt-bladeDir*.045,hilt+bladeDir*.64,.014);
   float bladeHalo=seg(e,hilt-bladeDir*.045,hilt+bladeDir*.64,.044);
-  float readPulse=tele*smoothstep(.35,1.,prog)*(.70+.30*sin(T*16.));
+  float readPulse=readBeat*(.75+.25*sin(T*13.));
   vec3 teleCol=mix(vec3(1.,.48,.12),vec3(1.,.16,.12),boss);
   c+=teleCol*mask(bladeHalo,.06)*readPulse*.23;
   c=mix(c,vec3(.94,.96,.93),mask(blade,.014));
   float guard=seg(e,hilt-sideAxis*.058,hilt+sideAxis*.058,.012);
   c=mix(c,metal*.72,mask(guard,.010));
 
-  // Directional anticipation arc sits behind the sword, not over the HUD.
   float arcR=length(e-(hilt+bladeDir*.25));
   float arc=abs(arcR-.29)-.014;
   float arcSide=dot(normalize(e-(hilt+bladeDir*.25)+vec2(.0001)),sideAxis);
   float arcM=mask(arc,.035)*smoothstep(-.2,.55,arcSide)*readPulse;
   c+=teleCol*arcM*.12;
 
-  float trail=strike*sin(clamp(prog,0.,1.)*3.1415926);
   float trailAngle1=swordAngle-.16;
   float trailAngle2=swordAngle-.32;
   vec2 trailDir1=vec2(sin(trailAngle1),cos(trailAngle1));
   vec2 trailDir2=vec2(sin(trailAngle2),cos(trailAngle2));
   float trail1=seg(e,hilt+trailDir1*.02,hilt+trailDir1*.63,.025);
   float trail2=seg(e,hilt+trailDir2*.03,hilt+trailDir2*.59,.040);
-  c+=teleCol*mask(trail1,.045)*trail*.34;
-  c+=teleCol*.65*mask(trail2,.062)*trail*.17;
+  c+=teleCol*mask(trail1,.045)*trailBeat*.34;
+  c+=teleCol*.65*mask(trail2,.062)*trailBeat*.17;
 
-  float contact=hitGlow*exp(-18.*abs(length(e-vec2(.02,.05))-.23));
-  c+=vec3(1.,.55,.18)*contact*.18;
+  float contact=impact*exp(-16.*abs(length(e-vec2(.02,.05))-.23));
+  c+=vec3(1.,.62,.22)*contact*.30;
+  c+=vec3(1.,.55,.18)*hitGlow*.18;
 
-  // Player katana stays in the near foreground while the opponent is framed farther back.
-  float playerAngle=pdir*1.5708+(pact>.5?(pact>1.5?sin(T*16.)*.55:-.9+fract(T*3.)*1.8):-.6);
+  // Player katana uses action-local progress; it no longer wraps on the global clock.
+  float playerBase=pdir*1.5708-.60;
+  float playerAngle=playerBase;
+  if(pact>.5&&pact<2.5){
+    float parryArc=pulse(pprog);
+    playerAngle+=parryArc*(pact>1.5?.92:.72);
+  }else if(pact>2.5){
+    float cut=smoothstep(0.,1.,pprog);
+    playerAngle=pdir*1.5708+mix(-1.02,1.12,cut);
+  }
   vec2 playerHilt=uv-vec2(.37,-.50);
   vec2 playerDir=vec2(sin(playerAngle),cos(playerAngle));
   float playerBlade=seg(playerHilt,-playerDir*.08,playerDir*.67,.021);
@@ -256,7 +257,6 @@ vec3 paint(vec2 uv){
   c=mix(c,vec3(.94,.96,.91),mask(playerBlade,.018));
   c=mix(c,vec3(.33,.21,.09),mask(playerGuard,.012));
 
-  c+=vec3(1.,.45,.18)*hitGlow*.18;
   return c;
 }
 
@@ -271,9 +271,26 @@ void main(){
     this.p = this.program(V, F);
     this.gl.useProgram(this.p);
     this.u = {};
-    for (const n of ['R', 'T', 'phase', 'prog', 'adir', 'pact', 'pdir', 'hit', 'stage', 'shake']) {
+    for (const n of [
+      'R', 'T', 'adir', 'pact', 'pdir', 'pprog', 'hit', 'stage', 'shake',
+      'wind', 'swing', 'impact', 'follow', 'settle', 'readBeat', 'trailBeat', 'swordPose',
+    ]) {
       this.u[n] = this.gl.getUniformLocation(this.p, n);
     }
+
+    this.motion = enemyMotionFrame('ready', 0, {});
+    this.motionTarget = enemyMotionFrame('ready', 0, {});
+    this.motionReady = false;
+    this.lastFrameAt = 0;
+    this.frameEmaMs = 16.67;
+    this.renderScale = Math.min(globalThis.devicePixelRatio || 1, (globalThis.devicePixelRatio || 1) > 1.35 ? 1.45 : 1.35);
+    this.qualityCheckAt = 0;
+    this.playerAction = 0;
+    this.playerDirection = 0;
+    this.playerActionAt = 0;
+
+    document.documentElement.dataset.animationPipeline = 'four-beat-v3';
+    document.documentElement.dataset.renderProfile = 'adaptive-60-v1';
   }
 
   shader(t, s) {
@@ -293,27 +310,76 @@ void main(){
     return p;
   }
 
+  updateRenderScale(n, dpr, frameMs) {
+    if (frameMs > 0 && frameMs < 80) this.frameEmaMs += (frameMs - this.frameEmaMs) * 0.08;
+    if (n < this.qualityCheckAt) return;
+
+    const cap = Math.min(Math.max(1, dpr), 1.6);
+    const previous = this.renderScale;
+    this.renderScale = adaptiveRenderScale({
+      current: Math.min(previous, cap),
+      min: Math.min(1, cap),
+      max: cap,
+      frameEmaMs: this.frameEmaMs,
+    });
+    this.qualityCheckAt = n + (this.renderScale < previous ? 900 : 1400);
+  }
+
+  playerProgress(n, action, direction) {
+    if (action !== this.playerAction || direction !== this.playerDirection) {
+      this.playerAction = action;
+      this.playerDirection = direction;
+      if (action) this.playerActionAt = n;
+    }
+    if (!action) return 1;
+    return Math.max(0, Math.min(1, (n - this.playerActionAt) / (action === 3 ? 390 : 290)));
+  }
+
   draw(s, n, m = {}) {
-    const d = Math.min(devicePixelRatio || 1, 1.6);
-    const w = Math.floor(this.c.clientWidth * d);
-    const h = Math.floor(this.c.clientHeight * d);
+    const dpr = globalThis.devicePixelRatio || 1;
+    const frameMs = this.lastFrameAt ? Math.min(50, n - this.lastFrameAt) : 16.67;
+    this.lastFrameAt = n;
+    this.updateRenderScale(n, dpr, frameMs);
+
+    const d = Math.min(dpr, this.renderScale);
+    const w = Math.max(1, Math.floor(this.c.clientWidth * d));
+    const h = Math.max(1, Math.floor(this.c.clientHeight * d));
     if (this.c.width !== w || this.c.height !== h) {
       this.c.width = w;
       this.c.height = h;
       this.gl.viewport(0, 0, w, h);
     }
-    const map = { telegraph: 1, strike: 2, recovery: 3 };
+
+    enemyMotionFrame(s.phase, s.phaseProgress, this.motionTarget);
+    if (!this.motionReady) {
+      Object.assign(this.motion, this.motionTarget);
+      this.motionReady = true;
+    } else {
+      smoothMotionFrame(this.motion, this.motionTarget, frameMs, 82, this.motion);
+    }
+
+    const action = m.playerAction || 0;
+    const direction = m.playerDirectionIndex || 0;
+    const pprog = this.playerProgress(n, action, direction);
+
     this.gl.useProgram(this.p);
     this.gl.uniform2f(this.u.R, w, h);
     this.gl.uniform1f(this.u.T, n / 1000);
-    this.gl.uniform1f(this.u.phase, map[s.phase] || 0);
-    this.gl.uniform1f(this.u.prog, s.phaseProgress);
     this.gl.uniform1f(this.u.adir, m.attackDirectionIndex || 0);
-    this.gl.uniform1f(this.u.pact, m.playerAction || 0);
-    this.gl.uniform1f(this.u.pdir, m.playerDirectionIndex || 0);
+    this.gl.uniform1f(this.u.pact, action);
+    this.gl.uniform1f(this.u.pdir, direction);
+    this.gl.uniform1f(this.u.pprog, pprog);
     this.gl.uniform1f(this.u.hit, m.hitAge ?? 999);
     this.gl.uniform1f(this.u.stage, s.enemyIndex || 0);
     this.gl.uniform1f(this.u.shake, m.shake || 0);
+    this.gl.uniform1f(this.u.wind, this.motion.wind);
+    this.gl.uniform1f(this.u.swing, this.motion.swing);
+    this.gl.uniform1f(this.u.impact, this.motion.impact);
+    this.gl.uniform1f(this.u.follow, this.motion.follow);
+    this.gl.uniform1f(this.u.settle, this.motion.settle);
+    this.gl.uniform1f(this.u.readBeat, this.motion.read);
+    this.gl.uniform1f(this.u.trailBeat, this.motion.trail);
+    this.gl.uniform1f(this.u.swordPose, this.motion.sword);
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
   }
 }

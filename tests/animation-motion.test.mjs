@@ -1,0 +1,60 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import {
+  adaptiveRenderScale,
+  enemyMotionFrame,
+  smoothMotionFrame,
+} from '../src/animation-motion.js';
+
+test('normal attack phase boundaries preserve sword/body pose continuity', () => {
+  const teleEnd = enemyMotionFrame('telegraph', 1, {});
+  const strikeStart = enemyMotionFrame('strike', 0, {});
+  assert.equal(teleEnd.sword, strikeStart.sword);
+  assert.equal(teleEnd.wind, strikeStart.wind);
+
+  const strikeEnd = enemyMotionFrame('strike', 1, {});
+  const recoveryStart = enemyMotionFrame('recovery', 0, {});
+  assert.equal(strikeEnd.sword, recoveryStart.sword);
+  assert.equal(strikeEnd.follow, recoveryStart.follow);
+
+  const recoveryEnd = enemyMotionFrame('recovery', 1, {});
+  const idle = enemyMotionFrame('gap', 0, {});
+  assert.equal(recoveryEnd.sword, idle.sword);
+  assert.equal(recoveryEnd.follow, idle.follow);
+  assert.equal(recoveryEnd.settle, idle.settle);
+});
+
+test('strike exposes distinct swing impact and follow-through beats', () => {
+  const early = enemyMotionFrame('strike', 0.18, {});
+  const impact = enemyMotionFrame('strike', 0.56, {});
+  const late = enemyMotionFrame('strike', 0.9, {});
+  assert.ok(early.wind > 0);
+  assert.ok(impact.impact > 0.95);
+  assert.ok(impact.trail > 0.7);
+  assert.ok(late.follow > impact.follow);
+  assert.ok(late.sword > impact.sword);
+});
+
+test('early parry smoothing cannot teleport directly to recovery pose in one 60Hz frame', () => {
+  const current = enemyMotionFrame('strike', 0.12, {});
+  const before = current.sword;
+  const target = enemyMotionFrame('recovery', 0, {});
+  smoothMotionFrame(current, target, 16.67, 82, current);
+  assert.ok(current.sword > before);
+  assert.ok(current.sword < 0.2, `one frame jumped too far: ${current.sword}`);
+  assert.ok(current.follow < 0.3);
+});
+
+test('motion helpers reuse caller-owned output objects', () => {
+  const target = {};
+  assert.equal(enemyMotionFrame('telegraph', 0.5, target), target);
+  const current = enemyMotionFrame('ready', 0, {});
+  assert.equal(smoothMotionFrame(current, target, 16.67, 72, current), current);
+});
+
+test('adaptive render scale drops under sustained slow frames and recovers conservatively', () => {
+  assert.equal(adaptiveRenderScale({ current: 1.45, min: 1, max: 1.6, frameEmaMs: 21 }), 1.35);
+  assert.equal(adaptiveRenderScale({ current: 1.35, min: 1, max: 1.6, frameEmaMs: 16 }), 1.4);
+  assert.equal(adaptiveRenderScale({ current: 1.35, min: 1, max: 1.6, frameEmaMs: 18 }), 1.35);
+});

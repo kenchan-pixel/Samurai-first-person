@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.0-evolution — Four-beat combat motion and adaptive phone rendering
+
+- Reworked enemy visual motion around continuous wind-up → swing → impact/follow-through → recovery pose weights instead of phase-local pose resets.
+- Added transition damping so an early successful parry no longer teleports the opponent sword/body directly from an early strike pose into recovery.
+- Added coherent stance, torso, arm, hilt, blade-trail and cape/weight-shift motion driven by the same elapsed-time choreography.
+- Replaced global-clock foreground-katana wrapping with action-local parry/slash progress so player sword motion starts and returns predictably.
+- Added bounded adaptive internal render resolution based on rolling frame time to protect a 60 Hz-oriented phone experience without changing combat timing.
+- Added deterministic Node coverage for motion boundaries, impact beats, interrupted-parry smoothing, object reuse and render-scale decisions.
+- Opened a documented 3D fidelity Decision Gate: Three.js + local glTF/GLB is the tentative prototype path, but no runtime engine/model migration is approved yet.
+
 ## 0.9.0-evolution — Wide-framed samurai visual redraw
 
 - Pulled the enemy materially farther back in portrait combat so the full helmet-to-feet silhouette and sword path have more negative space.

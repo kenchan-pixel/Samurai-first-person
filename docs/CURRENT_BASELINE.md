@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.9.0-evolution**
+Version: **0.10.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -67,23 +67,39 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - First-person WebGL2 combat view keeps the player katana in the near foreground and the opponent centred as the primary read.
 - **Wide-framed enemy baseline:** the enemy is rendered materially farther back than the earlier near-camera presentation. The full body from helmet to feet remains visible in normal portrait framing, with more negative space around the sword path.
-- The opponent has been procedurally redrawn with layered samurai armour: hakama, greaves, lamellar skirt plates, lit chest armour, shoulder plates, menpo/eye slit, helmet/brim and stage-specific silhouette accents.
-- Stage-specific art language is readable without external assets: Ashigaru uses a jingasa-like brim, Ronin a headband/leaner silhouette, Oni heavier horned armour, and Crimson Shogun a gold crest plus red cape accent.
-- The dojo now has stronger visual depth through a receding roof/gate, pillars, lanterns and perspective floor lines while keeping the centre combat lane clear.
-- Telegraph animation uses a larger two-handed wind-up, stronger torso commitment and a directional anticipation arc behind the blade; strike/recovery motion remains phase-driven.
-- Player katana is slightly slimmer/lower so it does not dominate the enemy read.
+- The opponent retains the Run 014 procedural layered samurai armour and stage-specific silhouette language.
+- The dojo retains stronger visual depth through a receding roof/gate, pillars, lanterns and perspective floor lines while keeping the centre combat lane clear.
+- **Four-beat combat motion:** enemy attacks now present a continuous **wind-up / swing / impact-follow-through / recovery** visual flow. Motion weights share matching boundary poses instead of resetting at each combat phase.
+- If a parry changes the game state before the strike animation has naturally completed, the renderer dampens toward the recovery pose over multiple frames instead of teleporting the sword/body directly to a new pose.
+- Enemy stance, torso, arms, hilt, sword trail and cape/weight shift are driven by the same elapsed-time motion frame so the whole body commits to the attack rather than only rotating the blade.
+- Player parry and slash animation now use action-local elapsed progress; the foreground katana no longer depends on a wrapping global-clock animation that could visibly jump mid-action.
 - Normal/perfect parries, counters, guard-break contacts and player damage keep bounded direction-aware contact FX. Reduced-motion removes traveling sparks/slashes but retains the contact ring/core.
 - Impact nodes remain pointer-transparent, capped to three and self-cleaning.
 - Boss blood-moon presentation, footwork range chip, posture HUD and Guided Duel remain additive overlays that must not obscure the enemy body/blade read.
 - Generated Web Audio and optional vibration remain interaction-triggered; no external visual/audio assets are required.
 
+## Mobile performance baseline
+
+- Combat and animation timing continue to use elapsed time rather than assuming a fixed frame count.
+- The renderer maintains a rolling frame-time estimate and adapts **internal render resolution only** within a bounded scale (approximately 1.0–1.6 device pixels per CSS pixel) to protect a 60 Hz-oriented phone experience under load.
+- Adaptive resolution never changes parry windows, strike timing, damage, engine updates, input mapping or encounter rules.
+- The motion controller reuses caller-owned state objects; no per-frame animation-node or DOM allocation is introduced by the four-beat choreography.
+- Headless Chromium/SwiftShader can prove shader/runtime integration but cannot certify sustained 60 Hz on a physical iPhone. Recent-phone performance remains a human acceptance gate.
+
 ## Technical baseline
 
 - Static ES-module web app with no runtime framework dependency.
 - Combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact are additive adapters/observers.
-- Rendering is now isolated in `src/renderer.js`; `src/main.js` owns gameplay/input/HUD orchestration and passes render-state values into the renderer.
+- Rendering remains isolated in `src/renderer.js`; `src/main.js` owns gameplay/input/HUD orchestration and passes render-state values into the renderer.
+- `src/animation-motion.js` owns deterministic four-beat visual pose weights, transition damping and bounded adaptive render-scale decisions; it does not mutate combat state.
 - The renderer remains one bounded WebGL2 pass with procedural geometry/shading and no texture/model downloads, network calls, per-frame DOM allocation or third-party 3D engine.
-- Browser smoke executes the real app under headless Chromium/SwiftShader, requires shader compile/link, enabled start control and `wide-samurai-v2` renderer initialization.
+- Browser smoke executes the real app under headless Chromium/SwiftShader and requires shader compile/link, enabled start control and `wide-samurai-v2` renderer initialization.
 - Existing mastery, boss, onboarding, footwork and impact browser harnesses remain required at 320×568.
-- Impact browser coverage now also runs under `prefers-reduced-motion` and proves ring feedback remains while sparks/slash travel are absent and cleanup remains bounded.
+- Impact browser coverage runs under `prefers-reduced-motion` and proves ring feedback remains while sparks/slash travel are absent and cleanup remains bounded.
 - GitHub Actions runs Node tests plus browser/WebGL integration on pull requests and pushes to `main`.
+
+## Open 3D fidelity Decision Gate
+
+The physical-phone review confirms that procedural shader art is still below the desired character fidelity. A rigged-model/open-source-engine path is now an **open Decision Gate**, not an approved stack migration. See `docs/3D_PIPELINE_DECISION_GATE.md`.
+
+Until that gate is approved, the current static ES-module/WebGL2 architecture remains authoritative and no downloaded character pack or unverified third-party model may silently replace it.

@@ -16,20 +16,34 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 011 — Spacing and footwork:** close/mid/far engagement, attack reach and timed STEP backstep.
 - **Run 012 — Guided Duel / STEP integration hardening:** evade-only tutorial non-completion, real STEP pointer path and four-stage copy sync.
 - **Run 013 — Directional impact choreography:** bounded direction-aware contact rings, slash afterimages and sparks with reduced-motion fallback.
-- **Run 014 — Wide-framed 3D visual redraw:** pulled the opponent materially farther back, redrew stage-specific samurai silhouettes/armour, deepened the dojo scene, strengthened sword/body anticipation, reduced foreground-katana obstruction, separated renderer code, and closed reduced-motion Impact FX browser coverage.
+- **Run 014 — Wide-framed 3D visual redraw:** pulled the opponent farther back, strengthened procedural samurai silhouettes/armour, dojo depth and anticipation readability.
+- **Run 015 — Four-beat motion / adaptive phone rendering:** continuous wind-up → swing → impact/follow-through → recovery animation, interruption damping, action-local player sword timing and bounded adaptive internal resolution.
 
-## High-value candidates
+## Highest-priority Decision Gate — rigged 3D character pipeline
 
-1. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and a clean restart loop.
-2. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
-3. **Visual identity follow-through** — only after real-device review of Run 014: refine proportions, lighting, arena variety or stage-specific colour language based on what still reads poorly.
-4. **Boss refinement** — only with play/review evidence: signature silhouette/weapon language, phase tuning or arena interaction rather than stacking mechanics.
-5. **Onboarding follow-through** — only if player evidence shows remaining confusion; avoid turning the first duel into a long tutorial.
+Physical iPhone evidence after Run 014 shows that the procedural shader character is still not detailed enough. The next fidelity step should therefore be evaluated as a deliberate architecture/asset decision rather than another small shader repaint.
+
+**Status: OPEN — migration not approved.** See `docs/3D_PIPELINE_DECISION_GATE.md`.
+
+Candidate prototype order:
+
+1. **Three.js + local glTF/GLB rigged character** — tentative first prototype because it is a focused browser 3D library with a large ecosystem and MIT licence.
+2. **Babylon.js + local glTF/GLB rigged character** — stronger full game-engine/tooling option; evaluate if its extra scene/animation tooling materially reduces implementation cost.
+3. **Stay on custom WebGL2 + build our own rig/model loader** — lowest dependency count but highest engineering burden; only retain if engine/library overhead is proven unacceptable.
+
+Before approving a migration, one bounded prototype must compare: load size, first-load time, animation quality, sustained physical-phone frame timing, memory/GPU symptoms, asset provenance/licence, mobile Safari compatibility, and integration cost with the existing combat state machine.
+
+## High-value candidates after the Decision Gate
+
+1. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
+2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and a clean restart loop.
+3. **Boss refinement** — signature weapon/animation language and phase tuning based on play evidence, not more stacked mechanics.
+4. **Onboarding follow-through** — only if player evidence shows remaining confusion; avoid turning the first duel into a long tutorial.
 
 ## Technical opportunities
 
+- Performance HUD / physical-device frame sampling for evidence-based quality tuning.
 - Pointer-level browser interaction smoke for representative physical edge-parry/swipe gestures; STEP is already covered.
-- Performance HUD and adaptive render quality for real-device tuning.
 - Deterministic replay of combat inputs for broader regression testing.
 - Installable PWA and offline shell.
 - Continue separating rendering, audio, input and encounter controllers only when complexity warrants it.
@@ -42,4 +56,4 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - Large inventory/equipment systems.
 - Open-world navigation.
 - Framework migration solely for fashion or preference.
-- Large downloaded 3D asset packs before the procedural visual direction has been validated on a real phone.
+- Downloaded 3D asset packs without explicit provenance/licence review and mobile performance evidence.
