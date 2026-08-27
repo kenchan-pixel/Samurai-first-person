@@ -4,12 +4,16 @@ const installed = Symbol.for('blade-reversal.blade-trajectory-v2');
 const BLADE_LENGTH = 1.78;
 const PARRY_PLANE_Z = 2.25;
 const MAX_TRAIL_SEGMENTS = 6;
+const STRIKE_CONTACT = 0.62;
 
+// World-space blade axes, not unreachable absolute tip positions. Positive Z points
+// toward the first-person camera. Each cut begins from a readable guard, commits
+// through the player-facing plane, then exits on the opposite side.
 const PATHS = Object.freeze([
-  Object.freeze({ wind: [0.10, 3.20, 0.55], contact: [0.00, 1.55, 4.35], follow: [-0.10, 0.35, 2.45] }),
-  Object.freeze({ wind: [1.75, 2.35, 0.55], contact: [0.62, 1.48, 4.35], follow: [-1.45, 1.02, 2.45] }),
-  Object.freeze({ wind: [0.00, 0.28, 0.55], contact: [0.00, 1.08, 4.35], follow: [0.08, 2.62, 2.45] }),
-  Object.freeze({ wind: [-1.75, 2.35, 0.55], contact: [-0.62, 1.48, 4.35], follow: [1.45, 1.02, 2.45] }),
+  Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
+  Object.freeze({ wind: [0.73, 0.67, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
+  Object.freeze({ wind: [0.00, -0.985, 0.12], contact: [0.00, 0.18, 0.984], follow: [0.05, 0.84, 0.54] }),
+  Object.freeze({ wind: [-0.73, 0.67, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
 ]);
 
 const clamp01 = (v) => Math.max(0, Math.min(1, Number.isFinite(v) ? v : 0));
@@ -17,15 +21,34 @@ const smooth = (v) => {
   const x = clamp01(v);
   return x * x * (3 - 2 * x);
 };
+const cutEase = (v) => {
+  const x = clamp01(v);
+  return 1 - Math.pow(1 - x, 2.35);
+};
 const mix = (a, b, t) => a + (b - a) * t;
-const mixVec = (a, b, t) => new pc.Vec3(mix(a.x, b.x, t), mix(a.y, b.y, t), mix(a.z, b.z, t));
 const vec = (values) => new pc.Vec3(values[0], values[1], values[2]);
+
+function mixDirection(a, b, t) {
+  const from = a.clone().normalize();
+  const to = b.clone().normalize();
+  return new pc.Vec3(
+    mix(from.x, to.x, t),
+    mix(from.y, to.y, t),
+    mix(from.z, to.z, t),
+  ).normalize();
+}
 
 function quatFromUp(direction) {
   const d = direction.clone().normalize();
   if (d.y < -0.999) return new pc.Quat(1, 0, 0, 0);
   const q = new pc.Quat(d.z, 0, -d.x, 1 + d.y);
   return q.normalize();
+}
+
+function sampledBladeDirection(sword) {
+  const direction = new pc.Vec3(0, 1, 0);
+  sword.getRotation().transformVector(direction, direction);
+  return direction.normalize();
 }
 
 function trailEntity(view, index) {
@@ -64,30 +87,35 @@ function updateTrail(view, points) {
   }
 }
 
-function pathTip(path, phase, progress, baseTip, recoveryStart) {
-  const p = smooth(progress);
-  const wind = vec(path.wind);
-  const contact = vec(path.contact);
-  const follow = vec(path.follow);
-  if (phase === 'telegraph') return mixVec(baseTip, wind, 0.28 + p * 0.72);
+function pathDirection(path, phase, progress, baseDirection, recoveryDirection) {
+  const p = clamp01(progress);
+  const wind = vec(path.wind).normalize();
+  const contact = vec(path.contact).normalize();
+  const follow = vec(path.follow).normalize();
+
+  if (phase === 'telegraph') {
+    return mixDirection(baseDirection, wind, 0.24 + smooth(p) * 0.76);
+  }
   if (phase === 'strike') {
-    if (p <= 0.54) return mixVec(wind, contact, smooth(p / 0.54));
-    return mixVec(contact, follow, smooth((p - 0.54) / 0.46));
+    if (p <= STRIKE_CONTACT) {
+      return mixDirection(wind, contact, cutEase(p / STRIKE_CONTACT));
+    }
+    return mixDirection(contact, follow, smooth((p - STRIKE_CONTACT) / (1 - STRIKE_CONTACT)));
   }
   if (phase === 'recovery' || phase === 'recovery-interrupted') {
-    return mixVec(recoveryStart || follow, baseTip, p);
+    return mixDirection(recoveryDirection || follow, baseDirection, smooth(p));
   }
-  return baseTip;
+  return baseDirection.clone().normalize();
 }
 
 function depthFor(phase, progress) {
-  const p = smooth(progress);
-  if (phase === 'telegraph') return 0.10 * p;
+  const p = clamp01(progress);
+  if (phase === 'telegraph') return 0.08 * smooth(p);
   if (phase === 'strike') {
-    if (p <= 0.54) return mix(0.10, 0.96, smooth(p / 0.54));
-    return mix(0.96, 0.44, smooth((p - 0.54) / 0.46));
+    if (p <= STRIKE_CONTACT) return mix(0.08, 1.02, cutEase(p / STRIKE_CONTACT));
+    return mix(1.02, 0.42, smooth((p - STRIKE_CONTACT) / (1 - STRIKE_CONTACT)));
   }
-  if (phase === 'recovery' || phase === 'recovery-interrupted') return 0.44 * (1 - p);
+  if (phase === 'recovery' || phase === 'recovery-interrupted') return 0.42 * (1 - smooth(p));
   return 0;
 }
 
@@ -107,12 +135,13 @@ export function installBladeTrajectoryView(view) {
     trailSegments: 0,
   };
 
-  let current = { phase: 'ready', progress: 0, directionIndex: 0 };
+  let current = { phase: 'ready', progress: 0, directionIndex: 0, baseDirection: null };
   let history = [];
   let lastPhase = 'ready';
   let lastDirection = 0;
   let lastTip = null;
-  let recoveryStart = null;
+  let lastBladeDirection = null;
+  let recoveryDirection = null;
   let lastHistoryKey = '';
 
   const ready = view.characterReady?.then?.(() => {
@@ -142,33 +171,37 @@ export function installBladeTrajectoryView(view) {
       hideTrail(view);
       history = [];
       lastTip = null;
-      recoveryStart = null;
+      lastBladeDirection = null;
+      recoveryDirection = null;
       lastPhase = phase;
       lastDirection = directionIndex;
       view.bladeTrajectoryState = { ...view.bladeTrajectoryState, phase, directionIndex, crossedPlane: false, trailSegments: 0 };
       return;
     }
 
-    const hilt = sword.getPosition().clone();
-    const baseUp = new pc.Vec3(0, 1, 0);
-    sword.getRotation().transformVector(baseUp, baseUp);
-    const baseTip = hilt.clone().add(baseUp.normalize().mulScalar(BLADE_LENGTH));
+    // `baseDirection` is sampled immediately after skeletal animation in draw(),
+    // before this presentation layer overrides the Sword's world orientation.
+    // Keeping that sample prevents the prerender pass from feeding our own
+    // trajectory back into telegraph/recovery blending.
+    const baseDirection = current.baseDirection?.clone() || sampledBladeDirection(sword);
 
     if (phase !== lastPhase || directionIndex !== lastDirection) {
-      if (phase === 'recovery' || phase === 'recovery-interrupted') recoveryStart = lastTip?.clone() || baseTip.clone();
+      if (phase === 'recovery' || phase === 'recovery-interrupted') {
+        recoveryDirection = lastBladeDirection?.clone() || baseDirection.clone();
+      }
       if (phase === 'strike' || directionIndex !== lastDirection) {
         history = lastTip ? [lastTip.clone()] : [];
         lastHistoryKey = '';
       }
     }
 
-    const target = pathTip(PATHS[directionIndex], phase, progress, baseTip, recoveryStart);
-    const aim = target.clone().sub(hilt);
-    if (aim.lengthSq() > 0.0001) sword.setRotation(quatFromUp(aim));
+    const bladeDirection = pathDirection(PATHS[directionIndex], phase, progress, baseDirection, recoveryDirection);
+    sword.setRotation(quatFromUp(bladeDirection));
 
-    const bladeDirection = aim.lengthSq() > 0.0001 ? aim.normalize() : baseUp.normalize();
-    const actualTip = hilt.clone().add(bladeDirection.mulScalar(BLADE_LENGTH));
+    const hilt = sword.getPosition().clone();
+    const actualTip = hilt.clone().add(bladeDirection.clone().mulScalar(BLADE_LENGTH));
     lastTip = actualTip.clone();
+    lastBladeDirection = bladeDirection.clone();
 
     if (phase === 'strike') {
       const key = `${directionIndex}:${progress.toFixed(4)}`;
@@ -205,8 +238,10 @@ export function installBladeTrajectoryView(view) {
       phase: snapshot?.phase || 'ready',
       progress: snapshot?.phaseProgress || 0,
       directionIndex: meta?.attackDirectionIndex ?? 0,
+      baseDirection: null,
     };
     const result = originalDraw(snapshot, now, meta);
+    if (view.skinnedSword) current.baseDirection = sampledBladeDirection(view.skinnedSword);
     apply();
     return result;
   };

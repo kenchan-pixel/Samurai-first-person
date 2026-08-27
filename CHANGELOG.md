@@ -2,6 +2,7 @@
 
 ## 0.14.2-evolution — Real blade trajectory + Perfect Parry riposte
 
+- Run 028 blocker repair replaced unreachable absolute blade-tip targets with normalized hilt-relative world-space blade axes and a front-loaded strike commitment, so the real fixed-length Sword advances continuously toward the player-facing plane without relaxing the production browser contract.
 - Replaced pose/echo-based enemy weapon implication with four real world-space 3D blade-tip paths on the actual skinned `Sword` joint. Top/right/bottom/left strikes now advance into camera depth, cross a player-facing parry plane, follow through and recover.
 - Added a bounded strike depth lunge plus six reusable world-space trail segments sampled from the actual blade-tip history; old attached swing echoes are suppressed while this path is active.
 - Enlarged STEP primary text materially for phone play, removed its tiny secondary label, and enlarged range/temporary feedback while retaining the lower-right non-overlap layout.

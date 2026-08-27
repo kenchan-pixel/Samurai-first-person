@@ -10,7 +10,7 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - **Run 003 — BLOCKER_FIX:** player-katana/GLSL fixes plus executable WebGL browser smoke.
 - **Run 004 — FEATURE:** player/enemy posture and guard break.
 - **Runs 005–006 — FEATURE/BLOCKER_FIX:** mastery grading/local best plus browser/storage/layout hardening.
-- **Runs 007–008 — FEATURE/BLOCKER_FIX:** Crimson Shogun multi-phase boss plus reduced-motion/browser hardening.
+- **Runs 007–008 — FEATURE/BLOCKER_FIX:** Crimson Shogun and Guided Duel with integration repairs.
 - **Runs 009–010 — FEATURE/BLOCKER_FIX:** Guided Duel onboarding plus lifecycle repair.
 - **Runs 011–012 — FEATURE/BLOCKER_FIX:** close/mid/far spacing and STEP plus onboarding/pointer integration repair.
 - **Run 013 — FEATURE:** direction-aware impact choreography.
@@ -76,3 +76,32 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - Physical-iPhone re-check of all four blade paths, Perfect Parry auto-riposte feel and STEP readability.
 - Sustained device frame-time/shadow/pixel-ratio tuning if evidence requires it.
 - First-person player hands/katana fidelity only after opponent trajectory acceptance is confirmed.
+
+## Run 028 — Blade trajectory exact-head CI repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the failed exact-head browser gate from Run 027 without weakening the player-facing blade acceptance contract.
+
+### Preflight / blocker evidence
+
+- Exact HEAD `890292fad3e4705decd65a3bee8deb5e3b2a6a4a`: Vercel commit status = success, but CI #56 / run `33100201493` failed.
+- `npm test` passed all 40 Node tests. `npm run test:browser` failed the real production PlayCanvas contract with `Top strike blade tip did not advance continuously toward the player`.
+- PlayCanvas, the skinned GLB, STEP readability layer and `worldspace-v2` adapter all initialized; the failure was isolated to the new real Sword trajectory.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- Therefore this run is strictly `BLOCKER_FIX`; no unrelated feature work is permitted.
+
+### Root cause / repair
+
+- Run 027 described wind/contact/follow as absolute world-space tip targets several metres from the hilt, then normalized the aim back to the fixed 1.78 m blade length. The resulting reachable tip could fail the required monotonic forward movement even though the nominal target Z increased.
+- The strike path also applied easing to already-interpolated absolute targets, making early commitment less deterministic than the contract requires.
+- Replaced those unreachable positions with normalized hilt-relative **world-space blade-axis profiles** for top/right/bottom/left.
+- The first strike beat now uses a bounded front-loaded cut easing from guard axis to a near-camera contact axis; the opponent depth lunge follows the same commitment. Contact then blends through a direction-specific follow-through axis and recovery returns to the sampled skeletal direction.
+- The skeletal/base Sword direction is sampled immediately after the original animation draw and before the presentation override, so the later prerender pass cannot feed the overridden trajectory back into its own telegraph/recovery interpolation.
+- Existing max-six world-space trail reuse, STEP presentation, Perfect Parry riposte, combat timing/input/damage authority and fallbacks are unchanged.
+
+### Verification boundary
+
+- The existing fail-closed browser assertion is intentionally unchanged; this repair must make the real Sword satisfy it rather than relax the gate.
+- Post-commit exact-head CI and Vercel results are recorded in the Draft PR run receipt, per the scheduled-task protocol.
+- Physical-iPhone normal-speed smoothness and exact visual contact remain the owner acceptance gate even after automated trajectory geometry is green.

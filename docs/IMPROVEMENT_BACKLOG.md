@@ -13,10 +13,11 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Runs 024–025:** direction-specific skinned body reads and four stage-specific enemy silhouettes.
 - **Run 026:** physical-iPhone readability repair: stronger parry clash, quieter HUD, STEP relocation and initial strike smoothing.
 - **Run 027:** owner P1 repair: real world-space 3D blade-tip cuts toward/crossing the player-facing plane, bounded actual-path trail, larger STEP presentation, and Perfect Parry automatic light riposte without increasing the existing perfect+manual damage budget.
+- **Run 028:** exact-head blocker repair: converted the real Sword path from unreachable absolute tip targets to hilt-relative normalized blade axes with faster early commitment, preserving the strict four-direction player-facing trajectory contract instead of weakening the failed browser gate.
 
 ## Highest priority — physical-phone acceptance
 
-Do not add unrelated combat systems until Run 027 is checked on the target phone.
+Do not add unrelated combat systems until the Run 027/028 blade repair is checked on the target phone.
 
 1. **Physical-iPhone re-check** — verify the enemy katana now visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 2. **Perfect Parry feel** — confirm the automatic light riposte is immediate/obvious but does not make normal parry or manual swipe follow-up feel redundant.
