@@ -1,118 +1,89 @@
 # Current Baseline
 
-Version: **0.8.0-evolution**
+Version: **0.9.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
 ## Playable flow
 
-- The game starts from a mobile-friendly title screen.
-- The player enters a first-person dojo combat view.
-- Three enemies are fought sequentially as the approved baseline sequence, followed by a fourth boss duel.
-- Each stage begins, plays, resolves, and advances without reloading the page.
-- The game has victory and defeat states with restart support.
+- Mobile-first portrait start screen → four sequential duels → victory/defeat → restart without page reload.
+- Three enemies are fought sequentially as the original baseline sequence, followed by the Crimson Shogun boss.
+- Touch, stylus and mouse input remain supported.
 
 ## Guided first duel
 
-- A first-time browser run enables a compact **Guided Duel** coach for the opening Ashigaru fight; a start-screen toggle lets the player turn it on or off before drawing the sword.
-- The coach observes the real combat event stream rather than running a separate tutorial simulation: it progresses through **read the blade → directional parry → swipe counter** using the same controls and timings as normal play.
-- Wrong-direction and wrong-time parry attempts receive different corrective cues, feints explicitly tell the player to re-read the final blade path, and successful parries expose current enemy posture so the posture system is learned in context.
-- Enemy guard break explains the +2 counter opportunity. Completing the basic read/parry/counter sequence collapses the coach after a short acknowledgement instead of leaving a permanent overlay over combat.
-- Clearing the opening Ashigaru through STEP/evade counters without demonstrating a parry does **not** mark Guided Duel complete; the coach stays eligible on the next run so the core parry lesson cannot be skipped permanently.
-- If guidance remains enabled, the Crimson Shogun intro and Blood Moon Phase II produce brief coach cues reminding the player to discard the old rhythm and re-read the boss.
-- Completing the first guided duel stores only a local completion preference so later page loads default the coach off; storage failure is non-fatal, the toggle remains available, and no analytics/network service is introduced.
-- The coach is pointer-transparent, bounded to a compact lower-left card, and has dedicated 320×568 browser coverage for progress, adaptive miss guidance, viewport containment, non-blocking input, and the evade-only non-completion lifecycle.
+- First-time players may use the compact Guided Duel coach for **read the blade → directional parry → swipe counter** using the real combat event stream.
+- Wrong-direction, wrong-time and feint guidance remains contextual; successful parries expose posture and guard-break opportunity.
+- Clearing Ashigaru through STEP/evade counters without a demonstrated parry does not persist tutorial completion.
+- Completion stores only a local preference; blocked storage is non-fatal and the start-screen toggle remains available.
+- Boss entry/Phase II can provide brief rhythm-reset cues when guidance remains enabled.
+- Coach/toggle remain pointer-safe and covered at 320×568.
 
 ## Core combat
 
 - Four defensive directions: top, right, bottom, left.
-- Tapping an edge region attempts a block in that direction.
-- Correctly timed, matching-direction blocks parry attacks.
-- A smaller timing window awards a perfect parry.
-- Swiping in four directions performs a katana attack.
-- Counterattacks during recovery damage the enemy.
-- Perfect parry counters deal increased damage.
-- Wrong timing or direction can result in player damage.
-- Successful parries pressure enemy posture; perfect parries build posture faster.
-- Each baseline enemy has a distinct posture threshold: Ashigaru Scout 3, Wandering Ronin 4, Oni Guard 5.
-- Filling enemy posture causes a guard break, extends the current counter window, and adds +2 damage to the next valid counter before posture resets.
-- Incoming hits build player posture. Heavy attacks build posture faster; when player posture reaches 4, the guard breaks, that hit gains +1 damage, and player posture resets.
-- A successful parry relieves one point of player posture, rewarding recovery through correct defence.
+- Edge tap attempts a matching directional block; correct timing/direction parries, with a smaller perfect-parry window.
+- Four-direction swipe attacks are used for counters during recovery.
+- Wrong direction/timing can result in damage; counterattack can land once per recovery opening.
+- Enemy posture rises on parry, faster on perfect parry. Ashigaru/Ronin/Oni thresholds remain 3/4/5.
+- Enemy guard break extends the counter opening and grants +2 damage to the next valid counter before posture resets.
+- Incoming hits build player posture; heavy hits build faster. Player guard break at 4 adds +1 damage to that hit and resets posture.
+- Successful parry relieves one player-posture point.
 
 ## Spacing and footwork
 
-- Active combat adds a compact **STEP / 後撤** control in the lower centre without changing the four edge-block zones or swipe attack mapping.
-- Enemy attack profiles now carry close / mid / long reach. Before each attack the opponent automatically closes or opens to a valid engagement distance; lighter attacks may sidestep while heavy attacks can set up from farther away.
-- The current engagement distance is shown as **近 / 中 / 遠** and drives a restrained first-person camera response so spacing changes are visible without adding dense UI.
-- A STEP input is only effective during the early strike window. It increases distance by one step.
-- If the new distance is beyond that attack's reach, the strike whiffs and creates a recovery counter opening without granting a parry/perfect-parry bonus.
-- Long/heavy tracking attacks can still reach at far distance, so STEP is not universal invulnerability; the player must still read the attack and use directional parry when distance alone will not escape it.
-- A successful counter after an evade closes one distance step again. Taking a hit also pulls the engagement back toward close/mid range.
-- Stage start/restart resets engagement distance to mid.
-- The real STEP button's pointerdown/pointerup path now has browser coverage for pointer capture, stop-propagation isolation, drag-distance rejection, short-range evade and long-range tracking outcomes.
-- Reduced-motion preference disables the camera movement while keeping distance logic, STEP control, and reach outcomes unchanged.
+- Combat tracks close / mid / far engagement distance and shows a compact **近 / 中 / 遠** chip.
+- Enemy attacks have reach/setup distance and can approach, retreat or sidestep before attacking.
+- **STEP / 後撤** works only in the bounded early strike window, moves one distance step, and creates an evade-recovery opening only when the attack no longer reaches.
+- Long/heavy tracking attacks still reach at far distance, so STEP does not replace directional reading/parry.
+- Evade counter closes one distance step; stage start/restart resets to mid.
+- Reduced-motion preference disables the camera motion but not spacing/reach mechanics.
+- Real STEP pointerdown/pointerup, capture/isolation and drag rejection are browser-tested.
 
 ## Boss encounter
 
-- **Crimson Shogun** is a fourth-stage boss after the three approved baseline enemies.
-- Phase I uses 12 HP, posture 6, deliberate heavy attacks, and mixed feints.
-- At 6 HP or lower after a valid counter, the boss enters **Blood Moon Phase II** instead of continuing the same pattern.
-- The phase transition resets boss posture/attack cursor, creates an 1100 ms breathing gap, and awards a small transition score bonus without changing player controls.
-- Phase II raises posture to 7, tightens the perfect-parry window, shortens neutral gaps/recovery, and switches to a faster feint/heavy signature attack set.
-- The boss stage adds a bounded procedural blood-moon/ember atmosphere and an explicit Phase II banner; effects are decorative, pointer-transparent, and honour reduced-motion preference.
-- The Phase II banner has an explicit bounded lifetime, so reduced-motion users see the short transition cue without leaving a persistent panel over the fight.
-- Defeating the boss reaches the existing victory/mastery flow. Restart returns the boss to Phase I.
+- **Crimson Shogun** is stage 4 with 12 HP and Phase I posture 6.
+- At 6 HP or lower after a valid counter, Blood Moon Phase II triggers once, resets posture/attack cursor, creates an 1100 ms breathing gap and switches to faster/tighter pressure.
+- Phase II posture is 7, perfect-parry timing tightens and the attack set changes.
+- Boss blood-moon/ember atmosphere is bounded, pointer-transparent and honours reduced motion.
+- Phase II banner has an explicit bounded lifetime; restart restores Phase I; victory flows into mastery.
 
 ## Mastery and replay feedback
 
-- Each duel tracks parry attempts, successful parries, perfect parries, guard breaks, counters, hits taken, damage dealt/taken, and elapsed time without altering combat resolution.
-- Victory produces a 0–100 mastery score plus S/A/B/C/D grade based on accuracy, perfect timing, guard breaks, counter execution, clear time, and damage taken.
-- Defeat remains D grade while still showing the run statistics for learning feedback.
-- The result screen shows compact mastery feedback: grade, mastery score, parry accuracy, perfect-parry count, guard breaks, hits taken, clear time, and the existing numeric score.
-- The best completed victory is stored locally in browser `localStorage` and shown on later result screens. Storage failure is non-fatal and does not affect gameplay.
-- No account, network sync, analytics, or external service is used for mastery records.
+- Duel telemetry tracks parry attempts/success, perfect parries, guard breaks, counters, hits, damage and elapsed time without changing combat resolution.
+- Victory produces a 0–100 mastery score and S/A/B/C/D grade; defeat remains D while still showing learning stats.
+- Result screen shows mastery, parry accuracy, perfect parries, guard breaks, hits taken, clear time and numeric score.
+- Better victories may replace a local personal best; worse runs do not. Storage failure is non-fatal.
+- No account, network sync, analytics or external service is used.
 
 ## Enemy differentiation
 
-- **Ashigaru Scout:** low health, broad timing windows, simple single attacks, low posture threshold; mixes close cuts with a longer committing strike.
-- **Wandering Ronin:** faster rhythm, feints, mixed directions, higher health, medium posture threshold; uses more lateral footwork and alternating close/mid reach.
-- **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest baseline posture threshold; heavy hits pressure player posture faster and use long tracking reach.
-- **Crimson Shogun:** multi-phase boss with a mid-fight ruleset/tempo shift, higher posture resistance, signature heavy/feint patterns, distinct arena atmosphere, and long-reach tracking pressure on heavy attacks.
+- **Ashigaru Scout:** low HP, broad timing, simple attacks, low posture; mixes close cuts with a committed longer strike.
+- **Wandering Ronin:** faster rhythm, feints, mixed directions, lateral footwork, close/mid reach.
+- **Oni Guard:** heavy damage, shorter strike windows, higher HP/posture, strong tracking/heavy posture pressure.
+- **Crimson Shogun:** multi-phase boss, higher posture resistance, heavy/feint signatures, Blood Moon ruleset shift and long-reach pressure.
 
-## Presentation and impact choreography
+## Presentation and visual identity
 
-- First-person WebGL 3D arena and combatants.
-- Player katana visible in the foreground.
-- Enemy sword telegraphs and strike motion correspond to attack direction.
-- Enemy animation is phase-driven rather than rigid: telegraphs use direction-specific anticipation, strikes use a committed body lunge and accelerated sword sweep, and recovery visibly follows through before resetting.
-- Procedural arms, stance/legs, torso lean, ground shadow, telegraph blade halo, and strike trail make the opponent silhouette and blade path easier to read without adding dense controls.
-- HUD shows player health, enemy health, stage, combat prompt, directional feedback, and compact player/enemy posture values.
-- Enemy guard break and player guard break use explicit combat prompts, stronger impact timing, audio, flash, and optional vibration feedback.
-- Successful parries, perfect parries, counters, guard-break strikes, and player hits now also generate a short direction-aware impact burst positioned toward the relevant attack/counter direction.
-- Perfect parries and guard-break counters use larger shock rings and brighter bounded sparks; normal counters add a directional slash afterimage; player hits use a distinct red damage burst.
-- Impact burst nodes are pointer-transparent, capped to three concurrent bursts, and removed after a bounded lifetime. Reduced-motion preference suppresses spark/slash travel while retaining a short readable contact ring/core.
-- Boss-specific blood-moon and ember presentation is bounded to a fixed DOM layer and does not add external assets.
-- Footwork adds only a small STEP control, distance chip, and bounded camera transform; the centre combat view and edge-block zones remain usable.
-- The victory copy reflects the complete four-duel campaign rather than the older three-enemy baseline.
-- Generated Web Audio cues are used; no external audio assets are required.
-- Pointer input supports touch, stylus, and mouse.
+- First-person WebGL2 combat view keeps the player katana in the near foreground and the opponent centred as the primary read.
+- **Wide-framed enemy baseline:** the enemy is rendered materially farther back than the earlier near-camera presentation. The full body from helmet to feet remains visible in normal portrait framing, with more negative space around the sword path.
+- The opponent has been procedurally redrawn with layered samurai armour: hakama, greaves, lamellar skirt plates, lit chest armour, shoulder plates, menpo/eye slit, helmet/brim and stage-specific silhouette accents.
+- Stage-specific art language is readable without external assets: Ashigaru uses a jingasa-like brim, Ronin a headband/leaner silhouette, Oni heavier horned armour, and Crimson Shogun a gold crest plus red cape accent.
+- The dojo now has stronger visual depth through a receding roof/gate, pillars, lanterns and perspective floor lines while keeping the centre combat lane clear.
+- Telegraph animation uses a larger two-handed wind-up, stronger torso commitment and a directional anticipation arc behind the blade; strike/recovery motion remains phase-driven.
+- Player katana is slightly slimmer/lower so it does not dominate the enemy read.
+- Normal/perfect parries, counters, guard-break contacts and player damage keep bounded direction-aware contact FX. Reduced-motion removes traveling sparks/slashes but retains the contact ring/core.
+- Impact nodes remain pointer-transparent, capped to three and self-cleaning.
+- Boss blood-moon presentation, footwork range chip, posture HUD and Guided Duel remain additive overlays that must not obscure the enemy body/blade read.
+- Generated Web Audio and optional vibration remain interaction-triggered; no external visual/audio assets are required.
 
 ## Technical baseline
 
-- Static web app with ES modules and no runtime framework dependency.
-- Combat rules separated from rendering in `src/game-core.js`.
-- `src/boss-encounter.js` installs the boss as a small idempotent encounter adapter before `src/main.js` creates the engine; baseline enemies and the core interaction model remain untouched.
-- `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere, uses explicit timers for transition-banner/deactivation cleanup, and marks readiness for browser smoke verification.
-- `src/onboarding-coach.js` observes public combat events for the guided first duel, keeps tutorial state outside the combat state machine, injects a pointer-transparent coach/toggle, and stores only a local completion preference after the full read/parry/counter proof is complete.
-- `src/footwork.js` installs an idempotent encounter adapter over public `CombatEngine` state: it decorates attack reach/setup profiles, tracks engagement distance, adds timed backstep/evade openings, injects the STEP/range UI, and leaves directional parry/swipe rules intact.
-- `src/impact-fx.js` observes the same public combat event stream and renders short-lived DOM/CSS impact choreography without changing damage, timing, posture, reach, input, or the WebGL shader.
-- Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
-- Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation; impact DOM nodes are event-driven and explicitly bounded/cleaned up.
-- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, guided-duel progression/non-completion/adaptive cues, footwork short-evade / long-track outcomes, and impact-event profile/direction mapping.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding/footwork/impact initialization, and runs dedicated mastery, boss, onboarding, footwork, and impact integration harnesses at a 320×568 viewport.
-- The mastery browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the viewport.
-- The boss browser integration gate runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, proves the banner cleans up while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
-- The onboarding browser integration gate drives the real opening enemy event stream through both an evade-only clear and the intended wrong-direction correction → successful parry → counter path; it proves evade-only play does not persist completion and that a fresh run still enables guidance.
-- The footwork browser integration gate drives the real STEP pointerdown/pointerup path, checks pointer capture/isolation and drag rejection, proves a close-range strike can be escaped into a counter opening, and proves a long/heavy strike still tracks STEP.
-- The impact browser integration gate drives real `CombatEngine` perfect-parry, counter, and player-hit events, verifies pointer-transparent 320×568 presentation, and proves burst nodes clean themselves up after their bounded lifetime.
-- GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.
+- Static ES-module web app with no runtime framework dependency.
+- Combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact are additive adapters/observers.
+- Rendering is now isolated in `src/renderer.js`; `src/main.js` owns gameplay/input/HUD orchestration and passes render-state values into the renderer.
+- The renderer remains one bounded WebGL2 pass with procedural geometry/shading and no texture/model downloads, network calls, per-frame DOM allocation or third-party 3D engine.
+- Browser smoke executes the real app under headless Chromium/SwiftShader, requires shader compile/link, enabled start control and `wide-samurai-v2` renderer initialization.
+- Existing mastery, boss, onboarding, footwork and impact browser harnesses remain required at 320×568.
+- Impact browser coverage now also runs under `prefers-reduced-motion` and proves ring feedback remains while sparks/slash travel are absent and cleanup remains bounded.
+- GitHub Actions runs Node tests plus browser/WebGL integration on pull requests and pushes to `main`.

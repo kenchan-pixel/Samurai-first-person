@@ -1,328 +1,81 @@
 # Evolution Run Log
 
-This file keeps the autonomous-evolution history concise. Full implementation detail remains available in Git history and the Draft PR receipts.
+This file keeps the autonomous-evolution history concise. Full implementation detail remains available in Git history and Draft PR receipts.
 
-## Run 000 — Repository baseline
+## Runs 000–013 — Established evolution history
 
-**Date:** 2026-08-25  
-**Action type:** BASELINE
+- **Run 000 — BASELINE:** mobile-first first-person WebGL duel, four-direction parry/swipe combat, three enemies, progression, tests and SOT.
+- **Run 001 — BLOCKER_FIX:** exact-head CI/Vercel fence plus P0/P1/P2 review-gate semantics.
+- **Run 002 — FEATURE:** enemy animation readability with anticipation, body commitment, articulated stance and blade trails.
+- **Run 003 — BLOCKER_FIX:** player-katana SDF / GLSL mask fixes plus executable WebGL browser smoke.
+- **Run 004 — FEATURE:** player/enemy posture and guard-break pressure.
+- **Run 005 — FEATURE:** mastery grading and local personal best.
+- **Run 006 — BLOCKER_FIX:** mastery browser integration/storage/layout hardening.
+- **Run 007 — FEATURE:** Crimson Shogun multi-phase boss and Blood Moon presentation.
+- **Run 008 — BLOCKER_FIX:** boss reduced-motion banner cleanup and full boss browser integration.
+- **Run 009 — FEATURE:** Guided Duel read/parry/counter onboarding.
+- **Run 010 — BLOCKER_FIX:** Guided Duel browser lifecycle repair.
+- **Run 011 — FEATURE:** close/mid/far spacing, attack reach and timed STEP backstep.
+- **Run 012 — BLOCKER_FIX:** STEP cannot permanently bypass the parry lesson; real STEP pointer-path coverage and four-stage copy sync.
+- **Run 013 — FEATURE:** bounded direction-aware impact choreography for parries, counters, guard breaks and player hits.
 
-Initial mobile-first first-person WebGL samurai duel established with four-direction parry/swipe combat, three sequential enemies, progression, tests, CI, regression checklist, and repository SOT.
-
-## Run 001 — Autonomous verification/review gate hardening
-
-**Date:** 2026-08-26  
-**Action type:** BLOCKER_FIX
-
-Added exact-current-HEAD CI + Vercel terminal-green fence, HOLD semantics for missing/in-progress checks, P0/P1 review blocking semantics, and actionable P2 disposition rules. Gameplay unchanged.
-
-## Run 002 — Combat animation readability
-
-**Date:** 2026-08-26  
-**Action type:** FEATURE
-
-Added direction-specific anticipation, body commitment, recovery follow-through, procedural arms/stance/shadow, telegraph halo, and bounded blade trails while preserving combat timing and the single-pass WebGL architecture.
-
-## Run 003 — Renderer correctness and WebGL verification
-
-**Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX
-
-Fixed the player-katana SDF and undefined reversed-edge GLSL masks; added dependency-free headless Chromium/SwiftShader compile/link/startup smoke coverage. Exact HEAD `d26741621111b3b9274ec9e33288464234162870` reached green CI and Vercel status.
-
-## Run 004 — Posture and guard-break pressure
-
-**Date:** 2026-08-27  
-**Action type:** FEATURE
-
-Added player/enemy posture, enemy-specific thresholds, guard-break counter bonus/window, player guard-break consequence, compact HUD state, distinct feedback, and automated combat tests. Initial balance values remain subject to real-device playtesting.
-
-## Run 005 — Mastery grading and personal best
-
-**Date:** 2026-08-27  
-**Action type:** FEATURE
-
-Added deterministic 0–100 mastery grading, S/A/B/C/D ranks, parry/perfect/guard-break/hit/clear-time feedback, and local-only best-victory persistence without accounts or network services.
-
-## Run 006 — Mastery browser integration hardening
-
-**Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX
-
-Closed the reviewer P2 regression gap at the mastery/personal-best integration seam. Browser coverage now executes the real patched `CombatEngine` event stream, verifies victory mastery rendering, personal-best preservation, blocked-storage tolerance, and 320×568 result layout. Gameplay and mastery weights unchanged.
-
-## Run 007 — Crimson Shogun multi-phase boss
-
-**Date:** 2026-08-27  
-**Action type:** FEATURE
-
-Added Crimson Shogun as stage 4 with 12 HP, Phase I posture 6, a Blood Moon Phase II transition at 6 HP or lower after a valid counter, faster phase-two pressure, an 1100 ms breathing gap, bounded moon/ember atmosphere, restart safety, and encounter coverage.
-
-## Run 008 — Boss reduced-motion and browser integration hardening
-
-**Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX
-
-Closed two reviewer P2s: the reduced-motion Phase II banner now has an explicit bounded lifetime, and a deterministic 320×568 browser harness executes boss activation, Phase II, restart-to-Phase-I, and final victory. Exact HEAD `8b163f48ca805340ea5be025ad5b5a8cea304b0b` entered Run 009 with CI `33015301566` success and Vercel success.
-
-## Run 009 — Guided first duel onboarding
+## Run 014 — Wide-framed samurai visual redraw
 
 **Date:** 2026-08-27  
 **Action type:** FEATURE  
-**Scope:** Teach the real read → parry → counter loop interactively during the opening Ashigaru duel without changing combat timing, damage, input mapping, or encounter rules.
+**Scope:** Directly address Ken's current visual feedback that the opponent was too close, hard to read in motion and visually unattractive, while retaining the existing combat system and low-dependency WebGL architecture.
 
 ### Preflight / review disposition
 
-- Exact previous HEAD `8b163f48ca805340ea5be025ad5b5a8cea304b0b`: CI run `33015301566` = success; GitHub `Vercel` status = success.
-- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
-- The latest actionable review findings were the two Run 007 P2s, both demonstrably closed by Run 008's bounded Phase II banner and executable boss browser harness. No applicable unresolved P0/P1 or blocking P2 remained before feature selection.
-
-### Candidate selection
-
-Three materially different candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
-
-- Guided first-duel onboarding: **5 / 5 / 4 / 5 / 5 = 24**.
-- Enemy spacing and footwork: **5 / 5 / 5 / 3 / 3 = 21** because meaningful distance-dependent combat still needs deeper renderer/encounter coupling and real-phone tuning.
-- Combat-juice expansion: **4 / 4 / 3 / 5 / 4 = 20** because hit stop, shake, flash, audio and optional haptics already exist.
-
-Guided onboarding wins because the Product Goal requires a coherent, learnable mobile experience while the current start screen still teaches mainly through static text. The public combat event stream provides a low-risk way to teach actual play rather than a separate tutorial simulation.
-
-### Before
-
-- New players received static control cards and generic combat prompts but no persistent learning progression.
-- Wrong-direction and wrong-time parry misses did not become contextual first-duel coaching.
-- Posture/guard-break meaning was visible in HUD numbers but not connected to the opening read/parry/counter lesson.
-
-### After
-
-- `src/onboarding-coach.js` adds an optional first-time Guided Duel layer driven by the real `CombatEngine` event stream: read the final blade path, parry the matching edge, then swipe counter.
-- Wrong-direction versus wrong-time misses receive distinct corrective hints; feints explicitly prompt a re-read of the final blade direction.
-- Successful parries expose current enemy posture inside the coach, and an enemy guard break explains the +2 counter opportunity.
-- Completing the core read/parry/counter sequence produces a short completion acknowledgement and stores only a local completion preference so later page loads default the coach off. A start-screen toggle allows manual enable/disable; blocked storage remains non-fatal.
-- If guidance remains enabled for the current run, Crimson Shogun entry and Blood Moon Phase II provide brief rhythm-reset cues without changing boss mechanics.
-- The coach is pointer-transparent, bounded to a compact lower-left card, honours reduced-motion preference, and leaves the centre combat view and existing HUD/directional indicators intact.
-- Node tests cover progression, adaptive miss guidance, boss phase cueing and disabled-state inertness. A dedicated 320×568 browser harness drives the real opening enemy event stream through wrong-direction correction → valid parry → counter and verifies completion, toggle readiness, viewport containment and pointer transparency.
-- The real-app browser smoke now requires onboarding initialization/toggle wiring in addition to the existing WebGL, mastery and boss gates.
-
-### Pre-commit verification
-
-- Previous exact HEAD CI and Vercel were terminal green.
-- Review submissions, top-level PR discussion and inline threads were inspected before feature selection.
-- New onboarding module, Node test, browser-harness module body and updated browser-smoke script passed syntax checks before Git object creation; targeted onboarding Node tests passed 3/3.
-- `game-core.js`, enemy HP/timing/damage, boss encounter rules, mastery scoring, WebGL shader, pointer mapping, audio and network boundaries are unchanged.
-
-### Post-commit gate
-
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before another feature run. The PR Run 9 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
-
-### Known risks
-
-- Headless browser coverage proves event integration and 320×568 bounds, but a real-iPhone review is still needed to judge whether the lower-left coach feels appropriately unobtrusive during one-handed play.
-- The coach intentionally teaches only the core first-duel loop plus contextual boss rhythm reset. Deeper mastery/replay education should be added only if play evidence shows confusion rather than turning onboarding into a long tutorial.
-
-### Next-run candidates
-
-- Add enemy spacing and footwork with distance-dependent attacks.
-- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
-- Add challenge mode with mastery-aware scoring and a clean restart loop.
-
-## Run 010 — Guided Duel CI lifecycle repair
-
-**Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX  
-**Scope:** Restore the exact-head browser verification fence after Run 009 failed `npm run test:browser`.
-
-### Preflight / blocker
-
-- Exact HEAD `86046e230855ed0af77d43caff78ff9efb50bf45` had Vercel `success` but CI run `33021631244` failed in the onboarding browser assertion.
-- All 22 Node tests passed; only the browser gate failed.
-- The failing assertion expected the Guided Duel toggle to still be enabled **after** the harness had already completed the tutorial. Production behavior intentionally stores `completed`, sets the current-page guide default off, and updates the toggle to `aria-pressed="false"` after completion.
-- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed. Earlier actionable review findings had already been dispositioned by prior runs, and no newer P0/P1 review applied to this exact head before the CI repair.
-
-### Repair
-
-- `tests/onboarding-browser-harness.html` now captures the initial first-time toggle state immediately after onboarding installation, before starting combat.
-- After driving the real read → parry → counter completion path, the same harness verifies that the `completed` preference was written and that the toggle correctly defaults off afterward.
-- The existing `data-onboarding-toggle="true"` browser-smoke contract now means the **full intended toggle lifecycle** passed, rather than incorrectly requiring the post-completion toggle to remain on.
-- No production code or player-facing behavior changed.
-
-### Pre-commit verification
-
-- The revised inline module passed `node --check` before Git object creation.
-- The repair is limited to the CI harness plus required SOT/state/changelog/backlog updates; combat rules, onboarding production logic, storage semantics, input, renderer, boss, mastery and deployment configuration are untouched.
-
-### Post-commit gate
-
-Exact HEAD `87b36f31aae737b2042ac801b6d6bd2d24c39307` reached terminal-green CI #36 (`33022179004`) and terminal-green Vercel Preview before Run 011 feature selection. The missing Run 10 PR receipt was restored during Run 011 preflight without a Git commit.
-
-### Known risks
-
-- This repair proves the expected first-time → completed preference lifecycle in headless Chromium. Real-iPhone judgement of coach placement remains the same open human visual check from Run 009.
-
-### Next-run candidates
-
-- Add enemy spacing and footwork with distance-dependent attacks.
-- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
-- Add challenge mode with mastery-aware scoring and a clean restart loop.
-
-## Run 011 — Spacing, reach and timed backstep
-
-**Date:** 2026-08-27  
-**Action type:** FEATURE  
-**Scope:** Add meaningful close / mid / far engagement distance and one bounded mobility decision without replacing the directional parry/swipe combat model.
-
-### Preflight / review disposition
-
-- Exact previous HEAD `87b36f31aae737b2042ac801b6d6bd2d24c39307`: CI #36 (`33022179004`) = success; GitHub `Vercel` status = success.
-- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
-- Submitted reviews and top-level discussion were inspected. Earlier renderer, mastery and boss P2 findings were demonstrably closed by Runs 003, 006 and 008; no applicable unresolved P0/P1 or blocking P2 remained.
-- Run 010's required top-level PR verification receipt was missing despite green exact-head evidence, so that communication receipt was restored before feature work without changing Git history.
-
-### Candidate selection
-
-Three materially different player-visible candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
-
-- Enemy spacing and footwork: **5 / 5 / 5 / 4 / 4 = 23**.
-- Combat-juice expansion: **4 / 4 / 3 / 5 / 4 = 20** because strong hit stop, shake, flash, audio and optional haptics already exist.
-- Challenge mode: **4 / 4 / 5 / 4 / 3 = 20** because it adds replay structure but less moment-to-moment combat depth than spacing.
-
-Spacing wins because it directly strengthens the Product Goal's opponent-reading and distinct-duel pillars while adding a new decision that is visible every attack.
-
-### Before
-
-- Every duel effectively happened at one fixed engagement distance.
-- Enemy attacks differed in direction, timing, feints and damage but not in whether their blade could still reach after spacing changed.
-- The player had directional block and swipe counter only; there was no bounded mobility decision during a strike.
-
-### After
-
-- `src/footwork.js` adds an idempotent close / mid / far engagement layer over public `CombatEngine` state without changing `game-core.js`.
-- Attack profiles now carry reach/setup distance. Ashigaru mixes close and committing long cuts; Ronin uses more lateral close/mid setups; Oni and Crimson Shogun heavy attacks use long tracking reach.
-- A compact mobile `STEP / 後撤` control becomes available during active combat. A correctly timed early-strike STEP increases distance by one.
-- If the new distance exceeds the current attack's reach, the strike whiffs into a recovery counter opening. The evade itself grants no perfect-parry or guard-break damage bonus.
-- Long/heavy reach-2 attacks still track at far distance, so STEP cannot replace directional reading/parry.
-- Successful evade counters pull spacing one step closer; hits and stage transitions prevent the duel from remaining artificially far.
-- A small 近 / 中 / 遠 chip and restrained first-person depth/lateral camera response make spacing readable. Reduced-motion preference disables only camera motion, not the mechanics.
-- Added Node coverage for short evade/counter, long/heavy tracking and wrong-time STEP; a 320×568 browser harness exercises the patched engine and verifies STEP/range UI initialization. The real-app browser smoke now requires footwork initialization.
-
-### Pre-commit verification
-
-- Prior exact-head CI and Vercel were terminal green and review gates clear.
-- `src/footwork.js`, `tests/footwork.test.mjs`, and the updated browser-smoke script passed `node --check` before Git object creation.
-- The implementation is additive: no change to `game-core.js`, boss HP/timing/phase rules, mastery scoring/storage, Guided Duel storage semantics, WebGL shader, edge block mapping, swipe direction mapping, networking, or dependencies.
-- Regression checklist, Current Baseline, backlog, changelog, state, and this run log are included in the same final commit.
-
-### Post-commit gate
-
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before a later feature run. The PR Run 11 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
-
-### Known risks
-
-- The camera response intentionally transforms the single canvas as a whole; it is a restrained depth/lateral cue rather than a full spatial 3D locomotion system. Real-iPhone play should decide whether the amount feels natural.
-- STEP window/reach profiles are deterministic and covered by tests, but their difficulty and readability still need real-device play tuning.
-- The browser harness proves footwork engine outcomes and UI initialization, while a future pointer-level browser test can harden the physical STEP gesture itself if reviews expose a need.
-
-### Next-run candidates
-
-- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
-- Add challenge mode with mastery-aware scoring and a clean restart loop.
-- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
-
-## Run 012 — Guided Duel completion and STEP pointer hardening
-
-**Date:** 2026-08-27  
-**Action type:** BLOCKER_FIX  
-**Scope:** Repair the current-head reviewer P1 that allowed STEP to permanently bypass the core parry lesson, close the related pointer-path P2, and synchronize stale four-stage copy.
-
-### Preflight / blocker
-
-- Exact previous HEAD `30f795186372633dc248d8baa9353018ffb00818`: CI #37 (`33024187730`) = success; GitHub `Vercel` status = success.
+- Exact previous HEAD `f9eb6b4b2f869f571d69e1620832d7c1d9341910`: CI #40 (`33030310940`) = success; GitHub `Vercel` status = success.
 - Draft PR #1 remained open, Draft, mergeable and unmerged; there were no inline review threads.
-- The exact-head review identified one applicable P1: Ashigaru could be defeated through evade counters without a parry, while `enemy-defeated` still forced Guided Duel `completed`, permanently disabling the core read → parry → counter lesson.
-- The same review identified a P2 at the physical STEP control boundary: browser coverage called `attemptBackstep()` directly and did not execute the real pointerdown/pointerup/capture/travel/isolation path.
-- A second P2 noted stale three-enemy copy in the runtime/README. This is low-risk but coherent to repair in the same bounded blocker-fix commit.
-
-### Repair
-
-- Guided Duel now marks completion only when `read && parry && counter` are all demonstrated. If stage 1 ends first through STEP/evade counters, the coach hides for the rest of that stage but keeps the local preference uncompleted so a fresh run remains guided.
-- Added a Node regression for stage clear with read + counter but no parry.
-- The onboarding browser harness now clears a low-HP Ashigaru through the real footwork evade/counter path, proves no `completed` preference is stored, starts a fresh engine and proves the basics coach returns, then still verifies the intended parry-completion lifecycle.
-- The footwork browser harness now dispatches real STEP pointerdown/pointerup events. It observes pointer capture, requires the events not to bubble beyond the control, rejects travel over 18 px without a backstep attempt, proves short-range evade and long-range tracking outcomes, then verifies a subsequent canvas pointer pair resets cleanly.
-- Browser smoke promotes both new lifecycle checks to CI gates.
-- Runtime victory copy and README now describe the current four-duel campaign and STEP control instead of the older three-enemy baseline.
-
-### Regression boundaries
-
-- No change to `game-core.js`, enemy HP/damage/timing, posture math, reach values, boss phase rules, mastery scoring/storage, WebGL shader, edge parry mapping, swipe mapping, networking, dependencies, or deployment configuration.
-- The Guided Duel storage schema/key is unchanged; only the condition that is allowed to persist `completed` is corrected to the already-documented core lesson.
-
-### Post-commit gate
-
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before a later feature run. The PR Run 12 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
-
-### Known risks
-
-- Programmatically dispatched pointer events validate the STEP control's browser event wiring but cannot fully reproduce iOS Safari's physical touch feel or gesture heuristics; real-iPhone play remains the final tactile check.
-- Canvas edge-parry/swipe still has source-level and game-core direction coverage; a dedicated physical pointer browser harness remains a technical opportunity.
-
-### Next-run candidates
-
-- Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
-- Add challenge mode with mastery-aware scoring and a clean restart loop.
-- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
-
-## Run 013 — Directional impact choreography
-
-**Date:** 2026-08-27  
-**Action type:** FEATURE  
-**Scope:** Make successful defence, counters, guard-break strikes and incoming damage read as physically different contact events without altering combat rules.
-
-### Preflight / review disposition
-
-- Exact previous HEAD `0016f41d6464dd6e21a56e54ad2243966abf1a6c`: CI #39 (`33027123675`) = success; GitHub `Vercel` status = success.
-- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
-- The current-head All Repos review reported no actionable P0/P1/P2. The prior Guided Duel/STEP findings were demonstrably closed by Run 012, so no review or regression gate blocked feature selection.
+- The current-head review contained no P0/P1. Its only P2 was a browser-coverage gap for the already-implemented reduced-motion Impact FX path. Node coverage and production logic showed no known behavior defect, so it was non-blocking for feature selection; Run 014 closes the gap by executing the impact harness under real browser reduced-motion preference as part of the same bounded change.
 
 ### Candidate selection
 
-Three materially different player-visible candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+Direct user feedback materially changed priority, so the three candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
 
-- Directional impact choreography: **5 / 5 / 4 / 5 / 4 = 23**.
-- Challenge mode: **5 / 4 / 5 / 4 / 3 = 21** because it adds strong replay value but touches progression/scoring/state more broadly.
-- Accessibility options: **4 / 5 / 5 / 4 / 4 = 22** because timing/layout assistance is high-value but benefits from a dedicated settings surface rather than being squeezed into this run.
+- Wide-framed visual redraw and enemy art-direction pass: **5 / 5 / 5 / 4 / 4 = 23**.
+- Accessibility settings surface: **4 / 5 / 5 / 4 / 4 = 22**.
+- Challenge mode: **5 / 4 / 5 / 4 / 3 = 21**.
 
-Impact choreography wins because the Product Goal explicitly calls for satisfying visual/audio/haptic physicality, and the existing event stream allows a visible upgrade with low risk to combat correctness.
+The visual redraw wins because the Product Goal makes opponent reading the first experience pillar, and the user explicitly reported that the current close framing and enemy appearance were blocking that experience.
 
 ### Before
 
-- The renderer already had blade trails, flash, shake, generated sound and haptics, but successful contacts still shared mostly full-screen feedback.
-- Perfect parry, normal parry, counter, guard-break counter and incoming damage were not strongly separated by contact shape or screen position.
+- The opponent occupied almost the full vertical combat view, leaving little negative space around the sword path.
+- Enemy body/armour relied on a comparatively flat torso/head/limb silhouette and was visually weak at phone size.
+- Player katana and contact effects competed with the opponent in the same near-camera space.
+- Dojo depth cues were limited, making the fight feel flatter and the enemy feel closer than intended.
 
 ### After
 
-- `src/impact-fx.js` observes public `CombatEngine` events and injects a pointer-transparent bounded overlay without changing `game-core.js`.
-- Contact origin follows the attack/counter direction, so the effect reinforces directional physicality rather than appearing as a generic centre flash.
-- Normal/perfect parries use distinct shock-ring intensity; counters add a short directional slash afterimage; guard-break contacts scale up the ring/sparks; player damage uses a separate red burst language.
-- At most three burst containers exist concurrently and every burst self-removes after a fixed lifetime. Reduced-motion preference removes traveling sparks/slash afterimages while preserving a short contact ring/core.
-- Added Node profile/direction tests and a 320×568 browser harness that drives real perfect-parry, counter and player-hit events, then verifies pointer safety, viewport containment and cleanup.
-- Real-app browser smoke now requires impact initialization and the new integration harness while retaining all existing WebGL/mastery/boss/onboarding/footwork gates.
+- Renderer framing now scales the opponent to roughly 72–76% of the former on-screen size so helmet-to-feet remain visible with more surrounding read space.
+- Stage-specific procedural samurai redraw adds hakama, greaves, lamellar skirt plates, lit chest armour, shoulder plates, menpo/eye band, helmet/brim and unique silhouette accents for Ashigaru, Ronin, Oni and Crimson Shogun.
+- The environment gains receding roof/gate structure, pillars, lanterns and perspective floor lines to create a clearer near/mid/far composition without adding downloaded assets.
+- Telegraphs use a larger two-handed anticipation pose plus a directional arc behind the sword; strike and recovery still derive from the same combat phase/timing values.
+- Player katana is slightly slimmer/lower in the foreground to reduce obstruction while retaining first-person presence.
+- Rendering code is isolated in `src/renderer.js`; `src/main.js` retains input/gameplay/HUD orchestration and passes only render state.
+- Real-app browser smoke now requires the `wide-samurai-v2` renderer marker and therefore compiles/links the new shader in CI.
+- Reduced-motion Impact FX browser coverage now proves ring/core feedback remains while sparks/slash travel are absent and cleanup remains bounded.
 
 ### Regression boundaries
 
-- No change to enemy HP/damage/timing, posture math, reach, footwork, boss phase rules, mastery scoring/storage, Guided Duel state, edge-parry/swipe mapping, WebGL shader, networking, dependencies or deployment configuration.
-- Impact DOM work is event-driven only; there is no per-frame allocation or unbounded particle/listener growth.
+- No enemy HP, damage, timing, posture, reach, STEP, boss phase, mastery, onboarding or input rule changed.
+- No framework, external model/texture, copyrighted asset, network request, account, analytics or paid dependency was introduced.
+- The renderer remains a bounded WebGL2 pass; no per-frame DOM/object growth is added.
 
 ### Post-commit gate
 
-The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before another feature run. The PR Run 13 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+The new exact HEAD must reach terminal-green `npm test`, `npm run test:browser` and Vercel Preview before another feature run. The Draft PR Run 14 receipt is authoritative for the created SHA and post-commit verification.
 
 ### Known risks
 
-- Headless Chromium verifies wiring, bounds and cleanup, but real iPhone acceptance is still needed to judge whether spark density and ring scale feel punchy rather than visually noisy on a small OLED screen.
-- Reduced-motion behavior is implemented as a simplified static contact cue; a future accessibility run can expose broader motion/contrast/timing controls as an explicit player setting.
+- Browser smoke proves shader compile/link and controller integration, not subjective art quality. A real iPhone review is still required to judge whether the new full-body scale, armour proportions and lighting are sufficiently attractive/readable.
+- The redraw is still procedural WebGL rather than downloaded high-detail character models. If the visual direction is approved but fidelity remains insufficient, a later Decision Gate can evaluate a lightweight original 3D-asset pipeline without silently changing the current stack.
 
 ### Next-run candidates
 
 - Add challenge mode with mastery-aware scoring and a clean restart loop.
-- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
-- Create a stronger procedural visual-identity pass across arenas and enemy silhouettes.
+- Add accessibility options for timing assistance, left-handed layout and high-contrast telegraphs.
+- Refine Run 014 proportions/lighting only if real-device evidence shows a specific remaining readability or art-direction defect.

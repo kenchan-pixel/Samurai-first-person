@@ -8,7 +8,7 @@ const contentTypes = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
+  '.json': 'application/json',
 };
 
 const server = createServer(async (req, res) => {
@@ -93,6 +93,9 @@ try {
   }
   if (!appDom.includes('data-start-ready="true"')) {
     throw new Error('Start control was disabled after browser initialization');
+  }
+  if (!appDom.includes('data-visual-identity="wide-samurai-v2"')) {
+    throw new Error('Wide-framed samurai renderer did not initialize in the real application document');
   }
   if (!appDom.includes('data-mastery-ready="true"')) {
     throw new Error('Mastery observer did not initialize in the real application document');
@@ -195,7 +198,24 @@ try {
     throw new Error('Impact burst nodes were not cleaned up after their bounded lifetime');
   }
 
-  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + onboarding + footwork + impact integration`);
+  const reducedImpactDom = await dumpDom(browser, '/tests/impact-browser-harness.html', {
+    budget: 1200,
+    extraArgs: ['--force-prefers-reduced-motion'],
+  });
+  if (!reducedImpactDom.includes('data-impact-integration="pass"')) {
+    throw new Error(`Reduced-motion impact event choreography failed. DOM:\n${reducedImpactDom.slice(0, 5000)}`);
+  }
+  if (!reducedImpactDom.includes('data-impact-reduced-motion="true"')) {
+    throw new Error('Impact browser harness did not execute with reduced-motion preference enabled');
+  }
+  if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) {
+    throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
+  }
+  if (!reducedImpactDom.includes('data-impact-bounded="true"')) {
+    throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
+  }
+
+  console.log(`browser smoke passed with ${browser}: WebGL2/wide renderer + mastery + boss + onboarding + footwork + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

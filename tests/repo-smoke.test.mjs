@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 const files = {
   html: new URL('../index.html', import.meta.url),
   main: new URL('../src/main.js', import.meta.url),
+  renderer: new URL('../src/renderer.js', import.meta.url),
   core: new URL('../src/game-core.js', import.meta.url),
   baseline: new URL('../docs/CURRENT_BASELINE.md', import.meta.url),
   rules: new URL('../docs/EVOLUTION_RULES.md', import.meta.url),
@@ -19,12 +20,19 @@ test('entry document references local source files', async () => {
 });
 
 test('runtime contains WebGL, pointer controls, audio, and combat engine integration', async () => {
-  const main = await readFile(files.main, 'utf8');
-  assert.match(main, /getContext\('webgl2'/);
+  const [main, renderer] = await Promise.all([
+    readFile(files.main, 'utf8'),
+    readFile(files.renderer, 'utf8'),
+  ]);
+  assert.match(renderer, /getContext\('webgl2'/);
+  assert.match(renderer, /enemyScale=\.72/);
+  assert.match(renderer, /Lamellar skirt plates/);
+  assert.match(renderer, /Directional anticipation arc/);
   assert.match(main, /pointerdown/);
   assert.match(main, /directionFromSwipe/);
   assert.match(main, /AudioContext/);
   assert.match(main, /new CombatEngine/);
+  assert.match(main, /visualIdentity = 'wide-samurai-v2'/);
 });
 
 test('evolution source of truth is present', async () => {

@@ -1,4 +1,5 @@
 import { CombatEngine, Direction, directionFromSwipe, directionFromTap } from './game-core.js';
+import { View } from './renderer.js';
 
 const $ = (selector) => document.querySelector(selector);
 const canvas = $('#game-canvas');
@@ -103,222 +104,11 @@ class AudioFX {
 
 const audio = new AudioFX();
 
-class View {
-  constructor(c) {
-    this.c = c;
-    this.gl = c.getContext('webgl2', { antialias: false, powerPreference: 'high-performance' });
-    if (!this.gl) throw Error('WebGL2 unavailable');
-
-    const V = `#version 300 es
-void main(){
-  vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);
-  gl_Position=vec4(p*2.-1.,0,1);
-}`;
-
-    const F = `#version 300 es
-precision highp float;
-out vec4 O;
-uniform vec2 R;
-uniform float T,phase,prog,adir,pact,pdir,hit,stage,shake;
-
-float box(vec2 p,vec2 b){
-  vec2 d=abs(p)-b;
-  return length(max(d,0.))+min(max(d.x,d.y),0.);
-}
-
-float seg(vec2 p,vec2 a,vec2 b,float w){
-  vec2 pa=p-a,ba=b-a;
-  float h=clamp(dot(pa,ba)/max(dot(ba,ba),.0001),0.,1.);
-  return length(pa-ba*h)-w;
-}
-
-vec2 rot(vec2 p,float a){
-  float c=cos(a),s=sin(a);
-  return mat2(c,-s,s,c)*p;
-}
-
-float rbox(vec2 p,vec2 b,float a){
-  return box(rot(p,a),b);
-}
-
-float ease(float x){
-  x=clamp(x,0.,1.);
-  return x*x*(3.-2.*x);
-}
-
-float mask(float d,float feather){
-  return 1.-smoothstep(0.,feather,d);
-}
-
-vec3 paint(vec2 uv){
-  vec3 c=mix(vec3(.018,.02,.026),stage>1.5?vec3(.09,.025,.018):vec3(.035,.04,.05),max(0.,uv.y));
-  float floorY=uv.y+.28;
-  if(floorY<0.){
-    float z=.12/max(.02,-floorY);
-    float gx=abs(fract((uv.x/z+.5)*8.)-.5);
-    float gy=abs(fract(z*3.)-.5);
-    c+=vec3(.18,.13,.09)*(.05/(gx+.08)+.035/(gy+.08))*(1.-smoothstep(-.7,-.02,floorY));
-  }
-
-  for(float s=-1.;s<=1.;s+=2.){
-    float d=box(uv-vec2(s*.72,.05),vec2(.04,.58));
-    c=mix(c,vec3(.33,.12,.08),mask(d,.025));
-    d=box(uv-vec2(s*.72,.55),vec2(.3,.045));
-    c=mix(c,vec3(.42,.16,.1),mask(d,.025));
-  }
-
-  float hitGlow=exp(-max(0.,hit)*5.);
-  float tele=phase>.5&&phase<1.5?ease(prog):0.;
-  float strike=phase>1.5&&phase<2.5?ease(prog):0.;
-  float recover=phase>2.5&&phase<3.5?ease(prog):0.;
-  float a=adir*1.5707963;
-  vec2 attackAxis=vec2(sin(a),cos(a));
-  vec2 sideAxis=vec2(attackAxis.y,-attackAxis.x);
-
-  float attackPulse=sin(strike*3.1415926);
-  float stageWeight=1.+stage*.08;
-  vec2 bodyShift=-attackAxis*.045*tele+attackAxis*.065*attackPulse;
-  bodyShift+=sideAxis*.018*sin(T*2.1+stage*1.7)*(1.-min(1.,tele+strike));
-  bodyShift.y-=max(0.,-attackAxis.y)*.045*tele;
-  bodyShift.y+=max(0.,attackAxis.y)*.025*tele;
-  bodyShift+=vec2(hitGlow*.08,0.);
-
-  vec2 e=uv-bodyShift;
-  float torsoTilt=-attackAxis.x*.11*tele+attackAxis.x*.16*attackPulse;
-  float shadow=length(vec2(e.x*.95,(e.y+.39)*3.2))-.19*stageWeight;
-  c=mix(c,vec3(.01,.008,.008),mask(shadow,.08)*.7);
-
-  vec3 armour=stage<.5?vec3(.55,.16,.1):stage<1.5?vec3(.13,.22,.5):vec3(.45,.08,.07);
-  vec3 armourDark=armour*.45;
-
-  float leftLeg=seg(e,vec2(-.07,-.23),vec2(-.13-.02*stage,-.39),.052);
-  float rightLeg=seg(e,vec2(.07,-.23),vec2(.13+.02*stage,-.39),.052);
-  c=mix(c,armourDark,mask(min(leftLeg,rightLeg),.02));
-
-  float torso=rbox(e-vec2(0.,-.005),vec2(.165,.305),torsoTilt);
-  c=mix(c,armour,mask(torso,.025));
-  float sash=box(rot(e-vec2(0.,-.08),torsoTilt),vec2(.18,.035));
-  c=mix(c,armourDark*.72,mask(sash,.018));
-
-  vec2 headPos=vec2(attackAxis.x*.018*tele,.405+attackAxis.y*.008*tele);
-  float head=length(e-headPos)-.105;
-  c=mix(c,vec3(.58,.39,.25),mask(head,.02));
-  float helm=box(e-headPos-vec2(0,.07),vec2(.15+.015*stage,.045));
-  c=mix(c,vec3(.05),mask(helm,.02));
-
-  float swordAngle=a-.38;
-  if(phase>.5&&phase<1.5){
-    swordAngle=mix(a-.38,a-.98,tele);
-  }else if(phase>1.5&&phase<2.5){
-    float cut=ease(clamp(prog*1.18,0.,1.));
-    swordAngle=mix(a-.98,a+1.13,cut);
-  }else if(phase>2.5&&phase<3.5){
-    swordAngle=mix(a+1.13,a+.28,recover);
-  }
-
-  vec2 hilt=vec2(.11,.19)-attackAxis*.11*tele+attackAxis*.035*attackPulse+sideAxis*.035;
-  vec2 shoulderL=vec2(-.105,.19);
-  vec2 shoulderR=vec2(.105,.19);
-  vec2 elbow=hilt-sideAxis*.13-attackAxis*.05;
-  float upperArm=seg(e,shoulderR,elbow,.038);
-  float foreArm=seg(e,elbow,hilt,.034);
-  float supportArm=seg(e,shoulderL,hilt-attackAxis*.045,.031);
-  c=mix(c,vec3(.22,.11,.075),mask(min(upperArm,min(foreArm,supportArm)),.02));
-
-  vec2 bladeDir=vec2(sin(swordAngle),cos(swordAngle));
-  float blade=seg(e,hilt-bladeDir*.045,hilt+bladeDir*.59,.017);
-  float bladeHalo=seg(e,hilt-bladeDir*.045,hilt+bladeDir*.59,.048);
-  float readPulse=tele*smoothstep(.45,1.,prog)*(.65+.35*sin(T*18.));
-  c+=vec3(1.,.36,.12)*mask(bladeHalo,.07)*readPulse*.16;
-  c=mix(c,vec3(.92,.94,.9),mask(blade,.015));
-  float guard=seg(e,hilt-sideAxis*.055,hilt+sideAxis*.055,.015);
-  c=mix(c,vec3(.12,.08,.05),mask(guard,.012));
-
-  float trail=strike*sin(clamp(prog,0.,1.)*3.1415926);
-  float trailAngle1=swordAngle-.18;
-  float trailAngle2=swordAngle-.36;
-  vec2 trailDir1=vec2(sin(trailAngle1),cos(trailAngle1));
-  vec2 trailDir2=vec2(sin(trailAngle2),cos(trailAngle2));
-  float trail1=seg(e,hilt+trailDir1*.02,hilt+trailDir1*.57,.031);
-  float trail2=seg(e,hilt+trailDir2*.03,hilt+trailDir2*.54,.045);
-  c+=vec3(1.,.33,.09)*mask(trail1,.055)*trail*.32;
-  c+=vec3(.9,.16,.05)*mask(trail2,.07)*trail*.16;
-
-  float contact=hitGlow*exp(-18.*abs(length(e-vec2(.02,.05))-.23));
-  c+=vec3(1.,.55,.18)*contact*.18;
-
-  float playerAngle=pdir*1.5708+(pact>.5?(pact>1.5?sin(T*16.)*.55:-.9+fract(T*3.)*1.8):-.6);
-  vec2 playerHilt=uv-vec2(.34,-.47);
-  vec2 playerDir=vec2(sin(playerAngle),cos(playerAngle));
-  float playerBlade=seg(playerHilt,-playerDir*.1,playerDir*.75,.026);
-  c=mix(c,vec3(.95,.96,.9),mask(playerBlade,.02));
-
-  c+=vec3(1.,.45,.18)*hitGlow*.2;
-  return c;
-}
-
-void main(){
-  vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;
-  uv+=vec2(sin(T*61.),cos(T*53.))*shake*.002;
-  vec3 c=paint(uv);
-  float vig=1.-smoothstep(.32,.9,length(uv));
-  O=vec4(c*(.5+.5*vig),1);
-}`;
-
-    this.p = this.program(V, F);
-    this.gl.useProgram(this.p);
-    this.u = {};
-    for (const n of ['R', 'T', 'phase', 'prog', 'adir', 'pact', 'pdir', 'hit', 'stage', 'shake']) {
-      this.u[n] = this.gl.getUniformLocation(this.p, n);
-    }
-  }
-
-  shader(t, s) {
-    const x = this.gl.createShader(t);
-    this.gl.shaderSource(x, s);
-    this.gl.compileShader(x);
-    if (!this.gl.getShaderParameter(x, this.gl.COMPILE_STATUS)) throw Error(this.gl.getShaderInfoLog(x));
-    return x;
-  }
-
-  program(v, f) {
-    const p = this.gl.createProgram();
-    this.gl.attachShader(p, this.shader(this.gl.VERTEX_SHADER, v));
-    this.gl.attachShader(p, this.shader(this.gl.FRAGMENT_SHADER, f));
-    this.gl.linkProgram(p);
-    if (!this.gl.getProgramParameter(p, this.gl.LINK_STATUS)) throw Error(this.gl.getProgramInfoLog(p));
-    return p;
-  }
-
-  draw(s, n) {
-    const d = Math.min(devicePixelRatio || 1, 1.6);
-    const w = Math.floor(this.c.clientWidth * d);
-    const h = Math.floor(this.c.clientHeight * d);
-    if (this.c.width !== w || this.c.height !== h) {
-      this.c.width = w;
-      this.c.height = h;
-      this.gl.viewport(0, 0, w, h);
-    }
-    const map = { telegraph: 1, strike: 2, recovery: 3 };
-    this.gl.useProgram(this.p);
-    this.gl.uniform2f(this.u.R, w, h);
-    this.gl.uniform1f(this.u.T, n / 1000);
-    this.gl.uniform1f(this.u.phase, map[s.phase] || 0);
-    this.gl.uniform1f(this.u.prog, s.phaseProgress);
-    this.gl.uniform1f(this.u.adir, D[s.attack?.displayedDirection]?.[2] || 0);
-    this.gl.uniform1f(this.u.pact, action);
-    this.gl.uniform1f(this.u.pdir, D[actionDir]?.[2] || 0);
-    this.gl.uniform1f(this.u.hit, (n - hitAt) / 320);
-    this.gl.uniform1f(this.u.stage, s.enemyIndex);
-    this.gl.uniform1f(this.u.shake, shake);
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
-  }
-}
-
 let view;
 try {
   view = new View(canvas);
   document.documentElement.dataset.webgl = 'ready';
+  document.documentElement.dataset.visualIdentity = 'wide-samurai-v2';
 } catch (e) {
   console.error(e);
   unsupported.hidden = false;
@@ -503,7 +293,13 @@ function loop(n) {
   hud(s, n);
   shake = Math.max(0, shake - dt * 0.0048);
   if (action && n - actionAt > (action === 3 ? 390 : 290)) action = 0;
-  view?.draw(s, n);
+  view?.draw(s, n, {
+    attackDirectionIndex: D[s.attack?.displayedDirection]?.[2] || 0,
+    playerAction: action,
+    playerDirectionIndex: D[actionDir]?.[2] || 0,
+    hitAge: (n - hitAt) / 320,
+    shake,
+  });
 }
 
 $('#start-button').addEventListener('click', begin);

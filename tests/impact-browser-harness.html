@@ -11,6 +11,9 @@
     import { CombatEngine, Direction } from '../src/game-core.js';
     import '../src/impact-fx.js';
 
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.documentElement.dataset.impactReducedMotion = String(reducedMotion);
+
     const enemy = {
       id: 'impact-harness',
       name: 'Impact Harness',
@@ -35,11 +38,14 @@
 
     const layer = document.querySelector('#impact-fx-layer');
     const perfectSeen = Boolean(layer?.querySelector('.impact-fx--perfect'));
-    const sparkSeen = (layer?.querySelectorAll('.impact-fx__spark').length ?? 0) >= 6;
+    const sparkCount = layer?.querySelectorAll('.impact-fx__spark').length ?? 0;
+    const sparkSeen = reducedMotion ? sparkCount === 0 : sparkCount >= 6;
+    const ringSeen = Boolean(layer?.querySelector('.impact-fx--perfect .impact-fx__ring'));
 
     combat.attemptAttack(Direction.BOTTOM, 1660);
     combat.drainEvents();
-    const slashSeen = Boolean(layer?.querySelector('.impact-fx--slash .impact-fx__slash'));
+    const slashCount = layer?.querySelectorAll('.impact-fx--slash .impact-fx__slash').length ?? 0;
+    const slashSeen = reducedMotion ? slashCount === 0 : slashCount >= 1;
 
     const damageCombat = new CombatEngine({ enemies: [enemy], playerMaxHp: 4 });
     damageCombat.start(0);
@@ -58,9 +64,10 @@
       rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight
     );
 
-    document.documentElement.dataset.impactIntegration = perfectSeen && slashSeen && damageSeen && sparkSeen ? 'pass' : 'fail';
+    document.documentElement.dataset.impactIntegration = perfectSeen && slashSeen && damageSeen && sparkSeen && ringSeen ? 'pass' : 'fail';
     document.documentElement.dataset.impactPointerSafe = String(Boolean(pointerSafe));
     document.documentElement.dataset.impactLayout = layoutSafe ? 'pass' : 'fail';
+    document.documentElement.dataset.impactReducedFallback = String(Boolean(reducedMotion && ringSeen && sparkCount === 0 && slashCount === 0));
 
     await new Promise((resolve) => setTimeout(resolve, 650));
     document.documentElement.dataset.impactBounded = String(Boolean(layer && layer.childElementCount === 0));

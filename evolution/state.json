@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 13,
+  "run_number": 14,
   "last_action_type": "FEATURE",
-  "last_action": "Added bounded direction-aware impact choreography for parries, counters, guard breaks and player hits with reduced-motion fallback",
-  "last_commit": "0016f41d6464dd6e21a56e54ad2243966abf1a6c",
+  "last_action": "Redrew the procedural samurai presentation with wider enemy framing, stage-specific armour silhouettes, deeper dojo perspective and stronger readable anticipation while preserving the combat model",
+  "last_commit": "f9eb6b4b2f869f571d69e1620832d7c1d9341910",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/AQHpK9b8bWE9icqCc373TGAYEcgH",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/2Jm77KZ7qtuXa43sYVRxcpWmJSrj",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -20,6 +20,6 @@
   "next_candidates": [
     "Add challenge mode with mastery-aware scoring and a clean restart loop",
     "Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs",
-    "Create a stronger procedural visual identity pass across arenas and enemy silhouettes"
+    "Review the wide-framed visual redraw on a real iPhone and refine proportions/lighting only if evidence warrants it"
   ]
 }
