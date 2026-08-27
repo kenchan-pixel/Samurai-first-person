@@ -109,6 +109,9 @@ try {
   if (!appDom.includes('data-footwork-ready="true"') || !appDom.includes('id="footwork-step"')) {
     throw new Error('Footwork controller / STEP control did not initialize in the real application document');
   }
+  if (!appDom.includes('data-impact-ready="true"') || !appDom.includes('id="impact-fx-layer"')) {
+    throw new Error('Impact choreography layer did not initialize in the real application document');
+  }
 
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2600 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) {
@@ -178,7 +181,21 @@ try {
     throw new Error('STEP pointer travel threshold allowed a dragged gesture to trigger a backstep');
   }
 
-  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + onboarding + footwork integration`);
+  const impactDom = await dumpDom(browser, '/tests/impact-browser-harness.html', { budget: 1600 });
+  if (!impactDom.includes('data-impact-integration="pass"')) {
+    throw new Error(`Impact event choreography failed. DOM:\n${impactDom.slice(0, 5000)}`);
+  }
+  if (!impactDom.includes('data-impact-pointer-safe="true"')) {
+    throw new Error('Impact layer intercepted pointer input');
+  }
+  if (!impactDom.includes('data-impact-layout="pass"')) {
+    throw new Error('Impact layer escaped the 320x568 viewport');
+  }
+  if (!impactDom.includes('data-impact-bounded="true"')) {
+    throw new Error('Impact burst nodes were not cleaned up after their bounded lifetime');
+  }
+
+  console.log(`browser smoke passed with ${browser}: WebGL2/startup + mastery + boss + onboarding + footwork + impact integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

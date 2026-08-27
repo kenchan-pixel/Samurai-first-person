@@ -15,15 +15,15 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 010 — Guided Duel CI lifecycle repair:** fixed the browser gate to capture the first-time enabled toggle before combat, then verify tutorial completion persists and correctly defaults guidance off afterward.
 - **Run 011 — Spacing and footwork:** close/mid/far engagement distance, enemy approach/retreat/sidestep setup, attack reach, a timed STEP backstep that only evades attacks moved beyond their reach, and mobile browser/Node verification.
 - **Run 012 — Guided Duel / STEP integration hardening:** evade-only stage clears no longer persist Guided Duel completion; browser coverage now drives the real STEP pointer path with capture/isolation/drag-threshold checks and current four-stage copy is restored.
+- **Run 013 — Directional impact choreography:** perfect parries, normal parries, counters, guard-break hits and player damage now produce bounded direction-aware shock rings, slash afterimages and sparks with reduced-motion fallback plus Node/browser verification.
 
 ## High-value candidates
 
-1. **Combat juice pass** — richer hit stop/time dilation, camera impulse, impact sparks, directional audio, and optional haptics beyond the current baseline feedback.
-2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring, and a clean restart loop.
-3. **Accessibility mode** — adjustable timing windows, left-handed layout, reduced camera motion, high-contrast telegraphs, and sound-independent cues.
-4. **Visual identity pass** — original environments, weather, lighting, silhouette language, and enemy art direction using procedural assets.
-5. **Boss refinement** — only after play/review evidence: additional boss-specific renderer silhouette/weapon language, phase tuning, or signature arena interactions rather than immediately stacking more boss mechanics.
-6. **Onboarding follow-through** — only if play/review evidence shows confusion remains: teach mastery/replay goals more explicitly without turning the first duel into a long tutorial.
+1. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring, and a clean restart loop.
+2. **Accessibility mode** — adjustable timing windows, left-handed layout, reduced camera motion, high-contrast telegraphs, and sound-independent cues.
+3. **Visual identity pass** — original environments, weather, lighting, silhouette language, and enemy art direction using procedural assets.
+4. **Boss refinement** — only after play/review evidence: additional boss-specific renderer silhouette/weapon language, phase tuning, or signature arena interactions rather than immediately stacking more boss mechanics.
+5. **Onboarding follow-through** — only if play/review evidence shows confusion remains: teach mastery/replay goals more explicitly without turning the first duel into a long tutorial.
 
 ## Technical opportunities
 
@@ -31,7 +31,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - Performance HUD and adaptive render quality.
 - Deterministic replay of combat inputs for broader regression testing.
 - Installable PWA and offline shell.
-- Separate rendering, audio, input, encounter, footwork, onboarding, and run-summary controllers as complexity grows.
+- Separate rendering, audio, input, encounter, footwork, onboarding, impact, and run-summary controllers as complexity grows.
 
 ## Avoid until justified
 

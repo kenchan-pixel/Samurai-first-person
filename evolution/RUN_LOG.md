@@ -270,3 +270,59 @@ The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm ru
 - Deepen combat impact with richer hit stop, camera impulse and bounded sparks.
 - Add challenge mode with mastery-aware scoring and a clean restart loop.
 - Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
+
+## Run 013 — Directional impact choreography
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Scope:** Make successful defence, counters, guard-break strikes and incoming damage read as physically different contact events without altering combat rules.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `0016f41d6464dd6e21a56e54ad2243966abf1a6c`: CI #39 (`33027123675`) = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft, mergeable and unmerged; no inline review threads existed.
+- The current-head All Repos review reported no actionable P0/P1/P2. The prior Guided Duel/STEP findings were demonstrably closed by Run 012, so no review or regression gate blocked feature selection.
+
+### Candidate selection
+
+Three materially different player-visible candidates were scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Directional impact choreography: **5 / 5 / 4 / 5 / 4 = 23**.
+- Challenge mode: **5 / 4 / 5 / 4 / 3 = 21** because it adds strong replay value but touches progression/scoring/state more broadly.
+- Accessibility options: **4 / 5 / 5 / 4 / 4 = 22** because timing/layout assistance is high-value but benefits from a dedicated settings surface rather than being squeezed into this run.
+
+Impact choreography wins because the Product Goal explicitly calls for satisfying visual/audio/haptic physicality, and the existing event stream allows a visible upgrade with low risk to combat correctness.
+
+### Before
+
+- The renderer already had blade trails, flash, shake, generated sound and haptics, but successful contacts still shared mostly full-screen feedback.
+- Perfect parry, normal parry, counter, guard-break counter and incoming damage were not strongly separated by contact shape or screen position.
+
+### After
+
+- `src/impact-fx.js` observes public `CombatEngine` events and injects a pointer-transparent bounded overlay without changing `game-core.js`.
+- Contact origin follows the attack/counter direction, so the effect reinforces directional physicality rather than appearing as a generic centre flash.
+- Normal/perfect parries use distinct shock-ring intensity; counters add a short directional slash afterimage; guard-break contacts scale up the ring/sparks; player damage uses a separate red burst language.
+- At most three burst containers exist concurrently and every burst self-removes after a fixed lifetime. Reduced-motion preference removes traveling sparks/slash afterimages while preserving a short contact ring/core.
+- Added Node profile/direction tests and a 320×568 browser harness that drives real perfect-parry, counter and player-hit events, then verifies pointer safety, viewport containment and cleanup.
+- Real-app browser smoke now requires impact initialization and the new integration harness while retaining all existing WebGL/mastery/boss/onboarding/footwork gates.
+
+### Regression boundaries
+
+- No change to enemy HP/damage/timing, posture math, reach, footwork, boss phase rules, mastery scoring/storage, Guided Duel state, edge-parry/swipe mapping, WebGL shader, networking, dependencies or deployment configuration.
+- Impact DOM work is event-driven only; there is no per-frame allocation or unbounded particle/listener growth.
+
+### Post-commit gate
+
+The new exact HEAD must reach terminal-green repository CI (`npm test` + `npm run test:browser`) and terminal-green Vercel Preview before another feature run. The PR Run 13 receipt is authoritative for the created SHA and post-commit statuses; no second metadata-only commit should be created.
+
+### Known risks
+
+- Headless Chromium verifies wiring, bounds and cleanup, but real iPhone acceptance is still needed to judge whether spark density and ring scale feel punchy rather than visually noisy on a small OLED screen.
+- Reduced-motion behavior is implemented as a simplified static contact cue; a future accessibility run can expose broader motion/contrast/timing controls as an explicit player setting.
+
+### Next-run candidates
+
+- Add challenge mode with mastery-aware scoring and a clean restart loop.
+- Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs.
+- Create a stronger procedural visual-identity pass across arenas and enemy silhouettes.

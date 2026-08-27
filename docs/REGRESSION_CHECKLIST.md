@@ -93,6 +93,11 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Player/enemy posture values remain visible without blocking the combat view.
 - [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
 - [ ] Engagement distance changes produce restrained camera depth/lateral feedback without hiding the blade read or moving essential controls.
+- [ ] Normal/perfect parries produce direction-aware contact feedback; perfect parry is visibly stronger than a normal parry without changing timing.
+- [ ] Counters produce a short directional slash afterimage and bounded sparks; guard-break counters read as stronger than normal counters.
+- [ ] Incoming player hits use a distinct red burst rather than being visually confused with a successful parry/counter.
+- [ ] Impact FX remain pointer-transparent, never exceed three concurrent burst containers, and self-remove after the bounded lifetime.
+- [ ] Reduced-motion preference suppresses traveling impact sparks/slash afterimages while retaining a short readable contact cue.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
 - [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
 - [ ] Victory copy reflects the complete four-stage campaign.
@@ -106,7 +111,7 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, boss encounter initialization, onboarding initialization, and footwork initialization in the real app document.
+- [ ] Browser smoke confirms WebGL2, enabled start control, mastery observer initialization, boss encounter initialization, onboarding initialization, footwork initialization, and impact-FX initialization in the real app document.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
@@ -116,6 +121,8 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Onboarding browser harness proves an evade-only Ashigaru clear does not write `completed`, a fresh run remains guided, then drives wrong-direction correction → successful parry → counter and verifies normal completion/toggle lifecycle plus 320×568 pointer-transparent coach layout.
 - [ ] Footwork Node coverage proves short-range evade + counter, long/heavy tracking, and wrong-time STEP rejection.
 - [ ] Footwork browser harness drives actual STEP pointerdown/pointerup, observes pointer capture/isolation, rejects a dragged STEP, proves a short evade/counter, proves a long tracked strike, and confirms later canvas pointer state resets cleanly.
+- [ ] Impact Node coverage proves event-to-effect profile selection and direction-origin mapping without touching combat resolution.
+- [ ] Impact browser harness drives actual perfect-parry, counter and player-hit events, proves 320×568 pointer-safe layout, and confirms all burst nodes clean themselves up.
 - [ ] CI configuration remains valid.
 - [ ] Current Baseline is updated only for accepted new baseline behaviour.
 - [ ] Changelog, backlog, and run log are updated.

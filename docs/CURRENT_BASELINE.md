@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.7.1-evolution**
+Version: **0.8.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
 
@@ -79,7 +79,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - **Oni Guard:** heavy damage, short strike windows, larger health pool, pressure patterns, highest baseline posture threshold; heavy hits pressure player posture faster and use long tracking reach.
 - **Crimson Shogun:** multi-phase boss with a mid-fight ruleset/tempo shift, higher posture resistance, signature heavy/feint patterns, distinct arena atmosphere, and long-reach tracking pressure on heavy attacks.
 
-## Presentation
+## Presentation and impact choreography
 
 - First-person WebGL 3D arena and combatants.
 - Player katana visible in the foreground.
@@ -88,6 +88,9 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Procedural arms, stance/legs, torso lean, ground shadow, telegraph blade halo, and strike trail make the opponent silhouette and blade path easier to read without adding dense controls.
 - HUD shows player health, enemy health, stage, combat prompt, directional feedback, and compact player/enemy posture values.
 - Enemy guard break and player guard break use explicit combat prompts, stronger impact timing, audio, flash, and optional vibration feedback.
+- Successful parries, perfect parries, counters, guard-break strikes, and player hits now also generate a short direction-aware impact burst positioned toward the relevant attack/counter direction.
+- Perfect parries and guard-break counters use larger shock rings and brighter bounded sparks; normal counters add a directional slash afterimage; player hits use a distinct red damage burst.
+- Impact burst nodes are pointer-transparent, capped to three concurrent bursts, and removed after a bounded lifetime. Reduced-motion preference suppresses spark/slash travel while retaining a short readable contact ring/core.
 - Boss-specific blood-moon and ember presentation is bounded to a fixed DOM layer and does not add external assets.
 - Footwork adds only a small STEP control, distance chip, and bounded camera transform; the centre combat view and edge-block zones remain usable.
 - The victory copy reflects the complete four-duel campaign rather than the older three-enemy baseline.
@@ -102,12 +105,14 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/boss-overlay.js` observes public combat events for bounded boss-only atmosphere, uses explicit timers for transition-banner/deactivation cleanup, and marks readiness for browser smoke verification.
 - `src/onboarding-coach.js` observes public combat events for the guided first duel, keeps tutorial state outside the combat state machine, injects a pointer-transparent coach/toggle, and stores only a local completion preference after the full read/parry/counter proof is complete.
 - `src/footwork.js` installs an idempotent encounter adapter over public `CombatEngine` state: it decorates attack reach/setup profiles, tracks engagement distance, adds timed backstep/evade openings, injects the STEP/range UI, and leaves directional parry/swipe rules intact.
+- `src/impact-fx.js` observes the same public combat event stream and renders short-lived DOM/CSS impact choreography without changing damage, timing, posture, reach, input, or the WebGL shader.
 - Mastery scoring is isolated in pure `src/mastery.js`; a lightweight observer adapter records public combat events without changing the combat state machine.
-- Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation.
-- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, guided-duel progression/non-completion/adaptive cues, and footwork short-evade / long-track outcomes.
-- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding/footwork initialization, and runs dedicated mastery, boss, onboarding, and footwork integration harnesses at a 320×568 viewport.
+- Procedural combat rendering remains a single bounded WebGL2 fragment-shader pass with no new assets, network calls, particles, or per-frame object allocation; impact DOM nodes are event-driven and explicitly bounded/cleaned up.
+- Automated Node tests cover direction mapping, combat resolution, posture pressure, guard-break counter damage, player posture reset, boss stage injection/phase transition/restart, mastery statistics, grading, personal-best comparison, time formatting, guided-duel progression/non-completion/adaptive cues, footwork short-evade / long-track outcomes, and impact-event profile/direction mapping.
+- A dependency-free headless Chromium/Chrome smoke test executes the real page with WebGL2/SwiftShader, requires shader compile/link success, verifies start/mastery/boss/onboarding/footwork/impact initialization, and runs dedicated mastery, boss, onboarding, footwork, and impact integration harnesses at a 320×568 viewport.
 - The mastery browser integration gate verifies victory mastery rendering, personal-best persistence, worse-run preservation, blocked-`localStorage` tolerance, and that the mastery result/restart control remain inside the viewport.
 - The boss browser integration gate runs with `prefers-reduced-motion`, drives the real patched `CombatEngine` through boss activation and Phase II, proves the banner cleans up while Phase II remains active, verifies restart-to-Phase-I, and reaches final victory.
 - The onboarding browser integration gate drives the real opening enemy event stream through both an evade-only clear and the intended wrong-direction correction → successful parry → counter path; it proves evade-only play does not persist completion and that a fresh run still enables guidance.
 - The footwork browser integration gate drives the real STEP pointerdown/pointerup path, checks pointer capture/isolation and drag rejection, proves a close-range strike can be escaped into a counter opening, and proves a long/heavy strike still tracks STEP.
+- The impact browser integration gate drives real `CombatEngine` perfect-parry, counter, and player-hit events, verifies pointer-transparent 320×568 presentation, and proves burst nodes clean themselves up after their bounded lifetime.
 - GitHub Actions runs both Node tests and the browser integration/WebGL smoke gate on pull requests and pushes to main.

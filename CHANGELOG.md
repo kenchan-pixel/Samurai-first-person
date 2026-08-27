@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0-evolution — Directional impact choreography
+
+- Added a dedicated event-driven impact layer for normal/perfect parries, counters, guard-break strikes, and player hits without changing combat resolution.
+- Impact contact now appears toward the relevant attack/counter direction; perfect parries and guard-break hits use larger shock rings, counters add short slash afterimages, and incoming damage uses a distinct red burst.
+- Impact nodes are pointer-transparent, capped to three concurrent bursts, and removed after a bounded lifetime; reduced-motion preference suppresses traveling sparks/slashes while keeping a short contact ring/core.
+- Added pure Node coverage for impact profile/direction mapping plus a 320×568 browser harness that drives real `CombatEngine` events and verifies perfect-parry/counter/damage presentation, pointer safety, viewport containment, and cleanup.
+- Extended the real-app browser smoke gate to require impact initialization alongside WebGL, mastery, boss, onboarding, and footwork controllers.
+- No enemy HP/damage/timing, posture math, reach, boss phase rules, mastery scoring/storage, input mapping, networking, dependencies, or framework changed.
+
 ## 0.7.1-evolution — Guided Duel / STEP integration hardening
 
 - Fixed Guided Duel completion so clearing the opening Ashigaru through STEP/evade counters without a demonstrated parry no longer persists the tutorial as completed; the lesson remains eligible on the next run.
