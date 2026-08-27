@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.11.0-evolution**
+Version: **0.12.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -65,44 +65,43 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 ## Presentation and visual identity
 
-- **PlayCanvas Engine standalone is now the primary production-facing renderer on `autonomous-evolution`.** It renders a real perspective 3D courtyard, directional/point lighting, shadows, a first-person katana and an original code-authored articulated samurai hierarchy.
-- The previous custom single-pass WebGL2 procedural renderer is preserved in `src/legacy-renderer.js` as a temporary fallback while the migration stabilises.
-- The enemy remains materially farther back than the earlier near-camera presentation so the full helmet-to-feet silhouette and sword path remain readable in portrait framing.
-- Stage identity remains visible through armour/cloth/accent palette, helmet crest and boss scale/atmosphere while the centre combat lane stays clear.
-- Enemy motion remains a continuous **wind-up → swing → impact/follow-through → recovery** visual flow driven from the same elapsed-time combat phase state used before the renderer migration.
-- Normal telegraph/strike/recovery poses follow the elapsed-time target directly; only a genuinely parried strike → recovery transition receives bounded smoothing.
-- Player parry/slash motion remains action-local and direction-aware.
-- Normal/perfect parries, counters, guard-break contacts and player damage keep bounded direction-aware DOM impact FX; reduced-motion keeps a short readable contact cue while removing travelling effects.
+- **PlayCanvas Engine standalone remains the primary production-facing renderer.** It renders the perspective courtyard, directional/point lighting, shadows, first-person katana and enemy character.
+- **The visible enemy is now an original skinned glTF/GLB samurai rather than the Run 018 primitive figure once the local asset loads.** The generated model has layered lamellar armour, shoulder/waist plates, greaves, menpo, helmet/crest, hands and katana with a 19-joint skin hierarchy.
+- The local GLB is generated deterministically at build time from `tools/generate-samurai-glb.mjs`; no downloaded model, texture or motion-capture pack is used. Provenance is recorded in `docs/ASSET_PROVENANCE.md`.
+- The previous code-authored articulated PlayCanvas primitive remains a graceful character-level fallback if the GLB cannot load. The older custom single-pass WebGL2 renderer remains in `src/legacy-renderer.js` as renderer-level fallback while migration evidence accumulates.
+- Enemy full-body framing remains materially farther back than the original near-camera presentation so helmet-to-feet silhouette and sword path stay readable in portrait.
+- Stage identity continues through armour/cloth/accent palette and boss scale/atmosphere; the imported material groups are recoloured locally per stage without extra texture downloads.
+- The enemy uses real skeletal clips for **Idle / Windup / Strike / Recovery / Parry**. Clip choice and sampling remain driven by the existing renderer-neutral combat snapshot rather than animation owning hit/parry timing.
+- Normal telegraph/strike/recovery poses continue to follow elapsed-time phase progress. A genuine parry maps interrupted recovery to the explicit `Parry` reaction clip; normal recovery maps to `Recovery`.
+- Short clip transitions use bounded PlayCanvas blending while the destination clip begins at current combat progress, preventing the visual layer from redefining combat windows.
+- Player parry/slash motion remains action-local and direction-aware; normal/perfect parry, counter, guard-break and player-hit DOM impact FX remain bounded and reduced-motion aware.
 - Boss blood-moon presentation, range chip, posture HUD and Guided Duel remain additive DOM overlays and must not obstruct the opponent/body/blade read.
 - Generated Web Audio and optional vibration remain interaction-triggered.
-
-### Current 3D-fidelity boundary
-
-Run 018 proves the approved PlayCanvas/Vite production path with an original articulated 3D character assembled from engine primitives. It is a substantial step beyond the shader-drawn figure but **is not yet the final high-detail skinned character target**. The next fidelity slice should introduce one local, clearly licensed/original skinned glTF/GLB samurai and real animation clips without changing combat authority.
 
 ## Mobile performance baseline
 
 - Gameplay and animation timing remain elapsed-time based rather than frame-count based.
-- PlayCanvas rendering uses the existing rolling frame-time signal to adapt `graphicsDevice.maxPixelRatio` within a conservative mobile range; quality may fall before gameplay timing/responsiveness does.
+- PlayCanvas rendering uses the rolling frame-time signal to adapt `graphicsDevice.maxPixelRatio` within a conservative mobile range; quality may fall before gameplay timing/responsiveness does.
 - Adaptive quality never changes parry windows, strike timing, damage, engine updates, input mapping or encounter rules.
-- The new renderer reuses its scene hierarchy and motion-state objects; it does not create 3D entities per frame.
-- Headless Chromium/SwiftShader can prove the Vite bundle, PlayCanvas renderer startup and browser integration but cannot certify sustained 60 Hz on a physical iPhone. Recent-phone performance remains the human acceptance gate.
+- The skinned character reuses one loaded scene hierarchy and animation component; no enemy entities, model assets or animation controllers are created per frame.
+- The generated GLB is currently about 315 KiB with about 1,972 triangles, 19 joints, 8 material groups and no texture payload. This is a deliberately conservative first mobile fidelity budget, not a final art ceiling.
+- Headless Chromium/SwiftShader proves production bundle, model loading, skeletal clip selection and combat mapping but cannot certify sustained 60 Hz, heat or final visual quality on a physical iPhone. Recent-phone performance remains the human acceptance gate.
 
 ## Technical baseline
 
 - Deterministic combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact remain additive adapters/observers.
-- `src/main.js` still owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
-- `src/renderer.js` is now a narrow renderer adapter: PlayCanvas primary, legacy WebGL2 fallback.
-- `src/playcanvas-view.ts` owns the new 3D scene, articulated samurai/player katana presentation, stage visual style and adaptive render quality.
-- `src/legacy-renderer.js` preserves the previously accepted procedural renderer during migration.
+- `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
+- `src/renderer.js` remains a narrow adapter: PlayCanvas primary, legacy WebGL2 fallback.
+- `src/playcanvas-view.ts` owns the scene, local skinned-character loading/animation, stage style, primitive character fallback, first-person katana and adaptive render quality.
 - `src/animation-motion.js` remains renderer-independent and owns deterministic four-beat visual weights plus the authoritative parry-interruption smoothing rule.
-- Build/development now uses Vite; the browser gate builds `dist/` first, then executes the real production bundle at 320×568 while reusing existing focused integration harnesses for mastery, boss, onboarding, footwork and impact.
-- The real-app browser gate requires the **PlayCanvas** backend marker; silently falling back to the legacy renderer does not pass CI.
-- GitHub Actions installs pinned npm dependencies, runs Node tests and the browser integration gate. Vercel builds the same Vite `dist/` output.
-- PlayCanvas is the only new runtime 3D dependency; no React, physics engine, login, analytics, network model service or paid API is introduced.
+- `tools/generate-samurai-glb.mjs` is the auditable original model/rig/clip source. `vite.config.js` generates `public/assets/samurai-v1.glb` before Vite serves/builds the app; the generated binary is ignored by Git.
+- Build/development uses Vite; Vercel builds the same `dist/` output.
+- The real-app browser gate requires the PlayCanvas backend and drives one representative CombatEngine telegraph → strike → parry → counter sequence. It now also requires the skinned GLB to load and verifies Windup → Strike → Parry skeletal clip mapping in that same existing smoke path.
+- Existing mastery, boss, onboarding, footwork and impact browser harnesses remain required at 320×568.
+- PlayCanvas is the only runtime 3D dependency; no React, physics engine, account, analytics, network model service or paid API is introduced.
 
 ## Approved 3D direction
 
-The PlayCanvas-first Decision Gate is approved and Run 018 begins its production implementation. The approved long-term asset pipeline remains **Blender → local glTF/GLB**, with KTX2/Basis where useful and WebGL2 as required compatibility baseline. WebGPU remains optional progressive enhancement.
+The PlayCanvas-first Decision Gate remains approved. The production path is now **PlayCanvas + local generated glTF/GLB skin/animation**, with Blender-compatible glTF/GLB retained as the long-term asset interchange and KTX2/Basis available when textured assets justify it. WebGL2 remains the required compatibility baseline; WebGPU remains optional progressive enhancement.
 
 A new human Decision Gate is required only if evidence points outside this approved direction or changes a material product/cost/privacy/licensing constraint.

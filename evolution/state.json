@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 20,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Closed the current PlayCanvas integration verification P2 by extending the existing real-app browser gate to drive a representative CombatEngine telegraph → strike → parry → counter sequence through the production PlayCanvas View and assert enemy/player transform progression without adding a parallel test harness",
-  "last_commit": "c94421f47416af2bd54f845604bfea604a272d2b",
+  "run_number": 21,
+  "last_action_type": "FEATURE",
+  "last_action": "Replaced the visible primitive enemy with an original locally generated skinned glTF/GLB samurai on the PlayCanvas path, using real Idle/Windup/Strike/Recovery/Parry skeletal clips sampled from authoritative combat phase progress while retaining the primitive and legacy WebGL2 fallbacks",
+  "last_commit": "3c5eb050c00bb0c317eea7292edfefc4b4782ec2",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Replace the Run 018 primitive articulated samurai with one local clearly licensed/original skinned glTF/GLB character and real animation clips",
-    "Tune PlayCanvas quality/frame budget from physical-iPhone evidence and only then consider retiring the legacy renderer",
-    "Add accessibility options after the main 3D fidelity path is stable"
+    "Tune the skinned samurai camera/material/animation blend budget from physical-iPhone evidence, prioritising sustained 60 Hz and attack readability",
+    "Add richer directional skeletal attack variants and stronger enemy-specific silhouette/weapon language without changing combat authority",
+    "Upgrade the first-person player katana/arms presentation after the enemy fidelity path is stable"
   ]
 }

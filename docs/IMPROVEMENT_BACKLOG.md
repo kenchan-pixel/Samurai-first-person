@@ -12,49 +12,43 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 009–010 — Guided Duel:** read/parry/counter onboarding plus lifecycle repair.
 - **Run 011–012 — Spacing/STEP:** close/mid/far engagement and safe onboarding/pointer integration.
 - **Run 013 — Impact choreography:** bounded direction-aware contact feedback with reduced-motion fallback.
-- **Run 014 — Wide visual redraw:** more readable full-body framing and stronger procedural samurai/dojo depth.
-- **Run 015–017 — Four-beat motion:** elapsed-time wind-up/swing/impact/recovery, adaptive render scale and parry-authoritative dropped-frame recovery handling.
-- **Run 018 — First PlayCanvas production slice:** PlayCanvas standalone + Vite becomes the primary renderer, with a real perspective 3D courtyard, lighting, articulated original samurai/player katana and adaptive pixel ratio; legacy WebGL2 remains temporary fallback and the real production bundle is browser-gated.
-- **Run 019 — PlayCanvas verification repair:** repository smoke assertions now validate the approved PlayCanvas-primary/WebGL2-fallback architecture and current four-duel SOT instead of stale single-file WebGL source/text details, allowing the real Vite/PlayCanvas browser gate to run.
-- **Run 020 — PlayCanvas motion-contract verification:** the existing real-app browser gate now drives a representative CombatEngine telegraph → strike → parry → counter sequence through the production PlayCanvas `View`, proving enemy body/blade motion, interrupted recovery and player katana action transforms rather than only initialization.
+- **Run 014 — Wide visual redraw:** readable full-body framing and stronger procedural samurai/dojo depth.
+- **Run 015–017 — Four-beat motion:** elapsed-time wind-up/swing/impact/recovery, adaptive render scale and authoritative parry interruption handling.
+- **Run 018 — First PlayCanvas production slice:** PlayCanvas standalone + Vite primary renderer, true perspective scene, articulated original primitive samurai and legacy WebGL2 fallback.
+- **Run 019 — PlayCanvas verification repair:** current architecture/browser gate restored after stale smoke assertions.
+- **Run 020 — PlayCanvas motion-contract verification:** real production View driven through telegraph → strike → parry → counter.
+- **Run 021 — Original skinned samurai vertical slice:** deterministic local GLB generated from repository source, 19-joint skin, layered armour and five real skeletal clips; combat phase progress remains authoritative and the primitive renderer character remains fallback.
 
-## Highest priority — finish the rigged-character fidelity migration
+## Highest priority — physical-phone quality and animation refinement
 
-Run 018 proves the engine/build/renderer seam without importing an unverified character pack. Run 020 closes the remaining current-head browser verification gap around actual PlayCanvas combat-motion mapping. Once Run 020 exact-head CI and Preview are terminal green, the next visible step is asset fidelity rather than more framework or test work.
+The engine migration and first skinned-character slice are now production-facing. Do not spend another run building framework infrastructure unless phone evidence exposes a real bottleneck.
 
-Preferred next slice:
+Preferred next work:
 
-1. add one **local, clearly licensed/original skinned samurai glTF/GLB** with recorded provenance;
-2. use real skeletal animation clips/blending for idle + representative directional attack + parry reaction/recovery;
-3. continue driving timing from `game-core.js` rather than letting the animation clip redefine parry windows;
-4. keep full-body portrait readability and current HUD/input behaviour;
-5. compare load size/frame time against Run 018 on the same Preview and physical iPhone;
-6. only retire the legacy renderer after the PlayCanvas path has enough real-device evidence.
+1. **Physical-iPhone visual/performance tuning** — inspect normal combat distance, sustained frame time, heat and load time; tune model/material/shadow/pixel-ratio budget based on evidence.
+2. **Directional skeletal attack variants** — expand left/right/bottom attack body language so blade direction is readable primarily from pose, not UI. Reuse the same combat-authoritative timing contract.
+3. **Enemy-specific visual language** — vary helmet/armour/weapon silhouette or animation rhythm per stage without creating four heavyweight duplicate assets.
+4. **First-person weapon fidelity** — upgrade player hands/katana only after enemy readability and frame budget are stable.
 
-Do not spend a full run merely converting file formats or building an asset-management framework. Asset work should land as a visible playable improvement.
-
-## High-value candidates after / alongside 3D fidelity
+## High-value product candidates after the core fidelity path
 
 1. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and clean restart.
-3. **Boss refinement** — signature model/weapon/animation language and phase tuning based on play evidence.
+3. **Boss refinement** — stronger signature weapon/animation language and phase tuning from play evidence.
 4. **Onboarding follow-through** — only if player evidence shows remaining confusion.
 
 ## Technical opportunities
 
-- Physical-device frame sampling / compact developer performance readout for evidence-based tuning.
-- Deterministic replay of combat inputs for broader regression testing if future complexity needs it.
-- Installable PWA/offline shell after the renderer/asset path is stable.
-- Migrate selected new 3D code toward stronger TypeScript typing only where it reduces real integration risk.
+- Compact physical-device performance readout only if needed to tune the 60 Hz budget.
+- KTX2/Basis only when textured materials are introduced and memory/transfer evidence justifies it.
+- Deterministic replay of combat inputs only if future complexity makes current focused regressions insufficient.
+- Installable PWA/offline shell after renderer/asset loading stabilises.
 
 ## Avoid until justified
 
-- Multiplayer.
-- Accounts and cloud saves.
-- Monetisation.
-- Large inventory/equipment systems.
-- Open-world navigation.
+- Multiplayer, accounts/cloud saves, monetisation, large inventory systems or open-world navigation.
 - React migration solely to host the renderer.
 - Physics engine without a gameplay requirement.
 - Downloaded 3D assets without explicit provenance/licence review.
+- Retiring the primitive or legacy WebGL2 fallbacks before physical-phone evidence is adequate.
 - Test/refactor work that does not protect a real risk or unlock a visible result.

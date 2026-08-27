@@ -1,70 +1,46 @@
 # Changelog
 
+## 0.12.0-evolution — Original skinned samurai and skeletal combat clips
+
+- Replaced the visible Run 018 primitive opponent, after asset readiness, with an original **skinned glTF/GLB samurai** generated locally from repository source.
+- Added a 19-joint rig and more detailed layered lamellar armour, shoulder/waist plates, greaves, menpo, helmet/crest, hands and katana while keeping a conservative mobile geometry budget and no texture downloads.
+- Added real `Idle`, `Windup`, `Strike`, `Recovery` and `Parry` skeletal animation clips. Clip selection and sampling follow existing combat phase progress; animation does not own parry windows, damage or encounter timing.
+- Added short bounded clip transitions and directional lean while keeping the wider full-body portrait framing.
+- Preserved the previous articulated PlayCanvas character as character-level fallback and the legacy custom WebGL2 renderer as renderer-level fallback.
+- Added deterministic build-time GLB generation through `vite.config.js` and `tools/generate-samurai-glb.mjs`; provenance is recorded in `docs/ASSET_PROVENANCE.md` and the generated binary is not committed.
+- Extended the existing renderer-contract smoke only enough to require the skinned asset and verify Windup → Strike → Parry clip mapping through the real combat sequence.
+
 ## 0.11.2-evolution — PlayCanvas combat-motion verification hardening
 
-- Extended the existing real-app browser gate so it now drives a representative CombatEngine telegraph → strike → parry → counter sequence through the production PlayCanvas `View` instead of proving initialization only.
-- The smoke path asserts enemy body/blade transform progression, authoritative interrupted-recovery mapping, player parry motion and player counter-slash motion while remaining on the PlayCanvas backend.
-- Reused the existing Vite/Chromium smoke process rather than adding a parallel browser harness or broad new test suite.
-- The renderer contract smoke is dynamically imported only for the explicit browser-smoke query and is not loaded during normal gameplay.
-- No combat timing, damage, parry window, input mapping, HUD, persistence or production renderer behaviour changed.
+- Real-app browser gate drives CombatEngine telegraph → strike → parry → counter through the production PlayCanvas `View`, including enemy/player transform progression and interrupted recovery.
 
 ## 0.11.1-evolution — PlayCanvas verification gate repair
 
-- Replaced stale repository smoke assertions that were coupled to the old single-file WebGL renderer and historical three-enemy wording.
-- The source-level gate now checks the approved PlayCanvas-primary renderer adapter, preserved WebGL2 fallback, renderer-neutral four-beat motion, adaptive mobile pixel ratio, combat/input/audio integration and current four-duel SOT.
-- Kept the production browser gate unchanged so CI must still build the Vite bundle, initialize PlayCanvas rather than silently fall back, and execute the existing mobile integration harnesses.
-- No gameplay, timing, renderer behaviour, storage, network or input mapping changed.
+- Replaced stale single-file WebGL/text assertions with semantic checks for the approved PlayCanvas-primary/WebGL2-fallback architecture while retaining the real Vite browser gate.
 
 ## 0.11.0-evolution — PlayCanvas true-3D renderer foundation
 
-- Introduced PlayCanvas Engine standalone as the primary production-facing renderer behind a narrow adapter while preserving the previous custom WebGL2 renderer as a temporary fallback.
-- Replaced the shader-built opponent presentation with an original code-authored true-3D articulated samurai hierarchy, perspective camera, lit courtyard/gate scene, shadows and a first-person 3D katana.
-- Mapped the existing renderer-independent four-beat wind-up → swing → impact/follow-through → recovery timeline onto the new 3D body/arms/sword hierarchy without changing combat authority or parry timing.
-- Kept stage-specific visual identity through armour/cloth/accent palette, helmet crest and boss scale while preserving wide full-body portrait framing.
-- Carried the existing rolling frame-time quality logic into PlayCanvas through bounded device pixel-ratio adaptation.
-- Added Vite production bundling and made browser CI execute the built application; the real-app gate now fails if PlayCanvas silently falls back to the legacy renderer.
-- Added pinned PlayCanvas/Vite dependencies and Vercel `dist/` build configuration.
-- No downloaded model/texture pack was introduced. A local clearly licensed/original skinned glTF/GLB samurai with real animation clips remains the next fidelity step.
+- Introduced PlayCanvas standalone + Vite as the primary renderer/build path, true perspective courtyard/lighting/shadows, original articulated primitive samurai and first-person katana; legacy WebGL2 remained fallback.
 
 ## 0.10.1-evolution — Phase-aware motion follow-through
 
-- Removed persistent EMA-style smoothing from normal elapsed-time enemy motion so the fastest 175–330 ms strike phases can visually reach their intended pose instead of trailing behind the game timeline.
-- Normal telegraph, strike and recovery frames now follow the deterministic motion target directly, including after a slow frame, preventing accumulated animation latency.
-- Early successful parries still receive bounded multi-frame strike → recovery damping so interruption remains smooth rather than teleporting.
-- Follow-up hardening makes strike → recovery damping depend on authoritative `attack.parried` state rather than inferring interruption from the previous rendered pose.
-- A natural recovery after a skipped/slow render frame now catches up to the correct elapsed-time target immediately; only a genuine parry interruption keeps bounded multi-frame damping.
-- Added focused regression coverage for identical stale strike poses followed by natural versus explicitly interrupted recovery.
-- Added regression coverage for same-phase direct tracking, natural phase boundaries, multi-frame interrupted recovery, object reuse and adaptive render scaling.
-- No combat timing, parry window, damage, posture, reach, STEP, boss, mastery, onboarding or renderer-stack rule changed.
+- Removed persistent normal-motion smoothing lag and made interrupted recovery depend on authoritative `attack.parried` state so dropped frames catch up correctly.
 
 ## 0.10.0-evolution — Four-beat combat motion and adaptive phone rendering
 
-- Reworked enemy visual motion around continuous wind-up → swing → impact/follow-through → recovery pose weights instead of phase-local pose resets.
-- Added transition damping so an early successful parry no longer teleports the opponent sword/body directly from an early strike pose into recovery.
-- Added coherent stance, torso, arm, hilt, blade-trail and cape/weight-shift motion driven by the same elapsed-time choreography.
-- Replaced global-clock foreground-katana wrapping with action-local parry/slash progress so player sword motion starts and returns predictably.
-- Added bounded adaptive internal render resolution based on rolling frame time to protect a 60 Hz-oriented phone experience without changing combat timing.
-- Added deterministic Node coverage for motion boundaries, impact beats, interrupted-parry smoothing, object reuse and render-scale decisions.
-- Opened a documented 3D fidelity Decision Gate: Three.js + local glTF/GLB is the tentative prototype path, but no runtime engine/model migration is approved yet.
+- Added continuous wind-up → swing → impact/follow-through → recovery motion, action-local player sword animation and bounded adaptive render resolution.
 
 ## 0.9.0-evolution — Wide-framed samurai visual redraw
 
-- Pulled the enemy materially farther back in portrait combat so the full helmet-to-feet silhouette and sword path have more negative space.
-- Redrew the procedural opponent with layered samurai armour, stage-specific head/helmet language, menpo, shoulder plates, lamellar skirt plates, greaves and stronger light/shadow separation.
-- Added deeper dojo composition with receding roof/gate, pillars, lanterns and perspective floor cues while keeping the centre combat lane clear.
-- Enlarged the two-handed anticipation motion and added a directional sword-read arc; kept strike/recovery timing tied to the existing combat phases.
-- Reduced the foreground player-katana footprint so it remains first-person but obstructs less of the opponent.
-- Extracted the WebGL renderer into `src/renderer.js` without changing combat/input/state rules or adding a framework/asset dependency.
-- Real-app browser smoke now requires the new renderer marker and therefore compiles/links the redesigned shader.
-- Closed the Run 013 review P2 coverage gap by running the impact harness under real browser reduced-motion preference and proving ring/core fallback, no sparks/slash travel and bounded cleanup.
+- Pulled the opponent farther back, strengthened samurai silhouette/armour and dojo depth, and improved attack-read space in portrait.
 
 ## 0.8.0-evolution — Directional impact choreography
 
-- Added bounded event-driven direction-aware impact rings, slash afterimages and sparks for parry/counter/guard-break/player-hit events with reduced-motion fallback.
+- Added bounded direction-aware contact rings, slash afterimages and sparks with reduced-motion fallback.
 
 ## 0.7.1-evolution — Guided Duel / STEP integration hardening
 
-- Prevented evade-only stage clear from persisting the core parry lesson as complete, hardened real STEP pointer coverage and synchronized four-stage copy.
+- Prevented evade-only stage clear from persisting the parry lesson as complete, hardened STEP pointer coverage and synchronized four-stage copy.
 
 ## 0.7.0-evolution — Spacing and footwork
 
@@ -76,7 +52,7 @@
 
 ## 0.6.0-evolution — Guided first duel onboarding
 
-- Added optional event-driven read → parry → counter coaching, adaptive miss guidance, boss rhythm-reset cues and local completion preference.
+- Added optional read → parry → counter coaching, adaptive miss guidance, boss rhythm-reset cues and local completion preference.
 
 ## 0.5.1-evolution — Boss reduced-motion and browser integration hardening
 

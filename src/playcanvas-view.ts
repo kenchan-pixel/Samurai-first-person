@@ -3,6 +3,8 @@ import { adaptiveRenderScale, enemyMotionFrame, smoothMotionFrame } from './anim
 
 const DIR_Z = [0, -90, 180, 90];
 const clamp01 = (v) => Math.max(0, Math.min(1, Number.isFinite(v) ? v : 0));
+const CHARACTER_URL = '/assets/samurai-v1.glb';
+const CHARACTER_CLIPS = Object.freeze(['Idle', 'Windup', 'Strike', 'Recovery', 'Parry']);
 
 function mat(rgb, { metal = 0, gloss = 0.45, emissive = null } = {}) {
   const m = new pc.StandardMaterial();
@@ -78,8 +80,14 @@ export class PlayCanvasView {
     this.playerDirection = 0;
     this.playerActionAt = 0;
     this.stageIndex = -1;
+    this.stageStyle = null;
+    this.skinnedModel = null;
+    this.skinnedMaterials = new Map();
+    this.characterClip = 'PrimitiveFallback';
+    this.characterDirection = 0;
 
     this.app.start();
+    this.characterReady = this.loadSkinnedEnemy();
     document.documentElement.dataset.animationPipeline = 'playcanvas-four-beat-v1';
     document.documentElement.dataset.renderProfile = 'playcanvas-adaptive-60-v1';
   }
@@ -119,7 +127,6 @@ export class PlayCanvasView {
 
     const floor = part(this.app.root, 'box', 'Courtyard', this.materials.floor, [0, -0.09, -0.5], [8, 0.12, 8]);
     floor.render.receiveShadows = true;
-
     for (let i = -3; i <= 3; i += 1) {
       part(this.app.root, 'box', `FloorLine${i}`, this.materials.stone, [i * 0.72, -0.015, -0.45], [0.018, 0.01, 7.2], [0, 0, 0], false);
     }
@@ -128,19 +135,13 @@ export class PlayCanvasView {
     part(gate, 'box', 'GateLeft', this.materials.wood, [-2.0, 1.55, 0], [0.26, 3.3, 0.32]);
     part(gate, 'box', 'GateRight', this.materials.wood, [2.0, 1.55, 0], [0.26, 3.3, 0.32]);
     part(gate, 'box', 'GateBeam', this.materials.darkWood, [0, 3.05, 0], [4.7, 0.34, 0.48]);
-    part(gate, 'box', 'GateRoof', this.materials.darkWood, [0, 3.42, 0], [5.5, 0.18, 0.95], [0, 0, 0]);
+    part(gate, 'box', 'GateRoof', this.materials.darkWood, [0, 3.42, 0], [5.5, 0.18, 0.95]);
 
     for (const s of [-1, 1]) {
       part(gate, 'box', `LanternFrame${s}`, this.materials.darkWood, [s * 1.42, 1.72, 0.08], [0.22, 0.42, 0.22]);
       part(gate, 'box', `LanternGlow${s}`, this.materials.lantern, [s * 1.42, 1.72, 0.04], [0.15, 0.30, 0.15], [0, 0, 0], false);
       const lamp = new pc.Entity(`LanternLight${s}`);
-      lamp.addComponent('light', {
-        type: 'point',
-        color: new pc.Color(1, 0.35, 0.08),
-        intensity: 0.6,
-        range: 3.2,
-        castShadows: false,
-      });
+      lamp.addComponent('light', { type: 'point', color: new pc.Color(1, 0.35, 0.08), intensity: 0.6, range: 3.2, castShadows: false });
       lamp.setLocalPosition(s * 1.42, 1.72, 0.35);
       gate.addChild(lamp);
     }
@@ -149,7 +150,7 @@ export class PlayCanvasView {
   createEnemy() {
     const M = this.materials;
     this.enemy = pivot(this.app.root, 'EnemyRig', [0, 0, 0]);
-    this.hips = pivot(this.enemy, 'Hips', [0, 0.92, 0]);
+    this.hips = pivot(this.enemy, 'PrimitiveFallback', [0, 0.92, 0]);
     this.torso = pivot(this.hips, 'Torso', [0, 0.62, 0]);
 
     part(this.hips, 'box', 'HakamaL', M.cloth, [-0.19, -0.34, 0], [0.28, 0.70, 0.34], [0, 0, -5]);
@@ -158,11 +159,8 @@ export class PlayCanvasView {
     part(this.hips, 'capsule', 'ShinR', M.armourDark, [0.22, -0.84, 0.02], [0.16, 0.52, 0.16]);
     part(this.hips, 'box', 'FootL', M.darkWood, [-0.22, -1.10, 0.12], [0.25, 0.12, 0.50]);
     part(this.hips, 'box', 'FootR', M.darkWood, [0.22, -1.10, 0.12], [0.25, 0.12, 0.50]);
-
     part(this.torso, 'box', 'Chest', M.armour, [0, 0.04, 0], [0.72, 0.78, 0.38]);
-    for (let i = 0; i < 4; i += 1) {
-      part(this.torso, 'box', `ChestPlate${i}`, M.armourDark, [0, 0.24 - i * 0.16, -0.215], [0.78 - i * 0.03, 0.055, 0.06]);
-    }
+    for (let i = 0; i < 4; i += 1) part(this.torso, 'box', `ChestPlate${i}`, M.armourDark, [0, 0.24 - i * 0.16, -0.215], [0.78 - i * 0.03, 0.055, 0.06]);
     for (const s of [-1, 1]) {
       part(this.torso, 'box', `ShoulderPlate${s}`, M.armour, [s * 0.50, 0.23, 0], [0.34, 0.14, 0.48], [0, 0, s * 12]);
       part(this.torso, 'box', `WaistPlate${s}`, M.armourDark, [s * 0.34, -0.50, 0], [0.25, 0.38, 0.30], [0, 0, s * 8]);
@@ -181,13 +179,11 @@ export class PlayCanvasView {
     part(this.armR, 'capsule', 'UpperArmR', M.cloth, [0, -0.18, 0], [0.15, 0.46, 0.15]);
     part(this.elbowR, 'capsule', 'ForeArmR', M.armourDark, [0, -0.22, 0], [0.14, 0.44, 0.14]);
     this.handR = part(this.elbowR, 'sphere', 'HandR', M.darkWood, [0, -0.45, 0], [0.17, 0.17, 0.17]);
-
     this.armL = pivot(this.torso, 'ArmL', [-0.43, 0.24, 0]);
     this.elbowL = pivot(this.armL, 'ElbowL', [0, -0.36, 0]);
     part(this.armL, 'capsule', 'UpperArmL', M.cloth, [0, -0.18, 0], [0.15, 0.46, 0.15]);
     part(this.elbowL, 'capsule', 'ForeArmL', M.armourDark, [0, -0.21, 0], [0.14, 0.42, 0.14]);
     part(this.elbowL, 'sphere', 'HandL', M.darkWood, [0, -0.43, 0], [0.17, 0.17, 0.17]);
-
     this.sword = pivot(this.handR, 'EnemySword', [0, -0.10, 0]);
     part(this.sword, 'cylinder', 'Grip', M.darkWood, [0, 0.22, 0], [0.08, 0.45, 0.08]);
     part(this.sword, 'box', 'Guard', M.metal, [0, 0.48, 0], [0.46, 0.07, 0.10]);
@@ -203,6 +199,68 @@ export class PlayCanvasView {
     part(this.playerRig, 'box', 'PlayerBlade', M.blade, [0, 0.95, 0], [0.075, 1.48, 0.035]);
   }
 
+  loadSkinnedEnemy() {
+    return new Promise((resolve) => {
+      this.app.assets.loadFromUrl(CHARACTER_URL, 'container', (error, asset) => {
+        if (error || !asset?.resource) {
+          console.warn('Skinned samurai unavailable; keeping articulated primitive fallback.', error);
+          document.documentElement.dataset.characterPipeline = 'primitive-fallback';
+          resolve(false);
+          return;
+        }
+        try {
+          const model = asset.resource.instantiateRenderEntity();
+          model.name = 'SkinnedSamuraiV1';
+          model.setLocalPosition(0, 0, 0);
+          this.enemy.addChild(model);
+          for (const render of model.findComponents('render')) {
+            render.castShadows = true;
+            render.receiveShadows = true;
+            for (const meshInstance of render.meshInstances || []) {
+              const material = meshInstance.material;
+              if (material?.name && !this.skinnedMaterials.has(material.name)) this.skinnedMaterials.set(material.name, material);
+            }
+          }
+          model.addComponent('anim', { activate: true, speed: 1 });
+          const tracks = asset.resource.animations || [];
+          const available = new Set(tracks.map((track) => track.name));
+          for (const clip of CHARACTER_CLIPS) if (!available.has(clip)) throw new Error(`Missing GLB animation clip: ${clip}`);
+          for (const track of tracks) model.anim.baseLayer.assignAnimation(track.name, track, 1, track.name === 'Idle');
+          model.anim.baseLayer.play('Idle');
+          this.skinnedModel = model;
+          this.characterClip = 'Idle';
+          this.hips.enabled = false;
+          this.applySkinnedStyle(this.stageStyle);
+          document.documentElement.dataset.characterPipeline = 'skinned-gltf-v1';
+          document.documentElement.dataset.characterClips = CHARACTER_CLIPS.join(',');
+          document.documentElement.dataset.characterAsset = 'samurai-v1.glb';
+          resolve(true);
+        } catch (modelError) {
+          console.warn('Skinned samurai setup failed; keeping articulated primitive fallback.', modelError);
+          document.documentElement.dataset.characterPipeline = 'primitive-fallback';
+          resolve(false);
+        }
+      });
+    });
+  }
+
+  applySkinnedStyle(style) {
+    if (!style || !this.skinnedMaterials.size) return;
+    const palette = {
+      Armor: style.armour,
+      Cloth: style.cloth,
+      Accent: style.accent,
+      DarkArmor: style.armour.map((v) => v * 0.23),
+      Cord: style.accent.map((v) => v * 0.42),
+    };
+    for (const [name, rgb] of Object.entries(palette)) {
+      const material = this.skinnedMaterials.get(name);
+      if (!material) continue;
+      material.diffuse = new pc.Color(...rgb);
+      material.update();
+    }
+  }
+
   applyStage(stage) {
     if (stage === this.stageIndex) return;
     this.stageIndex = stage;
@@ -212,12 +270,12 @@ export class PlayCanvasView {
       { armour: [0.27, 0.055, 0.035], cloth: [0.08, 0.04, 0.03], accent: [0.76, 0.36, 0.06], sky: [0.075, 0.04, 0.035] },
       { armour: [0.24, 0.018, 0.035], cloth: [0.25, 0.025, 0.04], accent: [0.86, 0.52, 0.12], sky: [0.12, 0.018, 0.025] },
     ][Math.max(0, Math.min(3, stage))];
+    this.stageStyle = styles;
     this.materials.armour.diffuse = new pc.Color(...styles.armour);
     this.materials.cloth.diffuse = new pc.Color(...styles.cloth);
     this.materials.accent.diffuse = new pc.Color(...styles.accent);
-    this.materials.armour.update();
-    this.materials.cloth.update();
-    this.materials.accent.update();
+    this.materials.armour.update(); this.materials.cloth.update(); this.materials.accent.update();
+    this.applySkinnedStyle(styles);
     this.camera.camera.clearColor = new pc.Color(...styles.sky);
     const boss = stage === 3;
     this.crestL.enabled = stage >= 2;
@@ -231,12 +289,7 @@ export class PlayCanvasView {
     const dpr = globalThis.devicePixelRatio || 1;
     const cap = Math.min(Math.max(1, dpr), 1.5);
     const prev = this.renderScale;
-    this.renderScale = adaptiveRenderScale({
-      current: Math.min(prev, cap),
-      min: Math.min(1, cap),
-      max: cap,
-      frameEmaMs: this.frameEmaMs,
-    });
+    this.renderScale = adaptiveRenderScale({ current: Math.min(prev, cap), min: Math.min(1, cap), max: cap, frameEmaMs: this.frameEmaMs });
     this.app.graphicsDevice.maxPixelRatio = Math.min(dpr, this.renderScale);
     this.qualityCheckAt = n + (this.renderScale < prev ? 900 : 1400);
   }
@@ -249,6 +302,29 @@ export class PlayCanvasView {
     }
     if (!action) return 1;
     return clamp01((n - this.playerActionAt) / (action === 3 ? 390 : 290));
+  }
+
+  syncSkinnedAnimation(s, directionIndex) {
+    if (!this.skinnedModel?.anim) return;
+    const phase = s.phase;
+    const clip = phase === 'telegraph' ? 'Windup'
+      : phase === 'strike' ? 'Strike'
+        : phase === 'recovery-interrupted' ? 'Parry'
+          : phase === 'recovery' ? 'Recovery'
+            : 'Idle';
+    const progress = clip === 'Idle' ? ((performance.now() % 1600) / 1600) : clamp01(s.phaseProgress);
+    const layer = this.skinnedModel.anim.baseLayer;
+    if (clip !== this.characterClip) {
+      const blend = clip === 'Parry' ? 0.045 : clip === 'Strike' ? 0.035 : 0.06;
+      layer.transition(clip, blend, progress);
+      this.characterClip = clip;
+    }
+    if (layer.activeState === clip && Number.isFinite(layer.activeStateDuration)) {
+      layer.activeStateCurrentTime = Math.max(0, Math.min(layer.activeStateDuration, progress * layer.activeStateDuration));
+    }
+    this.characterDirection = directionIndex;
+    const directionalLean = directionIndex === 1 ? -5 : directionIndex === 3 ? 5 : directionIndex === 2 ? 3 : 0;
+    this.skinnedModel.setLocalEulerAngles(0, 0, directionalLean * Math.sin(Math.PI * clamp01(this.motion.swing)));
   }
 
   draw(s, n, m = {}) {
@@ -271,16 +347,17 @@ export class PlayCanvasView {
     const lunge = -0.12 * this.motion.wind + 0.34 * commit + 0.18 * this.motion.follow;
     const side = idx === 1 ? 0.12 : idx === 3 ? -0.12 : 0;
     this.enemy.setLocalPosition(side * commit, 0, lunge);
+
     this.hips.setLocalEulerAngles(0, side * 18 * commit, (idx === 1 ? -1 : idx === 3 ? 1 : 0) * 6 * commit);
     this.torso.setLocalEulerAngles(-4 * this.motion.wind + 11 * commit, side * 38 * commit, (idx === 1 ? -1 : idx === 3 ? 1 : 0) * 11 * (this.motion.wind + commit));
     this.neck.setLocalEulerAngles(-2 + 5 * commit, -side * 34 * commit, 0);
-
     const swordArc = this.motion.sword * 82;
     this.armR.setLocalEulerAngles(-62 + swordArc * 0.42, -15 + side * 55, -28 + dirZ * 0.34);
     this.elbowR.setLocalEulerAngles(-52 + swordArc * 0.18, 0, 12 + dirZ * 0.18);
     this.armL.setLocalEulerAngles(-48 + swordArc * 0.30, 14 + side * 46, 24 + dirZ * 0.28);
     this.elbowL.setLocalEulerAngles(-44 + swordArc * 0.14, 0, -10 + dirZ * 0.14);
     this.sword.setLocalEulerAngles(0, 0, dirZ - 12 + swordArc);
+    this.syncSkinnedAnimation(s, idx);
 
     const impact = this.motion.impact;
     const hitAge = m.hitAge ?? 999;
