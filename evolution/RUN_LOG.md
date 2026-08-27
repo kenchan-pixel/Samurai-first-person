@@ -73,3 +73,38 @@ Chosen slice: candidate 1.
 - Same-device Stage 2 Ronin re-check after the gameplay guide; tune only if the difficulty wall remains.
 - Same-device blade trajectory plus Perfect Parry/Perfect STEP differentiation check.
 - Privacy Decision Gate for anonymous balancing telemetry before any backend collection is implemented.
+
+## Run 034 — Perfect STEP closed-opening cue repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the current-head P2 where Perfect STEP could correctly trigger Blood Moon and close the recovery opening while the player-facing STEP/cue text still instructed a manual swipe.
+
+### Preflight / evidence
+
+- Exact previous HEAD `42b5daa876bab8d7b1c4b62bc45980f684ec69c7`: CI #62 / run `33122961450` = success; exact-head GitHub `Vercel` commit status = success.
+- Direct Vercel deployment enumeration returned 403, so the canonical fallback remains GitHub's exact-head `Vercel` status.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- The exact-head Second Hourly review identified one actionable P2: Crimson Shogun 7→6 HP Perfect STEP transitions to `gap`/Blood Moon, but both STEP feedback and the larger action cue could still say `掃屏` even though `currentAttack` had been cleared and no recovery counter was legal.
+- Earlier P0/P1/P2 findings were already demonstrably addressed by later reviewed heads; no additional current-head blocker was found.
+
+### Delivered repair
+
+- Perfect STEP riposte events now retain whether their automatic damage closes the opening through Blood Moon Phase II or enemy defeat.
+- The normal Perfect STEP result is unchanged: `無敵勢 · 仲可掃屏` still appears when a real recovery opening remains.
+- If Blood Moon takes priority, the immediate STEP feedback is corrected before the next render and the larger cue says `BLOOD MOON 先行 · 等下一次開口`; neither surface tells the player to swipe.
+- If the automatic riposte defeats the enemy, the cue reports the defeat rather than advertising a nonexistent follow-up.
+- Updated the 玩法 card to state the same exception, keeping the mechanic learnable without adding persistent HUD text.
+
+### Verification / regression boundaries
+
+- Extended the existing footwork browser harness rather than adding another test suite. It now installs the real boss state, drives the actual STEP pointer path on Crimson Shogun's escapable second attack at 7 HP, and requires: 6 HP, zero posture gain, `gap`, Phase II enemy data, cleared `currentAttack`, automatic Perfect STEP event with `openingClosed`, Blood Moon event, and no `掃屏` copy in either immediate feedback or the action cue.
+- Existing normal Perfect STEP browser assertions still require `仲可掃屏`, protecting the distinction between a genuine open recovery and a phase-transition-closed recovery.
+- Combat damage, Perfect STEP/normal STEP timing and reach, posture rules, boss HP threshold, manual counter legality, input mapping, renderer/asset pipeline, network/privacy behavior and merge authority are unchanged.
+- Post-commit CI/Preview remain pending self-verification by protocol; the Draft PR run comment will carry the exact commit SHA and verification receipt.
+
+### Next candidates
+
+- Same-device Stage 2 Ronin re-check after the gameplay guide; tune only if the difficulty wall remains.
+- Same-device blade trajectory plus Perfect Parry/Perfect STEP differentiation check.
+- Privacy Decision Gate for anonymous balancing telemetry before any backend collection is implemented.

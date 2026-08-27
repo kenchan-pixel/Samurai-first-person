@@ -19,6 +19,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 031:** first exact-head gameplay-clarity gate repair: aligned the Node Perfect-riposte assertion with the intended `掃屏反擊` semantic cue; the browser harness then exposed the same remaining stale wording check.
 - **Run 032:** completed the exact-head gameplay-clarity gate repair by aligning the existing browser integration assertion with the same semantic `掃屏反擊` contract, without changing production gameplay.
 - **Run 033:** separated STEP into normal evade and a narrower **Perfect STEP** skill reward: automatic 1-damage sidestep riposte, no posture damage, manual swipe still available, tracking attacks still punish STEP, and boss Phase II remains authoritative.
+- **Run 034:** repaired Perfect STEP phase-priority messaging so a Blood Moon transition or enemy defeat closes the recovery opening without briefly/inaccurately telling the player to swipe; the existing browser footwork gate now covers the exact boss 7→6 path.
 
 ## Highest priority — physical-phone acceptance
 

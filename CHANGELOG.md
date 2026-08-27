@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.1-evolution — Perfect STEP phase-priority cue repair
+
+- Fixed a player-facing contradiction where Perfect STEP could trigger Crimson Shogun Blood Moon Phase II and close the recovery opening while the STEP feedback still told the player to swipe.
+- Perfect STEP riposte events now carry whether Blood Moon/defeat closed the opening; the immediate STEP feedback and larger action cue switch to phase/defeat copy and suppress swipe instructions when no manual counter is legal.
+- Extended the existing footwork browser harness through the actual STEP pointer path for the exact boss 7→6 HP transition, requiring `gap`, Blood Moon copy and no stale swipe prompt.
+- Combat damage, STEP timing/reach, posture, boss threshold, input mapping and renderer behavior are unchanged.
+
 ## 0.16.0-evolution — Perfect STEP sidestep riposte
 
 - Split STEP into two clearly different skill outcomes without removing the existing evade route: a normal successful STEP still only creates a manual swipe-counter opening, while a narrower 48–68 ms **Perfect STEP** window immediately performs a 1-damage sidestep riposte.

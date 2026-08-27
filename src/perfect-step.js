@@ -17,26 +17,61 @@ function installGuideCard() {
     const card = document.createElement('article');
     card.className = 'combat-guide-card combat-guide-card--accent';
     card.dataset.perfectStepGuide = 'true';
-    card.innerHTML = '<strong>⑥ PERFECT STEP</strong><span>STEP 成功仲有兩級：普通 STEP 只係避刀；喺更窄嘅最早時機避過短／中距離斬會觸發 PERFECT STEP，自動補 1 刀但唔增加敵勢，之後仍可再掃屏一次。長距離／重擊照樣會追到。</span>';
+    card.innerHTML = '<strong>⑥ PERFECT STEP</strong><span>STEP 成功仲有兩級：普通 STEP 只係避刀；喺更窄嘅最早時機避過短／中距離斬會觸發 PERFECT STEP，自動補 1 刀但唔增加敵勢，之後仍可再掃屏一次。長距離／重擊照樣會追到；如果補刀直接觸發 BLOOD MOON 或擊倒敵人，原本反擊空隙會即時結束。</span>';
     cards.append(card);
   }
   document.documentElement.dataset.perfectStepGuide = String(Boolean(cards?.querySelector('[data-perfect-step-guide]')));
 }
 
+function perfectStepCopy(detail) {
+  const damage = detail?.damage || 1;
+  if (detail?.bossPhase === 2) {
+    return {
+      feedback: `PERFECT STEP · 自動補刀 -${damage} · BLOOD MOON`,
+      body: `自動補刀 -${damage} · BLOOD MOON 先行 · 等下一次開口`,
+      kind: 'stage',
+      marker: 'riposte-phase-shift',
+    };
+  }
+  if (detail?.defeated || detail?.enemyHp <= 0) {
+    return {
+      feedback: `PERFECT STEP · 自動補刀 -${damage} · 擊倒`,
+      body: `自動補刀 -${damage} · 敵人倒下`,
+      kind: 'opening',
+      marker: 'riposte-defeat',
+    };
+  }
+  return {
+    feedback: `PERFECT STEP · 自動補刀 -${damage}`,
+    body: `自動補刀 -${damage} · 無敵勢 · 仲可掃屏`,
+    kind: 'opening',
+    marker: 'riposte',
+  };
+}
+
+function presentImmediateClosedOpening(detail) {
+  if (typeof document === 'undefined' || !detail?.openingClosed) return;
+  queueMicrotask(() => {
+    const feedback = document.querySelector('#footwork-feedback');
+    if (feedback) feedback.textContent = perfectStepCopy(detail).feedback;
+  });
+}
+
 function presentPerfectStep(detail) {
   if (typeof document === 'undefined') return;
+  const copy = perfectStepCopy(detail);
   const feedback = document.querySelector('#footwork-feedback');
-  if (feedback) feedback.textContent = 'PERFECT STEP · 自動補刀 -1';
+  if (feedback) feedback.textContent = copy.feedback;
 
   const cue = document.querySelector('#combat-action-cue');
   if (cue) {
     if (cueTimer !== null) clearTimeout(cueTimer);
     cue.hidden = false;
-    cue.dataset.kind = 'opening';
+    cue.dataset.kind = copy.kind;
     const title = cue.querySelector('strong');
     const body = cue.querySelector('span');
     if (title) title.textContent = 'PERFECT STEP';
-    if (body) body.textContent = `自動補刀 -${detail?.damage || 1} · 無敵勢 · 仲可掃屏`;
+    if (body) body.textContent = copy.body;
     cue.classList.add('is-visible');
     cueTimer = window.setTimeout(() => {
       cue.classList.remove('is-visible');
@@ -47,7 +82,7 @@ function presentPerfectStep(detail) {
     }, 1050);
   }
 
-  document.documentElement.dataset.perfectStepLast = 'riposte';
+  document.documentElement.dataset.perfectStepLast = copy.marker;
 }
 
 export function installPerfectStep(Engine = CombatEngine) {
@@ -81,7 +116,7 @@ export function installPerfectStep(Engine = CombatEngine) {
     this.enemyHp = Math.max(0, this.enemyHp - damage);
     this.score += damage * 120;
     const direction = oppositeDirection(attack.direction) || attack.direction;
-    this.events.push({
+    const riposteEvent = {
       type: 'perfect-step-riposte',
       detail: {
         direction,
@@ -91,16 +126,28 @@ export function installPerfectStep(Engine = CombatEngine) {
         evaded: true,
         enemyHp: this.enemyHp,
         maxEnemyHp: this.enemy.maxHp,
+        bossPhase: undefined,
+        defeated: false,
+        openingClosed: false,
       },
-    });
+    };
+    this.events.push(riposteEvent);
 
     const bossPhase = maybeAdvanceBossPhase(this, now) ? 2 : undefined;
+    let defeated = false;
     if (!bossPhase && this.enemyHp <= 0) {
+      defeated = true;
       this.phase = 'stage-clear';
       this.phaseStartedAt = now;
       this.phaseEndsAt = now + 1450;
       this.events.push({ type: 'enemy-defeated', detail: { enemyId: this.enemy.id, stage: this.enemyIndex + 1 } });
     }
+
+    const openingClosed = Boolean(bossPhase || defeated);
+    riposteEvent.detail.bossPhase = bossPhase;
+    riposteEvent.detail.defeated = defeated;
+    riposteEvent.detail.openingClosed = openingClosed;
+    presentImmediateClosedOpening(riposteEvent.detail);
 
     return {
       ...result,
@@ -109,7 +156,8 @@ export function installPerfectStep(Engine = CombatEngine) {
       autoRiposte: true,
       autoRiposteDamage: damage,
       bossPhase,
-      defeated: this.enemyHp <= 0,
+      defeated,
+      openingClosed,
     };
   };
 

@@ -15,9 +15,11 @@
   </div>
   <script type="module">
     import { CombatEngine, Direction } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE, BOSS_PHASE_TWO, installBossEncounter } from '../src/boss-encounter.js';
     import { installFootwork } from '../src/footwork.js';
     import { installPerfectStep } from '../src/perfect-step.js';
 
+    installBossEncounter(CombatEngine);
     installFootwork(CombatEngine);
     installPerfectStep(CombatEngine);
 
@@ -97,6 +99,41 @@
       actionCue?.querySelector('span')?.textContent.includes('仲可掃屏');
     const counter = shortCombat.attemptAttack(Direction.BOTTOM, 1670);
 
+    const bossCombat = new CombatEngine({ enemies: [BOSS_PHASE_ONE] });
+    bossCombat.start(0);
+    bossCombat.attackCursor = 1;
+    bossCombat.update(1550);
+    bossCombat.drainEvents();
+    bossCombat.enemyHp = 7;
+    bossCombat.enemyPosture = 0;
+    const bossStrikeAt = bossCombat.phaseEndsAt;
+    bossCombat.update(bossStrikeAt);
+    dispatchStep(44, 100, 100, 102, 101);
+    await Promise.resolve();
+    const bossImmediateFeedback = feedback?.textContent || '';
+    const bossEvents = bossCombat.drainEvents();
+    const bossCueBody = actionCue?.querySelector('span')?.textContent || '';
+    const bossThresholdPassed =
+      bossCombat.enemyHp === 6 &&
+      bossCombat.enemyPosture === 0 &&
+      bossCombat.phase === 'gap' &&
+      bossCombat.currentAttack === null &&
+      bossCombat.enemy.title === BOSS_PHASE_TWO.title &&
+      bossEvents.some((event) =>
+        event.type === 'counter' &&
+        event.detail?.automatic &&
+        event.detail?.perfectStep &&
+        event.detail?.bossPhase === 2 &&
+        event.detail?.openingClosed === true
+      ) &&
+      bossEvents.some((event) => event.type === 'boss-phase' && event.detail?.phase === 2) &&
+      bossImmediateFeedback.includes('BLOOD MOON') &&
+      !bossImmediateFeedback.includes('掃屏') &&
+      feedback?.textContent.includes('BLOOD MOON') &&
+      !feedback?.textContent.includes('掃屏') &&
+      bossCueBody.includes('BLOOD MOON') &&
+      !bossCueBody.includes('掃屏');
+
     const thresholdCombat = new CombatEngine({ enemies: [shortEnemy] });
     thresholdCombat.start(0);
     thresholdCombat.update(1550);
@@ -153,13 +190,14 @@
       thresholdSnapshot.attack?.evaded === false &&
       !thresholdEvents.some((event) => event.type === 'backstep-evade' || event.type === 'footwork-miss' || event.detail?.perfectStep);
 
-    document.documentElement.dataset.footworkIntegration = shortPassed && longPassed && uiReady && guideReady ? 'pass' : 'fail';
+    document.documentElement.dataset.footworkIntegration = shortPassed && bossThresholdPassed && longPassed && uiReady && guideReady ? 'pass' : 'fail';
     document.documentElement.dataset.footworkShortEvade = String(shortPassed);
     document.documentElement.dataset.footworkLongTrack = String(longPassed);
     document.documentElement.dataset.footworkUi = String(uiReady);
     document.documentElement.dataset.footworkPointer = String(pointerPathPassed);
     document.documentElement.dataset.footworkTravelThreshold = String(travelThresholdPassed);
-    document.documentElement.dataset.perfectStepIntegration = String(perfectStepVisible && guideReady);
+    document.documentElement.dataset.perfectStepIntegration = String(perfectStepVisible && bossThresholdPassed && guideReady);
+    document.documentElement.dataset.perfectStepBossThreshold = String(bossThresholdPassed);
   </script>
 </body>
 </html>
