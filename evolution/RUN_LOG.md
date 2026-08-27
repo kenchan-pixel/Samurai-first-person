@@ -210,3 +210,58 @@ Physical-iPhone tuning remains highest-value evidence work, but lack of a physic
 - Physical-iPhone model/material/shadow/pixel-ratio tuning.
 - Stronger stage-specific helmet/armour/weapon silhouette and rhythm.
 - First-person player hand/katana fidelity once enemy readability and mobile budget remain stable.
+
+## Run 025 — Stage-specific skinned enemy identities
+
+**Date:** 2026-08-27  
+**Action type:** FEATURE  
+**Goal:** Make every duel immediately recognisable from the opponent silhouette and weapon while keeping one lightweight shared skinned rig and unchanged combat authority.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `8ea291b66348067a884abd48b3ef3d804d8c4543`: CI run `33083292549` / CI #53 = success; exact-head GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft and unmerged.
+- No inline review threads existed.
+- Latest established All Repos review on the preceding verified GLB-binding HEAD reported **no actionable P0/P1/P2 finding**; all older P1/P2 findings remain materially fixed by later verified commits.
+
+### Candidate selection
+
+Candidates scored 1–5 for visible impact / goal alignment / novelty / confidence / safety:
+
+- Stage-specific skinned silhouette / weapon language: **5 / 5 / 5 / 4 / 5 = 24**.
+- Accessibility timing / high-contrast / left-handed mode: **4 / 5 / 4 / 4 / 4 = 21**.
+- First-person player hands / katana fidelity: **4 / 4 / 4 / 4 / 4 = 20**.
+
+Physical-iPhone tuning remains the highest-value evidence task, but lack of a physical phone in this environment is explicitly not a HOLD condition. Stage differentiation won because distinct duels are a core product pillar and the current shared rig provides a bounded presentation-only seam.
+
+### Before
+
+- Stages differed in palette, combat behaviour and boss atmosphere, but the loaded skinned character kept almost the same helmet, armour mass and weapon silhouette across all four opponents.
+- Oni and Crimson Shogun therefore depended more on colour/HUD/rules than on instant body-shape recognition.
+
+### After
+
+- Reused the same loaded skinned GLB and attached small original PlayCanvas accessories directly to its real `Head`, `Chest` and `Sword` bones.
+- Ashigaru uses a broad jingasa; Ronin uses a headband/travel sash and different tsuba; Oni uses horns, broader shoulder guards and a heavier blade spine; Crimson Shogun uses tall antlers, sashimono, a wider tsuba and crimson blade spine.
+- Added restrained stage-specific body/weapon scaling and presentation commitment so heavier enemies read heavier without changing reach or rules.
+- All 17 accessory entities are created once after model load and only the current stage group is enabled, with at most six active. No duplicate GLB, texture, network asset or per-frame accessory allocation is introduced.
+- Extended the existing renderer-contract smoke instead of adding another harness: it now proves four distinct identities, bounded active groups and heavier Oni/Shogun scale before running the existing real telegraph → strike → parry → counter sequence.
+
+### Verification / regression boundary
+
+- Modified renderer and existing smoke pass local JavaScript syntax checks before commit.
+- Exact previous HEAD was terminal-green for both CI and Vercel before feature selection.
+- No HP, damage, timing window, attack selection, reach, STEP, boss rules, mastery, onboarding, persistence, input mapping or network behaviour changes.
+- Primitive PlayCanvas and legacy WebGL2 fallbacks remain available.
+- Exact new-head `npm test` + `npm run test:browser` and Vercel Preview are the post-commit gate; any failure blocks the next feature run.
+
+### Risk / human acceptance
+
+- Headless assertions prove the identity-switching and bounded-resource contract, not final artistic quality or physical-iPhone sustained 60 Hz/heat.
+- Accessories are intentionally simple geometry so this slice improves silhouette before spending the mobile performance budget on textures or separate characters.
+
+### Next candidates
+
+- Physical-iPhone material/shadow/pixel-ratio tuning from real device evidence.
+- First-person player hands/katana fidelity.
+- Accessibility options, with separate directional clips only if physical play shows the current shared clips are limiting readability.

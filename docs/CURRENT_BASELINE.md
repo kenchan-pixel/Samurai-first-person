@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.13.0-evolution**
+Version: **0.14.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -62,6 +62,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 - **Wandering Ronin:** faster rhythm, feints, mixed directions, lateral footwork, close/mid reach.
 - **Oni Guard:** heavy damage, shorter strike windows, higher HP/posture, strong tracking/heavy posture pressure.
 - **Crimson Shogun:** multi-phase boss, higher posture resistance, heavy/feint signatures, Blood Moon ruleset shift and long-reach pressure.
+- The shared skinned GLB now adds a distinct stage silhouette on the actual `Head` / `Chest` / `Sword` bones: Ashigaru gets a broad jingasa, Ronin a headband/sash and different tsuba, Oni a horned heavy-guard profile, and Crimson Shogun tall antlers, sashimono and an enlarged crimson weapon profile.
+- These identity parts are presentation-only. Stage-specific body/weapon scale and commitment weight may strengthen visual character, but do not change reach, hitboxes, attack timing, parry windows or damage.
 
 ## Presentation and visual identity
 
@@ -70,10 +72,10 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The local GLB is generated deterministically at build time from `tools/generate-samurai-glb.mjs`; no downloaded model, texture or motion-capture pack is used. Provenance is recorded in `docs/ASSET_PROVENANCE.md`.
 - The previous code-authored articulated PlayCanvas primitive remains a graceful character-level fallback if the GLB cannot load. The older custom single-pass WebGL2 renderer remains in `src/legacy-renderer.js` as renderer-level fallback while migration evidence accumulates.
 - Enemy full-body framing remains materially farther back than the original near-camera presentation so helmet-to-feet silhouette and sword path stay readable in portrait.
-- Stage identity continues through armour/cloth/accent palette and boss scale/atmosphere; the imported material groups are recoloured locally per stage without extra texture downloads.
-- The skinned enemy uses real skeletal `Idle / Windup / Strike / Recovery / Parry` clips, while **direction-specific full-body choreography now reorients the whole rig for top/right/bottom/left attacks**. Right and left attacks visibly coil to opposite sides; bottom attacks lower the stance; top attacks retain the overhead read.
+- Stage identity now combines palette plus bone-attached silhouette/weapon accessories on one shared rig; no duplicate character model or stage-specific network download is required.
+- The skinned enemy uses real skeletal `Idle / Windup / Strike / Recovery / Parry` clips, while **direction-specific full-body choreography reorients the whole rig for top/right/bottom/left attacks**. Right and left attacks visibly coil to opposite sides; bottom attacks lower the stance; top attacks retain the overhead read.
 - A bounded in-world blade-read trail is attached to the skinned sword bone during telegraph/strike, so the actual moving weapon carries the cue rather than adding another HUD panel.
-- Clip choice and sampling remain driven by the existing renderer-neutral combat snapshot. The directional body layer is presentation-only and cannot change hit/parry timing, reach, damage or encounter rules.
+- Clip choice and sampling remain driven by the existing renderer-neutral combat snapshot. Directional body and stage-identity layers are presentation-only and cannot change hit/parry timing, reach, damage or encounter rules.
 - Normal telegraph/strike/recovery poses continue to follow elapsed-time phase progress. A genuine parry maps interrupted recovery to the explicit `Parry` reaction clip; normal recovery maps to `Recovery`.
 - Short clip transitions use bounded PlayCanvas blending while the destination clip begins at current combat progress, preventing the visual layer from redefining combat windows.
 - Player parry/slash motion remains action-local and direction-aware; normal/perfect parry, counter, guard-break and player-hit DOM impact FX remain bounded and reduced-motion aware.
@@ -87,19 +89,21 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Adaptive quality never changes parry windows, strike timing, damage, engine updates, input mapping or encounter rules.
 - The skinned character reuses one loaded scene hierarchy and animation component; no enemy entities, model assets or animation controllers are created per frame.
 - Directional choreography reuses the same loaded rig and five clips; it adds only bounded root transforms plus one sword-bone trail entity, avoiding duplicate character assets or per-direction model downloads.
+- Stage identity creates 17 simple accessory entities once after the GLB loads and enables only the current stage group (maximum six active). No per-frame accessory allocation, extra GLB, texture or network request is introduced.
 - The generated GLB remains about 315 KiB with about 1,972 triangles, 19 joints, 8 material groups and no texture payload. This is a deliberately conservative first mobile fidelity budget, not a final art ceiling.
-- Headless Chromium/SwiftShader proves production bundle, model loading, skeletal clip selection, directional body mapping and combat mapping but cannot certify sustained 60 Hz, heat or final visual quality on a physical iPhone. Recent-phone performance remains the human acceptance gate.
+- Headless Chromium/SwiftShader proves production bundle, model loading, skeletal clip selection, directional body mapping, stage-identity switching and combat mapping but cannot certify sustained 60 Hz, heat or final visual quality on a physical iPhone. Recent-phone performance remains the human acceptance gate.
 
 ## Technical baseline
 
 - Deterministic combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact remain additive adapters/observers.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` remains a narrow adapter: PlayCanvas primary, legacy WebGL2 fallback.
-- `src/playcanvas-view.ts` owns the scene, local skinned-character loading/animation, stage style, direction-specific body/blade choreography, primitive character fallback, first-person katana and adaptive render quality.
+- `src/playcanvas-view.ts` owns the scene, local skinned-character loading/animation, stage palettes, direction-specific body/blade choreography, primitive character fallback, first-person katana and adaptive render quality.
+- `src/stage-identity.js` adds bounded stage-specific silhouette/weapon accessories around the PlayCanvas view after the skinned model is ready; it does not own combat authority.
 - `src/animation-motion.js` remains renderer-independent and owns deterministic four-beat visual weights plus the authoritative parry-interruption smoothing rule.
 - `tools/generate-samurai-glb.mjs` remains the auditable original model/rig/clip source. `vite.config.js` generates `public/assets/samurai-v1.glb` before Vite serves/builds the app; the generated binary is ignored by Git.
 - Build/development uses Vite; Vercel builds the same `dist/` output.
-- The real-app browser gate requires the PlayCanvas backend and drives one representative CombatEngine telegraph → strike → parry → counter sequence. It also requires the skinned GLB to load, verifies Windup → Strike → Parry skeletal clip mapping, and checks distinct right/left/bottom body reads plus the in-world sword trail in that same smoke path.
+- The real-app browser gate requires the PlayCanvas backend and drives one representative CombatEngine telegraph → strike → parry → counter sequence. It also requires the skinned GLB to load, verifies Windup → Strike → Parry skeletal clip mapping, checks distinct right/left/bottom body reads plus the in-world sword trail, and proves all four stage identity groups switch on the same rig with bounded accessory counts and heavier Oni/Shogun silhouettes.
 - Existing mastery, boss, onboarding, footwork and impact browser harnesses remain required at 320×568.
 - PlayCanvas is the only runtime 3D dependency; no React, physics engine, account, analytics, network model service or paid API is introduced.
 

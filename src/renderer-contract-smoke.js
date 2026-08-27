@@ -65,6 +65,23 @@ try {
   const characterReady = await view.impl.characterReady;
   assert(characterReady && view.impl.skinnedModel, 'Skinned GLB samurai did not load on the PlayCanvas backend');
 
+  const identities = [];
+  const activeCounts = [];
+  const swordScales = [];
+  const enemyScales = [];
+  for (let stage = 0; stage < 4; stage += 1) {
+    view.impl.applyStage(stage);
+    identities.push(view.impl.stageIdentity);
+    activeCounts.push(view.impl.skinnedStageParts.reduce((count, parts) => count + parts.filter((entity) => entity.enabled).length, 0));
+    swordScales.push(Number(view.impl.skinnedSword?.getLocalScale().y) || 0);
+    enemyScales.push(Number(view.impl.enemy.getLocalScale().x) || 0);
+  }
+  assert(new Set(identities).size === 4, 'Four stages did not expose four distinct skinned enemy identities');
+  assert(activeCounts.join(',') === '3,3,5,6', 'Stage identity attachments were not bounded to the intended active groups');
+  assert(swordScales[2] > swordScales[1] && swordScales[3] > swordScales[2], 'Heavy/boss weapon silhouettes did not scale above the ronin blade');
+  assert(enemyScales[3] > enemyScales[2] && enemyScales[2] > enemyScales[1], 'Oni/Shogun silhouettes did not increase body mass distinctly');
+  view.impl.applyStage(0);
+
   const engine = new CombatEngine();
   engine.start(0);
   engine.drainEvents();
@@ -116,6 +133,7 @@ try {
   root.dataset.rendererCharacterPipeline = 'skinned-gltf-v1';
   root.dataset.rendererCharacterClips = 'Windup,Strike,Parry';
   root.dataset.rendererDirectionalRead = 'top-right-bottom-left';
+  root.dataset.rendererStageIdentity = identities.join(',');
 } catch (error) {
   console.error('PlayCanvas renderer contract smoke failed', error);
   root.dataset.rendererMotionIntegration = 'fail';

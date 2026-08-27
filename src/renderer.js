@@ -1,10 +1,11 @@
 import { PlayCanvasView } from './playcanvas-view.ts';
+import { installStageIdentity } from './stage-identity.js';
 import { View as LegacyWebGLView } from './legacy-renderer.js';
 
 export class View {
   constructor(canvas) {
     try {
-      this.impl = new PlayCanvasView(canvas);
+      this.impl = installStageIdentity(new PlayCanvasView(canvas));
       this.backend = 'playcanvas';
       document.documentElement.dataset.rendererBackend = 'playcanvas';
       queueMicrotask(() => {

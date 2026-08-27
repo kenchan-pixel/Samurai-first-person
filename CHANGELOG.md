@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.14.0-evolution — Stage-specific skinned enemy identities
+
+- Gave all four duels distinct opponent silhouettes while reusing the same locally generated skinned GLB and five combat-authoritative skeletal clips.
+- Ashigaru now reads through a broad jingasa; Ronin through a headband/sash and altered tsuba; Oni through horned heavy armour and a heavier blade profile; Crimson Shogun through tall antlers, sashimono and an enlarged crimson weapon silhouette.
+- Identity parts attach once to the real `Head` / `Chest` / `Sword` bones and toggle per stage; 17 simple accessories are created after model load with at most six active at once, so no duplicate character asset, texture download or per-frame allocation is introduced.
+- Stage-specific body/weapon scale and commitment are presentation-only and do not change hitboxes, reach, timing, parry windows, damage or encounter rules.
+- Extended the existing production renderer-contract smoke to verify four distinct identity groups, bounded active accessory counts and heavier Oni/Shogun silhouettes without adding another broad test harness.
+
 ## 0.13.0-evolution — Directional skinned combat readability
 
 - Added distinct top/right/bottom/left full-body choreography on the loaded skinned samurai while keeping the same combat-authoritative `Windup / Strike / Recovery / Parry` clip pipeline.

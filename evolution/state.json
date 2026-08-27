@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 24,
+  "run_number": 25,
   "last_action_type": "FEATURE",
-  "last_action": "Added direction-specific full-body skinned-samurai choreography for top/right/bottom/left attacks plus a bounded in-world sword-bone read trail while keeping combat timing and the existing five skeletal clips authoritative",
-  "last_commit": "c1f2e3f8257ff9a6cdca0eebb5336ec5bc8443e1",
+  "last_action": "Added four stage-specific skinned-samurai silhouettes and weapon profiles using bounded Head/Chest/Sword bone attachments on the same shared rig, with presentation-only body commitment scaling and no combat-rule changes",
+  "last_commit": "8ea291b66348067a884abd48b3ef3d804d8c4543",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Tune the skinned samurai camera/material/shadow/pixel-ratio budget from physical-iPhone evidence, prioritising sustained 60 Hz and attack readability",
-    "Strengthen stage-specific helmet/armour/weapon silhouette and animation rhythm without duplicating heavyweight character assets",
-    "Upgrade the first-person player hands/katana presentation after enemy readability and phone budget remain stable"
+    "Tune camera/material/shadow/pixel-ratio budget from physical-iPhone evidence, prioritising sustained 60 Hz and attack readability",
+    "Upgrade first-person player hands/katana silhouette and motion while preserving the opponent read",
+    "Add accessibility timing/high-contrast/left-handed options, or separate directional clips only if physical play evidence justifies them"
   ]
 }

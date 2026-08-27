@@ -17,28 +17,28 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 018 — First PlayCanvas production slice:** PlayCanvas standalone + Vite primary renderer, true perspective scene, articulated original primitive samurai and legacy WebGL2 fallback.
 - **Run 019 — PlayCanvas verification repair:** current architecture/browser gate restored after stale smoke assertions.
 - **Run 020 — PlayCanvas motion-contract verification:** real production View driven through telegraph → strike → parry → counter.
-- **Run 021 — Original skinned samurai vertical slice:** deterministic local GLB generated from repository source, 19-joint skin, layered armour and five real skeletal clips; combat phase progress remains authoritative and the primitive renderer character remains fallback.
-- **Run 022 — Current-baseline CI gate repair:** removed stale sentence-coupled SOT assertions so the existing Node + production PlayCanvas browser gate can verify the skinned-character baseline again without adding a new test harness.
-- **Run 023 — Skinned animation binding repair:** unwrapped PlayCanvas container animation Assets to real AnimTracks, created the combat layer and restored the fail-closed GLB runtime path.
-- **Run 024 — Directional skinned combat read:** top/right/bottom/left attacks now use distinct full-body rig orientation, lower-body stance and an in-world sword-bone read trail while preserving the same combat-authoritative skeletal clips.
+- **Run 021 — Original skinned samurai vertical slice:** deterministic local GLB, 19-joint skin, layered armour and five skeletal clips.
+- **Run 022 — Current-baseline CI gate repair:** stale sentence-coupled assertions repaired without adding another harness.
+- **Run 023 — Skinned animation binding repair:** PlayCanvas animation Assets unwrapped to real AnimTracks and the production GLB path restored.
+- **Run 024 — Directional skinned combat read:** four-direction full-body choreography plus an in-world sword-bone read trail.
+- **Run 025 — Stage-specific skinned identities:** four clearly different opponent silhouettes/weapon profiles on the same rig, with bounded bone-attached accessories and no duplicate character downloads.
 
-## Highest priority — physical-phone quality and enemy differentiation
+## Highest priority — physical-phone quality and player weapon fidelity
 
-The engine migration and skinned-character path are production-facing. Do not spend another run building framework infrastructure unless phone evidence exposes a real bottleneck.
+The engine migration, skinned-character path, directional choreography and stage silhouettes are production-facing. Do not spend another run building framework infrastructure unless phone evidence exposes a real bottleneck.
 
 Preferred next work:
 
 1. **Physical-iPhone visual/performance tuning** — inspect normal combat distance, sustained frame time, heat and load time; tune material/shadow/pixel-ratio budget from evidence.
-2. **Enemy-specific visual language** — vary helmet/armour/weapon silhouette or animation rhythm per stage without creating four heavyweight duplicate assets.
-3. **First-person weapon fidelity** — improve player hands/katana once enemy readability and frame budget are stable.
-4. **Directional clip authoring only if needed** — the new runtime body/blade choreography provides distinct four-direction reads without multiplying assets; add separate imported clips later only if physical play shows the shared base clips still limit readability.
+2. **First-person weapon fidelity** — improve player hands/katana silhouette, grip and motion while keeping the main opponent read clear.
+3. **Directional clip authoring only if needed** — runtime body/blade choreography already provides distinct reads; add separate imported clips only if physical play shows a genuine limit.
+4. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 
 ## High-value product candidates after the core fidelity path
 
-1. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
-2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and clean restart.
-3. **Boss refinement** — stronger signature weapon/animation language and phase tuning from play evidence.
-4. **Onboarding follow-through** — only if player evidence shows remaining confusion.
+1. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and clean restart.
+2. **Boss refinement** — stronger signature animation/phase language and tuning from play evidence.
+3. **Onboarding follow-through** — only if player evidence shows remaining confusion.
 
 ## Technical opportunities
 
