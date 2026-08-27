@@ -5,6 +5,9 @@
 - Removed persistent EMA-style smoothing from normal elapsed-time enemy motion so the fastest 175–330 ms strike phases can visually reach their intended pose instead of trailing behind the game timeline.
 - Normal telegraph, strike and recovery frames now follow the deterministic motion target directly, including after a slow frame, preventing accumulated animation latency.
 - Early successful parries still receive bounded multi-frame strike → recovery damping so interruption remains smooth rather than teleporting.
+- Follow-up hardening makes strike → recovery damping depend on authoritative `attack.parried` state rather than inferring interruption from the previous rendered pose.
+- A natural recovery after a skipped/slow render frame now catches up to the correct elapsed-time target immediately; only a genuine parry interruption keeps bounded multi-frame damping.
+- Added focused regression coverage for identical stale strike poses followed by natural versus explicitly interrupted recovery.
 - Added regression coverage for same-phase direct tracking, natural phase boundaries, multi-frame interrupted recovery, object reuse and adaptive render scaling.
 - No combat timing, parry window, damage, posture, reach, STEP, boss, mastery, onboarding or renderer-stack rule changed.
 

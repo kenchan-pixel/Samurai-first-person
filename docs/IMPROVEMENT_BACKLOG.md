@@ -19,6 +19,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 014 — Wide-framed 3D visual redraw:** pulled the opponent farther back, strengthened procedural samurai silhouettes/armour, dojo depth and anticipation readability.
 - **Run 015 — Four-beat motion / adaptive phone rendering:** continuous wind-up → swing → impact/follow-through → recovery animation, interruption damping, action-local player sword timing and bounded adaptive internal resolution.
 - **Run 016 — Phase-aware motion follow-through:** normal elapsed-time motion now follows its target directly while only interrupted strike → recovery transitions are damped, removing accumulated visual lag from fast attacks.
+- **Run 017 — Parry-authoritative recovery hardening:** recovery damping now uses the real parry state, so dropped-frame natural recoveries catch up immediately without losing smooth genuine-parry interruption.
 
 ## Highest-priority implementation — rigged 3D character pipeline
 

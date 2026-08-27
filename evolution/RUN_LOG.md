@@ -145,3 +145,47 @@ Run 015 correctly made motion elapsed-time based, but the renderer still called 
 - Resolve the open 3D pipeline Decision Gate before any rigged-engine/model prototype.
 - Accessibility mode for timing/readability/left-handed support.
 - Challenge mode after visual direction is stable.
+
+## Run 017 — Parry-authoritative recovery transition
+
+**Date:** 2026-08-27  
+**Action type:** BLOCKER_FIX  
+**Scope:** Repair the unresolved P1 where a natural strike → recovery transition after a skipped/slow render frame could be mistaken for a parry interruption and reintroduce the visual lag Run 016 intended to remove.
+
+### Preflight / review disposition
+
+- Exact previous HEAD `358d45800342c4b709c1a1227b996a3efa1586d0`: CI run `33043813234` = success; GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft and unmerged.
+- No inline review threads existed.
+- Latest All Repos review on that exact HEAD reported one applicable **P1**: `smoothMotionFrame()` inferred interruption from stale rendered pose, so PlayCanvas feature work was blocked until repaired.
+
+### Before
+
+- `smoothMotionFrame()` classified an interrupted recovery from the previous rendered `phase/sword/follow` values.
+- If a phone skipped the late strike frame and the combat clock naturally entered recovery, the stale early/mid strike pose matched the same condition as an early parry.
+- That natural recovery then received 82 ms multi-frame damping instead of catching up to the elapsed-time pose immediately.
+
+### After
+
+- Added `motionPhaseForSnapshot()` to derive the visual interruption signal from authoritative combat state: recovery is marked interrupted only when `snapshot.attack.parried === true`.
+- `src/main.js` passes a visual-only `recovery-interrupted` phase to the renderer for genuine parry recovery while HUD/combat continue using the untouched snapshot.
+- `enemyMotionFrame()` converts that visual-only phase into the normal recovery pose plus an explicit `interruptedRecovery` marker.
+- `smoothMotionFrame()` now dampens only that explicit marker; natural recovery and STEP/evade recovery copy the current elapsed-time target immediately even after a dropped frame.
+- No combat timing, damage, parry window, STEP, posture, boss, mastery or input rule changed.
+
+### Verification
+
+- `src/main.js` and `src/animation-motion.js` syntax checks passed.
+- Focused animation-motion Node suite passed **10/10**, including the same early strike pose followed by natural recovery versus explicitly parried recovery.
+- Previous exact HEAD had terminal-green full CI and Vercel Preview before the blocker repair was selected.
+- Exact Run 017 HEAD must pass the repository's full Node/browser/WebGL CI and Vercel Preview after commit.
+
+### Regression / risk
+
+- Existing deterministic combat state remains authoritative; the new marker affects visual transition only.
+- No dependency, network/storage service, external asset or renderer-stack change is introduced.
+- Physical-iPhone animation feel remains the primary final acceptance signal.
+
+### Next candidate
+
+- Once the exact Run 017 HEAD is green and the review gate is clear, deliver the first production-facing PlayCanvas rigged-samurai duel slice behind the existing fallback renderer.

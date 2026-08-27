@@ -3,23 +3,23 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 16,
-  "last_action_type": "FEATURE",
-  "last_action": "Removed persistent per-frame animation smoothing from normal elapsed-time attack motion while retaining bounded damping only for interrupted strike-to-recovery transitions, so fast attacks can complete their intended four-beat visual timeline without added render latency",
-  "last_commit": "d31d639646e3df7b340298a4786628f7001387e8",
+  "run_number": 17,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Made strike-to-recovery damping depend on authoritative parry state instead of stale rendered pose, so dropped-frame natural recoveries catch up immediately while genuine parry interruptions remain smoothly damped",
+  "last_commit": "358d45800342c4b709c1a1227b996a3efa1586d0",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/946Hri4ND7PHGeWz8hxQn3D1D2Wu",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/HwNjdiFhU8XzpzS2tb56pTQMJTdv",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Prototype a rigged Three.js/Babylon/custom renderer only after the 3D pipeline Decision Gate is explicitly approved",
+    "Deliver the first production-facing PlayCanvas rigged-samurai duel slice behind the existing fallback renderer",
     "Add accessibility options for timing assistance, left-handed play and high-contrast telegraphs",
-    "Add challenge mode after the visual and animation direction is stable"
+    "Add challenge mode after the visual and animation migration is stable"
   ]
 }

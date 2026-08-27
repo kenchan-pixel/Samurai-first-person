@@ -11,17 +11,27 @@ const MOTION_KEYS = Object.freeze([
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
 
+export function motionPhaseForSnapshot(snapshot) {
+  const phase = snapshot?.phase ?? 'ready';
+  return phase === 'recovery' && snapshot?.attack?.parried === true
+    ? 'recovery-interrupted'
+    : phase;
+}
+
 export function smoother(value) {
   const x = clamp01(value);
   return x * x * x * (x * (x * 6 - 15) + 10);
 }
 
 export function enemyMotionFrame(phase, progress, out = {}) {
+  const interruptedRecovery = phase === 'recovery-interrupted';
+  const motionPhase = interruptedRecovery ? 'recovery' : phase;
   const p = clamp01(progress);
-  out.phase = phase;
+  out.phase = motionPhase;
+  out.interruptedRecovery = interruptedRecovery;
   for (const key of MOTION_KEYS) out[key] = 0;
 
-  if (phase === 'telegraph') {
+  if (motionPhase === 'telegraph') {
     const wind = smoother(p / 0.82);
     out.wind = wind;
     out.read = smoother((p - 0.18) / 0.62);
@@ -29,7 +39,7 @@ export function enemyMotionFrame(phase, progress, out = {}) {
     return out;
   }
 
-  if (phase === 'strike') {
+  if (motionPhase === 'strike') {
     out.wind = 1 - smoother(p / 0.24);
     out.swing = smoother(p / 0.76);
     out.impact = Math.max(0, 1 - Math.abs(p - 0.56) / 0.16);
@@ -39,7 +49,7 @@ export function enemyMotionFrame(phase, progress, out = {}) {
     return out;
   }
 
-  if (phase === 'recovery') {
+  if (motionPhase === 'recovery') {
     const settle = smoother(p);
     out.follow = 1 - settle;
     out.settle = settle;
@@ -56,6 +66,7 @@ function copyMotionFrame(target, out) {
     out[key] = Number.isFinite(target?.[key]) ? target[key] : 0;
   }
   out.phase = target?.phase ?? 'ready';
+  out.interruptedRecovery = target?.interruptedRecovery === true;
   return out;
 }
 
@@ -70,13 +81,13 @@ function recoveryPoseGap(current, target) {
 export function smoothMotionFrame(current, target, frameMs, responseMs = 72, out = current) {
   const fromPhase = current?.phase;
   const toPhase = target?.phase;
-  const interruptedRecovery = fromPhase === 'strike'
-    && toPhase === 'recovery'
-    && ((current?.sword ?? 0) < 0.72 || (current?.follow ?? 0) < 0.72);
+  const interruptedRecovery = target?.interruptedRecovery === true
+    && fromPhase === 'strike'
+    && toPhase === 'recovery';
 
   // Normal elapsed-time motion already has continuous boundary poses, so track
-  // it exactly. Smoothing every frame adds avoidable latency to the fastest
-  // 175–330 ms strikes and can stop the visible swing from completing.
+  // it exactly. Only an explicitly signalled parry interruption is damped;
+  // a dropped frame followed by natural recovery must catch up immediately.
   if (!interruptedRecovery || recoveryPoseGap(current, target) < 0.22) {
     return copyMotionFrame(target, out);
   }
@@ -91,6 +102,7 @@ export function smoothMotionFrame(current, target, frameMs, responseMs = 72, out
     out[key] = from + (to - from) * alpha;
   }
   out.phase = fromPhase;
+  out.interruptedRecovery = true;
   return out;
 }
 

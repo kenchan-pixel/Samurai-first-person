@@ -1,5 +1,6 @@
 import { CombatEngine, Direction, directionFromSwipe, directionFromTap } from './game-core.js';
 import { View } from './renderer.js';
+import { motionPhaseForSnapshot } from './animation-motion.js';
 
 const $ = (selector) => document.querySelector(selector);
 const canvas = $('#game-canvas');
@@ -293,7 +294,9 @@ function loop(n) {
   hud(s, n);
   shake = Math.max(0, shake - dt * 0.0048);
   if (action && n - actionAt > (action === 3 ? 390 : 290)) action = 0;
-  view?.draw(s, n, {
+  const motionPhase = motionPhaseForSnapshot(s);
+  const renderState = motionPhase === s.phase ? s : { ...s, phase: motionPhase };
+  view?.draw(renderState, n, {
     attackDirectionIndex: D[s.attack?.displayedDirection]?.[2] || 0,
     playerAction: action,
     playerDirectionIndex: D[actionDir]?.[2] || 0,

@@ -4,8 +4,15 @@ import assert from 'node:assert/strict';
 import {
   adaptiveRenderScale,
   enemyMotionFrame,
+  motionPhaseForSnapshot,
   smoothMotionFrame,
 } from '../src/animation-motion.js';
+
+test('renderer motion phase uses authoritative parry state rather than stale visual pose', () => {
+  assert.equal(motionPhaseForSnapshot({ phase: 'recovery', attack: { parried: false } }), 'recovery');
+  assert.equal(motionPhaseForSnapshot({ phase: 'recovery', attack: { parried: true } }), 'recovery-interrupted');
+  assert.equal(motionPhaseForSnapshot({ phase: 'strike', attack: { parried: false } }), 'strike');
+});
 
 test('normal attack phase boundaries preserve sword/body pose continuity', () => {
   const teleEnd = enemyMotionFrame('telegraph', 1, {});
@@ -50,16 +57,25 @@ test('normal phase boundaries do not add a second animation delay', () => {
   assert.deepEqual(current, target);
 });
 
-test('early parry recovery is damped across multiple 60Hz frames instead of teleporting', () => {
-  const current = enemyMotionFrame('strike', 0.12, {});
-  const target = enemyMotionFrame('recovery', 0, {});
+test('dropped-frame natural recovery catches up immediately from an early strike pose', () => {
+  const current = enemyMotionFrame('strike', 0.34, {});
+  const target = enemyMotionFrame('recovery', 0.08, {});
+  smoothMotionFrame(current, target, 50, 82, current);
+  assert.deepEqual(current, target);
+});
+
+test('explicit parry recovery from the same early strike pose remains damped', () => {
+  const current = enemyMotionFrame('strike', 0.34, {});
+  const target = enemyMotionFrame('recovery-interrupted', 0.08, {});
   const before = current.sword;
 
+  assert.equal(target.phase, 'recovery');
+  assert.equal(target.interruptedRecovery, true);
   smoothMotionFrame(current, target, 16.67, 82, current);
   assert.equal(current.phase, 'strike');
+  assert.equal(current.interruptedRecovery, true);
   assert.ok(current.sword > before);
-  assert.ok(current.sword < 0.2, `one frame jumped too far: ${current.sword}`);
-  assert.ok(current.follow < 0.3);
+  assert.ok(current.sword < target.sword);
 
   const afterOne = current.sword;
   smoothMotionFrame(current, target, 16.67, 82, current);
