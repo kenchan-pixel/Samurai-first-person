@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.11.0-evolution — PlayCanvas true-3D renderer foundation
+
+- Introduced PlayCanvas Engine standalone as the primary production-facing renderer behind a narrow adapter while preserving the previous custom WebGL2 renderer as a temporary fallback.
+- Replaced the shader-built opponent presentation with an original code-authored true-3D articulated samurai hierarchy, perspective camera, lit courtyard/gate scene, shadows and a first-person 3D katana.
+- Mapped the existing renderer-independent four-beat wind-up → swing → impact/follow-through → recovery timeline onto the new 3D body/arms/sword hierarchy without changing combat authority or parry timing.
+- Kept stage-specific visual identity through armour/cloth/accent palette, helmet crest and boss scale while preserving wide full-body portrait framing.
+- Carried the existing rolling frame-time quality logic into PlayCanvas through bounded device pixel-ratio adaptation.
+- Added Vite production bundling and made browser CI execute the built application; the real-app gate now fails if PlayCanvas silently falls back to the legacy renderer.
+- Added pinned PlayCanvas/Vite dependencies and Vercel `dist/` build configuration.
+- No downloaded model/texture pack was introduced. A local clearly licensed/original skinned glTF/GLB samurai with real animation clips remains the next fidelity step.
+
 ## 0.10.1-evolution — Phase-aware motion follow-through
 
 - Removed persistent EMA-style smoothing from normal elapsed-time enemy motion so the fastest 175–330 ms strike phases can visually reach their intended pose instead of trailing behind the game timeline.

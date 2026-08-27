@@ -1,13 +1,13 @@
 # Current Baseline
 
-Version: **0.10.1-evolution**
+Version: **0.11.0-evolution**
 
-These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove the user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges the Draft PR.
+These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
 ## Playable flow
 
 - Mobile-first portrait start screen → four sequential duels → victory/defeat → restart without page reload.
-- Three enemies are fought sequentially as the original baseline sequence, followed by the Crimson Shogun boss.
+- Three baseline enemies are followed by the Crimson Shogun boss.
 - Touch, stylus and mouse input remain supported.
 
 ## Guided first duel
@@ -37,15 +37,15 @@ These capabilities are approved for the current evolution branch and cumulative.
 - **STEP / 後撤** works only in the bounded early strike window, moves one distance step, and creates an evade-recovery opening only when the attack no longer reaches.
 - Long/heavy tracking attacks still reach at far distance, so STEP does not replace directional reading/parry.
 - Evade counter closes one distance step; stage start/restart resets to mid.
-- Reduced-motion preference disables the camera motion but not spacing/reach mechanics.
-- Real STEP pointerdown/pointerup, capture/isolation and drag rejection are browser-tested.
+- Reduced-motion preference disables camera motion but not spacing/reach mechanics.
+- Real STEP pointerdown/pointerup, capture/isolation and drag rejection remain browser-tested.
 
 ## Boss encounter
 
 - **Crimson Shogun** is stage 4 with 12 HP and Phase I posture 6.
 - At 6 HP or lower after a valid counter, Blood Moon Phase II triggers once, resets posture/attack cursor, creates an 1100 ms breathing gap and switches to faster/tighter pressure.
 - Phase II posture is 7, perfect-parry timing tightens and the attack set changes.
-- Boss blood-moon/ember atmosphere is bounded, pointer-transparent and honours reduced motion.
+- Boss blood-moon/ember atmosphere remains bounded, pointer-transparent and honours reduced motion.
 - Phase II banner has an explicit bounded lifetime; restart restores Phase I; victory flows into mastery.
 
 ## Mastery and replay feedback
@@ -65,45 +65,44 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 ## Presentation and visual identity
 
-- First-person WebGL2 combat view keeps the player katana in the near foreground and the opponent centred as the primary read.
-- **Wide-framed enemy baseline:** the enemy is rendered materially farther back than the earlier near-camera presentation. The full body from helmet to feet remains visible in normal portrait framing, with more negative space around the sword path.
-- The opponent retains the Run 014 procedural layered samurai armour and stage-specific silhouette language.
-- The dojo retains stronger visual depth through a receding roof/gate, pillars, lanterns and perspective floor lines while keeping the centre combat lane clear.
-- **Four-beat combat motion:** enemy attacks present a continuous **wind-up / swing / impact-follow-through / recovery** visual flow. Motion weights share matching boundary poses instead of resetting at each combat phase.
-- **Phase-aware motion follow-through:** normal telegraph/strike/recovery frames now track the elapsed-time target directly rather than carrying a persistent smoothing delay. Fast 175–330 ms strike phases therefore keep their intended visual progression even after a slower frame.
-- Only a materially interrupted strike → recovery transition (for example an early successful parry) keeps bounded multi-frame damping; a natural completed strike enters recovery directly because its visible boundary pose already matches.
-- Enemy stance, torso, arms, hilt, sword trail and cape/weight shift are driven by the same elapsed-time motion frame so the whole body commits to the attack rather than only rotating the blade.
-- Player parry and slash animation uses action-local elapsed progress; the foreground katana no longer depends on a wrapping global-clock animation that could visibly jump mid-action.
-- Normal/perfect parries, counters, guard-break contacts and player damage keep bounded direction-aware contact FX. Reduced-motion removes traveling sparks/slashes but retains the contact ring/core.
-- Impact nodes remain pointer-transparent, capped to three and self-cleaning.
-- Boss blood-moon presentation, footwork range chip, posture HUD and Guided Duel remain additive overlays that must not obscure the enemy body/blade read.
-- Generated Web Audio and optional vibration remain interaction-triggered; no external visual/audio assets are required.
+- **PlayCanvas Engine standalone is now the primary production-facing renderer on `autonomous-evolution`.** It renders a real perspective 3D courtyard, directional/point lighting, shadows, a first-person katana and an original code-authored articulated samurai hierarchy.
+- The previous custom single-pass WebGL2 procedural renderer is preserved in `src/legacy-renderer.js` as a temporary fallback while the migration stabilises.
+- The enemy remains materially farther back than the earlier near-camera presentation so the full helmet-to-feet silhouette and sword path remain readable in portrait framing.
+- Stage identity remains visible through armour/cloth/accent palette, helmet crest and boss scale/atmosphere while the centre combat lane stays clear.
+- Enemy motion remains a continuous **wind-up → swing → impact/follow-through → recovery** visual flow driven from the same elapsed-time combat phase state used before the renderer migration.
+- Normal telegraph/strike/recovery poses follow the elapsed-time target directly; only a genuinely parried strike → recovery transition receives bounded smoothing.
+- Player parry/slash motion remains action-local and direction-aware.
+- Normal/perfect parries, counters, guard-break contacts and player damage keep bounded direction-aware DOM impact FX; reduced-motion keeps a short readable contact cue while removing travelling effects.
+- Boss blood-moon presentation, range chip, posture HUD and Guided Duel remain additive DOM overlays and must not obstruct the opponent/body/blade read.
+- Generated Web Audio and optional vibration remain interaction-triggered.
+
+### Current 3D-fidelity boundary
+
+Run 018 proves the approved PlayCanvas/Vite production path with an original articulated 3D character assembled from engine primitives. It is a substantial step beyond the shader-drawn figure but **is not yet the final high-detail skinned character target**. The next fidelity slice should introduce one local, clearly licensed/original skinned glTF/GLB samurai and real animation clips without changing combat authority.
 
 ## Mobile performance baseline
 
-- Combat and animation timing continue to use elapsed time rather than assuming a fixed frame count.
-- Normal animation frames are not recursively low-pass filtered; the render pose follows the current elapsed-time target so a dropped/slow frame catches up instead of accumulating extra visual latency.
-- The renderer maintains a rolling frame-time estimate and adapts **internal render resolution only** within a bounded scale (approximately 1.0–1.6 device pixels per CSS pixel) to protect a 60 Hz-oriented phone experience under load.
-- Adaptive resolution never changes parry windows, strike timing, damage, engine updates, input mapping or encounter rules.
-- The motion controller reuses caller-owned state objects; no per-frame animation-node or DOM allocation is introduced by the four-beat choreography.
-- Headless Chromium/SwiftShader can prove shader/runtime integration but cannot certify sustained 60 Hz on a physical iPhone. Recent-phone performance remains a human acceptance gate.
+- Gameplay and animation timing remain elapsed-time based rather than frame-count based.
+- PlayCanvas rendering uses the existing rolling frame-time signal to adapt `graphicsDevice.maxPixelRatio` within a conservative mobile range; quality may fall before gameplay timing/responsiveness does.
+- Adaptive quality never changes parry windows, strike timing, damage, engine updates, input mapping or encounter rules.
+- The new renderer reuses its scene hierarchy and motion-state objects; it does not create 3D entities per frame.
+- Headless Chromium/SwiftShader can prove the Vite bundle, PlayCanvas renderer startup and browser integration but cannot certify sustained 60 Hz on a physical iPhone. Recent-phone performance remains the human acceptance gate.
 
 ## Technical baseline
 
-- Static ES-module web app with no runtime framework dependency.
-- Combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact are additive adapters/observers.
-- Rendering remains isolated in `src/renderer.js`; `src/main.js` owns gameplay/input/HUD orchestration and passes render-state values into the renderer.
-- `src/animation-motion.js` owns deterministic four-beat visual pose weights, phase-aware interrupted-recovery damping and bounded adaptive render-scale decisions; it does not mutate combat state.
-- The renderer remains one bounded WebGL2 pass with procedural geometry/shading and no texture/model downloads, network calls, per-frame DOM allocation or third-party 3D engine.
-- Browser smoke executes the real app under headless Chromium/SwiftShader and requires shader compile/link, enabled start control and `wide-samurai-v2` renderer initialization.
-- Existing mastery, boss, onboarding, footwork and impact browser harnesses remain required at 320×568.
-- Impact browser coverage runs under `prefers-reduced-motion` and proves ring feedback remains while sparks/slash travel are absent and cleanup remains bounded.
-- GitHub Actions runs Node tests plus browser/WebGL integration on pull requests and pushes to `main`.
+- Deterministic combat rules remain isolated in `src/game-core.js`; boss, mastery, onboarding, footwork and impact remain additive adapters/observers.
+- `src/main.js` still owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
+- `src/renderer.js` is now a narrow renderer adapter: PlayCanvas primary, legacy WebGL2 fallback.
+- `src/playcanvas-view.ts` owns the new 3D scene, articulated samurai/player katana presentation, stage visual style and adaptive render quality.
+- `src/legacy-renderer.js` preserves the previously accepted procedural renderer during migration.
+- `src/animation-motion.js` remains renderer-independent and owns deterministic four-beat visual weights plus the authoritative parry-interruption smoothing rule.
+- Build/development now uses Vite; the browser gate builds `dist/` first, then executes the real production bundle at 320×568 while reusing existing focused integration harnesses for mastery, boss, onboarding, footwork and impact.
+- The real-app browser gate requires the **PlayCanvas** backend marker; silently falling back to the legacy renderer does not pass CI.
+- GitHub Actions installs pinned npm dependencies, runs Node tests and the browser integration gate. Vercel builds the same Vite `dist/` output.
+- PlayCanvas is the only new runtime 3D dependency; no React, physics engine, login, analytics, network model service or paid API is introduced.
 
-## Approved 3D fidelity direction — migration not yet delivered
+## Approved 3D direction
 
-Physical-phone review confirms that procedural shader art is still below the desired character fidelity. The approved next direction is now **PlayCanvas Engine standalone + incremental Vite/TypeScript 3D layer + local rigged glTF/GLB assets, with KTX2/Basis textures where useful**. See `docs/3D_PIPELINE_DECISION_GATE.md`.
+The PlayCanvas-first Decision Gate is approved and Run 018 begins its production implementation. The approved long-term asset pipeline remains **Blender → local glTF/GLB**, with KTX2/Basis where useful and WebGL2 as required compatibility baseline. WebGPU remains optional progressive enhancement.
 
-This approval does **not** mean the baseline has already migrated. Until a production-facing PlayCanvas slice lands and passes its regression/performance checks, the current static ES-module/WebGL2 renderer above remains the active playable implementation and fallback.
-
-The autonomous agent may execute the approved migration incrementally without reopening a human gate for routine testing/refactoring decisions. Core combat/timing must remain renderer-independent, and a new Decision Gate is required only if evidence points outside the approved direction or changes a hard product/cost/privacy/licensing constraint.
+A new human Decision Gate is required only if evidence points outside this approved direction or changes a material product/cost/privacy/licensing constraint.

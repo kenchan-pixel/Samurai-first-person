@@ -4,64 +4,46 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 
 ## Recently delivered
 
-- **Run 002 — Animation readability pass:** procedural anticipation, body commitment, recovery follow-through, articulated arms/stance, blade-read halo and strike trail.
-- **Run 003 — Renderer/WebGL correctness:** localized player-katana SDF, ordered GLSL masks and browser WebGL compile/link/startup smoke.
-- **Run 004 — Posture / guard-break system:** player/enemy posture, thresholds, guard-break counter bonus/window and HUD feedback.
-- **Run 005 — Mastery grading and personal best:** mastery result feedback and local best-victory persistence.
-- **Run 006 — Mastery integration hardening:** executable browser coverage for mastery, storage fallback and 320×568 result layout.
-- **Run 007 — Crimson Shogun boss:** fourth-stage multi-phase boss, Blood Moon ruleset shift and arena atmosphere.
-- **Run 008 — Boss accessibility/integration hardening:** bounded reduced-motion Phase II banner plus executable boss browser flow.
-- **Run 009 — Guided first duel:** interactive read/parry/counter coaching and local completion preference.
-- **Run 010 — Guided Duel CI lifecycle repair:** corrected first-time → completed browser verification.
-- **Run 011 — Spacing and footwork:** close/mid/far engagement, attack reach and timed STEP backstep.
-- **Run 012 — Guided Duel / STEP integration hardening:** evade-only tutorial non-completion, real STEP pointer path and four-stage copy sync.
-- **Run 013 — Directional impact choreography:** bounded direction-aware contact rings, slash afterimages and sparks with reduced-motion fallback.
-- **Run 014 — Wide-framed 3D visual redraw:** pulled the opponent farther back, strengthened procedural samurai silhouettes/armour, dojo depth and anticipation readability.
-- **Run 015 — Four-beat motion / adaptive phone rendering:** continuous wind-up → swing → impact/follow-through → recovery animation, interruption damping, action-local player sword timing and bounded adaptive internal resolution.
-- **Run 016 — Phase-aware motion follow-through:** normal elapsed-time motion now follows its target directly while only interrupted strike → recovery transitions are damped, removing accumulated visual lag from fast attacks.
-- **Run 017 — Parry-authoritative recovery hardening:** recovery damping now uses the real parry state, so dropped-frame natural recoveries catch up immediately without losing smooth genuine-parry interruption.
+- **Run 002 — Animation readability:** anticipation, body commitment, articulated stance and blade trails.
+- **Run 003 — Renderer/WebGL correctness:** katana SDF/GLSL fixes and executable WebGL browser smoke.
+- **Run 004 — Posture / guard break:** player/enemy posture, thresholds and counter consequences.
+- **Run 005–006 — Mastery:** grading, local best and browser/storage/layout hardening.
+- **Run 007–008 — Crimson Shogun:** multi-phase boss plus reduced-motion/browser hardening.
+- **Run 009–010 — Guided Duel:** read/parry/counter onboarding plus lifecycle repair.
+- **Run 011–012 — Spacing/STEP:** close/mid/far engagement and safe onboarding/pointer integration.
+- **Run 013 — Impact choreography:** bounded direction-aware contact feedback with reduced-motion fallback.
+- **Run 014 — Wide visual redraw:** more readable full-body framing and stronger procedural samurai/dojo depth.
+- **Run 015–017 — Four-beat motion:** elapsed-time wind-up/swing/impact/recovery, adaptive render scale and parry-authoritative dropped-frame recovery handling.
+- **Run 018 — First PlayCanvas production slice:** PlayCanvas standalone + Vite becomes the primary renderer, with a real perspective 3D courtyard, lighting, articulated original samurai/player katana and adaptive pixel ratio; legacy WebGL2 remains temporary fallback and the real production bundle is browser-gated.
 
-## Highest-priority implementation — rigged 3D character pipeline
+## Highest priority — finish the rigged-character fidelity migration
 
-Physical iPhone evidence shows that the procedural shader character is still not detailed enough. The 3D architecture direction is now approved rather than blocked on another selection round.
+Run 018 proves the engine/build/renderer seam without importing an unverified character pack. The next visible step is now asset fidelity rather than more framework work.
 
-**Approved direction:** **PlayCanvas Engine standalone + incremental Vite/TypeScript 3D layer + local Blender-authored/licensed glTF/GLB rigged characters + KTX2/Basis textures where useful.** See `docs/3D_PIPELINE_DECISION_GATE.md`.
+Preferred next slice:
 
-### Preferred next vertical slice
+1. add one **local, clearly licensed/original skinned samurai glTF/GLB** with recorded provenance;
+2. use real skeletal animation clips/blending for idle + representative directional attack + parry reaction/recovery;
+3. continue driving timing from `game-core.js` rather than letting the animation clip redefine parry windows;
+4. keep full-body portrait readability and current HUD/input behaviour;
+5. compare load size/frame time against Run 018 on the same Preview and physical iPhone;
+6. only retire the legacy renderer after the PlayCanvas path has enough real-device evidence.
 
-Deliver a production-facing first PlayCanvas duel slice rather than a throwaway demo:
+Do not spend a full run merely converting file formats or building an asset-management framework. Asset work should land as a visible playable improvement.
 
-1. introduce a narrow renderer adapter/fallback seam without moving deterministic combat rules into the engine;
-2. load one clearly licensed/original rigged samurai at the current wide combat framing;
-3. drive a complete wind-up → swing → impact/follow-through → recovery animation from the existing combat phase/timing state;
-4. preserve real parry/swipe/STEP behaviour and stage/restart flow;
-5. keep the procedural renderer as a temporary fallback until the new path is proven stable;
-6. deploy to the existing Vercel Preview for immediate physical-iPhone quality/performance feedback.
-
-Testing/refactoring should be proportionate to the risks of this slice. Reuse existing regression coverage, add only focused integration evidence for new engine/model/animation failure modes, and avoid spending a run on test-count growth or broad cleanup without visible gameplay payoff.
-
-### Fallback order if evidence rejects PlayCanvas
-
-1. **Babylon.js + local glTF/GLB rigged character** — strongest full-engine alternative if it provides a material animation/performance/maintenance advantage.
-2. **Three.js + local glTF/GLB rigged character** — focused rendering-library alternative if a thinner engine layer proves preferable.
-3. **Stay on custom WebGL2 + build our own rig/model loader** — only if third-party engine overhead is proven unacceptable; highest engineering burden.
-
-A new human Decision Gate is needed only if evidence points to a substantially different direction or introduces new material cost/privacy/licensing risk.
-
-## High-value candidates after / alongside the 3D migration
+## High-value candidates after / alongside 3D fidelity
 
 1. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
-2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and a clean restart loop.
-3. **Boss refinement** — signature weapon/animation language and phase tuning based on play evidence, not more stacked mechanics.
-4. **Onboarding follow-through** — only if player evidence shows remaining confusion; avoid turning the first duel into a long tutorial.
+2. **Challenge mode** — endless or seeded sequence with escalating tempo, mastery-aware scoring and clean restart.
+3. **Boss refinement** — signature model/weapon/animation language and phase tuning based on play evidence.
+4. **Onboarding follow-through** — only if player evidence shows remaining confusion.
 
 ## Technical opportunities
 
-- Performance HUD / physical-device frame sampling for evidence-based quality tuning.
-- Pointer-level browser interaction smoke for representative physical edge-parry/swipe gestures; STEP is already covered.
-- Deterministic replay of combat inputs for broader regression testing.
-- Installable PWA and offline shell.
-- Continue separating rendering, audio, input and encounter controllers only when complexity warrants it.
+- Physical-device frame sampling / compact developer performance readout for evidence-based tuning.
+- Deterministic replay of combat inputs for broader regression testing if future complexity needs it.
+- Installable PWA/offline shell after the renderer/asset path is stable.
+- Migrate selected new 3D code toward stronger TypeScript typing only where it reduces real integration risk.
 
 ## Avoid until justified
 
@@ -70,6 +52,7 @@ A new human Decision Gate is needed only if evidence points to a substantially d
 - Monetisation.
 - Large inventory/equipment systems.
 - Open-world navigation.
-- Framework migration solely for fashion or preference.
-- Downloaded 3D asset packs without explicit provenance/licence review and mobile performance evidence.
-- Test or refactor work that does not protect a real risk or unlock a player-visible result.
+- React migration solely to host the renderer.
+- Physics engine without a gameplay requirement.
+- Downloaded 3D assets without explicit provenance/licence review.
+- Test/refactor work that does not protect a real risk or unlock a visible result.

@@ -4,7 +4,7 @@ A mobile-first, first-person 3D samurai action web game. The player reads enemy 
 
 ## Current vertical slice
 
-- First-person WebGL dojo scene rendered without external assets.
+- PlayCanvas standalone now renders the primary true-3D duel scene with perspective camera, dynamic lighting, articulated samurai body parts and a first-person katana; the previous custom WebGL2 renderer remains a temporary fallback during migration.
 - Four-direction touch parry: top, right, bottom, and left.
 - Four-direction swipe attacks plus a compact `STEP / 後撤` control for bounded distance evasion.
 - Close / mid / far engagement distance with attack reach, approach/retreat/sidestep setup, and restrained camera response.
@@ -14,21 +14,22 @@ A mobile-first, first-person 3D samurai action web game. The player reads enemy 
 - Mastery score/grade, run statistics, and local-only personal best after victory.
 - Player/enemy health, stage progression, hit feedback, generated sound effects, victory, and defeat states.
 - Mouse fallback for desktop testing.
-- Pure combat state machine with Node tests plus headless mobile browser/WebGL integration coverage.
+- Deterministic combat state remains independent of rendering; Node tests plus headless mobile browser integration protect the playable baseline.
 
-## Baseline status
+## 3D migration status
 
-The playable evolution baseline is included in this repository. Open `index.html` through a local HTTP server to test the current mobile combat vertical slice.
+Run 018 is the first production-facing PlayCanvas slice. It replaces the old shader figure as the preferred renderer with an original code-authored articulated 3D samurai and dojo while keeping the old renderer as fallback. A higher-detail local skinned GLB/animation asset is the next fidelity step; no downloaded character pack was introduced in this run.
 
 ## Run locally
 
 ```bash
+npm install
 npm test
 npm run test:browser
 npm run serve
 ```
 
-Open `http://localhost:4173` on a phone or desktop browser.
+Open `http://localhost:4173` on a phone or desktop browser. `npm run build` creates the Vercel production bundle in `dist/`.
 
 ## Controls
 
