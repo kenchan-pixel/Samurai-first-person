@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { applyCoachEvent, createCoachProgress } from '../src/onboarding-coach.js';
+import { applyCoachEvent, createCoachProgress, guideCueForEvent } from '../src/onboarding-coach.js';
 
 test('guided first duel progresses from read to parry to counter', () => {
   let state = createCoachProgress(true);
@@ -60,4 +60,18 @@ test('disabled coach remains inert', () => {
   const next = applyCoachEvent(state, { type: 'stage-start', detail: { stage: 1 } });
   assert.equal(next.visible, false);
   assert.equal(next.mode, null);
+});
+
+test('gameplay clarity cues expose hidden follow-up rules without changing combat', () => {
+  assert.deepEqual(guideCueForEvent({ type: 'stage-start', detail: { stage: 2 } }), {
+    title: 'RONIN · 假動作',
+    detail: '等最後刀路先格擋',
+    kind: 'stage',
+    duration: 1700,
+  });
+  assert.match(guideCueForEvent({ type: 'parry', detail: {} }).detail, /掃屏反擊/);
+  assert.match(guideCueForEvent({ type: 'perfect-riposte', detail: { automatic: true } }).detail, /再掃/);
+  assert.match(guideCueForEvent({ type: 'backstep-evade', detail: {} }).detail, /掃屏反擊/);
+  assert.match(guideCueForEvent({ type: 'enemy-guard-break', detail: {} }).detail, /\+2/);
+  assert.equal(guideCueForEvent({ type: 'counter', detail: { automatic: false } }).hide, true);
 });

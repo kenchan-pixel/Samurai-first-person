@@ -128,3 +128,41 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - Existing manual-counter Phase II test remains, proving both damage sources use the same transition.
 - No parry window, attack timing, damage amount, posture threshold, STEP/input rule, renderer path, asset, storage/network model or merge/deploy authority changes.
 - Physical-iPhone blade smoothness, automatic-riposte feel and STEP readability remain the next human acceptance gate before unrelated feature expansion.
+
+## Run 030 — Gameplay clarity before Ronin rebalance
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Make the existing combat system learnable on a phone before changing Stage 2 balance, using direct owner evidence that Ronin felt very difficult (score 1965) and that key mechanics such as the post-parry swipe counter were not discoverable.
+
+### Preflight / evidence
+
+- Exact previous HEAD `17464e88c6bd1c7433df78fff6f229b9b278def1`: CI #58 / run `33103609415` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- Exact-head All Repos review reported no actionable P0/P1/P2 finding and confirmed the prior Blood Moon blocker is fixed.
+- Owner play evidence identified a learnability problem: Stage 2 felt very hard, normal parry→manual swipe damage was not obvious, STEP's distinction from parry was unclear, and other mechanics were effectively hidden.
+- The owner also proposed a backend for gameplay analytics. Current repository policy explicitly prohibits analytics/external tracking without approval, so that proposal is recorded as a privacy Decision Gate rather than silently implemented.
+
+### Candidate selection
+
+1. **Gameplay guide + contextual Ronin/recovery cues** — impact 5 / goal alignment 5 / novelty 4 / confidence 5 / safety 5.
+2. **Immediately soften Ronin timing/feint pressure** — 4 / 4 / 2 / 3 / 4; deferred because the observed difficulty may be caused by hidden rules rather than raw timing.
+3. **Remote balancing telemetry backend** — 5 / 4 / 5 / 2 / 1 under current policy; deferred pending explicit privacy/data-retention/backend approval.
+
+Chosen slice: candidate 1. It is player-visible, directly addresses the owner evidence, and preserves a clean later balance decision.
+
+### Delivered slice
+
+- Added a prominent **玩法** control to the start screen. It opens a scrollable, phone-first guide covering the full normal parry→swipe loop, Perfect Parry automatic riposte + remaining swipe, opposite-direction swipe +1 damage, posture/guard-break +2 damage, STEP timing/range limitations and Ronin feints.
+- Added short large live cues after successful parry, Perfect riposte, STEP evade and guard break so the immediate follow-up is explicit without bringing back persistent combat text.
+- Added a Stage 2 entry cue: `RONIN · 假動作 — 等最後刀路先格擋`, directly teaching the final-direction rule before the difficulty spike.
+- Kept existing Guided Duel behavior and local completion preference. Automatic riposte does not satisfy the manual counter lesson.
+- No Ronin timing, damage, HP, posture, score, parry window, STEP reach or other balance value changed in this run.
+
+### Verification / regression boundaries
+
+- Extended the existing onboarding Node test with pure cue mapping checks rather than creating another test family.
+- Extended the existing onboarding browser harness to open/close the real guide at 320×568, verify critical rule copy/scrollability, drive Stage 2 to verify the Ronin cue, and drive a real Perfect Parry through the patched engine to verify the automatic-riposte follow-up cue.
+- The same browser harness checks the live cue is pointer-transparent and materially readable; the existing overall browser gate continues to protect the complete PlayCanvas/mastery/boss/onboarding/footwork/impact baseline.
+- No new network request, account, analytics service, external storage, paid API, asset or permission is introduced.
+- Physical-iPhone retest remains necessary: if Ronin still behaves as a difficulty wall after these rules are understood, the next bounded slice should tune Stage 2 from that evidence rather than globally weakening the game.

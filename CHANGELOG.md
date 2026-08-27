@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.0-evolution — Gameplay clarity and Ronin learning ramp
+
+- Added a prominent phone-first **玩法** guide on the start screen that explains the complete parry → swipe-counter loop, Perfect Parry automatic riposte plus remaining swipe, opposite-direction +1 damage, enemy posture/guard-break +2 damage, STEP range limits, and Ronin feints.
+- Added short, large, pointer-transparent live cues after parry/Perfect riposte/STEP evade/guard break and on Stage 2 entry so the next required action is clear without restoring persistent instruction clutter.
+- Stage 2 entry now explicitly tells the player to wait for Ronin's final blade direction; no Ronin timing, damage, health, posture or score value is changed in this slice so the next physical-phone test can separate learnability from actual balance.
+- Extended the existing onboarding Node/browser coverage to verify the guide, Ronin cue, Perfect-riposte follow-up cue and phone readability without adding a parallel harness.
+- Remote analytics/telemetry is intentionally not introduced yet; the owner-proposed balancing backend remains a privacy Decision Gate because current policy requires approval before external gameplay tracking.
+
 ## 0.14.3-evolution — Perfect Parry / Blood Moon phase-integrity repair
 
 - Fixed a cross-module boss regression where repeated Perfect Parry automatic ripostes could reduce Crimson Shogun from Phase I to defeat without ever entering Blood Moon Phase II.

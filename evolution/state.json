@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 29,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Closed the current-head P1 where Perfect Parry automatic riposte damage could bypass Crimson Shogun Blood Moon Phase II by routing manual-counter and auto-riposte HP changes through one boss threshold transition and adding a cross-module regression at 7 to 6 HP",
-  "last_commit": "33359ac7271a8d0ae30270268e7284a5c2f54f48",
+  "run_number": 30,
+  "last_action_type": "FEATURE",
+  "last_action": "Made the combat rules learnable on phone before rebalancing Ronin: added a start-screen gameplay guide plus short contextual parry, Perfect riposte, STEP, guard-break and Stage 2 feint/final-direction cues without changing combat balance values",
+  "last_commit": "17464e88c6bd1c7433df78fff6f229b9b278def1",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Re-check all four real blade trajectories, Perfect Parry auto-riposte feel, STEP readability and boss threshold transition on the same physical iPhone before unrelated feature work",
-    "Tune sustained phone frame-time, shadows and pixel-ratio budget without weakening blade readability",
-    "Upgrade first-person player hands/katana fidelity after opponent trajectory acceptance is confirmed"
+    "Re-test Stage 2 Ronin on the same physical iPhone after the gameplay-clarity pass; only tune timings/pressure if the difficulty wall remains after the rules are understood",
+    "Re-check all four real blade trajectories, Perfect Parry auto-riposte feel and STEP readability on the same physical iPhone",
+    "Open a privacy Decision Gate for the owner-proposed anonymous gameplay telemetry backend before implementing any external analytics/tracking"
   ]
 }

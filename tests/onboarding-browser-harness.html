@@ -22,9 +22,34 @@
     const { CombatEngine, Direction } = await import('../src/game-core.js');
     await import('../src/onboarding-coach.js');
     await import('../src/footwork.js');
+    await import('../src/perfect-riposte.js');
 
     const initialToggle = document.querySelector('#coach-toggle');
     const initialToggleReady = Boolean(initialToggle && initialToggle.getAttribute('aria-pressed') === 'true');
+
+    const guideButton = document.querySelector('#combat-guide-button');
+    const guideSheet = document.querySelector('#combat-guide-sheet');
+    const actionCue = document.querySelector('#combat-action-cue');
+    guideButton?.click();
+    const guideRect = guideSheet?.getBoundingClientRect();
+    const guideText = guideSheet?.textContent || '';
+    const guideOpen =
+      guideButton?.getAttribute('aria-expanded') === 'true' &&
+      guideSheet?.hidden === false &&
+      guideText.includes('格擋成功只係打開反擊窗口') &&
+      guideText.includes('相反方向掃') &&
+      guideText.includes('STEP') &&
+      guideText.includes('第二關 · Ronin');
+    const guideInsideViewport = Boolean(
+      guideRect &&
+      guideRect.left >= 0 &&
+      guideRect.top >= 0 &&
+      guideRect.right <= innerWidth &&
+      guideRect.bottom <= innerHeight &&
+      getComputedStyle(guideSheet).overflowY === 'auto'
+    );
+    guideSheet?.querySelector('.combat-guide__close')?.click();
+    const guideClose = guideSheet?.hidden === true && guideButton?.getAttribute('aria-expanded') === 'false';
 
     const evadeEnemy = {
       id: 'ashigaru-scout',
@@ -97,10 +122,75 @@
     const completionDefaultsOff = Boolean(toggle && toggle.getAttribute('aria-pressed') === 'false');
     const toggleLifecyclePassed = initialToggleReady && completionStored && completionDefaultsOff;
 
-    document.documentElement.dataset.onboardingIntegration = stepsPassed && completed && adaptiveMiss ? 'pass' : 'fail';
-    document.documentElement.dataset.onboardingLayout = insideViewport && pointerTransparent ? 'pass' : 'fail';
+    const rampEnemy1 = {
+      id: 'ashigaru-scout',
+      name: 'Ramp Ashigaru',
+      title: 'Harness 1',
+      maxHp: 1,
+      postureMax: 3,
+      gapMs: 100,
+      recoveryMs: 240,
+      perfectWindowMs: 30,
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+    };
+    const rampEnemy2 = {
+      id: 'wandering-ronin',
+      name: 'Ramp Ronin',
+      title: 'Harness 2',
+      maxHp: 3,
+      postureMax: 4,
+      gapMs: 100,
+      recoveryMs: 240,
+      perfectWindowMs: 50,
+      attacks: [{ direction: Direction.RIGHT, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+    };
+    const rampEngine = new CombatEngine({ enemies: [rampEnemy1, rampEnemy2] });
+    rampEngine.start(0);
+    rampEngine.drainEvents();
+    rampEngine.update(1550);
+    rampEngine.drainEvents();
+    rampEngine.update(1650);
+    rampEngine.drainEvents();
+    const rampParry = rampEngine.attemptParry(Direction.TOP, 1690);
+    rampEngine.drainEvents();
+    const rampCounter = rampEngine.attemptAttack(Direction.BOTTOM, 1700);
+    rampEngine.drainEvents();
+    rampEngine.update(3150);
+    rampEngine.drainEvents();
+    const roninCue =
+      rampParry.accepted === true &&
+      rampCounter.accepted === true &&
+      actionCue?.querySelector('strong')?.textContent.includes('RONIN') &&
+      actionCue?.querySelector('span')?.textContent.includes('最後刀路');
+
+    rampEngine.update(4700);
+    rampEngine.drainEvents();
+    rampEngine.update(4800);
+    rampEngine.drainEvents();
+    const perfect = rampEngine.attemptParry(Direction.RIGHT, 4801);
+    rampEngine.drainEvents();
+    const riposteCue =
+      perfect.accepted === true &&
+      perfect.perfect === true &&
+      perfect.autoRiposte === true &&
+      actionCue?.querySelector('strong')?.textContent.includes('自動補刀') &&
+      actionCue?.querySelector('span')?.textContent.includes('再掃');
+
+    const cueTitle = actionCue?.querySelector('strong');
+    const cueReadable =
+      actionCue &&
+      cueTitle &&
+      getComputedStyle(actionCue).pointerEvents === 'none' &&
+      parseFloat(getComputedStyle(cueTitle).fontSize) >= 14;
+
+    const gameplayGuidePassed = guideOpen && guideClose && roninCue && riposteCue;
+    document.documentElement.dataset.onboardingIntegration = stepsPassed && completed && adaptiveMiss && gameplayGuidePassed ? 'pass' : 'fail';
+    document.documentElement.dataset.onboardingLayout = insideViewport && pointerTransparent && guideInsideViewport && cueReadable ? 'pass' : 'fail';
     document.documentElement.dataset.onboardingToggle = toggleLifecyclePassed ? 'true' : 'false';
     document.documentElement.dataset.onboardingSkipParry = noPrematureCompletion && guidanceReturns ? 'true' : 'false';
+    document.documentElement.dataset.gameplayGuideUi = guideOpen && guideClose ? 'true' : 'false';
+    document.documentElement.dataset.gameplayGuideRonin = roninCue ? 'true' : 'false';
+    document.documentElement.dataset.gameplayGuideRiposte = riposteCue ? 'true' : 'false';
   </script>
 </body>
 </html>
