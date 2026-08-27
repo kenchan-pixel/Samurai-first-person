@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 28,
+  "run_number": 29,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Run 027 exact-head browser blocker by replacing unreachable absolute blade-tip targets with hilt-relative normalized world-space blade-axis trajectories, front-loading strike commitment so the real Sword advances continuously toward the player-facing plane while preserving four-direction cuts, bounded trail reuse and existing combat timing",
-  "last_commit": "793c456596aa99e3c2a61f867a23589e202f9250",
+  "last_action": "Closed the current-head P1 where Perfect Parry automatic riposte damage could bypass Crimson Shogun Blood Moon Phase II by routing manual-counter and auto-riposte HP changes through one boss threshold transition and adding a cross-module regression at 7 to 6 HP",
+  "last_commit": "33359ac7271a8d0ae30270268e7284a5c2f54f48",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,7 +18,7 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Re-check all four real blade trajectories, Perfect Parry auto-riposte feel, and STEP readability on the same physical iPhone before unrelated feature work",
+    "Re-check all four real blade trajectories, Perfect Parry auto-riposte feel, STEP readability and boss threshold transition on the same physical iPhone before unrelated feature work",
     "Tune sustained phone frame-time, shadows and pixel-ratio budget without weakening blade readability",
     "Upgrade first-person player hands/katana fidelity after opponent trajectory acceptance is confirmed"
   ]

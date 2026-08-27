@@ -1,4 +1,5 @@
 import { CombatEngine } from './game-core.js';
+import { maybeAdvanceBossPhase } from './boss-encounter.js';
 
 const installed = Symbol.for('blade-reversal.perfect-riposte-v1');
 
@@ -32,6 +33,8 @@ export function installPerfectRiposte(Engine = CombatEngine) {
       },
     });
 
+    const bossPhase = maybeAdvanceBossPhase(this, now) ? 2 : undefined;
+
     if (this.enemyHp <= 0) {
       this.phase = 'stage-clear';
       this.phaseStartedAt = now;
@@ -39,7 +42,13 @@ export function installPerfectRiposte(Engine = CombatEngine) {
       this.events.push({ type: 'enemy-defeated', detail: { enemyId: this.enemy.id, stage: this.enemyIndex + 1 } });
     }
 
-    return { ...result, autoRiposte: true, autoRiposteDamage: damage, defeated: this.enemyHp <= 0 };
+    return {
+      ...result,
+      autoRiposte: true,
+      autoRiposteDamage: damage,
+      bossPhase,
+      defeated: this.enemyHp <= 0,
+    };
   };
 
   Engine.prototype.attemptAttack = function perfectRiposteAttack(direction, now) {

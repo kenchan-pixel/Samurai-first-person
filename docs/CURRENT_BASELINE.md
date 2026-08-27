@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.14.2-evolution**
+Version: **0.14.3-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -29,7 +29,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Enemy guard break extends the counter opening and grants +2 damage to the next valid manual counter before posture resets.
 - Incoming hits build player posture; heavy hits build faster. Player guard break at 4 adds +1 damage to that hit and resets posture.
 - Successful parry relieves one player-posture point.
-- **Perfect Parry now immediately performs a 1-damage automatic light riposte.** The player may still swipe once during the same recovery opening. The previous +1 perfect bonus on the later manual counter is removed when the automatic riposte has fired, so the normal perfect-parry + opposite-direction follow-up damage budget stays approximately unchanged rather than stacking free damage.
+- **Perfect Parry now immediately performs a 1-damage automatic light riposte.** The player may still swipe once during the same recovery opening unless that riposte itself crosses the Crimson Shogun Phase II threshold, where the boss transition takes priority. The previous +1 perfect bonus on the later manual counter is removed when the automatic riposte has fired, so the normal perfect-parry + opposite-direction follow-up damage budget stays approximately unchanged rather than stacking free damage.
 - Normal parry does not auto-attack and still requires a manual swipe counter.
 
 ## Spacing and footwork
@@ -46,7 +46,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 ## Boss encounter
 
 - Crimson Shogun is stage 4 with 12 HP and Phase I posture 6.
-- At 6 HP or lower after a valid manual counter, Blood Moon Phase II triggers once, resets posture/attack cursor, creates an 1100 ms breathing gap and switches to faster/tighter pressure.
+- At 6 HP or lower after any accepted player damage source — manual counter or Perfect Parry automatic riposte — Blood Moon Phase II triggers once before another counter/attack can resolve, resets posture/attack cursor, creates an 1100 ms breathing gap and switches to faster/tighter pressure.
 - Phase II posture is 7, perfect-parry timing tightens and the attack set changes.
 - Boss blood-moon/ember atmosphere remains bounded, pointer-transparent and honours reduced motion.
 - Restart restores Phase I; victory flows into mastery.
@@ -95,13 +95,14 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact and Perfect Parry riposte are bounded adapters around that core.
 - `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old manual perfect damage bonus only for that same opening. It deliberately exposes the automatic visual hit to the main runtime after onboarding/mastery observers have processed the raw event, so Guided Duel still requires a real swipe counter.
+- `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II threshold transition. Manual counter damage and Perfect Parry automatic-riposte damage both invoke the same authoritative HP gate so Phase I cannot be defeated by bypassing Blood Moon.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, Run 026 readability, the world-space blade trajectory, and phone control readability.
 - `src/blade-trajectory.js` is presentation-only: it overrides the real skinned Sword world orientation late enough to survive skeletal sampling, applies bounded strike depth, and reuses world-space blade-tip trail segments. It cannot change hit/parry timing or damage.
 - `src/mobile-control-readability.js` enlarges STEP/range/temporary feedback presentation only; STEP mechanics remain in `src/footwork.js`.
 - `tools/generate-samurai-glb.mjs` remains the auditable source for the local skinned model/rig/clips; Vite generates the binary for CI/Vercel.
 - The real-app browser gate still requires PlayCanvas + the skinned GLB and drives a representative CombatEngine sequence. It now additionally verifies all four world-space blade paths move through the player-facing plane, the actual tip advances toward the player, world-space trail history is bounded, and the STEP primary label meets the phone readability floor.
-- Focused Node coverage verifies Perfect Parry auto-riposte damage plus preservation of the manual swipe follow-up and unchanged normal-parry behavior.
+- Focused Node coverage verifies Perfect Parry auto-riposte damage plus preservation of the manual swipe follow-up, unchanged normal-parry behavior, and the cross-module Crimson Shogun Phase II threshold when automatic riposte damage reaches 6 HP.
 
 ## Approved 3D direction
 

@@ -10,14 +10,9 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - **Run 003 — BLOCKER_FIX:** player-katana/GLSL fixes plus executable WebGL browser smoke.
 - **Run 004 — FEATURE:** player/enemy posture and guard break.
 - **Runs 005–006 — FEATURE/BLOCKER_FIX:** mastery grading/local best plus browser/storage/layout hardening.
-- **Runs 007–008 — FEATURE/BLOCKER_FIX:** Crimson Shogun and Guided Duel with integration repairs.
-- **Runs 009–010 — FEATURE/BLOCKER_FIX:** Guided Duel onboarding plus lifecycle repair.
-- **Runs 011–012 — FEATURE/BLOCKER_FIX:** close/mid/far spacing and STEP plus onboarding/pointer integration repair.
-- **Run 013 — FEATURE:** direction-aware impact choreography.
-- **Run 014 — FEATURE:** wider procedural samurai framing and deeper dojo perspective.
-- **Runs 015–017 — FEATURE/BLOCKER_FIX:** four-beat elapsed-time motion, direct catch-up, authoritative parry-interruption repair.
-- **Run 018 — FEATURE:** PlayCanvas standalone + Vite primary renderer, perspective scene and articulated primitive samurai with WebGL2 fallback.
-- **Runs 019–020 — BLOCKER_FIX:** current PlayCanvas CI gate and production telegraph → strike → parry → counter renderer contract restored.
+- **Runs 007–010 — FEATURE/BLOCKER_FIX:** Crimson Shogun and Guided Duel with integration repairs.
+- **Runs 011–014:** spacing/STEP, impact choreography and wider samurai/dojo framing.
+- **Runs 015–020:** elapsed-time four-beat motion, PlayCanvas production renderer and production combat-motion browser contract.
 
 ## Runs 021–026 — Skinned character and physical-phone readability
 
@@ -105,3 +100,31 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - The existing fail-closed browser assertion is intentionally unchanged; this repair must make the real Sword satisfy it rather than relax the gate.
 - Post-commit exact-head CI and Vercel results are recorded in the Draft PR run receipt, per the scheduled-task protocol.
 - Physical-iPhone normal-speed smoothness and exact visual contact remain the owner acceptance gate even after automated trajectory geometry is green.
+
+## Run 029 — Perfect Parry / Blood Moon phase-integrity repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Close the current-head P1 where Perfect Parry automatic riposte damage could bypass Crimson Shogun Phase II.
+
+### Preflight / blocker evidence
+
+- Exact HEAD `33359ac7271a8d0ae30270268e7284a5c2f54f48`: CI #57 / run `33101381344` = success and exact-head GitHub `Vercel` status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- Current-head All Repos review identified one P1: `perfect-riposte.js` could reduce boss HP independently while `boss-encounter.js` only evaluated the 6-HP Blood Moon threshold after a manual counter. Repeated Perfect Parries could therefore defeat Phase I without ever entering Phase II.
+- Because the finding is a current-head P1 gameplay regression, this run is strictly `BLOCKER_FIX`; unrelated feature work is prohibited.
+
+### Root cause / repair
+
+- Boss Phase II transition logic was embedded inside the manual `attemptAttack()` wrapper rather than expressed as a reusable authoritative HP-threshold transition.
+- Extracted a single `maybeAdvanceBossPhase()` transition in `boss-encounter.js`. It owns the one-time phase state change, boss definition swap, posture/attack reset, 1100 ms breathing gap, score bonus and `boss-phase` event.
+- Manual accepted counter damage continues to invoke that transition.
+- Perfect Parry automatic riposte now invokes the same transition immediately after its 1 damage. If the riposte moves Crimson Shogun from 7 HP to 6 HP, Blood Moon starts before another manual counter/attack can resolve. Phase I therefore cannot be chipped to defeat through automatic ripostes.
+- Normal enemies and normal parries are unaffected; the existing Perfect Parry damage-budget rule remains unchanged outside the boss threshold transition.
+
+### Focused regression / boundaries
+
+- Extended the existing boss Node suite, not a new broad harness: a real patched `CombatEngine` is placed at Crimson Shogun 7 HP during a valid perfect-parry strike; the automatic riposte must reach 6 HP, emit `boss-phase`, swap to Phase II, enter the 1100 ms gap, avoid `enemy-defeated`, and reject an immediate manual follow-up as `no-opening`.
+- Existing manual-counter Phase II test remains, proving both damage sources use the same transition.
+- No parry window, attack timing, damage amount, posture threshold, STEP/input rule, renderer path, asset, storage/network model or merge/deploy authority changes.
+- Physical-iPhone blade smoothness, automatic-riposte feel and STEP readability remain the next human acceptance gate before unrelated feature expansion.

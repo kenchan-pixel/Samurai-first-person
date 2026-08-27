@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.3-evolution — Perfect Parry / Blood Moon phase-integrity repair
+
+- Fixed a cross-module boss regression where repeated Perfect Parry automatic ripostes could reduce Crimson Shogun from Phase I to defeat without ever entering Blood Moon Phase II.
+- Manual counter damage and automatic riposte damage now share one boss HP-threshold transition; reaching 6 HP starts Phase II immediately, resets boss pressure and creates the existing 1100 ms breathing gap before another counter/attack can resolve.
+- Added focused boss coverage for the exact 7→6 HP automatic-riposte path while preserving the existing manual-counter Phase II regression.
+
 ## 0.14.2-evolution — Real blade trajectory + Perfect Parry riposte
 
 - Run 028 blocker repair replaced unreachable absolute blade-tip targets with normalized hilt-relative world-space blade axes and a front-loaded strike commitment, so the real fixed-length Sword advances continuously toward the player-facing plane without relaxing the production browser contract.

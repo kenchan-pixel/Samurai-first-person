@@ -44,6 +44,43 @@ export const BOSS_PHASE_TWO = Object.freeze({
 const installed = Symbol.for('blade-reversal.boss-encounter');
 const bossState = new WeakMap();
 
+export function maybeAdvanceBossPhase(engine, now) {
+  const state = engine ? bossState.get(engine) : null;
+  const shouldShift =
+    state?.phase === 1 &&
+    engine.enemy?.id === BOSS_ID &&
+    Number.isFinite(now) &&
+    engine.enemyHp > 0 &&
+    engine.enemyHp <= BOSS_PHASE_TWO_HP;
+
+  if (!shouldShift) return false;
+
+  state.phase = 2;
+  const nextEnemies = [...engine.enemies];
+  nextEnemies[engine.enemyIndex] = BOSS_PHASE_TWO;
+  engine.enemies = nextEnemies;
+  engine.enemyPosture = 0;
+  engine.attackCursor = 0;
+  engine.currentAttack = null;
+  engine.phase = 'gap';
+  engine.phaseStartedAt = now;
+  engine.phaseEndsAt = now + 1100;
+  engine.score += 300;
+  engine.events.push({
+    type: 'boss-phase',
+    detail: {
+      enemyId: BOSS_ID,
+      phase: 2,
+      title: 'BLOOD MOON',
+      enemyHp: engine.enemyHp,
+      maxEnemyHp: BOSS_PHASE_TWO.maxHp,
+      score: engine.score,
+    },
+  });
+
+  return true;
+}
+
 export function installBossEncounter(Engine = CombatEngine) {
   if (Engine.prototype[installed]) return;
 
@@ -64,39 +101,7 @@ export function installBossEncounter(Engine = CombatEngine) {
 
   Engine.prototype.attemptAttack = function bossEncounterAttack(direction, now) {
     const result = originalAttemptAttack.call(this, direction, now);
-    const state = bossState.get(this);
-    const shouldShift =
-      state?.phase === 1 &&
-      this.enemy?.id === BOSS_ID &&
-      result?.accepted &&
-      !result.defeated &&
-      this.enemyHp <= BOSS_PHASE_TWO_HP;
-
-    if (!shouldShift) return result;
-
-    state.phase = 2;
-    const nextEnemies = [...this.enemies];
-    nextEnemies[this.enemyIndex] = BOSS_PHASE_TWO;
-    this.enemies = nextEnemies;
-    this.enemyPosture = 0;
-    this.attackCursor = 0;
-    this.currentAttack = null;
-    this.phase = 'gap';
-    this.phaseStartedAt = now;
-    this.phaseEndsAt = now + 1100;
-    this.score += 300;
-    this.events.push({
-      type: 'boss-phase',
-      detail: {
-        enemyId: BOSS_ID,
-        phase: 2,
-        title: 'BLOOD MOON',
-        enemyHp: this.enemyHp,
-        maxEnemyHp: BOSS_PHASE_TWO.maxHp,
-        score: this.score,
-      },
-    });
-
-    return { ...result, bossPhase: 2 };
+    const shifted = Boolean(result?.accepted && !result.defeated && maybeAdvanceBossPhase(this, now));
+    return shifted ? { ...result, bossPhase: 2 } : result;
   };
 }
