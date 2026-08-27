@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.14.1-evolution — Physical-iPhone combat readability repair
+
+- Re-timed the existing skinned `Strike` presentation with a smootherstep playback curve, small full-body whip and two bounded sword-bone afterimages so the cut reads as a continuous accelerating swing instead of pose changes; combat timing remains authoritative in `game-core.js`.
+- Added a stronger direction-aware successful-parry clash with a short contact wash, expanding ring and crossed blade flash; perfect parry remains visibly stronger and reduced-motion retains a compact cue.
+- Reduced live-fight instruction density by suppressing quiet read/track prompts, hiding persistent prompt subtitles/passive edge labels/gesture copy, and enlarging the critical direction indicator and core HUD type.
+- Moved STEP and its range chip to the lower-right safe corner, outside the bottom-block and right-block regions at the 320×568 acceptance viewport, without changing STEP mechanics or pointer isolation.
+- Added the repair as one bounded presentation adapter around the existing PlayCanvas/CombatEngine seams; no new network asset, gameplay rule, account, analytics or paid dependency was introduced.
+
 ## 0.14.0-evolution — Stage-specific skinned enemy identities
 
 - Gave all four duels distinct opponent silhouettes while reusing the same locally generated skinned GLB and five combat-authoritative skeletal clips.

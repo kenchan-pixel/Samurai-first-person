@@ -265,3 +265,50 @@ Physical-iPhone tuning remains the highest-value evidence task, but lack of a ph
 - Physical-iPhone material/shadow/pixel-ratio tuning from real device evidence.
 - First-person player hands/katana fidelity.
 - Accessibility options, with separate directional clips only if physical play shows the current shared clips are limiting readability.
+
+## Run 026 — Physical-iPhone combat readability repair
+
+**Date:** 2026-08-28  
+**Action type:** REGRESSION_FIX  
+**Goal:** Repair four player-visible problems demonstrated by direct iPhone screenshots: pose-like enemy swings, weak successful-parry feedback, dense/tiny combat copy, and STEP overlapping the lower block area.
+
+### Preflight / evidence disposition
+
+- Exact previous HEAD `c2aae51c00fc91bbbbc5777f0765317d916486da`: CI run `33089165442` / CI #54 = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; no inline review threads existed.
+- Latest established review on the exact previous HEAD reported no actionable P0/P1/P2 finding.
+- New direct physical-iPhone evidence superseded feature selection: the attack blade read looked like pose changes rather than a flowing cut, successful parry lacked a clear visual hit, the live HUD carried too much small instructional text, and centred STEP occupied the lower directional-input area. These are material regressions against the mobile clarity / animation-first product goal and regression checklist, so unrelated feature work was prohibited.
+
+### Before
+
+- Strike clip sampling followed linear phase progress, making the three-pose skeletal cut read mechanically on the phone despite the existing directional choreography.
+- The single in-world sword read trail did not create a strong continuous sweep impression.
+- Existing DOM impact FX technically fired on parry, but physical-phone feedback showed the result was too subtle to register reliably.
+- Persistent combat prompt subtitles, edge-zone labels and the bottom gesture sentence competed with the opponent read; several live labels were 8–9 px.
+- STEP was centred near the bottom of the viewport, inside the same area used for bottom directional blocking.
+
+### After
+
+- Added a presentation-only smootherstep strike curve around the existing combat-authoritative skeletal clip, plus a small full-body whip and two bounded sword-bone afterimages during the actual strike. Combat timing and hit/parry windows remain unchanged.
+- Added an unmistakable direction-aware parry clash: short screen wash, expanding contact ring and crossed blade flash; perfect parry is visibly stronger and reduced-motion keeps a compact contact cue.
+- Quiet read/track prompts and instructional subtitles are suppressed during normal observation, passive edge-zone words and the persistent gesture sentence are removed from the live fight, while direction arrow/name and essential HUD typography are enlarged.
+- STEP and the distance chip move to the lower-right safe corner. At 320×568 their hit area sits right of the bottom-block region and below the right-block region; STEP pointer mechanics themselves are untouched.
+- Footwork feedback copy is shortened to action-level cues instead of full instructional sentences.
+
+### Verification / regression boundary
+
+- New presentation module and renderer adapter pass local Node syntax checks before commit.
+- Exact previous HEAD was terminal-green for CI and Vercel before this regression repair.
+- No HP, damage, attack duration, parry/perfect timing window, posture, reach, STEP effectiveness, boss rules, mastery, persistence or input mapping changes.
+- New strike afterimages are two entities created once after the skinned model loads; parry clash nodes are pointer-transparent, capped to two concurrent containers and self-remove within 460 ms.
+- Existing PlayCanvas/GLB and legacy WebGL2 fallback architecture remains intact. Exact new-head `npm test`, `npm run test:browser`, CI and Vercel Preview are the post-commit gate.
+
+### Human acceptance boundary
+
+- Headless verification can prove runtime safety and the input/control contracts but cannot certify whether the revised strike now feels sufficiently fluid or whether the new clash strength is ideal on the user's iPhone. The next physical-device check should compare directly against the screenshots that triggered this repair before any additional feature expansion.
+
+### Next candidates
+
+- Physical-iPhone re-check of swing/parry/HUD/STEP and only evidence-driven tuning if needed.
+- Sustained phone frame-time / shadow / pixel-ratio tuning.
+- First-person player hands/katana fidelity after this readability repair is confirmed.

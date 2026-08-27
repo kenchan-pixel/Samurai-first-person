@@ -22,16 +22,17 @@ This is a candidate pool, not a fixed roadmap. Each evolution run should re-eval
 - **Run 023 — Skinned animation binding repair:** PlayCanvas animation Assets unwrapped to real AnimTracks and the production GLB path restored.
 - **Run 024 — Directional skinned combat read:** four-direction full-body choreography plus an in-world sword-bone read trail.
 - **Run 025 — Stage-specific skinned identities:** four clearly different opponent silhouettes/weapon profiles on the same rig, with bounded bone-attached accessories and no duplicate character downloads.
+- **Run 026 — Physical-iPhone combat readability repair:** smoother strike playback/body whip with bounded blade afterimages, stronger parry clash, quieter/larger live HUD cues, and STEP/range moved out of the lower block region.
 
-## Highest priority — physical-phone quality and player weapon fidelity
+## Highest priority — physical-phone confirmation and player weapon fidelity
 
-The engine migration, skinned-character path, directional choreography and stage silhouettes are production-facing. Do not spend another run building framework infrastructure unless phone evidence exposes a real bottleneck.
+Direct iPhone evidence now drives the near-term queue. Do not add unrelated combat systems until the Run 026 readability repair has been re-checked on a physical phone.
 
 Preferred next work:
 
-1. **Physical-iPhone visual/performance tuning** — inspect normal combat distance, sustained frame time, heat and load time; tune material/shadow/pixel-ratio budget from evidence.
-2. **First-person weapon fidelity** — improve player hands/katana silhouette, grip and motion while keeping the main opponent read clear.
-3. **Directional clip authoring only if needed** — runtime body/blade choreography already provides distinct reads; add separate imported clips only if physical play shows a genuine limit.
+1. **Physical-iPhone re-check** — compare enemy swing flow, parry visibility, HUD density and STEP placement directly against the screenshots that triggered Run 026; tune only if evidence still shows a material problem.
+2. **Sustained phone performance tuning** — inspect normal combat distance, frame time, heat and load time; tune material/shadow/pixel-ratio budget without weakening blade readability.
+3. **First-person weapon fidelity** — improve player hands/katana silhouette, grip and motion while keeping the opponent read clear.
 4. **Accessibility mode** — adjustable timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 
 ## High-value product candidates after the core fidelity path

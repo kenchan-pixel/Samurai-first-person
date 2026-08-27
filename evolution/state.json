@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 25,
-  "last_action_type": "FEATURE",
-  "last_action": "Added four stage-specific skinned-samurai silhouettes and weapon profiles using bounded Head/Chest/Sword bone attachments on the same shared rig, with presentation-only body commitment scaling and no combat-rule changes",
-  "last_commit": "8ea291b66348067a884abd48b3ef3d804d8c4543",
+  "run_number": 26,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Repaired physical-iPhone combat readability: eased enemy strike playback with bounded blade afterimages/body whip, added unmistakable parry clash feedback, reduced persistent combat copy, enlarged critical direction/HUD cues, and moved STEP/range controls to the lower-right safe corner outside edge-block regions",
+  "last_commit": "c2aae51c00fc91bbbbc5777f0765317d916486da",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Tune camera/material/shadow/pixel-ratio budget from physical-iPhone evidence, prioritising sustained 60 Hz and attack readability",
-    "Upgrade first-person player hands/katana silhouette and motion while preserving the opponent read",
-    "Add accessibility timing/high-contrast/left-handed options, or separate directional clips only if physical play evidence justifies them"
+    "Re-check the repaired swing/parry/HUD/STEP pass on a physical iPhone and tune only from direct device evidence",
+    "Tune material/shadow/pixel-ratio budget for sustained phone smoothness without weakening attack readability",
+    "Upgrade first-person player hands/katana silhouette and motion after the opponent readability regression is confirmed fixed"
   ]
 }
