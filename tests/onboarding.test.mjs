@@ -70,7 +70,7 @@ test('gameplay clarity cues expose hidden follow-up rules without changing comba
     duration: 1700,
   });
   assert.match(guideCueForEvent({ type: 'parry', detail: {} }).detail, /掃屏反擊/);
-  assert.match(guideCueForEvent({ type: 'perfect-riposte', detail: { automatic: true } }).detail, /再掃/);
+  assert.match(guideCueForEvent({ type: 'perfect-riposte', detail: { automatic: true } }).detail, /掃屏反擊/);
   assert.match(guideCueForEvent({ type: 'backstep-evade', detail: {} }).detail, /掃屏反擊/);
   assert.match(guideCueForEvent({ type: 'enemy-guard-break', detail: {} }).detail, /\+2/);
   assert.equal(guideCueForEvent({ type: 'counter', detail: { automatic: false } }).hide, true);

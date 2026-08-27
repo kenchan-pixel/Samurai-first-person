@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.15.1-evolution — Gameplay-clarity verification gate repair
+
+- Repaired the Run 030 onboarding cue regression assertion that expected the obsolete wording fragment `再掃` while the intended production cue says `仲有一次掃屏反擊`.
+- The focused test now protects the stable semantic contract `掃屏反擊`, allowing the required exact-head browser gate to run without changing gameplay, Ronin balance, combat timing, or player-facing copy.
+- No analytics/telemetry, network behavior, asset, renderer, input, persistence, or combat rule is introduced or changed by this blocker repair.
+
 ## 0.15.0-evolution — Gameplay clarity and Ronin learning ramp
 
 - Added a prominent phone-first **玩法** guide on the start screen that explains the complete parry → swipe-counter loop, Perfect Parry automatic riposte plus remaining swipe, opposite-direction +1 damage, enemy posture/guard-break +2 damage, STEP range limits, and Ronin feints.

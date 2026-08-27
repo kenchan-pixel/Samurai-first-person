@@ -166,3 +166,29 @@ Chosen slice: candidate 1. It is player-visible, directly addresses the owner ev
 - The same browser harness checks the live cue is pointer-transparent and materially readable; the existing overall browser gate continues to protect the complete PlayCanvas/mastery/boss/onboarding/footwork/impact baseline.
 - No new network request, account, analytics service, external storage, paid API, asset or permission is introduced.
 - Physical-iPhone retest remains necessary: if Ronin still behaves as a difficulty wall after these rules are understood, the next bounded slice should tune Stage 2 from that evidence rather than globally weakening the game.
+
+## Run 031 — Gameplay-clarity exact-head CI repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Restore the required exact-head CI/browser verification fence for the Run 030 gameplay-clarity slice without changing gameplay behavior or weakening the intended cue contract.
+
+### Preflight / blocker evidence
+
+- Exact HEAD `df29da733051af80ef877843bb772b1671d861c6`: Vercel commit status = success, but CI #59 / run `33109558030` failed.
+- `npm test` passed 41/42 tests; `tests/onboarding.test.mjs` expected `/再掃/` while the intended production Perfect-riposte cue is `仲有一次掃屏反擊`.
+- Because the Node step failed first, `npm run test:browser` was skipped, leaving the new phone-first gameplay guide/cues without required exact-head browser proof.
+- Current-head All Repos review classified this as the actionable P2/exact-head blocker; Draft PR #1 remained open, Draft and unmerged; no inline review threads existed; `main` remained untouched.
+
+### Root cause / repair
+
+- The failure is a stale copy-specific test expectation, not a production gameplay mismatch. The live cue correctly communicates that the automatic riposte leaves one manual swipe counter available.
+- Updated the focused onboarding assertion to verify the stable semantic contract `掃屏反擊` rather than the obsolete wording fragment `再掃`.
+- Runtime code, Ronin balance, combat timing/damage, STEP mechanics, renderer/assets, persistence and network/privacy behavior are unchanged.
+- No analytics/telemetry backend is introduced; that proposal remains behind the documented privacy Decision Gate.
+
+### Verification boundary / next gate
+
+- This repair does not relax or remove any player-facing browser assertion. Its purpose is to let the existing full Node + browser gate execute again on the exact new HEAD.
+- Post-commit exact-head CI and Vercel results are recorded in the Draft PR run receipt; no second metadata-only commit is allowed.
+- Once the new HEAD is terminal green, the next product decision remains physical-iPhone evidence: re-test Stage 2 Ronin after the clarity pass, then tune Stage 2 only if it still behaves as a difficulty wall.

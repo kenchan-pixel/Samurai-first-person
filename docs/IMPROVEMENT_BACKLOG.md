@@ -16,6 +16,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 028:** exact-head blocker repair: converted the real Sword path from unreachable absolute tip targets to hilt-relative normalized blade axes with faster early commitment, preserving the strict four-direction player-facing trajectory contract instead of weakening the failed browser gate.
 - **Run 029:** Perfect Parry/Blood Moon phase-integrity repair so automatic riposte damage cannot bypass Crimson Shogun Phase II.
 - **Run 030:** gameplay clarity pass: phone-first 玩法 guide, large transient follow-up cues and explicit Stage 2 Ronin feint/final-direction lesson without changing combat balance values.
+- **Run 031:** exact-head CI repair: aligned the Perfect-riposte onboarding test with the intended `掃屏反擊` semantic cue so the full browser gate can verify Run 030 without changing gameplay.
 
 ## Highest priority — physical-phone acceptance
 
