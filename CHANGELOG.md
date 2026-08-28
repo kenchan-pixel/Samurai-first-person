@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.22.0-evolution — Crimson Shogun signature phase language
+
+- Added presentation-only Crimson Shogun choreography on the existing shared 3D rig: Phase I heavy reads settle into a deliberate crouch/forward preparation, while Blood Moon Phase II becomes lower, more forward and more directionally committed.
+- Blood Moon also gains a slightly larger sword/read-trail silhouette and stronger crimson emissive on the existing weapon/accent materials, reinforcing the phase change through the opponent rather than extra HUD text.
+- The new signature frame is derived only from the existing renderer-neutral boss snapshot; HP, damage, timing, reach, STEP, posture, score and phase authority remain unchanged.
+- The implementation reuses existing transforms/materials, allocates no per-frame entities/timers/network work, and retains bounded primitive-fallback body motion when the skinned model is unavailable.
+- Added focused deterministic Node coverage for non-boss neutrality, Phase I/II differentiation, mirrored side commitment and recovery release.
+
 ## 0.21.1-evolution — Mobile Pause / parry-surface repair
 
 - Moved the 44×44 live Pause control from the active top-right parry surface into a lower-centre neutral tap band while preserving the Run 043 portrait top-parry reach and side/bottom mapping.

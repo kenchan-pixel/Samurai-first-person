@@ -121,6 +121,9 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] With 刀路清晰 enabled, the old centre arrow/label is suppressed so only one directional overlay is shown.
 - [ ] Live combat omits the persistent READ/PARRY prompt, footer gesture sentence, passive block-zone labels and arena subtitle; detailed instructions remain available through 玩法.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
+- [ ] Crimson Shogun Phase I heavy reads use a deliberate signature crouch/forward preparation while preserving the authoritative blade direction and timing.
+- [ ] Blood Moon Phase II is visibly lower, more forward and more directionally committed than Phase I, with stronger crimson sword/read-trail emphasis; the presentation must not alter HP, damage, reach, posture, STEP, score or the Phase II threshold.
+- [ ] Non-boss enemies retain their existing stage motion/scale and do not inherit the Shogun signature layer.
 - [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
 - [ ] Victory copy reflects the complete four-stage campaign.
 - [ ] Result mastery summary remains readable at 320×568 portrait without obscuring the restart control.
@@ -141,6 +144,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
 - [ ] Boss Node coverage proves stage injection, one-time Phase II transition, pressure reset, and restart-to-Phase-I behavior.
+- [ ] Shogun-signature Node coverage proves non-boss neutrality, Phase I heavy preparation, stronger Blood Moon pressure, mirrored left/right body commitment and recovery release without importing combat rules.
 - [ ] Boss browser harness runs with reduced-motion preference, drives the patched `CombatEngine` through boss activation and Phase II, proves the transition banner hides while the fight stays active, verifies restart-to-Phase-I, and reaches final victory.
 - [ ] Onboarding Node coverage proves read/parry/counter progression, evade-only non-completion, adaptive miss guidance, boss rhythm-reset cues, and disabled-state inertness.
 - [ ] Onboarding browser harness proves an evade-only Ashigaru clear does not write `completed`, a fresh run remains guided, then drives wrong-direction correction → successful parry → counter and verifies normal completion/toggle lifecycle plus 320×568 pointer-transparent coach layout.

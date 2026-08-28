@@ -277,3 +277,50 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - Verify exact-head CI and Vercel before any feature work.
 - If both are green, resume same-device Ronin/Shogun practice plus input/readability acceptance before changing balance.
 - After core acceptance, choose the next substantial player-visible slice from the existing backlog rather than adding more verification-only work.
+
+## Run 049 — Crimson Shogun signature phase language
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Make the existing Crimson Shogun boss feel materially more distinctive through body/weapon motion — especially when Blood Moon Phase II begins — without adding HUD clutter or changing any combat balance value.
+
+### Preflight / evidence
+
+- Exact previous HEAD `cd65ebcb07b54354d6af548ab49e01f2ce40aa50`: CI #81 / run `33171534505` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
+- Exact-head All Repos review reports **no new actionable P0/P1/P2 finding**; inline review threads are empty. Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
+- The backlog still requires physical-phone evidence before any Ronin/Shogun balance tuning. Presentation-only boss refinement is therefore safer than changing timing/HP/damage, and it advances the Product Goal requirement for memorable boss encounters.
+
+### Candidate selection
+
+1. **Crimson Shogun signature phase motion** — impact 4 / goal alignment 5 / novelty 4 / confidence 5 / safety 4. Uses existing boss phase/direction state to make Phase I and Blood Moon feel visibly different without touching combat authority.
+2. **Challenge / endless mode** — impact 5 / goal alignment 5 / novelty 5 / confidence 3 / safety 2. Strong replay value but much broader progression/scoring risk for one bounded run.
+3. **Left-handed/accessibility layout follow-up** — impact 3 / goal alignment 4 / novelty 4 / confidence 4 / safety 4. Useful, but it returns immediately to the recently changed Combat UX subsystem before more physical-phone evidence.
+
+Chosen slice: candidate 1.
+
+### Delivered feature
+
+- Added pure `bossSignatureFrame()` presentation logic driven only by the current renderer-neutral boss snapshot, attack direction and phase progress.
+- Phase I heavy reads now settle into a deliberate crouch/forward preparation. Blood Moon Phase II adds a lower stance, stronger forward pressure, larger directional torso commitment and slightly enlarged enemy/sword/read-trail emphasis.
+- Phase II also shifts the existing Shogun accent/read-trail materials toward a stronger crimson emissive, reinforcing Blood Moon through the opponent itself instead of adding more combat text.
+- The stage-identity adapter applies the signature to existing skinned transforms/materials and retains bounded body displacement on the primitive character fallback. No new 3D asset, entity pool, timer, network request or gameplay state is introduced.
+- No HP, damage, parry/Perfect window, STEP, reach, posture, score, boss phase threshold or attack-set authority is changed.
+
+### Verification / regression boundaries
+
+- Previous exact HEAD was terminal green before feature selection.
+- Local `node --check` passed for the new helper and modified stage-identity adapter.
+- Focused deterministic coverage passed **5/5**: non-boss neutrality, Phase I heavy commitment, stronger Blood Moon commitment, mirrored left/right body motion and recovery pressure release.
+- Existing renderer/browser, combat, boss, practice and input gates remain unchanged and will run through exact-head CI after this single commit.
+- Exact-head CI and Vercel Preview are pending post-commit self-verification; the Draft PR run comment will carry the new SHA and terminal verification receipt.
+
+### Human acceptance / residual risk
+
+- Physical-iPhone Shogun practice should confirm that Blood Moon now feels more aggressive while the actual blade direction remains easy to read and the added motion does not reduce sustained frame rate.
+- The visual delta is deliberately bounded; if the stronger phase motion obscures top/right/bottom/left reads on-device, tune the presentation multipliers rather than combat timing.
+
+### Next candidates
+
+- Re-check the new Shogun Phase I/Blood Moon language on the target phone together with blade trajectory and first-person grip.
+- Repeat Ronin/Shogun practice and use local analysis plus feel before any balance change.
+- After core phone acceptance, consider one bounded challenge-mode slice rather than further verification-only work.

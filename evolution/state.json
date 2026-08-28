@@ -3,11 +3,11 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 48,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the production Combat UX browser gate so the 42% top-parry contract is exercised under a real CDP-emulated 320x568 portrait viewport, with explicit window/canvas metric receipts before top/right routing is accepted",
-  "last_commit": "9c2d2fcdfde64747b6df565b554de8ab9f0b40aa",
-  "active_blocker": "Exact-head CI was red because desktop --window-size did not guarantee a 320x568 CSS portrait viewport; this run adds CDP device-metrics emulation plus fail-closed viewport/canvas diagnostics and awaits exact-head self-verification",
+  "run_number": 49,
+  "last_action_type": "FEATURE",
+  "last_action": "Added presentation-only Crimson Shogun signature phase choreography so Phase I heavy reads feel deliberate and Blood Moon Phase II becomes lower, more forward, more directional and more crimson without changing combat authority",
+  "last_commit": "cd65ebcb07b54354d6af548ab49e01f2ce40aa50",
+  "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Verify exact-head CI and Vercel; do not start feature work until both are terminal green",
-    "Physical-iPhone re-check: 42% upper-parry thumb reach, neutral lower-centre Pause, blade-read rails and simplified live HUD during Ronin/Shogun practice",
-    "Repeat Ronin/Shogun practice and use local stage analysis before any balance change"
+    "Physical-iPhone Shogun practice: confirm Phase I versus Blood Moon signature motion is clearer without hiding blade direction or hurting frame rate",
+    "Repeat Ronin/Shogun practice and use local stage analysis plus feel before any balance change",
+    "After core phone acceptance, consider a bounded challenge-mode slice rather than more verification-only work"
   ]
 }

@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { bossSignatureFrame } from './boss-signature-motion.js';
 
 export const STAGE_IDENTITIES = Object.freeze([
   { id: 'ashigaru-jingasa', enemyScale: 0.98, swordScale: 0.94, commitScale: 0.92 },
@@ -58,6 +59,23 @@ function createStageParts(view) {
   add(view, 3, sword, 'box', 'ShogunTsuba', M.metal, [0, 0.47, 0.045], [0.68, 0.055, 0.13], [0, 0, 0], false);
 }
 
+function applyBossSignaturePalette(view, phase) {
+  if (view.bossSignaturePhase === phase) return;
+  view.bossSignaturePhase = phase;
+  const accent = view.materials?.accent;
+  const bladeRead = view.materials?.bladeRead;
+  if (accent) {
+    accent.emissive = phase === 2 ? new pc.Color(0.18, 0.012, 0.008) : new pc.Color(0, 0, 0);
+    accent.update();
+  }
+  if (bladeRead) {
+    bladeRead.emissive = phase === 2 ? new pc.Color(0.95, 0.06, 0.015) : new pc.Color(0.72, 0.12, 0.015);
+    bladeRead.opacity = phase === 2 ? 0.26 : 0.18;
+    bladeRead.update();
+  }
+  document.documentElement.dataset.bossSignaturePhase = String(phase);
+}
+
 function applyIdentity(view, stage) {
   if (!view.skinnedModel || !view.skinnedStageParts.some((items) => items.length)) return;
   const index = Math.max(0, Math.min(3, stage));
@@ -75,7 +93,9 @@ export function installStageIdentity(view) {
   view.stageIdentity = 'pending-skinned-model';
   view.stageIdentityIndex = -1;
   view.skinnedStageParts = [[], [], [], []];
+  view.bossSignaturePhase = -1;
   document.documentElement.dataset.enemyIdentityPipeline = 'shared-rig-stage-silhouette-v1';
+  document.documentElement.dataset.bossSignaturePipeline = 'shogun-phase-motion-v1';
 
   const originalApplyStage = view.applyStage.bind(view);
   view.applyStage = (stage) => {
@@ -86,14 +106,49 @@ export function installStageIdentity(view) {
   const originalSyncSkinnedAnimation = view.syncSkinnedAnimation.bind(view);
   view.syncSkinnedAnimation = (state, directionIndex) => {
     originalSyncSkinnedAnimation(state, directionIndex);
+    const signature = bossSignatureFrame(state, directionIndex);
+    applyBossSignaturePalette(view, signature.phase);
+
+    const enemyPosition = view.enemy?.getLocalPosition?.();
+    if (enemyPosition && signature.active) {
+      view.enemy.setLocalPosition(
+        enemyPosition.x,
+        enemyPosition.y - signature.crouch,
+        enemyPosition.z + signature.forward,
+      );
+    }
+
+    if (view.torso && signature.active && !view.skinnedModel) {
+      const torsoEuler = view.torso.getLocalEulerAngles();
+      view.torso.setLocalEulerAngles(
+        torsoEuler.x + signature.pitch,
+        torsoEuler.y + signature.yaw,
+        torsoEuler.z + signature.roll,
+      );
+    }
+
     if (!view.skinnedModel) return;
     const identity = STAGE_IDENTITIES[Math.max(0, view.stageIdentityIndex)];
     const euler = view.skinnedModel.getLocalEulerAngles();
     view.skinnedModel.setLocalEulerAngles(
-      euler.x * identity.commitScale,
-      euler.y * identity.commitScale,
-      euler.z * identity.commitScale,
+      euler.x * identity.commitScale + signature.pitch,
+      euler.y * identity.commitScale + signature.yaw,
+      euler.z * identity.commitScale + signature.roll,
     );
+
+    const enemyScale = identity.enemyScale * signature.enemyScale;
+    view.enemy.setLocalScale(enemyScale, enemyScale, enemyScale);
+    const swordScale = identity.swordScale * signature.swordScale;
+    view.skinnedSword?.setLocalScale(swordScale, swordScale, swordScale);
+
+    if (view.skinnedReadTrail?.enabled && signature.trailScale !== 1) {
+      const trailScale = view.skinnedReadTrail.getLocalScale();
+      view.skinnedReadTrail.setLocalScale(
+        trailScale.x * signature.trailScale,
+        trailScale.y * signature.trailScale,
+        trailScale.z,
+      );
+    }
   };
 
   Promise.resolve(view.characterReady).then((ready) => {

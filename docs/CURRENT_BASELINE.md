@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.21.1-evolution**
+Version: **0.22.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -73,6 +73,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - When Perfect STEP is the damage source that crosses the threshold, both the immediate STEP feedback and the larger action cue explicitly give Blood Moon priority and do not instruct the player to swipe into a closed recovery opening.
 - Phase II posture is 7, perfect-parry timing tightens and the attack set changes.
 - Boss blood-moon/ember atmosphere remains bounded, pointer-transparent and honours reduced motion.
+- Crimson Shogun now has presentation-only signature phase choreography on the existing shared rig: Phase I heavy reads settle into a deliberate crouch/forward preparation, while Blood Moon Phase II becomes lower, more forward and more directionally committed with a slightly larger crimson sword/read-trail silhouette. This reads the existing authoritative phase/direction state only and changes no hit logic, timing, reach, damage, posture or score.
 - Restart restores Phase I; victory flows into mastery.
 - **Shogun practice uses this same Stage 4 Phase I boss and composed boss adapters.** It keeps the same 12 HP, Blood Moon threshold/Phase II rules, timings, reach, damage, posture and presentation; only the surrounding progression is bounded to that duel.
 
@@ -106,6 +107,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Enemy full-body framing remains far enough back to keep helmet-to-feet silhouette and weapon path readable in portrait.
 - Top/right/bottom/left attacks drive the actual `Sword` bone through direction-specific 3D blade-tip trajectories that advance toward/cross the player-facing parry plane and follow through before recovery.
 - The bounded world-space trail follows actual blade-tip history rather than decorating a body pose; the old attached swing echoes remain suppressed by the trajectory layer.
+- The Crimson Shogun signature layer adds bounded phase-aware body commitment, size and sword/read-trail emphasis to existing entities rather than another HUD instruction. Phase II shifts the weapon accent toward a stronger crimson emissive so Blood Moon is readable through the opponent itself as well as the existing moon/banner atmosphere.
 - The first-person player katana includes a bounded **two-hand grip silhouette**: two forearms, hands, wrist guards, habaki and pommel are attached to the existing camera-space katana rig. They follow the existing directional parry/counter motion with small action-local wrist/forearm articulation, making the player weapon read as something physically held rather than a floating blade.
 - The first-person grip is presentation-only: it does not alter swipe/parry direction mapping, damage, timing, hit logic, camera authority or combat state.
 - Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
@@ -121,6 +123,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
+- The Shogun signature layer allocates no runtime entity, timer, network request or animation loop; it derives one small frame description from the existing snapshot and updates already-existing transforms/materials in place.
 - The blade-read accessibility layer creates one fixed overlay and four DOM rails once. It updates classes/text only when combat events arrive and creates no per-frame nodes, timers or network work.
 - Run analysis and direct duel practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
 - Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
@@ -133,6 +136,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old later perfect damage bonus only for the same opening.
 - `src/perfect-step.js` wraps the existing footwork seam only after a STEP has genuinely escaped attack reach. It owns the narrower Perfect STEP timing grade, 1-damage automatic sidestep riposte, guide/cue integration and conversion of its raw event into the existing visible counter event. Its riposte event carries whether the opening was closed by Blood Moon/defeat so presentation never advertises an impossible manual follow-up. It does not change normal STEP reach, timing window, posture or manual-counter rules.
 - `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II HP threshold. Manual counter, Perfect Parry auto-riposte and Perfect STEP auto-riposte all invoke the same gate.
+- `src/boss-signature-motion.js` is a pure presentation helper that maps the existing boss snapshot/phase/direction to bounded pose/scale/trail emphasis. `src/stage-identity.js` applies that result to the existing PlayCanvas enemy/sword materials and primitive fallback body without writing back to CombatEngine.
 - `src/onboarding-coach.js` owns the Guided Duel and phone-first gameplay-clarity sheet; Perfect STEP appends one additional guide card without changing combat authority.
 - `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
 - `src/run-analysis.js` is a local-only observer/result adapter. It keeps stage-level counters in a `WeakMap` for the active run, tracks both total damage and manual-only `counterDamage`, derives one coaching tip, and injects the compact result analysis panel. It does not patch damage/timing/input authority, persist gameplay records, or use network APIs.
@@ -146,6 +150,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Focused run-analysis coverage proves stage-local statistics, missed-counter detection, Ronin-specific advice selection, and that automatic ripostes cannot inflate manual-counter damage coaching.
 - Focused practice coverage proves the optional routes initialize the actual Stage 2 Ronin and Stage 4 Crimson Shogun definitions and terminate after the selected duel. The existing mastery browser harness additionally clicks both player-facing practice routes, requires retry/campaign handoff, renders the matching Stage 2/Stage 4 analysis, and preserves the campaign personal best; the real-app smoke requires both practice entries to initialize inside the production 320×568 layout.
 - The separate boss Node/browser coverage remains authoritative for Blood Moon Phase II behaviour, including one-time transition, restart to Phase I and final boss victory; direct Shogun practice reuses that production boss adapter rather than duplicating phase logic.
+- Focused Shogun-signature coverage proves non-boss neutrality, Phase I heavy commitment, stronger Blood Moon crouch/forward/directional motion and mirrored left/right body commitment without importing combat rules into the presentation helper.
 - The blade-read browser harness uses a real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and requires the optional toggle, four pointer-safe rails, direction flow, stronger strike state, parry cleanup and bounded layout.
 - The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates.
 
