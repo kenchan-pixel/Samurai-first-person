@@ -146,6 +146,12 @@ try {
   if (!appDom.includes('data-practice-start-layout="pass"')) {
     throw new Error('Ronin practice entry or start-screen content overflowed the 320x568 production viewport');
   }
+  if (!appDom.includes('data-readability-mode-ready="true"') || !appDom.includes('id="blade-readability-toggle"')) {
+    throw new Error('Optional high-contrast blade-read mode did not initialize in the real application document');
+  }
+  if (!appDom.includes('data-readability-start-layout="pass"')) {
+    throw new Error('Blade-read accessibility toggle overflowed the 320x568 production viewport');
+  }
 
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2800 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) throw new Error(`Mastery event-stream integration failed. DOM:\n${masteryDom.slice(0, 5000)}`);
@@ -176,6 +182,15 @@ try {
   if (!footworkDom.includes('data-footwork-pointer="true"')) throw new Error('STEP pointerdown/pointerup path failed capture/isolation checks');
   if (!footworkDom.includes('data-footwork-travel-threshold="true"')) throw new Error('STEP pointer travel threshold allowed a dragged gesture to trigger a backstep');
 
+  const readabilityDom = await dumpDom(browser, '/tests/readability-browser-harness.html', { budget: 1300 });
+  if (!readabilityDom.includes('data-readability-integration="pass"')) throw new Error(`High-contrast blade-read integration failed. DOM:\n${readabilityDom.slice(0, 5000)}`);
+  if (!readabilityDom.includes('data-readability-toggle="true"')) throw new Error('Blade-read accessibility toggle did not enable the optional mode');
+  if (!readabilityDom.includes('data-readability-direction-flow="true"')) throw new Error('Blade-read mode did not follow the real telegraph direction');
+  if (!readabilityDom.includes('data-readability-danger="true"')) throw new Error('Blade-read mode did not strengthen the cue for the real strike phase');
+  if (!readabilityDom.includes('data-readability-clear="true"')) throw new Error('Blade-read cue did not clear after a successful real parry');
+  if (!readabilityDom.includes('data-readability-pointer-safe="true"')) throw new Error('Blade-read overlay intercepted input or did not create exactly four reusable rails');
+  if (!readabilityDom.includes('data-readability-layout="pass"')) throw new Error('Blade-read accessibility control overflowed the 320x568 harness viewport');
+
   const impactDom = await dumpDom(browser, '/tests/impact-browser-harness.html', { budget: 1600 });
   if (!impactDom.includes('data-impact-integration="pass"')) throw new Error(`Impact event choreography failed. DOM:\n${impactDom.slice(0, 5000)}`);
   if (!impactDom.includes('data-impact-pointer-safe="true"')) throw new Error('Impact layer intercepted pointer input');
@@ -188,7 +203,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin-practice-controls + boss + onboarding + footwork + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin-practice-controls + boss + onboarding + footwork + blade-read accessibility + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

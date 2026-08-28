@@ -9,6 +9,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] iPhone portrait safe areas do not hide HUD or restart controls.
 - [ ] The primary combat view is not blocked by instructions or panels.
 - [ ] Guided-duel toggle is reachable on the start screen without pushing the primary Start control outside the viewport.
+- [ ] Optional 刀路清晰 toggle remains inside the 320×568 viewport, defaults off unless locally enabled, and does not enlarge the start-screen flow.
 - [ ] STEP / 後撤 and the range chip remain clear of the four edge-block regions and the primary centre combat read.
 
 ## Guided first duel
@@ -34,6 +35,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Tap and swipe are not both triggered by one gesture.
 - [ ] Mouse fallback remains usable.
 - [ ] STEP pointerdown/pointerup captures its own pointer, stops propagation outside the control, rejects dragged gestures beyond the travel threshold, and leaves subsequent canvas pointer state clear.
+- [ ] 刀路清晰 overlay is pointer-transparent and cannot consume parry/swipe/STEP input.
 
 ## Combat
 
@@ -98,6 +100,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Incoming player hits use a distinct red burst rather than being visually confused with a successful parry/counter.
 - [ ] Impact FX remain pointer-transparent, never exceed three concurrent burst containers, and self-remove after the bounded lifetime.
 - [ ] Reduced-motion preference suppresses traveling impact sparks/slash afterimages while retaining a short readable contact cue.
+- [ ] Optional 刀路清晰 mode follows telegraph direction, updates to the final direction after a feint, strengthens the strike cue, clears after resolution, and remains static rather than pulsing under reduced motion.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
 - [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
 - [ ] Victory copy reflects the complete four-stage campaign.
@@ -111,7 +114,7 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork and impact integrations in the real app document.
+- [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, practice and blade-read accessibility integrations in the real app document.
 - [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
@@ -122,6 +125,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Onboarding browser harness proves an evade-only Ashigaru clear does not write `completed`, a fresh run remains guided, then drives wrong-direction correction → successful parry → counter and verifies normal completion/toggle lifecycle plus 320×568 pointer-transparent coach layout.
 - [ ] Footwork Node coverage proves short-range evade + counter, long/heavy tracking, and wrong-time STEP rejection.
 - [ ] Footwork browser harness drives actual STEP pointerdown/pointerup, observes pointer capture/isolation, rejects a dragged STEP, proves a short evade/counter, proves a long tracked strike, and confirms later canvas pointer state resets cleanly.
+- [ ] Blade-read browser harness drives the real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and proves optional toggle activation, direction flow, strike emphasis, cleanup and pointer-safe four-rail reuse.
 - [ ] Impact Node coverage proves event-to-effect profile selection and direction-origin mapping without touching combat resolution.
 - [ ] Impact browser harness drives actual perfect-parry, counter and player-hit events, proves 320×568 pointer-safe layout, and confirms all burst nodes clean themselves up.
 - [ ] CI configuration remains valid.

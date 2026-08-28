@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.19.0-evolution**
+Version: **0.20.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -24,6 +24,16 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Successful parry, automatic ripostes, STEP evade and guard break use short pointer-transparent action cues instead of dense persistent text.
 - No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis/practice passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
 - No remote gameplay analytics/telemetry backend is added. Gameplay statistics remain local-only until a separate privacy/data-retention/backend Decision Gate is approved.
+
+## Optional high-contrast blade-read mode
+
+- The start screen now includes an optional **刀路清晰** accessibility toggle. It defaults off, so the normal blade-reading presentation remains the standard experience unless the player explicitly enables it.
+- When enabled, four pointer-transparent edge rails mirror the authoritative incoming direction: telegraph uses the currently displayed direction, a Ronin feint moves the rail to the final direction, and the strike phase strengthens the same rail instead of adding another instruction panel over the opponent.
+- A successful parry, incoming hit, stage reset/transition, enemy defeat, victory or defeat clears the rail immediately. Wrong-direction attempts do not hide the correct active strike cue.
+- The mode changes presentation only. It does **not** widen parry/Perfect windows, alter damage/reach/STEP/score, auto-block, or change enemy behaviour.
+- Reduced-motion preference removes the pulsing animation while retaining the static high-contrast direction cue.
+- The preference is local-only; blocked `localStorage` is non-fatal and simply falls back to the default-off state. No account, network request, analytics or remote identifier is introduced.
+- The top-left toggle and four edge rails remain pointer-safe and bounded at the 320×568 acceptance viewport.
 
 ## Core combat
 
@@ -93,6 +103,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The first-person grip is presentation-only: it does not alter swipe/parry direction mapping, damage, timing, hit logic, camera authority or combat state.
 - Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
 - Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
+- The optional high-contrast blade-read layer uses four reusable pointer-transparent edge rails and only one active rail at a time; it reinforces the current/final attack direction without covering the centre blade-reading area.
 - The result analysis lives only on the post-run modal; it does not add persistent combat HUD text or cover the live blade-reading area.
 - The practice entry is a compact secondary start action. On short 320×568-class portrait viewports the start-screen spacing compresses rather than moving the primary **拔刀** action off-screen.
 
@@ -103,13 +114,14 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
+- The blade-read accessibility layer creates one fixed overlay and four DOM rails once. It updates classes/text only when combat events arrive and creates no per-frame nodes, timers or network work.
 - Run analysis and Ronin practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
 - Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
 
 ## Technical baseline
 
-- `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact, automatic-riposte and practice systems are bounded adapters around that core.
+- `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact, automatic-riposte, practice and accessibility systems are bounded adapters around that core.
 - `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old later perfect damage bonus only for the same opening.
 - `src/perfect-step.js` wraps the existing footwork seam only after a STEP has genuinely escaped attack reach. It owns the narrower Perfect STEP timing grade, 1-damage automatic sidestep riposte, guide/cue integration and conversion of its raw event into the existing visible counter event. Its riposte event carries whether the opening was closed by Blood Moon/defeat so presentation never advertises an impossible manual follow-up. It does not change normal STEP reach, timing window, posture or manual-counter rules.
 - `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II HP threshold. Manual counter, Perfect Parry auto-riposte and Perfect STEP auto-riposte all invoke the same gate.
@@ -117,12 +129,14 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
 - `src/run-analysis.js` is a local-only observer/result adapter. It keeps stage-level counters in a `WeakMap` for the active run, tracks both total damage and manual-only `counterDamage`, derives one coaching tip, and injects the compact result analysis panel. It does not patch damage/timing/input authority, persist gameplay records, or use network APIs.
 - `src/practice-mode.js` is installed after the existing combat adapters and before `main.js`. It initializes all normal sessions first, then redirects only an explicitly requested practice run to the existing Wandering Ronin, emits the real Stage 2 start event, intercepts that practice stage-clear before campaign advancement, and labels practice terminal events. Normal campaign start/restart remains unchanged.
+- `src/readability-mode.js` is a presentation-only observer installed after practice mode and before `main.js`. It reads the same composed event stream to mirror telegraph → feint → strike direction on an optional four-rail overlay, then returns the untouched events to the game runtime. It never calls parry/attack/STEP authority or changes combat state.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
 - `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
 - Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
 - Focused run-analysis coverage proves stage-local statistics, missed-counter detection, Ronin-specific advice selection, and that automatic ripostes cannot inflate manual-counter damage coaching.
 - Focused practice coverage proves the optional route initializes the actual Stage 2 Ronin and terminates after that stage. The existing mastery browser harness additionally requires the practice result to render Stage 2/Ronin analysis while preserving the campaign personal best, and the real-app smoke requires the practice entry/module to initialize in the production document.
+- The blade-read browser harness uses a real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and requires the optional toggle, four pointer-safe rails, direction flow, stronger strike state, parry cleanup and bounded layout.
 - The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates.
 
 ## Approved 3D direction

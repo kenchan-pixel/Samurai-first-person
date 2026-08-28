@@ -26,6 +26,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 038:** repaired the local analysis denominator so Blood Moon/defeat-closed automatic-riposte recoveries are not counted as manual counter opportunities that never legally existed.
 - **Run 039:** added a repeatable **Stage 2 Ronin practice duel** using the real current Ronin rules and local analysis, with practice results excluded from campaign personal-best storage.
 - **Run 040:** closed the Ronin-practice browser verification gap by driving the actual **第二關練習 → 再練浪人 → 開始完整主線** controls through the patched CombatEngine and requiring the real 320×568 start-screen layout gate.
+- **Run 041:** added optional **刀路清晰** accessibility mode: four pointer-transparent high-contrast edge rails follow telegraph → Ronin feint resolution → strike direction, strengthen only at the live strike, and clear after resolution without changing combat timing or difficulty.
 
 ## Highest priority — physical-phone acceptance
 
@@ -33,13 +34,13 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
-5. **STEP readability/layout** — confirm normal STEP vs Perfect STEP feedback is readable without entering bottom/right block regions and without restoring dense combat text.
+5. **STEP + optional blade-read readability/layout** — confirm normal STEP vs Perfect STEP feedback and the new opt-in high-contrast rails stay readable without entering bottom/right block regions, intercepting input or restoring dense combat text.
 6. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
 
 ## High-value candidates after core acceptance
 
 - **Difficulty tuning from evidence:** if repeated Ronin practice still shows a wall after the learning pass, use the corrected local Stage 2 analysis plus same-device feel to tune Stage 2 rhythm/window/feint pressure as one bounded balance slice rather than weakening the whole campaign.
-- Accessibility: timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
+- Accessibility follow-ups: left-handed layout, timing assistance and broader motion controls. High-contrast directional telegraphs are now delivered as the optional **刀路清晰** mode; do not duplicate them as another system.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
 - Boss refinement: stronger signature motion/phase language using play evidence.
 - Deeper first-person weapon fidelity only if the new bounded hand/grip silhouette passes phone readability and performance acceptance.
@@ -48,7 +49,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–040 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary and a repeatable local Ronin practice route to validate which balancing signals are actually useful before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–041 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, a repeatable local Ronin practice route and a local-only optional accessibility preference to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 

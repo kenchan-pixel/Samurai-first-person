@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.20.0-evolution — Optional high-contrast blade-read mode
+
+- Added an opt-in **刀路清晰** accessibility toggle that defaults off and stores only a local preference.
+- When enabled, four reusable pointer-transparent edge rails mirror the authoritative incoming direction: telegraph follows the displayed blade, Ronin feints move to the final direction, and strike strengthens the cue without covering the centre opponent read.
+- The cue clears after successful parry, player hit, stage/terminal transitions and never changes parry windows, damage, reach, STEP, score or enemy behaviour.
+- Reduced-motion keeps a static high-contrast cue while removing the strike pulse; blocked localStorage is non-fatal and no network/analytics backend is introduced.
+- Added a focused 320×568 browser integration using the real CombatEngine stage-intro → telegraph → strike → parry path, plus fail-closed production initialization/layout checks.
+
 ## 0.19.1-evolution — Ronin practice control-path verification repair
 
 - Closed the Run 039 browser-verification P2 by driving the actual **第二關練習** button through the same listener order used by production, then proving the patched CombatEngine starts the real Stage 2 Wandering Ronin.

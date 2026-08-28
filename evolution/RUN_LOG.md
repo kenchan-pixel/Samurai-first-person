@@ -342,3 +342,46 @@ Chosen slice: candidate 1.
 - Repeat Stage 2 practice on the same physical iPhone and use local analysis plus feel before changing any Ronin balance value.
 - Re-check enemy blade trajectory, first-person grip and Perfect Parry/Perfect STEP readability/performance on the same device.
 - Open a privacy Decision Gate for anonymous backend telemetry only if repeated local practice proves remote aggregation is worth the added privacy/backend cost.
+
+## Run 041 — Optional high-contrast blade-read accessibility mode
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Improve mobile directional readability for players who need stronger visual guidance without nerfing Ronin, changing combat timing, or covering the centre blade-reading view with more instructional text.
+
+### Preflight / evidence
+
+- Exact previous HEAD `654af846c3d1052f3806b54c61ce8a02a4cdbb2d`: CI #69 / run `33144757190` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review-thread list was empty.
+- The exact-head Second Hourly review reported **no actionable P0/P1/P2 finding** and confirmed the Run 040 practice-control repair.
+- The highest-priority Ronin balance item still requires repeated physical-phone evidence before changing timing/HP/damage. The backlog already identifies accessibility as a high-value candidate, while remote gameplay telemetry remains behind an unapproved privacy Decision Gate.
+
+### Candidate selection
+
+1. **Optional high-contrast blade-read mode** — impact 4 / goal alignment 5 / novelty 4 / confidence 5 / safety 5. Strengthens the core “read the opponent” interaction on phone while remaining presentation-only and default-off.
+2. **Challenge/endless mode** — impact 5 / goal alignment 5 / novelty 5 / confidence 3 / safety 2. Strong replay value but much wider progression/scoring risk in one run.
+3. **Crimson Shogun signature motion/phase refinement** — impact 4 / goal alignment 5 / novelty 4 / confidence 3 / safety 3. Valuable, but more dependent on physical-phone visual/performance acceptance than a bounded accessibility adapter.
+
+Chosen slice: candidate 1.
+
+### Delivered slice
+
+- Added an opt-in **刀路清晰** start-screen accessibility toggle. Default remains off; the setting stores only a local on/off preference and storage failure is non-fatal.
+- Added four reusable, pointer-transparent edge rails. During telegraph they mirror the currently displayed blade direction; when Ronin feints, the active rail moves to the final direction; during the actual strike the same rail switches to a stronger high-contrast danger state.
+- Successful parry, incoming hit and stage/terminal transitions clear the cue immediately. A wrong-direction parry attempt does not hide the still-live correct strike direction.
+- Reduced-motion preference keeps the static high-contrast rail but removes strike pulsing.
+- The feature is presentation-only: no parry/Perfect timing, damage, reach, STEP, posture, score, enemy AI, campaign/practice progression, remote analytics or renderer authority changed.
+
+### Verification / regression boundaries
+
+- Added one focused 320×568 browser harness using the real CombatEngine event stream: stage intro → actual Ashigaru telegraph → actual strike → successful directional parry. It requires toggle activation, correct top-direction flow, stronger strike state, parry cleanup, exactly four reused rails and `pointer-events:none`.
+- The production real-app smoke now fails closed unless the accessibility module/toggle initializes and the top-left control remains inside the 320×568 viewport.
+- Existing Node and browser gates continue to protect campaign/practice progression, directional parry/swipe, STEP/Perfect STEP, boss, mastery/run analysis, PlayCanvas/skinned rendering and reduced-motion impact behavior.
+- No remote network/storage schema, account, secret, downloaded asset or merge-authority change is introduced.
+- Post-commit CI/Preview remain pending self-verification by protocol; the Draft PR run comment will carry the exact commit SHA and verification receipt.
+
+### Next candidates
+
+- Repeat Stage 2 practice on the same physical iPhone and use local analysis plus feel before changing any Ronin balance value.
+- Re-check enemy blade trajectory, first-person grip, Perfect Parry/Perfect STEP and the optional blade-read mode together for readability/performance on the same device.
+- After physical-phone core acceptance, consider one bounded challenge-mode or boss-refinement slice; keep remote gameplay telemetry behind its separate privacy Decision Gate.
