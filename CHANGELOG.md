@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.1-evolution — Ronin practice control-path verification repair
+
+- Closed the Run 039 browser-verification P2 by driving the actual **第二關練習** button through the same listener order used by production, then proving the patched CombatEngine starts the real Stage 2 Wandering Ronin.
+- The existing mastery browser harness now also exercises **再練浪人** and **開始完整主線**, proving practice retry stays on Stage 2 while campaign handoff returns to Stage 1.
+- The real-app 320×568 smoke now requires `data-practice-start-layout="pass"`, so the practice entry cannot silently push the production start screen outside the phone acceptance viewport.
+- No combat timing, balance, input rule, persistence, backend telemetry, renderer behavior or player-facing production copy changed.
+
 ## 0.19.0-evolution — Repeatable Stage 2 Ronin practice
 
 - Added a compact **第二關練習** entry on the start screen that launches the real current Wandering Ronin directly without changing its timing, feints, reach, STEP, posture, HP, damage or score rules.

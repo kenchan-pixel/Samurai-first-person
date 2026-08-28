@@ -308,3 +308,37 @@ Chosen slice: candidate 1.
 - Repeat the new Ronin practice on the same physical iPhone and use its local Stage 2 card plus feel observations before any balance change.
 - Re-check enemy blade trajectory, first-person grip and Perfect Parry/Perfect STEP readability/performance on the same device.
 - Open a privacy Decision Gate for anonymous backend telemetry only if repeated local practice proves remote aggregation is worth the added privacy/backend cost.
+
+## Run 040 — Ronin practice player-control verification repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Close the current-head P2 where the Stage 2 practice feature was green in CI without exercising its actual player-facing entry/retry/campaign controls or the production short-phone start layout.
+
+### Preflight / evidence
+
+- Exact previous HEAD `666cc292424fb91622de7cb6167a7c70f4f00045`: CI #68 / run `33142305909` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review-thread list was empty.
+- The exact-head All Repos review identified one actionable P2: Node/mastery coverage invoked practice programmatically, while the real user-facing **第二關練習 / 再練浪人 / 開始完整主線** control path and `data-practice-start-layout` result were not fail-closed in browser CI.
+- This P2 is treated as blocking because it covers the primary playability seam of the just-delivered practice vertical slice; feature work remains prohibited until that seam is executable in the browser gate.
+
+### Delivered repair
+
+- Extended the existing mastery browser harness rather than adding a parallel suite. It now creates the same start/restart surfaces used by the production practice adapter and attaches the main-like CombatEngine start/reset listeners after the practice module, preserving the real listener ordering.
+- The harness clicks **第二關練習** and requires the patched CombatEngine to enter the real Wandering Ronin at Stage 2 with a practice `stage-start` event.
+- After a terminal practice result, it clicks **再練浪人** and proves another Stage 2 practice starts, then completes again and clicks **開始完整主線** to prove the engine returns to Stage 1 campaign mode.
+- The real production-page browser smoke now also requires `data-practice-start-layout="pass"` at 320×568, protecting the actual start-screen composition rather than only a minimal harness layout.
+- Production gameplay code, Ronin balance, persistence and privacy behavior are unchanged.
+
+### Verification / regression boundaries
+
+- Before this repair, exact-head Node + browser CI and Vercel were terminal green; the gap was review-discovered verification coverage, not an observed gameplay regression.
+- The repaired gate now fails if practice-entry listener ordering, retry mode retention, campaign handoff, personal-best isolation/result analysis, or the production 320×568 start layout regresses.
+- No combat timing/damage/input, boss, renderer/asset, storage schema, network/analytics, account, secret or merge-authority behavior changed.
+- Post-commit CI/Preview remain pending self-verification by protocol; the PR run comment will carry the exact new SHA and terminal verification receipt.
+
+### Next candidates
+
+- Repeat Stage 2 practice on the same physical iPhone and use local analysis plus feel before changing any Ronin balance value.
+- Re-check enemy blade trajectory, first-person grip and Perfect Parry/Perfect STEP readability/performance on the same device.
+- Open a privacy Decision Gate for anonymous backend telemetry only if repeated local practice proves remote aggregation is worth the added privacy/backend cost.

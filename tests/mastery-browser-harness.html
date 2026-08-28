@@ -8,6 +8,17 @@
 </head>
 <body>
   <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <div class="crest" aria-hidden="true">刃</div>
+        <p class="modal__eyebrow">FIRST-PERSON SAMURAI ACTION</p>
+        <h1>Blade Reversal<br /><span>刃返</span></h1>
+        <p>讀取敵人攻擊方向，在刀刃落下嘅一刻點擊相應位置格擋，再掃屏反擊。</p>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+        <small>建議直向顯示</small>
+      </div>
+    </section>
+
     <section id="result-screen" class="modal modal--visible" aria-live="assertive">
       <div id="result-content" class="modal__content modal__content--result">
         <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
@@ -70,31 +81,88 @@
       await flush();
     }
 
-    async function completeRoninPracticeVictory() {
-      requestRoninPractice(true);
-      const combat = new CombatEngine();
-      combat.start(0);
-      const startEvents = combat.drainEvents();
-      const stageStart = startEvents.find((event) => event.type === 'stage-start');
-      if (combat.enemy?.id !== 'wandering-ronin' || stageStart?.detail?.stage !== 2 || !stageStart?.detail?.practice) {
-        throw new Error('practice run did not initialize the real Stage 2 Wandering Ronin');
-      }
+    const uiCombat = new CombatEngine();
+    let uiNow = 1000;
+    const startButton = document.querySelector('#start-button');
+    const restartButton = document.querySelector('#restart-button');
 
-      combat.enemyHp = 0;
-      combat.phase = 'stage-clear';
-      combat.phaseStartedAt = 100;
-      combat.phaseEndsAt = 120;
-      combat.events.push({
+    startButton?.addEventListener('click', () => {
+      uiNow += 1000;
+      uiCombat.start(uiNow);
+    });
+
+    restartButton?.addEventListener('click', () => {
+      uiNow += 1000;
+      uiCombat.reset(uiNow);
+      uiCombat.start(uiNow);
+    });
+
+    function expectUiStage({ practice, stage, enemyId }, label) {
+      const events = uiCombat.drainEvents();
+      const stageStart = events.find((event) => event.type === 'stage-start');
+      const ok =
+        uiCombat.enemy?.id === enemyId &&
+        stageStart?.detail?.stage === stage &&
+        Boolean(stageStart?.detail?.practice) === Boolean(practice);
+      if (!ok) throw new Error(`${label} did not start expected ${enemyId} stage ${stage}`);
+      return stageStart;
+    }
+
+    async function finishUiPractice() {
+      uiCombat.enemyHp = 0;
+      uiCombat.phase = 'stage-clear';
+      uiCombat.phaseStartedAt = uiNow + 10;
+      uiCombat.phaseEndsAt = uiNow + 20;
+      uiCombat.events.push({
         type: 'enemy-defeated',
         detail: { enemyId: 'wandering-ronin', stage: 2 },
       });
-      combat.update(120);
-      const terminalEvents = combat.drainEvents();
+      uiNow += 20;
+      uiCombat.update(uiNow);
+      const terminalEvents = uiCombat.drainEvents();
       if (!terminalEvents.some((event) => event.type === 'victory' && event.detail?.practice)) {
-        throw new Error('practice run did not finish after the Ronin duel');
+        throw new Error('practice UI run did not terminate after Stage 2');
       }
       await flush();
-      requestRoninPractice(false);
+    }
+
+    async function completeRoninPracticeViaControls(firstBest) {
+      const practiceButton = document.querySelector('#practice-ronin-button');
+      const campaignButton = document.querySelector('#ronin-practice-campaign');
+      if (!practiceButton || !campaignButton || !startButton || !restartButton) {
+        throw new Error('practice player-facing controls were not installed');
+      }
+
+      practiceButton.click();
+      expectUiStage({ practice: true, stage: 2, enemyId: 'wandering-ronin' }, 'practice entry click');
+      await finishUiPractice();
+
+      const practiceAnalysisText = document.querySelector('#result-analysis')?.textContent || '';
+      const practiceSummary = document.querySelector('#result-summary')?.textContent || '';
+      const practiceEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
+      const firstTerminalUi =
+        restartButton.textContent.includes('再練浪人') &&
+        campaignButton.hidden === false &&
+        root.dataset.runMode === 'ronin-practice';
+
+      restartButton.click();
+      expectUiStage({ practice: true, stage: 2, enemyId: 'wandering-ronin' }, 'practice retry click');
+      const retryStarted = root.dataset.runMode === 'ronin-practice' && campaignButton.hidden === true;
+      await finishUiPractice();
+
+      campaignButton.click();
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'campaign action click');
+      const campaignStarted = root.dataset.runMode === 'campaign' && restartButton.textContent === '重新挑戰';
+
+      const resultOk =
+        localStorage.getItem(BEST_KEY) === firstBest &&
+        practiceEyebrow.includes('RONIN PRACTICE') &&
+        practiceSummary.includes('不計個人最佳') &&
+        practiceAnalysisText.includes('第2關') &&
+        practiceAnalysisText.includes('浪人');
+
+      root.dataset.roninPracticeControls = String(firstTerminalUi && retryStarted && campaignStarted);
+      root.dataset.roninPracticeIntegration = String(resultOk && root.dataset.roninPracticeControls === 'true');
     }
 
     try {
@@ -120,17 +188,7 @@
         Boolean((analysis?.querySelector('[data-analysis-tip]')?.textContent || '').trim());
       root.dataset.runAnalysis = String(analysisReady);
 
-      await completeRoninPracticeVictory();
-      const practiceAnalysisText = document.querySelector('#result-analysis')?.textContent || '';
-      const practiceSummary = document.querySelector('#result-summary')?.textContent || '';
-      const practiceEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
-      root.dataset.roninPracticeIntegration = String(
-        localStorage.getItem(BEST_KEY) === firstBest &&
-        practiceEyebrow.includes('RONIN PRACTICE') &&
-        practiceSummary.includes('不計個人最佳') &&
-        practiceAnalysisText.includes('第2關') &&
-        practiceAnalysisText.includes('浪人'),
-      );
+      await completeRoninPracticeViaControls(firstBest);
 
       await completeVictory({ missFirst: true, lateParry: true });
       root.dataset.masteryBestPreserved = String(localStorage.getItem(BEST_KEY) === firstBest);
@@ -163,6 +221,7 @@
       const passed =
         root.dataset.runAnalysis === 'true' &&
         root.dataset.roninPracticeIntegration === 'true' &&
+        root.dataset.roninPracticeControls === 'true' &&
         root.dataset.masteryBestPreserved === 'true' &&
         root.dataset.masteryStorageFallback === 'true' &&
         root.dataset.resultLayout === 'pass';

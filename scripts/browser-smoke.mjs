@@ -143,10 +143,14 @@ try {
   if (!appDom.includes('data-practice-mode-ready="true"') || !appDom.includes('id="practice-ronin-button"')) {
     throw new Error('Stage 2 Ronin practice entry did not initialize in the real application document');
   }
+  if (!appDom.includes('data-practice-start-layout="pass"')) {
+    throw new Error('Ronin practice entry or start-screen content overflowed the 320x568 production viewport');
+  }
 
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2800 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) throw new Error(`Mastery event-stream integration failed. DOM:\n${masteryDom.slice(0, 5000)}`);
   if (!masteryDom.includes('data-ronin-practice-integration="true"')) throw new Error('Ronin practice did not stop after Stage 2, render Stage 2 analysis, or preserve the campaign personal best');
+  if (!masteryDom.includes('data-ronin-practice-controls="true"')) throw new Error('Ronin practice player controls did not complete practice entry → retry → campaign handoff');
   if (!masteryDom.includes('data-mastery-best-preserved="true"')) throw new Error('A worse completed victory replaced the stored personal best');
   if (!masteryDom.includes('data-mastery-storage-fallback="true"')) throw new Error('Blocked localStorage prevented mastery result rendering');
   if (!masteryDom.includes('data-result-layout="pass"')) throw new Error('Mastery result content or restart control overflowed the 320x568 smoke viewport');
@@ -184,7 +188,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin-practice + boss + onboarding + footwork + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin-practice-controls + boss + onboarding + footwork + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

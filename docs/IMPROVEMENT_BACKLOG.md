@@ -25,10 +25,11 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 037:** repaired local battle-analysis coaching so automatic Perfect Parry/Perfect STEP riposte damage cannot inflate the average damage of manual swipe counters or suppress the opposite-direction swipe tip.
 - **Run 038:** repaired the local analysis denominator so Blood Moon/defeat-closed automatic-riposte recoveries are not counted as manual counter opportunities that never legally existed.
 - **Run 039:** added a repeatable **Stage 2 Ronin practice duel** using the real current Ronin rules and local analysis, with practice results excluded from campaign personal-best storage.
+- **Run 040:** closed the Ronin-practice browser verification gap by driving the actual **第二關練習 → 再練浪人 → 開始完整主線** controls through the patched CombatEngine and requiring the real 320×568 start-screen layout gate.
 
 ## Highest priority — physical-phone acceptance
 
-1. **Stage 2 Ronin repeated practice + re-check** — use the new direct Stage 2 practice route for several same-device attempts. Compare the local Ronin card/tip across attempts and distinguish low final-direction parry accuracy, unused counter openings, weak swipe direction, STEP misuse or raw timing pressure before changing balance values.
+1. **Stage 2 Ronin repeated practice + re-check** — use the direct Stage 2 practice route for several same-device attempts. Compare the local Ronin card/tip across attempts and distinguish low final-direction parry accuracy, unused counter openings, weak swipe direction, STEP misuse or raw timing pressure before changing balance values.
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
@@ -47,7 +48,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–039 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary and now a repeatable local Ronin practice route to validate which balancing signals are actually useful before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–040 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary and a repeatable local Ronin practice route to validate which balancing signals are actually useful before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 
