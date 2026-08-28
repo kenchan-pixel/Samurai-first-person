@@ -16,8 +16,8 @@ function mark(name, value) {
   root.dataset[name] = String(Boolean(value));
 }
 
-function dispatchCanvasTap(canvas, x, y, pointerId) {
-  canvas.dispatchEvent(new PointerEvent('pointerdown', {
+function dispatchViewportTap(target, x, y, pointerId) {
+  target.dispatchEvent(new PointerEvent('pointerdown', {
     bubbles: true,
     pointerId,
     pointerType: 'touch',
@@ -25,7 +25,7 @@ function dispatchCanvasTap(canvas, x, y, pointerId) {
     clientY: y,
     isPrimary: true,
   }));
-  canvas.dispatchEvent(new PointerEvent('pointerup', {
+  target.dispatchEvent(new PointerEvent('pointerup', {
     bubbles: true,
     pointerId,
     pointerType: 'touch',
@@ -44,37 +44,49 @@ function describeTarget(target) {
   return `${target.tagName || 'node'}${id}${classes}`.slice(0, 160);
 }
 
-async function verifyCanvasDirection(canvas, rect, direction, x, y, pointerId, diagnosticKey) {
+async function verifyProductionParry(canvas, rect, direction, x, y, pointerId, diagnosticKey) {
   const hitTarget = document.elementFromPoint(x, y);
   root.dataset[diagnosticKey] = describeTarget(hitTarget);
   const mapped = directionFromErgonomicTap(x - rect.left, y - rect.top, rect.width, rect.height);
-  let receivedPointerUp = false;
-  const observe = () => {
-    receivedPointerUp = true;
-  };
-  canvas.addEventListener('pointerup', observe, { capture: true, once: true });
-  dispatchCanvasTap(canvas, x, y, pointerId);
-  await sleep(0);
-  canvas.removeEventListener('pointerup', observe, { capture: true });
-  return hitTarget === canvas && mapped === direction && receivedPointerUp;
+  if (hitTarget !== canvas || mapped !== direction) return false;
+
+  const before = root.dataset.combatUxProductionParry || 'none';
+  dispatchViewportTap(hitTarget, x, y, pointerId);
+  const routed = await waitFor(() => {
+    const value = root.dataset.combatUxProductionParry || 'none';
+    return value !== before && value.startsWith(`${direction}:`);
+  }, 320);
+  root.dataset[`${diagnosticKey}Result`] = root.dataset.combatUxProductionParry || 'none';
+  return routed;
 }
 
 async function startProductionDuel(startButton, pauseButton) {
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    startButton.click();
-    const started = await waitFor(
-      () => !pauseButton.hidden && root.dataset.combatPhase !== 'ready',
-      500,
-    );
-    if (started) return true;
-    await sleep(40);
+  root.dataset.combatUxStartExecuted = 'false';
+  startButton.click();
+
+  const started = await waitFor(() =>
+    Boolean(root.dataset.combatUxRuntimeError) ||
+    (
+      !document.querySelector('#start-screen')?.classList.contains('modal--visible') &&
+      !pauseButton.hidden &&
+      root.dataset.gamePaused === 'false' &&
+      root.dataset.combatPhase !== 'ready'
+    )
+  , 1000);
+
+  if (root.dataset.combatUxRuntimeError) {
+    root.dataset.combatUxStartError = root.dataset.combatUxRuntimeError;
+    return false;
   }
-  return false;
+
+  mark('combatUxStartExecuted', started);
+  return started;
 }
 
 async function run() {
   const ready = await waitFor(() =>
     root.dataset.startReady === 'true' &&
+    root.dataset.startHandlerReady === 'true' &&
     root.dataset.combatUxReady === 'true' &&
     document.querySelector('#pause-button') &&
     document.querySelector('#combat-guide-sheet')
@@ -109,18 +121,18 @@ async function run() {
     root.dataset.pauseInputSafe === 'pass'
   , 900);
   if (!liveReady) {
-    root.dataset.combatUxBrowser = 'fail-live-layout';
+    root.dataset.combatUxBrowser = root.dataset.combatUxRuntimeError ? 'fail-start-runtime' : 'fail-live-layout';
     return;
   }
 
   const rect = canvas.getBoundingClientRect();
   const topX = rect.left + rect.width * 0.5;
   const topY = rect.top + rect.height * 0.36;
-  mark('combatUxTopParryPath', await verifyCanvasDirection(canvas, rect, 'top', topX, topY, 801, 'combatUxTopHit'));
+  mark('combatUxTopParryPath', await verifyProductionParry(canvas, rect, 'top', topX, topY, 801, 'combatUxTopHit'));
 
   const rightX = rect.right - 8;
   const rightY = rect.top + rect.height * 0.5;
-  mark('combatUxRightParryPath', await verifyCanvasDirection(canvas, rect, 'right', rightX, rightY, 802, 'combatUxRightHit'));
+  mark('combatUxRightParryPath', await verifyProductionParry(canvas, rect, 'right', rightX, rightY, 802, 'combatUxRightHit'));
 
   const pauseRect = pauseButton.getBoundingClientRect();
   const localPauseRect = {
@@ -173,6 +185,7 @@ async function run() {
   mark('combatUxHome', document.querySelector('#start-screen')?.classList.contains('modal--visible') && pauseScreen.hidden && pauseButton.hidden);
 
   const allPass = [
+    'combatUxStartExecuted',
     'combatUxTopParryPath',
     'combatUxRightParryPath',
     'combatUxPauseNeutral',
@@ -189,4 +202,5 @@ async function run() {
 run().catch((error) => {
   console.error(error);
   root.dataset.combatUxBrowser = 'fail-error';
+  root.dataset.combatUxRuntimeError = String(error?.message || error).slice(0, 240);
 });

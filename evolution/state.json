@@ -3,23 +3,23 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 45,
+  "run_number": 46,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the failed Run 044 production Combat UX browser gate by measuring Pause neutrality only after the control is visible and replacing timing-fragile top/right/resume observations with real rendered hit-testing, the production ergonomic mapper and direct Pause state assertions while retaining the existing no-catch-up clock test",
+  "last_action": "Repaired the production Combat UX verification path by observing the real Start-handler registration before clicking, surfacing startup runtime errors, and proving top/right taps reach the production CombatEngine.attemptParry path instead of a test-owned pointer listener",
   "last_commit": "9c2d2fcdfde64747b6df565b554de8ab9f0b40aa",
-  "active_blocker": null,
+  "active_blocker": "Vercel exact-head Preview verification is externally blocked by the project build-rate limit until the provider window resets",
   "ci_status": "pending_self_verification",
-  "preview_status": "pending_self_verification",
+  "preview_status": "rate_limited_external",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": null,
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects?upgradeToPro=build-rate-limit",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
+    "Re-check exact-head CI and Vercel after the external build-rate limit resets; do not start feature work until both are terminal green",
     "Physical-iPhone re-check: neutral lower-centre Pause reach, upper-parry thumb reach, blade-read rails and reduced live text during Ronin/Shogun practice",
-    "Repeat Ronin/Shogun practice and use the local stage analysis before any balance change",
-    "After core acceptance consider one bounded challenge-mode or boss signature-motion refinement; keep remote telemetry behind the separate privacy Decision Gate"
+    "Repeat Ronin/Shogun practice and use the local stage analysis before any balance change"
   ]
 }

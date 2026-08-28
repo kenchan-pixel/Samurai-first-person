@@ -162,3 +162,43 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - Repeat Ronin/Shogun practice on the same physical phone and use local stage analysis before changing balance.
 - Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified HUD and neutral Pause placement.
 - After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.
+
+## Run 046 — Production Start/parry verification repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the still-failing exact-head Combat UX gate by proving that the real production Start handler is actually registered/executed and that representative top/right taps reach the real production `CombatEngine.attemptParry()` path.
+
+### Preflight / evidence
+
+- Exact current HEAD `846e6cb2f5a236958fc54041d839f092bcb40692`: CI run `33162287386` failed `npm run test:browser` while all **57/57 Node tests passed**.
+- Failure DOM remained at `data-combat-phase="ready"`, `data-pause-layout="pending"`, `data-pause-input-safe="pending"`, `data-combat-ux-browser="fail-live-layout"`, so Run 045 never proved a real duel started.
+- Exact-head All Repos review found **P1** that `data-start-ready` was published before the real Start click listener was registered, making blind click/retry timing incapable of distinguishing premature clicks from startup exceptions.
+- The same review found a material **P2**: the top/right smoke installed its own `pointerup` listener, so it could pass without proving production `main.js` actually routed the gesture through `engine.attemptParry()`.
+- Exact-head GitHub `Vercel` status is also failed because of the external project build-rate limit (`Deployment rate limited — retry in 24 hours`). This is not treated as a product-code defect, but the exact-head fence remains blocked until Preview can deploy again.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads remained empty.
+
+### Delivered repair
+
+- Added a query-gated production-composition observer before `main.js`. During the Combat UX smoke only, it observes the actual `#start-button` click-listener registration and publishes `data-start-handler-ready="true"` only after that real listener exists.
+- The same observer captures `window.error` / `unhandledrejection` into a bounded diagnostic, so startup exceptions are distinguishable from an early/missed click.
+- The browser contract now waits for the real Start-handler marker, clicks Start once, and requires explicit post-click evidence: the start modal is gone, Pause is live, the game is unpaused and combat has left `ready`.
+- The query-gated observer wraps the existing composed `CombatEngine.attemptParry()` only for this smoke and records its actual result. The top/right assertions now dispatch through the real viewport hit target and require that production parry marker to change for the intended direction; the smoke-owned `pointerup` success shortcut is removed.
+- Normal gameplay receives no CombatEngine patch or extra input behavior: the observer is inert unless `?browser-smoke=combat-ux` is present.
+
+### Verification / regression boundaries
+
+- Current failed-head evidence already proves all 57 Node tests remain green; this run changes only the production browser verification seam and an inert query-gated observer.
+- No player-visible control placement, 42% top mapping, parry/Perfect timing, STEP, Pause semantics, HP/damage, enemy balance, renderer, storage/network/privacy boundary or merge authority is changed.
+- The exact-head browser gate remains fail-closed on Start execution, runtime errors, actual production top/right parry routing, neutral Pause placement, freeze, guide return, resume, restart and home.
+- Exact-head CI for this single blocker-fix commit is pending post-commit self-verification. Vercel Preview is expected to remain externally blocked until the provider build-rate window resets; the PR receipt will record the observed status rather than claiming a green Preview.
+
+### Human acceptance / residual risk
+
+- This is verification-only: physical-iPhone acceptance of Pause reach and the 42% upper-parry zone remains unchanged.
+- No feature work is eligible while exact-head Preview remains rate-limited or CI is not terminal green.
+
+### Next candidates
+
+- Re-check exact-head CI and Vercel once the external build-rate limit resets; hold feature work until both are green.
+- Then continue physical-iPhone Ronin/Shogun practice and input/readability acceptance before any balance change.
