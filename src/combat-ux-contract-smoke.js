@@ -67,6 +67,8 @@ async function startProductionDuel(startButton, pauseButton) {
   const started = await waitFor(() =>
     Boolean(root.dataset.combatUxRuntimeError) ||
     (
+      root.dataset.combatUxBeginEntered === 'true' &&
+      root.dataset.combatUxBeginCompleted === 'true' &&
       !document.querySelector('#start-screen')?.classList.contains('modal--visible') &&
       !pauseButton.hidden &&
       root.dataset.gamePaused === 'false' &&
@@ -185,6 +187,8 @@ async function run() {
   mark('combatUxHome', document.querySelector('#start-screen')?.classList.contains('modal--visible') && pauseScreen.hidden && pauseButton.hidden);
 
   const allPass = [
+    'combatUxBeginEntered',
+    'combatUxBeginCompleted',
     'combatUxStartExecuted',
     'combatUxTopParryPath',
     'combatUxRightParryPath',

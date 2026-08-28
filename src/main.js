@@ -3,6 +3,31 @@ import { View } from './renderer.js';
 import { motionPhaseForSnapshot } from './animation-motion.js';
 import { PausableCombatClock, directionFromErgonomicTap, installCombatUx } from './combat-ux.js';
 
+const root = document.documentElement;
+const isCombatUxSmoke = new URLSearchParams(location.search).get('browser-smoke') === 'combat-ux';
+const setCombatUxDiagnostic = (name, value) => {
+  if (isCombatUxSmoke) root.dataset[name] = String(value);
+};
+
+if (isCombatUxSmoke) {
+  root.dataset.startHandlerReady = 'false';
+  root.dataset.combatUxBeginEntered = 'false';
+  root.dataset.combatUxBeginCompleted = 'false';
+  root.dataset.combatUxRuntimeError = '';
+  root.dataset.combatUxProductionParry = 'none';
+
+  const formatRuntimeError = (value) => {
+    const text = value?.message || value?.reason?.message || value?.reason || value || 'unknown runtime error';
+    return String(text).slice(0, 240);
+  };
+  window.addEventListener('error', (event) => {
+    root.dataset.combatUxRuntimeError = formatRuntimeError(event.error || event.message);
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    root.dataset.combatUxRuntimeError = formatRuntimeError(event.reason);
+  });
+}
+
 installCombatUx();
 
 const $ = (selector) => document.querySelector(selector);
@@ -286,6 +311,7 @@ function events(n) {
 }
 
 function begin() {
+  setCombatUxDiagnostic('combatUxBeginEntered', 'true');
   audio.on().catch(() => {});
   start.classList.remove('modal--visible');
   result.classList.remove('modal--visible');
@@ -297,6 +323,7 @@ function begin() {
   hitStopUntil = 0;
   run = true;
   setPauseUi(false);
+  setCombatUxDiagnostic('combatUxBeginCompleted', 'true');
 }
 
 function end(e) {
@@ -323,7 +350,11 @@ function end(e) {
       action = 1;
       actionDir = d;
       actionAt = clock.now;
-      engine.attemptParry(d, clock.now);
+      const parry = engine.attemptParry(d, clock.now);
+      if (isCombatUxSmoke) {
+        const outcome = parry?.accepted ? 'accepted' : (parry?.reason || 'rejected');
+        root.dataset.combatUxProductionParry = `${d}:${outcome}`;
+      }
     }
   }
   ptr = null;
@@ -350,6 +381,7 @@ function loop(realNow) {
 }
 
 $('#start-button').addEventListener('click', begin);
+setCombatUxDiagnostic('startHandlerReady', 'true');
 $('#restart-button').addEventListener('click', () => {
   engine.reset(clock.now);
   begin();

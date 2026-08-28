@@ -202,3 +202,40 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 
 - Re-check exact-head CI and Vercel once the external build-rate limit resets; hold feature work until both are green.
 - Then continue physical-iPhone Ronin/Shogun practice and input/readability acceptance before any balance change.
+
+## Run 047 — Direct production Start boundary verification repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Close the still-red exact-head Combat UX browser fence by removing the ambiguous external listener inference and instrumenting the real `main.js` Start and parry boundaries directly.
+
+### Preflight / evidence
+
+- Exact current HEAD `55c632eec1e2b043d44fb81f35d884f480bb04e8`: CI #79 / run `33163321185` failed only `npm run test:browser`; all **57/57 Node tests passed**.
+- Exact-head Vercel deployment is healthy again: GitHub `Vercel` commit status = success / Preview Ready. The previous state entry claiming an active build-rate limit is stale.
+- Failure DOM proves the issue precisely: `start-handler-ready=true` but `combat-phase=ready`, `combat-ux-start-executed=false`, and Pause layout/input remained pending. The external observer therefore detected a Start-button listener without proving that the production `begin()` listener had registered or executed.
+- Exact-head Second Hourly review marks this as a blocking **P1** and explicitly requires readiness/entry/completion diagnostics from `main.js` itself. No inline review threads are open; Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
+
+### Delivered repair
+
+- `main.js` now owns the query-gated smoke diagnostics at the authoritative boundaries. `data-start-handler-ready=true` is published only after the real `#start-button → begin` listener registration line executes.
+- `begin()` publishes separate entry and completion markers around the real production start path. Completion occurs only after `engine.start()`, `run=true` and live Pause UI activation have executed.
+- The real `end()` pointer path records the actual `engine.attemptParry()` result for the representative top/right smoke taps. The smoke no longer monkey-patches `CombatEngine.prototype` to infer production routing.
+- The former runtime observer module is retained only as an inert stable path; it no longer patches `EventTarget` or combat methods. Runtime errors remain query-gated and are captured directly by `main.js`.
+- The production browser contract now requires both `begin` entry and completion in addition to the existing live-layout, actual parry, Pause-neutrality/freeze/guide/resume/restart/home gates.
+
+### Verification / regression boundaries
+
+- Previous exact HEAD already proves all 57 Node combat/input/clock/boss/practice tests green; no gameplay rule, control geometry, player-facing copy, renderer, balance, persistence/network/privacy or merge behavior changes in this repair.
+- The modified browser gate remains fail-closed and now binds its Start evidence to the same module that owns the production listener instead of relying on module execution order.
+- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the PR run comment is the authoritative receipt.
+
+### Human acceptance / residual risk
+
+- This repair changes verification only. Physical-iPhone acceptance of the 42% top-parry reach, neutral lower-centre Pause position, simplified HUD and blade-read rails remains unchanged.
+- Feature work remains prohibited unless this new exact HEAD reaches terminal-green CI and Vercel Preview.
+
+### Next candidates
+
+- If exact-head CI/Preview turn green, resume physical-iPhone Ronin/Shogun practice and readability/input acceptance before any balance changes.
+- After core acceptance, choose the next substantial player-visible slice from the existing backlog rather than adding more verification-only work.
