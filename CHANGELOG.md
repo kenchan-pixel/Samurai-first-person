@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.21.0-evolution — Direct Crimson Shogun practice
+
+- Expanded the bounded practice selector into a compact two-button **練浪人 / 練將軍** row without adding another vertical block to the phone start screen.
+- **練將軍** launches the real Stage 4 Crimson Shogun at Phase I after the normal boss adapter has initialized, so its 12 HP, Blood Moon threshold/Phase II pressure, reach, damage, posture and presentation remain unchanged.
+- Shogun practice terminates after the selected boss duel, offers **再戰將軍** or **開始完整主線**, reuses the existing local mastery/run-analysis surfaces, and is explicitly excluded from campaign personal-best storage.
+- Practice result labelling now distinguishes `RONIN PRACTICE` from `SHOGUN PRACTICE`; the existing Ronin route and normal four-stage campaign remain unchanged.
+- Added focused Stage 4 practice Node coverage and extended the existing mastery/real-app browser gates to drive both player-facing practice entry → retry → campaign-handoff paths and enforce the 320×568 start layout.
+
 ## 0.20.0-evolution — Optional high-contrast blade-read mode
 
 - Added an opt-in **刀路清晰** accessibility toggle that defaults off and stores only a local preference.
@@ -19,14 +27,14 @@
 
 - Added a compact **第二關練習** entry on the start screen that launches the real current Wandering Ronin directly without changing its timing, feints, reach, STEP, posture, HP, damage or score rules.
 - A practice clear ends after the Ronin instead of advancing to Oni Guard; practice results offer **再練浪人** or **開始完整主線** while the normal start/restart path remains the four-duel campaign.
-- Reused the existing local mastery and stage analysis for practice feedback, while explicitly labelling practice and preventing it from reading or overwriting the campaign personal-best record.
+- Reused the existing local mastery and per-stage battle analysis for practice feedback, while explicitly labelling practice and preventing it from reading or overwriting the campaign personal-best record.
 - Added focused Node coverage plus existing-browser-harness coverage for Stage 2 initialization, practice termination, Ronin result analysis, personal-best isolation and real-app practice UI initialization.
 - No backend telemetry, network request, identifier, account system or persistence schema was introduced.
 
 ## 0.18.1-evolution — Local battle-analysis counter coaching repair
 
 - Separated manual swipe-counter damage from total player damage in the local run-analysis stage record.
-- Opposite-direction swipe coaching now computes average damage from manual counters only, so automatic Perfect Parry / Perfect STEP ripostes cannot hide a weak manual counter pattern.
+- Opposite-direction swipe coaching now computes average counter damage from manual counters only, so automatic Perfect Parry / Perfect STEP ripostes cannot hide a weak manual counter pattern.
 - Added a focused mixed-damage regression proving total damage can include auto-ripostes while manual counter coaching still uses the real swipe damage.
 - No combat timing, damage, scoring, input, persistence, network/privacy boundary or Ronin balance value changed.
 

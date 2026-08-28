@@ -140,11 +140,15 @@ try {
   if (!appDom.includes('data-impact-ready="true"') || !appDom.includes('id="impact-fx-layer"')) {
     throw new Error('Impact choreography layer did not initialize in the real application document');
   }
-  if (!appDom.includes('data-practice-mode-ready="true"') || !appDom.includes('id="practice-ronin-button"')) {
-    throw new Error('Stage 2 Ronin practice entry did not initialize in the real application document');
+  if (
+    !appDom.includes('data-practice-mode-ready="true"') ||
+    !appDom.includes('id="practice-ronin-button"') ||
+    !appDom.includes('id="practice-shogun-button"')
+  ) {
+    throw new Error('Ronin/Shogun practice entries did not initialize in the real application document');
   }
   if (!appDom.includes('data-practice-start-layout="pass"')) {
-    throw new Error('Ronin practice entry or start-screen content overflowed the 320x568 production viewport');
+    throw new Error('Practice selector or start-screen content overflowed the 320x568 production viewport');
   }
   if (!appDom.includes('data-readability-mode-ready="true"') || !appDom.includes('id="blade-readability-toggle"')) {
     throw new Error('Optional high-contrast blade-read mode did not initialize in the real application document');
@@ -153,10 +157,12 @@ try {
     throw new Error('Blade-read accessibility toggle overflowed the 320x568 production viewport');
   }
 
-  const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 2800 });
+  const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 3200 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) throw new Error(`Mastery event-stream integration failed. DOM:\n${masteryDom.slice(0, 5000)}`);
   if (!masteryDom.includes('data-ronin-practice-integration="true"')) throw new Error('Ronin practice did not stop after Stage 2, render Stage 2 analysis, or preserve the campaign personal best');
   if (!masteryDom.includes('data-ronin-practice-controls="true"')) throw new Error('Ronin practice player controls did not complete practice entry → retry → campaign handoff');
+  if (!masteryDom.includes('data-shogun-practice-integration="true"')) throw new Error('Shogun practice did not stop after Stage 4, render Stage 4 analysis, or preserve the campaign personal best');
+  if (!masteryDom.includes('data-shogun-practice-controls="true"')) throw new Error('Shogun practice player controls did not complete practice entry → retry → campaign handoff');
   if (!masteryDom.includes('data-mastery-best-preserved="true"')) throw new Error('A worse completed victory replaced the stored personal best');
   if (!masteryDom.includes('data-mastery-storage-fallback="true"')) throw new Error('Blocked localStorage prevented mastery result rendering');
   if (!masteryDom.includes('data-result-layout="pass"')) throw new Error('Mastery result content or restart control overflowed the 320x568 smoke viewport');
@@ -203,7 +209,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin-practice-controls + boss + onboarding + footwork + blade-read accessibility + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin+Shogun-practice-controls + boss + onboarding + footwork + blade-read accessibility + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

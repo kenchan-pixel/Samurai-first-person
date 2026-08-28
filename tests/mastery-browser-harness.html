@@ -33,8 +33,12 @@
 
   <script type="module">
     import '../src/mastery-overlay.js';
-    import { requestRoninPractice } from '../src/practice-mode.js';
-    import { CombatEngine, Direction } from '../src/game-core.js';
+    import {
+      requestRoninPractice,
+      requestShogunPractice,
+    } from '../src/practice-mode.js';
+    import { CombatEngine, Direction, ENEMIES } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
 
     const BEST_KEY = 'blade-reversal-mastery-v1';
     const root = document.documentElement;
@@ -81,7 +85,7 @@
       await flush();
     }
 
-    const uiCombat = new CombatEngine();
+    const uiCombat = new CombatEngine({ enemies: [...ENEMIES, BOSS_PHASE_ONE] });
     let uiNow = 1000;
     const startButton = document.querySelector('#start-button');
     const restartButton = document.querySelector('#restart-button');
@@ -108,20 +112,21 @@
       return stageStart;
     }
 
-    async function finishUiPractice() {
+    async function finishUiPractice({ enemyId, stage }) {
       uiCombat.enemyHp = 0;
       uiCombat.phase = 'stage-clear';
       uiCombat.phaseStartedAt = uiNow + 10;
       uiCombat.phaseEndsAt = uiNow + 20;
       uiCombat.events.push({
         type: 'enemy-defeated',
-        detail: { enemyId: 'wandering-ronin', stage: 2 },
+        detail: { enemyId, stage },
       });
       uiNow += 20;
       uiCombat.update(uiNow);
       const terminalEvents = uiCombat.drainEvents();
-      if (!terminalEvents.some((event) => event.type === 'victory' && event.detail?.practice)) {
-        throw new Error('practice UI run did not terminate after Stage 2');
+      const victory = terminalEvents.find((event) => event.type === 'victory' && event.detail?.practice);
+      if (!victory || victory.detail?.practiceEnemyId !== enemyId || victory.detail?.practiceStage !== stage) {
+        throw new Error(`practice UI run did not terminate after ${enemyId} stage ${stage}`);
       }
       await flush();
     }
@@ -130,12 +135,12 @@
       const practiceButton = document.querySelector('#practice-ronin-button');
       const campaignButton = document.querySelector('#ronin-practice-campaign');
       if (!practiceButton || !campaignButton || !startButton || !restartButton) {
-        throw new Error('practice player-facing controls were not installed');
+        throw new Error('Ronin practice player-facing controls were not installed');
       }
 
       practiceButton.click();
-      expectUiStage({ practice: true, stage: 2, enemyId: 'wandering-ronin' }, 'practice entry click');
-      await finishUiPractice();
+      expectUiStage({ practice: true, stage: 2, enemyId: 'wandering-ronin' }, 'Ronin practice entry click');
+      await finishUiPractice({ enemyId: 'wandering-ronin', stage: 2 });
 
       const practiceAnalysisText = document.querySelector('#result-analysis')?.textContent || '';
       const practiceSummary = document.querySelector('#result-summary')?.textContent || '';
@@ -146,12 +151,12 @@
         root.dataset.runMode === 'ronin-practice';
 
       restartButton.click();
-      expectUiStage({ practice: true, stage: 2, enemyId: 'wandering-ronin' }, 'practice retry click');
+      expectUiStage({ practice: true, stage: 2, enemyId: 'wandering-ronin' }, 'Ronin practice retry click');
       const retryStarted = root.dataset.runMode === 'ronin-practice' && campaignButton.hidden === true;
-      await finishUiPractice();
+      await finishUiPractice({ enemyId: 'wandering-ronin', stage: 2 });
 
       campaignButton.click();
-      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'campaign action click');
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Ronin campaign action click');
       const campaignStarted = root.dataset.runMode === 'campaign' && restartButton.textContent === '重新挑戰';
 
       const resultOk =
@@ -163,6 +168,45 @@
 
       root.dataset.roninPracticeControls = String(firstTerminalUi && retryStarted && campaignStarted);
       root.dataset.roninPracticeIntegration = String(resultOk && root.dataset.roninPracticeControls === 'true');
+    }
+
+    async function completeShogunPracticeViaControls(firstBest) {
+      const practiceButton = document.querySelector('#practice-shogun-button');
+      const campaignButton = document.querySelector('#ronin-practice-campaign');
+      if (!practiceButton || !campaignButton || !startButton || !restartButton) {
+        throw new Error('Shogun practice player-facing controls were not installed');
+      }
+
+      practiceButton.click();
+      expectUiStage({ practice: true, stage: 4, enemyId: 'crimson-shogun' }, 'Shogun practice entry click');
+      await finishUiPractice({ enemyId: 'crimson-shogun', stage: 4 });
+
+      const practiceAnalysisText = document.querySelector('#result-analysis')?.textContent || '';
+      const practiceSummary = document.querySelector('#result-summary')?.textContent || '';
+      const practiceEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
+      const firstTerminalUi =
+        restartButton.textContent.includes('再戰將軍') &&
+        campaignButton.hidden === false &&
+        root.dataset.runMode === 'shogun-practice';
+
+      restartButton.click();
+      expectUiStage({ practice: true, stage: 4, enemyId: 'crimson-shogun' }, 'Shogun practice retry click');
+      const retryStarted = root.dataset.runMode === 'shogun-practice' && campaignButton.hidden === true;
+      await finishUiPractice({ enemyId: 'crimson-shogun', stage: 4 });
+
+      campaignButton.click();
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Shogun campaign action click');
+      const campaignStarted = root.dataset.runMode === 'campaign' && restartButton.textContent === '重新挑戰';
+
+      const resultOk =
+        localStorage.getItem(BEST_KEY) === firstBest &&
+        practiceEyebrow.includes('SHOGUN PRACTICE') &&
+        practiceSummary.includes('不計個人最佳') &&
+        practiceAnalysisText.includes('第4關') &&
+        practiceAnalysisText.includes('赤將軍');
+
+      root.dataset.shogunPracticeControls = String(firstTerminalUi && retryStarted && campaignStarted);
+      root.dataset.shogunPracticeIntegration = String(resultOk && root.dataset.shogunPracticeControls === 'true');
     }
 
     try {
@@ -189,6 +233,7 @@
       root.dataset.runAnalysis = String(analysisReady);
 
       await completeRoninPracticeViaControls(firstBest);
+      await completeShogunPracticeViaControls(firstBest);
 
       await completeVictory({ missFirst: true, lateParry: true });
       root.dataset.masteryBestPreserved = String(localStorage.getItem(BEST_KEY) === firstBest);
@@ -222,12 +267,15 @@
         root.dataset.runAnalysis === 'true' &&
         root.dataset.roninPracticeIntegration === 'true' &&
         root.dataset.roninPracticeControls === 'true' &&
+        root.dataset.shogunPracticeIntegration === 'true' &&
+        root.dataset.shogunPracticeControls === 'true' &&
         root.dataset.masteryBestPreserved === 'true' &&
         root.dataset.masteryStorageFallback === 'true' &&
         root.dataset.resultLayout === 'pass';
       root.dataset.masteryIntegration = passed ? 'pass' : 'fail';
     } catch (error) {
       requestRoninPractice(false);
+      requestShogunPractice(false);
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);
       root.dataset.masteryIntegration = 'fail';

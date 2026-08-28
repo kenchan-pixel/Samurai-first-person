@@ -10,6 +10,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] The primary combat view is not blocked by instructions or panels.
 - [ ] Guided-duel toggle is reachable on the start screen without pushing the primary Start control outside the viewport.
 - [ ] Optional 刀路清晰 toggle remains inside the 320×568 viewport, defaults off unless locally enabled, and does not enlarge the start-screen flow.
+- [ ] The compact 練浪人 / 練將軍 practice selector remains inside the 320×568 viewport and does not push the primary 拔刀 action off-screen.
 - [ ] STEP / 後撤 and the range chip remain clear of the four edge-block regions and the primary centre combat read.
 
 ## Guided first duel
@@ -77,6 +78,9 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Defeating Crimson Shogun reaches victory.
 - [ ] Reaching zero player health reaches defeat.
 - [ ] Stage transitions and restart reset posture, health, enemy, timing, HUD state, and engagement distance.
+- [ ] 練浪人 starts the real Wandering Ronin at Stage 2 and ends after that duel instead of advancing to Oni Guard.
+- [ ] 練將軍 starts the real Crimson Shogun at Stage 4 Phase I, preserves Blood Moon Phase II authority, and ends after the boss instead of changing campaign progression.
+- [ ] Practice retry restarts the selected duel; 開始完整主線 returns to Stage 1 and campaign mode.
 
 ## Mastery and replay
 
@@ -85,6 +89,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Result summary shows parry accuracy, perfect parries, guard breaks, hits taken, and clear time.
 - [ ] Defeat remains D grade while still showing the run statistics.
 - [ ] A better completed victory becomes the local personal best; a worse run does not overwrite it.
+- [ ] Ronin and Shogun practice results use distinct practice labels, render local stage analysis, and never read or overwrite the campaign personal best.
 - [ ] Unavailable/blocked `localStorage` does not prevent a duel from starting, finishing, or restarting.
 
 ## Presentation and performance
@@ -114,9 +119,10 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, practice and blade-read accessibility integrations in the real app document.
+- [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, both practice entries and blade-read accessibility integrations in the real app document.
 - [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
+- [ ] Browser mastery harness clicks both real practice entries and proves Ronin Stage 2 / Shogun Stage 4 entry → selected-duel retry → campaign handoff, with distinct practice result labels and campaign personal-best isolation.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
 - [ ] Browser mastery result content and restart control remain inside a 320×568 viewport.
 - [ ] Boss Node coverage proves stage injection, one-time Phase II transition, pressure reset, and restart-to-Phase-I behavior.

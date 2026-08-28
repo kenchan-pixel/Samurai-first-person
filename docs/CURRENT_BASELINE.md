@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.20.0-evolution**
+Version: **0.21.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -8,8 +8,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - Mobile-first portrait start screen → **four sequential duels** → victory/defeat → restart without page reload.
 - Three baseline enemies are followed by the Crimson Shogun boss.
-- The start screen also offers a bounded **第二關練習** route that launches the real Wandering Ronin directly and ends after that duel, without replacing the four-stage campaign.
-- Practice results can restart the Ronin immediately or return to the complete campaign.
+- The start screen also offers bounded direct-practice routes for the real **Stage 2 Wandering Ronin** and real **Stage 4 Crimson Shogun** without replacing the four-stage campaign.
+- Practice results can restart the selected duel immediately or return to the complete campaign. Practice never advances into a different campaign stage.
 - Touch, stylus and mouse input remain supported.
 
 ## Guided first duel and combat clarity
@@ -68,6 +68,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Phase II posture is 7, perfect-parry timing tightens and the attack set changes.
 - Boss blood-moon/ember atmosphere remains bounded, pointer-transparent and honours reduced motion.
 - Restart restores Phase I; victory flows into mastery.
+- **Shogun practice uses this same Stage 4 Phase I boss and composed boss adapters.** It keeps the same 12 HP, Blood Moon threshold/Phase II rules, timings, reach, damage, posture and presentation; only the surrounding progression is bounded to that duel.
 
 ## Mastery, local run analysis and replay feedback
 
@@ -78,9 +79,9 @@ These capabilities are approved for the current evolution branch and cumulative.
 - **Run-end battle analysis is stage-aware and local-only.** During the current run it tracks each reached stage's parry attempts/success, counter openings versus manual counters, STEP attempts/success, hits/damage and clear state using the existing combat event stream.
 - The analysis keeps **manual counter damage separate from automatic riposte damage**. Opposite-direction swipe coaching uses only manual counter damage, so Perfect Parry/Perfect STEP auto-ripostes cannot make weak swipe counters look stronger than they were.
 - The result screen adds compact per-stage cards plus one actionable coaching tip. On defeat it focuses the last reached stage; on victory it focuses the weakest stage from the run. Examples include missed counter openings, low Ronin parry accuracy, low STEP success, excessive hits or low manual counter damage.
-- Ronin practice reuses the same mastery and local analysis surfaces, but its result is explicitly labelled `RONIN PRACTICE` / `不計個人最佳`; practice never reads or overwrites the campaign personal-best record.
+- Direct duel practice reuses the same mastery and local analysis surfaces, with distinct `RONIN PRACTICE` / `SHOGUN PRACTICE` labels and `不計個人最佳`; practice never reads or overwrites the campaign personal-best record.
 - The analysis is deliberately ephemeral: it is held only in memory for the current run and sends nothing to a backend. It stores no raw touch coordinates, device identifier, account data or remote session identifier and does not change the separate remote-telemetry Decision Gate.
-- Better completed campaign victories may replace a local personal best; worse campaign runs and all Ronin-practice runs do not. Storage failure is non-fatal.
+- Better completed campaign victories may replace a local personal best; worse campaign runs and all practice runs do not. Storage failure is non-fatal.
 - No account, network sync, remote analytics or external gameplay-data service is used.
 
 ## Enemy differentiation
@@ -88,7 +89,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Ashigaru Scout: low HP, broad timing, simple attacks, low posture; mixes close cuts with a committed longer strike.
 - Wandering Ronin: faster rhythm, feints, mixed directions, lateral footwork, close/mid reach. The optional Stage 2 practice route uses this exact enemy definition rather than a softened training clone.
 - Oni Guard: heavy damage, shorter strike windows, higher HP/posture, strong tracking/heavy posture pressure.
-- Crimson Shogun: multi-phase boss, higher posture resistance, heavy/feint signatures, Blood Moon ruleset shift and long-reach pressure.
+- Crimson Shogun: multi-phase boss, higher posture resistance, heavy/feint signatures, Blood Moon ruleset shift and long-reach pressure. The optional Stage 4 practice route uses the same Phase I/II boss definitions rather than a training clone.
 - The shared skinned GLB adds distinct stage silhouettes on the actual Head / Chest / Sword bones. Identity parts are presentation-only and do not change reach, hitboxes, timing, parry windows or damage.
 
 ## Presentation and visual identity
@@ -105,7 +106,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
 - The optional high-contrast blade-read layer uses four reusable pointer-transparent edge rails and only one active rail at a time; it reinforces the current/final attack direction without covering the centre blade-reading area.
 - The result analysis lives only on the post-run modal; it does not add persistent combat HUD text or cover the live blade-reading area.
-- The practice entry is a compact secondary start action. On short 320×568-class portrait viewports the start-screen spacing compresses rather than moving the primary **拔刀** action off-screen.
+- Direct practice is presented as one compact two-button row (**練浪人 / 練將軍**) beneath the primary start action. On short 320×568-class portrait viewports the start-screen spacing compresses rather than moving **拔刀** off-screen.
 
 ## Mobile performance baseline
 
@@ -115,7 +116,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
 - The blade-read accessibility layer creates one fixed overlay and four DOM rails once. It updates classes/text only when combat events arrive and creates no per-frame nodes, timers or network work.
-- Run analysis and Ronin practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
+- Run analysis and direct duel practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
 - Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
 
@@ -128,14 +129,15 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/onboarding-coach.js` owns the Guided Duel and phone-first gameplay-clarity sheet; Perfect STEP appends one additional guide card without changing combat authority.
 - `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
 - `src/run-analysis.js` is a local-only observer/result adapter. It keeps stage-level counters in a `WeakMap` for the active run, tracks both total damage and manual-only `counterDamage`, derives one coaching tip, and injects the compact result analysis panel. It does not patch damage/timing/input authority, persist gameplay records, or use network APIs.
-- `src/practice-mode.js` is installed after the existing combat adapters and before `main.js`. It initializes all normal sessions first, then redirects only an explicitly requested practice run to the existing Wandering Ronin, emits the real Stage 2 start event, intercepts that practice stage-clear before campaign advancement, and labels practice terminal events. Normal campaign start/restart remains unchanged.
+- `src/practice-mode.js` is installed after the existing combat adapters and before `main.js`. It initializes all normal sessions first, then redirects only an explicitly requested practice run to the existing Wandering Ronin or already-installed Crimson Shogun, emits the real stage-start event, intercepts that selected practice stage-clear before campaign advancement, and labels practice terminal events. Normal campaign start/restart remains unchanged.
 - `src/readability-mode.js` is a presentation-only observer installed after practice mode and before `main.js`. It reads the same composed event stream to mirror telegraph → feint → strike direction on an optional four-rail overlay, then returns the untouched events to the game runtime. It never calls parry/attack/STEP authority or changes combat state.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
 - `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
 - Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
 - Focused run-analysis coverage proves stage-local statistics, missed-counter detection, Ronin-specific advice selection, and that automatic ripostes cannot inflate manual-counter damage coaching.
-- Focused practice coverage proves the optional route initializes the actual Stage 2 Ronin and terminates after that stage. The existing mastery browser harness additionally requires the practice result to render Stage 2/Ronin analysis while preserving the campaign personal best, and the real-app smoke requires the practice entry/module to initialize in the production document.
+- Focused practice coverage proves the optional routes initialize the actual Stage 2 Ronin and Stage 4 Crimson Shogun definitions and terminate after the selected duel. The existing mastery browser harness additionally clicks both player-facing practice routes, requires retry/campaign handoff, renders the matching Stage 2/Stage 4 analysis, and preserves the campaign personal best; the real-app smoke requires both practice entries to initialize inside the production 320×568 layout.
+- The separate boss Node/browser coverage remains authoritative for Blood Moon Phase II behaviour, including one-time transition, restart to Phase I and final boss victory; direct Shogun practice reuses that production boss adapter rather than duplicating phase logic.
 - The blade-read browser harness uses a real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and requires the optional toggle, four pointer-safe rails, direction flow, stronger strike state, parry cleanup and bounded layout.
 - The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates.
 

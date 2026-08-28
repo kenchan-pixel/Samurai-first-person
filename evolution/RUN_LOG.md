@@ -385,3 +385,48 @@ Chosen slice: candidate 1.
 - Repeat Stage 2 practice on the same physical iPhone and use local analysis plus feel before changing any Ronin balance value.
 - Re-check enemy blade trajectory, first-person grip, Perfect Parry/Perfect STEP and the optional blade-read mode together for readability/performance on the same device.
 - After physical-phone core acceptance, consider one bounded challenge-mode or boss-refinement slice; keep remote gameplay telemetry behind its separate privacy Decision Gate.
+
+## Run 042 — Direct Crimson Shogun practice duel
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Make the current boss pressure and Blood Moon feel directly repeatable on phone, using the real Stage 4 encounter, without changing balance or forcing the player through the first three duels for each acceptance attempt.
+
+### Preflight / evidence
+
+- Exact previous HEAD `ba0874d93bec3f0d47eb57fdf26a19900ea546d1`: CI run `33148093063` = success; exact-head GitHub `Vercel` commit status = success and Preview = Ready.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; the inline review-thread list was empty.
+- The latest same-head review reported **no new actionable P0–P2 finding**. Earlier review findings are fixed by later heads and no baseline regression, runtime blocker or deployment blocker was present.
+- The current backlog still prioritizes physical-phone acceptance before boss balance/signature-motion changes. Stage 2 already has a proven bounded practice seam, making a real Stage 4 practice route a lower-risk way to gather boss evidence than changing combat values.
+- Remote gameplay telemetry remains outside the approved privacy boundary and was not implemented.
+
+### Candidate selection
+
+1. **Direct Crimson Shogun practice** — impact 4 / goal alignment 5 / novelty 3 / confidence 5 / safety 5 = 22. Reuses the proven practice boundary, gives immediate access to the real boss/Phase II loop, and changes no combat authority.
+2. **Timing-assist accessibility mode** — 4 / 4 / 4 / 3 / 3 = 18. Useful, but it alters timing/difficulty semantics before current physical acceptance is complete.
+3. **Challenge/endless mode** — 5 / 5 / 5 / 2 / 2 = 19. Strong replay value but substantially wider progression/scoring risk for a one-commit run.
+
+Chosen slice: candidate 1.
+
+### Delivered slice
+
+- Generalized the existing bounded practice adapter so an explicit practice request can target the current Wandering Ronin or the already-installed Crimson Shogun without creating a second combat implementation.
+- Replaced the single practice action with one compact two-button row: **練浪人** (Stage 2 · feints) and **練將軍** (Stage 4 · Blood Moon). The row is checked as part of the production 320×568 start layout.
+- Shogun practice starts the real current Stage 4 Phase I definition after the normal boss adapter initializes; the same 12 HP, Blood Moon threshold, Phase II attack set, damage, reach, posture and feedback remain authoritative.
+- A Shogun practice result ends after that boss duel, labels mastery as `SHOGUN PRACTICE`, offers **再戰將軍** or **開始完整主線**, and reuses the same local Stage 4 run analysis.
+- Ronin practice keeps its existing `RONIN PRACTICE` / **再練浪人** behavior. All practice runs remain excluded from campaign personal-best reads/writes.
+- Normal **拔刀** start/restart remains the four-stage campaign; no timing, damage, HP, score, input, renderer, account, network or analytics behavior changed.
+
+### Verification / regression boundaries
+
+- Added focused Node coverage proving the direct boss target is the real Stage 4 Phase I definition and that a bounded Stage 4 practice clear terminates without campaign advancement.
+- Extended the existing mastery browser harness to click **練浪人** and **練將軍**, prove each enters the correct real stage, prove selected-duel retry, prove **開始完整主線** returns to Stage 1, and require distinct practice labels/Stage 2 or Stage 4 analysis while preserving the campaign personal best.
+- Extended the real-app browser smoke to fail closed unless both practice entries initialize and the combined selector remains inside 320×568. Existing boss browser coverage remains authoritative for the actual Blood Moon Phase II transition/restart/victory rules.
+- Local syntax checks passed for the modified practice/mastery/browser-smoke scripts before commit construction. The required exact-head CI and Vercel Preview are pending self-verification by protocol after the single implementation commit.
+- No boss balance, Ronin balance, parry/STEP timing, damage, input mapping, renderer/asset pipeline, network/privacy boundary or merge authority changed.
+
+### Next candidates
+
+- Use both direct practice routes on the same physical iPhone and compare Ronin reading vs Shogun Phase II pressure before changing balance.
+- Re-check enemy blade trajectories, the first-person two-hand grip, Perfect Parry/Perfect STEP and optional blade-read mode during the repeated duels.
+- After physical-phone core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; keep remote telemetry behind the separate privacy Decision Gate.

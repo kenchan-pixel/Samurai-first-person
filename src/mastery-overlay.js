@@ -37,7 +37,12 @@ function formatScore(value) {
   return Math.max(0, Math.round(Number(value) || 0)).toString().padStart(6, '0');
 }
 
-function renderReport(report, { practice = false } = {}) {
+function practiceLabel(enemyId) {
+  if (enemyId === 'crimson-shogun') return 'SHOGUN PRACTICE';
+  return 'RONIN PRACTICE';
+}
+
+function renderReport(report, { practice = false, practiceEnemyId = null } = {}) {
   const eyebrow = document.querySelector('#result-eyebrow');
   const title = document.querySelector('#result-title');
   const summary = document.querySelector('#result-summary');
@@ -50,7 +55,7 @@ function renderReport(report, { practice = false } = {}) {
   const best = newBest ? report : previousBest;
 
   if (practice) {
-    eyebrow.textContent = `RONIN PRACTICE · MASTERY ${report.masteryPoints}`;
+    eyebrow.textContent = `${practiceLabel(practiceEnemyId)} · MASTERY ${report.masteryPoints}`;
     title.textContent = report.won ? `${report.grade} 級 · 修行完成` : '修行敗北';
   } else {
     eyebrow.textContent = report.won ? `VICTORY · MASTERY ${report.masteryPoints}` : `DEFEAT · MASTERY ${report.masteryPoints}`;
@@ -97,7 +102,10 @@ if (!CombatEngine.prototype[patched]) {
           score: event.detail?.score,
           won: event.type === 'victory',
         });
-        queueMicrotask(() => renderReport(report, { practice }));
+        queueMicrotask(() => renderReport(report, {
+          practice,
+          practiceEnemyId: event.detail?.practiceEnemyId ?? null,
+        }));
       }
     }
 

@@ -27,10 +27,11 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 039:** added a repeatable **Stage 2 Ronin practice duel** using the real current Ronin rules and local analysis, with practice results excluded from campaign personal-best storage.
 - **Run 040:** closed the Ronin-practice browser verification gap by driving the actual **第二關練習 → 再練浪人 → 開始完整主線** controls through the patched CombatEngine and requiring the real 320×568 start-screen layout gate.
 - **Run 041:** added optional **刀路清晰** accessibility mode: four pointer-transparent high-contrast edge rails follow telegraph → Ronin feint resolution → strike direction, strengthen only at the live strike, and clear after resolution without changing combat timing or difficulty.
+- **Run 042:** expanded bounded duel practice with a compact **練將軍** route alongside **練浪人**. It launches the real Stage 4 Crimson Shogun at Phase I, preserves Blood Moon rules, reuses local mastery/analysis, supports immediate boss retry or campaign return, and never writes campaign personal-best data.
 
 ## Highest priority — physical-phone acceptance
 
-1. **Stage 2 Ronin repeated practice + re-check** — use the direct Stage 2 practice route for several same-device attempts. Compare the local Ronin card/tip across attempts and distinguish low final-direction parry accuracy, unused counter openings, weak swipe direction, STEP misuse or raw timing pressure before changing balance values.
+1. **Ronin + Shogun repeated practice re-check** — use the direct Stage 2 and Stage 4 practice routes for several same-device attempts. Compare local stage cards/tips and distinguish reading, missed counters, STEP misuse, raw timing pressure and boss Phase II pressure before changing any balance values.
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
@@ -39,7 +40,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 ## High-value candidates after core acceptance
 
-- **Difficulty tuning from evidence:** if repeated Ronin practice still shows a wall after the learning pass, use the corrected local Stage 2 analysis plus same-device feel to tune Stage 2 rhythm/window/feint pressure as one bounded balance slice rather than weakening the whole campaign.
+- **Difficulty tuning from evidence:** if repeated Ronin/Shogun practice still shows a wall after the learning pass, use the corrected local stage analysis plus same-device feel to tune one bounded rhythm/window/phase-pressure slice rather than weakening the whole campaign.
 - Accessibility follow-ups: left-handed layout, timing assistance and broader motion controls. High-contrast directional telegraphs are now delivered as the optional **刀路清晰** mode; do not duplicate them as another system.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
 - Boss refinement: stronger signature motion/phase language using play evidence.
@@ -49,7 +50,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–041 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, a repeatable local Ronin practice route and a local-only optional accessibility preference to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–042 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and a local-only optional accessibility preference to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 
@@ -61,7 +62,7 @@ Before any backend implementation, define at minimum:
 - whether test/owner sessions should be marked separately from public play;
 - dashboard/AI analysis output actually needed to justify collection.
 
-Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the repeatable Stage 2 practice/local analysis for balancing decisions.
+Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the repeatable Stage 2/Stage 4 practice and local analysis for balancing decisions.
 
 ## Technical opportunities
 

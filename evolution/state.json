@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 41,
+  "run_number": 42,
   "last_action_type": "FEATURE",
-  "last_action": "Added optional high-contrast blade-read accessibility mode with four direction edge rails that follow telegraph, feint resolution and strike without changing combat rules",
-  "last_commit": "654af846c3d1052f3806b54c61ce8a02a4cdbb2d",
+  "last_action": "Expanded bounded duel practice so the start screen can launch the real Stage 2 Wandering Ronin or Stage 4 Crimson Shogun directly, with retry/campaign handoff and practice-only mastery/run analysis",
+  "last_commit": "ba0874d93bec3f0d47eb57fdf26a19900ea546d1",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Use the repeatable Stage 2 practice duel on the same physical iPhone and compare Ronin parry accuracy, missed counter openings and feel before changing any balance values",
-    "Re-check all four enemy blade trajectories plus the first-person two-hand grip, Perfect Parry/Perfect STEP and optional blade-read mode readability/performance on the same physical iPhone",
-    "Consider one bounded challenge-mode or boss-refinement slice after physical-phone core acceptance; keep remote gameplay telemetry behind its separate privacy Decision Gate"
+    "Use direct Ronin and Shogun practice on the same physical iPhone to compare readability, missed counters, Perfect Parry/Perfect STEP feel and boss Phase II pressure before any balance change",
+    "Re-check all four enemy blade trajectories plus the first-person two-hand grip and optional blade-read mode for sustained phone readability/performance",
+    "Consider one bounded challenge-mode or boss signature-motion refinement after physical-phone core acceptance; keep remote gameplay telemetry behind its separate privacy Decision Gate"
   ]
 }
