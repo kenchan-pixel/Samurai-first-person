@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { spawn, spawnSync } from 'node:child_process';
 import { extname, resolve, sep } from 'node:path';
+import { dumpDomWithDeviceMetrics } from './cdp-mobile-dom.mjs';
 
 const root = resolve(process.cwd());
 const distRoot = resolve(root, 'dist');
@@ -157,9 +158,19 @@ try {
     throw new Error('Blade-read accessibility toggle overflowed the 320x568 production viewport');
   }
 
-  const combatUxDom = await dumpDom(browser, '/?browser-smoke=combat-ux', { budget: 6500 });
+  const combatUxDom = await dumpDomWithDeviceMetrics(browser, '/?browser-smoke=combat-ux', {
+    budget: 6500,
+    width: 320,
+    height: 568,
+  });
   if (!combatUxDom.includes('data-combat-ux-browser="pass"')) {
     throw new Error(`Production Combat UX integration failed. DOM:\n${combatUxDom.slice(0, 6000)}`);
+  }
+  if (!combatUxDom.includes('data-combat-ux-portrait-viewport="true"')) {
+    throw new Error(`Combat UX smoke did not run in the required 320x568 portrait viewport. DOM:\n${combatUxDom.slice(0, 6000)}`);
+  }
+  if (!combatUxDom.includes('data-combat-ux-viewport="320x568"') || !combatUxDom.includes('data-combat-ux-canvas="320x568"')) {
+    throw new Error(`Combat UX viewport/canvas metrics did not resolve to 320x568. DOM:\n${combatUxDom.slice(0, 6000)}`);
   }
   if (!combatUxDom.includes('data-pause-input-safe="pass"')) throw new Error('Pause control overlaps a directional parry region');
   if (!combatUxDom.includes('data-combat-ux-top-parry-path="true"') || !combatUxDom.includes('data-combat-ux-right-parry-path="true"')) throw new Error('Adjacent top/right parry routing failed around the neutral Pause band');

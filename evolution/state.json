@@ -3,11 +3,11 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 47,
+  "run_number": 48,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Bound the production Combat UX smoke directly to main.js: readiness is published only after the real Start listener is registered, begin entry/completion are marked at the real production boundary, and top/right parry results are recorded from the actual end() input path",
+  "last_action": "Repaired the production Combat UX browser gate so the 42% top-parry contract is exercised under a real CDP-emulated 320x568 portrait viewport, with explicit window/canvas metric receipts before top/right routing is accepted",
   "last_commit": "9c2d2fcdfde64747b6df565b554de8ab9f0b40aa",
-  "active_blocker": "Exact-head browser CI was red because Run 046 inferred Start readiness from an external listener observer; this run replaces that inference with direct main.js diagnostics and awaits exact-head self-verification",
+  "active_blocker": "Exact-head CI was red because desktop --window-size did not guarantee a 320x568 CSS portrait viewport; this run adds CDP device-metrics emulation plus fail-closed viewport/canvas diagnostics and awaits exact-head self-verification",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -19,7 +19,7 @@
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
     "Verify exact-head CI and Vercel; do not start feature work until both are terminal green",
-    "Physical-iPhone re-check: neutral lower-centre Pause reach, upper-parry thumb reach, blade-read rails and reduced live text during Ronin/Shogun practice",
-    "Repeat Ronin/Shogun practice and use the local stage analysis before any balance change"
+    "Physical-iPhone re-check: 42% upper-parry thumb reach, neutral lower-centre Pause, blade-read rails and simplified live HUD during Ronin/Shogun practice",
+    "Repeat Ronin/Shogun practice and use local stage analysis before any balance change"
   ]
 }

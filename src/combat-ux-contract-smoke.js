@@ -128,6 +128,21 @@ async function run() {
   }
 
   const rect = canvas.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  root.dataset.combatUxViewport = `${viewportWidth}x${viewportHeight}`;
+  root.dataset.combatUxCanvas = `${Math.round(rect.width)}x${Math.round(rect.height)}`;
+  const portraitViewport =
+    viewportWidth === 320 &&
+    viewportHeight === 568 &&
+    Math.abs(rect.width - 320) < 1 &&
+    Math.abs(rect.height - 568) < 1;
+  mark('combatUxPortraitViewport', portraitViewport);
+  if (!portraitViewport) {
+    root.dataset.combatUxBrowser = 'fail-viewport';
+    return;
+  }
+
   const topX = rect.left + rect.width * 0.5;
   const topY = rect.top + rect.height * 0.36;
   mark('combatUxTopParryPath', await verifyProductionParry(canvas, rect, 'top', topX, topY, 801, 'combatUxTopHit'));
@@ -187,6 +202,7 @@ async function run() {
   mark('combatUxHome', document.querySelector('#start-screen')?.classList.contains('modal--visible') && pauseScreen.hidden && pauseButton.hidden);
 
   const allPass = [
+    'combatUxPortraitViewport',
     'combatUxBeginEntered',
     'combatUxBeginCompleted',
     'combatUxStartExecuted',

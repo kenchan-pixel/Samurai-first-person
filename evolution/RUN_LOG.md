@@ -239,3 +239,41 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 
 - If exact-head CI/Preview turn green, resume physical-iPhone Ronin/Shogun practice and readability/input acceptance before any balance changes.
 - After core acceptance, choose the next substantial player-visible slice from the existing backlog rather than adding more verification-only work.
+
+## Run 048 — Real 320×568 portrait browser-emulation repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Restore the exact-head CI fence by making the production Combat UX gate genuinely execute the approved 320×568 portrait input branch instead of relying on desktop Chrome `--window-size` semantics.
+
+### Preflight / evidence
+
+- Exact current HEAD `d7dae6272996189c2936da1d75d5b1e45930dd51`: CI #80 / run `33167476369` has **57/57 Node tests green** and fails only `npm run test:browser`; exact-head GitHub `Vercel` status = success / Preview Ready.
+- Run 047 successfully proved the real production Start boundary, right parry path and Pause neutrality/freeze/玩法/resume/restart/home behavior. Only the representative top-parry path remained false.
+- Exact-head All Repos review identified the blocking **P1** root cause: desktop `--window-size=320,568` does not guarantee `window.innerWidth/innerHeight` or the canvas are actually 320×568 portrait. The 36%-height top probe therefore fell through to the 28% landscape mapper branch even though the Node `(320,568)` mapper contract was correct.
+- The reviewer explicitly required real device-metrics emulation plus actual viewport/canvas receipts and prohibited making the tap easier or weakening the assertion. Inline review threads remain empty; Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
+
+### Delivered repair
+
+- Added `scripts/cdp-mobile-dom.mjs`, a bounded Chrome DevTools Protocol helper that launches the existing headless Chromium/SwiftShader path, applies `Emulation.setDeviceMetricsOverride` at **320×568, DPR 1, mobile portrait**, enables touch emulation, then navigates the production app and returns its final DOM.
+- Only the production Combat UX gate uses the new CDP path; renderer, mastery, boss, onboarding, footwork, readability and impact harnesses keep the existing runner so the blocker repair remains narrow.
+- `src/combat-ux-contract-smoke.js` now records the actual `window.innerWidth × innerHeight` and canvas rectangle, requires both to resolve to 320×568 before attempting the directional checks, and fails as `fail-viewport` otherwise.
+- The top probe remains at 36% of canvas height, so it still proves the **42% portrait-only** reach instead of being moved into the old 28% region. Top/right taps still must pass through the real `main.js → end() → engine.attemptParry()` receipt.
+- `scripts/browser-smoke.mjs` now requires explicit `data-combat-ux-portrait-viewport="true"`, `data-combat-ux-viewport="320x568"` and `data-combat-ux-canvas="320x568"` before accepting the Combat UX gate.
+
+### Verification / regression boundaries
+
+- `node --check` passed for the new CDP helper and modified Combat UX contract smoke before creating the Git tree; the browser runner change is limited to importing that helper and replacing only the Combat UX invocation/assertions.
+- The failed exact HEAD already proves all 57 Node combat/input/clock/boss/practice tests green. No production gameplay code, 42% input mapping, Pause geometry, timing/damage, STEP, enemy balance, renderer/asset authority, persistence/network/privacy boundary or player-facing copy changes in this repair.
+- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the Draft PR run comment remains the authoritative receipt.
+
+### Human acceptance / residual risk
+
+- CDP device metrics prove automated phone geometry and production routing, not subjective thumb comfort, sustained frame rate or thermals on a physical iPhone.
+- The 42% upper-parry reach, neutral lower-centre Pause position, simplified HUD and blade-read rails still require the existing direct-device acceptance check.
+
+### Next candidates
+
+- Verify exact-head CI and Vercel before any feature work.
+- If both are green, resume same-device Ronin/Shogun practice plus input/readability acceptance before changing balance.
+- After core acceptance, choose the next substantial player-visible slice from the existing backlog rather than adding more verification-only work.
