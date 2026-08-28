@@ -76,6 +76,13 @@ function closeCounterWindow(session, missed = false) {
   session.pendingCounterStage = null;
 }
 
+function discardCounterWindow(session) {
+  if (!session || !Number.isFinite(session.pendingCounterStage)) return;
+  const stage = stageFor(session, session.pendingCounterStage);
+  if (stage && stage.counterOpenings > 0) stage.counterOpenings -= 1;
+  session.pendingCounterStage = null;
+}
+
 export function observeRunAnalysisEvent(session, event) {
   if (!session || !event?.type) return session;
   const detail = event.detail ?? {};
@@ -122,10 +129,10 @@ export function observeRunAnalysisEvent(session, event) {
     stage.hitsTaken += 1;
     stage.damageTaken += Math.max(0, Number(detail.damage) || 0);
   } else if (event.type === 'boss-phase') {
-    closeCounterWindow(session, false);
+    discardCounterWindow(session);
   } else if (event.type === 'enemy-defeated') {
     stage.cleared = true;
-    closeCounterWindow(session, false);
+    discardCounterWindow(session);
   }
 
   return session;

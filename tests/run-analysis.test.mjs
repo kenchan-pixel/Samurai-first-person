@@ -90,3 +90,40 @@ test('automatic ripostes do not inflate manual counter damage coaching', () => {
   assert.equal(stage.damageDealt, 3);
   assert.match(advice.tip, /相反方向掃/);
 });
+
+test('automatic riposte closures do not count unavailable manual counter openings', () => {
+  const phaseSession = createRunAnalysisSession();
+  observeRunAnalysisEvent(phaseSession, {
+    type: 'stage-start',
+    detail: { stage: 4, enemyId: 'crimson-shogun', enemyName: 'Crimson Shogun' },
+  });
+  observeRunAnalysisEvent(phaseSession, { type: 'perfect-parry', detail: {} });
+  observeRunAnalysisEvent(phaseSession, { type: 'perfect-riposte', detail: { damage: 1 } });
+  observeRunAnalysisEvent(phaseSession, { type: 'boss-phase', detail: { phase: 2 } });
+
+  const phaseReport = finishRunAnalysis(phaseSession, { won: false, score: 1200 });
+  const phaseAdvice = buildRunAdvice(phaseReport);
+  assert.equal(phaseReport.stages[0].counterOpenings, 0);
+  assert.equal(phaseReport.stages[0].counters, 0);
+  assert.equal(phaseAdvice.stageRows[0].counterOpenings, 0);
+  assert.equal(phaseAdvice.stageRows[0].counters, 0);
+
+  const defeatSession = createRunAnalysisSession();
+  observeRunAnalysisEvent(defeatSession, {
+    type: 'stage-start',
+    detail: { stage: 1, enemyId: 'ashigaru-scout', enemyName: 'Ashigaru Scout' },
+  });
+  observeRunAnalysisEvent(defeatSession, { type: 'backstep-evade', detail: {} });
+  observeRunAnalysisEvent(defeatSession, {
+    type: 'perfect-step-riposte',
+    detail: { damage: 1, defeated: true, openingClosed: true },
+  });
+  observeRunAnalysisEvent(defeatSession, { type: 'enemy-defeated', detail: { stage: 1 } });
+
+  const defeatReport = finishRunAnalysis(defeatSession, { won: true, score: 1500 });
+  const defeatAdvice = buildRunAdvice(defeatReport);
+  assert.equal(defeatReport.stages[0].counterOpenings, 0);
+  assert.equal(defeatReport.stages[0].counters, 0);
+  assert.equal(defeatAdvice.stageRows[0].counterOpenings, 0);
+  assert.equal(defeatAdvice.stageRows[0].counters, 0);
+});

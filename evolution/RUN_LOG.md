@@ -228,3 +228,38 @@ Chosen slice: candidate 1.
 - Same-device Stage 2 Ronin re-check using the corrected local stage analysis; tune only if the difficulty wall remains after the rules are understood.
 - Same-device enemy blade + first-person grip + Perfect Parry/Perfect STEP readability/performance check.
 - Privacy Decision Gate for anonymous backend telemetry only if local analysis proves the signals are worth collecting remotely.
+
+## Run 038 — Legal counter-opening denominator repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the current-head P2 where automatic Perfect Parry / Perfect STEP damage could close a recovery through Blood Moon or defeat while the result card still counted a manual counter opportunity that never legally existed.
+
+### Preflight / evidence
+
+- Exact previous HEAD `a3a1a4a9d3a35ffb2a0b05910d28505824fb71bc`: CI #66 / run `33136005197` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- The exact-head Second Hourly review identified one actionable P2: `counterOpenings` was incremented before an automatic riposte could trigger `boss-phase` / `enemy-defeated`, so the visible `反擊 x/y` denominator could include an impossible swipe follow-up.
+- Earlier current-head counter-damage coaching repair remains correct; no P0/P1, runtime, deployment, privacy or combat-authority blocker was found.
+- Remote gameplay telemetry remains outside the approved privacy boundary and was not implemented.
+
+### Delivered repair
+
+- Counter openings remain provisional while a manual swipe is pending. If `boss-phase` or `enemy-defeated` closes that recovery before a manual counter is accepted, the analysis removes that provisional opening from the denominator.
+- A real manual counter still closes its pending opening first, so a manual counter that itself triggers Blood Moon or defeat remains correctly counted.
+- Normal Perfect Parry / Perfect STEP recoveries that stay open remain counted exactly as before.
+- The result card therefore reports only legally available manual swipe opportunities rather than suggesting the player missed an action the combat engine had already closed.
+
+### Verification / regression boundaries
+
+- Added focused run-analysis regression coverage for both closure routes: Perfect Parry → Blood Moon and Perfect STEP → defeat must each leave `counterOpenings` at zero when no manual swipe can be accepted.
+- The test also checks the stage-row view model used by the visible `反擊 x/y` result line, so its denominator follows the corrected legal-opening count.
+- Existing Ronin-reading, missed-opening, STEP and manual-counter-damage tests remain intact.
+- No combat timing, damage, score, parry/STEP window, input, boss phase logic, mastery score, renderer, persistence/network/privacy boundary or Ronin balance value changed.
+- Post-commit CI/Preview remain pending self-verification by protocol; the Draft PR run comment will carry the exact commit SHA and verification receipt.
+
+### Next candidates
+
+- Same-device Stage 2 Ronin re-check using the corrected local stage analysis; tune only if the difficulty wall remains after the rules are understood.
+- Same-device enemy blade + first-person grip + Perfect Parry/Perfect STEP readability/performance check.
+- Privacy Decision Gate for anonymous backend telemetry only if local analysis proves the signals are worth collecting remotely.
