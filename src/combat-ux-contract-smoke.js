@@ -1,4 +1,4 @@
-import { directionFromErgonomicTap, rectIsNeutralForErgonomicTap } from './combat-ux.js';
+import { directionFromErgonomicTap, pauseRectIsTopRightHudSafe } from './combat-ux.js';
 
 const root = document.documentElement;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -120,6 +120,7 @@ async function run() {
     !pauseButton.hidden &&
     root.dataset.gamePaused === 'false' &&
     root.dataset.pauseLayout === 'pass' &&
+    root.dataset.pausePlacement === 'top-right' &&
     root.dataset.pauseInputSafe === 'pass'
   , 900);
   if (!liveReady) {
@@ -159,10 +160,32 @@ async function run() {
     bottom: pauseRect.bottom - rect.top,
   };
   mark(
-    'combatUxPauseNeutral',
-    rectIsNeutralForErgonomicTap(localPauseRect, rect.width, rect.height) &&
+    'combatUxPauseHudSafe',
+    pauseRectIsTopRightHudSafe(localPauseRect, rect.width, rect.height) &&
+      root.dataset.pausePlacement === 'top-right' &&
       root.dataset.pauseInputSafe === 'pass' &&
       root.dataset.pauseLayout === 'pass',
+  );
+
+  const pauseCenterX = (pauseRect.left + pauseRect.right) / 2;
+  const pauseCenterY = (pauseRect.top + pauseRect.bottom) / 2;
+  const pauseOwnsTap = document.elementFromPoint(pauseCenterX, pauseCenterY) === pauseButton;
+  const topNeighborX = pauseRect.left - 8;
+  const topNeighborY = pauseCenterY;
+  const rightNeighborX = pauseCenterX;
+  const rightNeighborY = pauseRect.bottom + 8;
+  const topNeighborTarget = document.elementFromPoint(topNeighborX, topNeighborY);
+  const rightNeighborTarget = document.elementFromPoint(rightNeighborX, rightNeighborY);
+  root.dataset.combatUxPauseHit = describeTarget(document.elementFromPoint(pauseCenterX, pauseCenterY));
+  root.dataset.combatUxPauseTopNeighbor = describeTarget(topNeighborTarget);
+  root.dataset.combatUxPauseRightNeighbor = describeTarget(rightNeighborTarget);
+  mark(
+    'combatUxPauseHitIsolation',
+    pauseOwnsTap &&
+      topNeighborTarget === canvas &&
+      rightNeighborTarget === canvas &&
+      directionFromErgonomicTap(topNeighborX - rect.left, topNeighborY - rect.top, rect.width, rect.height) === 'top' &&
+      directionFromErgonomicTap(rightNeighborX - rect.left, rightNeighborY - rect.top, rect.width, rect.height) === 'right',
   );
 
   pauseButton.click();
@@ -186,6 +209,7 @@ async function run() {
     root.dataset.gamePaused === 'false' &&
       pauseScreen.hidden &&
       !pauseButton.hidden &&
+      root.dataset.pausePlacement === 'top-right' &&
       root.dataset.pauseInputSafe === 'pass',
   );
 
@@ -208,7 +232,8 @@ async function run() {
     'combatUxStartExecuted',
     'combatUxTopParryPath',
     'combatUxRightParryPath',
-    'combatUxPauseNeutral',
+    'combatUxPauseHudSafe',
+    'combatUxPauseHitIsolation',
     'combatUxPauseFreeze',
     'combatUxGuideKeepsPaused',
     'combatUxResume',

@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 49,
-  "last_action_type": "FEATURE",
-  "last_action": "Added presentation-only Crimson Shogun signature phase choreography so Phase I heavy reads feel deliberate and Blood Moon Phase II becomes lower, more forward, more directional and more crimson without changing combat authority",
-  "last_commit": "cd65ebcb07b54354d6af548ab49e01f2ce40aa50",
+  "run_number": 50,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Moved the live Pause control out of the lower-centre play field into the conventional top-right safe-area HUD corner with bounded button-only hit isolation and adjacent top/right parry verification",
+  "last_commit": "93c8fecfd5994adec189e6e32707ef2d05c14c53",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Physical-iPhone Shogun practice: confirm Phase I versus Blood Moon signature motion is clearer without hiding blade direction or hurting frame rate",
+    "Physical-iPhone re-check: confirm the restored top-right Pause stays visually quiet and adjacent top/right parries remain comfortable with the 42% upper-parry reach",
     "Repeat Ronin/Shogun practice and use local stage analysis plus feel before any balance change",
-    "After core phone acceptance, consider a bounded challenge-mode slice rather than more verification-only work"
+    "After core phone acceptance, consider one bounded challenge-mode slice rather than more verification-only work"
   ]
 }

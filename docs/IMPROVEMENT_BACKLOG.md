@@ -32,6 +32,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 044:** repaired the Pause/input collision by moving the 44×44 Pause control wholly into a neutral lower-centre tap band, adding real-app Pause/parry/freeze/resume/restart/home browser coverage, and recording the accepted ergonomic input/Pause contract in the cumulative SOT.
 - **Runs 045–048:** repaired the production Combat UX exact-head gate until it genuinely proves the real Start/parry path under a CDP-emulated 320×568 portrait viewport instead of desktop window-size assumptions.
 - **Run 049:** added presentation-only Crimson Shogun signature phase language: deliberate Phase I heavy preparation plus lower, more forward, more directional and more crimson Blood Moon motion on the existing shared rig without changing combat balance.
+- **Run 050:** restored Pause to a conventional top-right safe-area/HUD position after direct physical-iPhone owner feedback, with button-only hit isolation and 320×568 proof that immediately adjacent top/right canvas taps still reach their directional parries.
 
 ## Highest priority — physical-phone acceptance
 
@@ -39,7 +40,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 2. **Physical-iPhone blade + Shogun signature re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, the trail follows the actual weapon path, and the stronger Blood Moon body/weapon language does not hide direction.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
-5. **STEP + blade-read + Pause layout** — confirm normal STEP vs Perfect STEP feedback, the opt-in high-contrast rails and the neutral lower-centre Pause control remain easy to reach without intercepting intended top/right/bottom/left parries or restoring dense combat text.
+5. **STEP + blade-read + Pause layout** — confirm normal STEP vs Perfect STEP feedback, the opt-in high-contrast rails and the quiet top-right Pause stay easy to use without restoring dense combat text; Pause should consume only its own 44×44 button while immediately adjacent top/right parries remain reachable.
 6. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
 
 ## High-value candidates after core acceptance
@@ -54,7 +55,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–049 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and local-only presentation/accessibility preferences to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–050 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and local-only presentation/accessibility preferences to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 

@@ -324,3 +324,43 @@ Chosen slice: candidate 1.
 - Re-check the new Shogun Phase I/Blood Moon language on the target phone together with blade trajectory and first-person grip.
 - Repeat Ronin/Shogun practice and use local analysis plus feel before any balance change.
 - After core phone acceptance, consider one bounded challenge-mode slice rather than further verification-only work.
+
+## Run 050 — Top-right Pause HUD placement repair
+
+**Date:** 2026-08-29  
+**Action type:** REGRESSION_FIX  
+**Goal:** Resolve the direct owner P1 that the lower-centre Pause control sits inside the play field and undermines the simplified combat composition. Restore a conventional top-right Pause without weakening the 42% thumb-reach parry map or hiding an input collision behind a neutral-zone workaround.
+
+### Preflight / evidence
+
+- Exact previous HEAD `93c8fecfd5994adec189e6e32707ef2d05c14c53`: CI #82 / run `33180868751` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
+- Draft PR #1 remains open, Draft and unmerged; `main` remains untouched; inline review threads are empty.
+- The current exact-head All Repos review reports no new P0/P1/P2 finding on the Shogun signature slice, but that does not supersede the earlier direct owner P1 on PR comment `#issuecomment-5453794517`. By repository authority and review-gate rules, the owner P1 still applies and blocks another feature.
+- The stale baseline/checklist still described the Run 044 lower-centre neutral-band compromise as accepted behaviour. This run therefore repairs both the production placement and its verification/SOT contract.
+
+### Delivered repair
+
+- Moved the same 44×44 **Pause** button from `left:50% / lower-centre` to the conventional top-right safe-area/HUD corner, offset below the top enemy HUD so the centre combat read stays clean. The visual treatment is slightly quieter than the old lower-centre button.
+- Replaced “Pause must be neutral under the parry mapper” as the placement contract with `pauseRectIsTopRightHudSafe()`: the rendered button must remain bounded in the top-right HUD area and points immediately left/below it must still map to **top** and **right** parries respectively.
+- Added explicit pointerdown/pointerup propagation isolation on the Pause element. The button intentionally owns its own 44×44 hit rectangle; it does not attempt to make that rectangle a simultaneous parry target.
+- Updated the real 320×568 CDP Combat UX gate to prove the actual rendered button centre hits Pause, while immediately adjacent points hit the canvas and retain their top/right production direction mapping. Existing freeze → 玩法 → resume → restart → home checks remain intact.
+- Updated Current Baseline, Regression Checklist, Improvement Backlog and Changelog so future runs do not move Pause back into the centre merely to satisfy the retired neutral-Pause assumption.
+
+### Verification / regression boundaries
+
+- Previous exact HEAD was terminal green before selecting this repair.
+- `node --check` passes for the modified `src/combat-ux.js`, `src/combat-ux-contract-smoke.js` and focused `tests/combat-ux.test.mjs`.
+- A focused geometry check proves the expected 320×568 top-right Pause rectangle is accepted, its left neighbour resolves to top, its lower neighbour resolves to right, and the old lower-centre rectangle is no longer accepted as the Pause HUD placement.
+- The 42% portrait top mapper itself is unchanged. No parry/Perfect/STEP timing, damage, boss/Ronin balance, score, renderer/asset authority, persistence/network/privacy boundary or merge authority is changed.
+- Exact-head CI and Vercel Preview for this single implementation commit are pending post-commit self-verification; the Draft PR run comment is the authoritative receipt.
+
+### Human acceptance / residual risk
+
+- The button deliberately consumes its own 44×44 top-right hitbox; automation proves neighbouring parry access, not subjective one-hand reach. Re-check on the target iPhone that Pause feels conventional and visually quiet while the 42% upper-parry reach remains comfortable.
+- If physical play shows the button too close to the enemy blade/HUD, tune the HUD offset rather than reintroducing a centre control or changing combat timing.
+
+### Next candidates
+
+- Re-check the top-right Pause together with the 42% upper-parry reach, blade trajectory and Shogun Blood Moon presentation on the target phone.
+- Repeat Ronin/Shogun practice and use local stage analysis plus feel before any balance change.
+- After core phone acceptance, consider one bounded challenge-mode slice rather than further verification-only work.

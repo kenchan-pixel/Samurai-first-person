@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.22.1-evolution — Top-right Pause HUD placement repair
+
+- Moved the live 44×44 Pause control from the lower-centre play field to the conventional top-right safe-area/HUD corner after direct physical-phone owner feedback.
+- Pause now owns only its own element hit rectangle; placement validation checks the actual rendered top-right geometry and requires immediately adjacent top/right points to remain canvas parry targets.
+- Updated the 320×568 production Combat UX gate to prove button hit isolation plus adjacent directional routing while retaining frozen time, 玩法-return-still-paused, resume, restart and home semantics.
+- No combat timing, damage, parry/STEP geometry, enemy balance, persistence/network or renderer authority changed.
+
 ## 0.22.0-evolution — Crimson Shogun signature phase language
 
 - Added presentation-only Crimson Shogun choreography on the existing shared 3D rig: Phase I heavy reads settle into a deliberate crouch/forward preparation, while Blood Moon Phase II becomes lower, more forward and more directionally committed.

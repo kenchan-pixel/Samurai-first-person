@@ -12,7 +12,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Optional 刀路清晰 toggle remains inside the 320×568 viewport, defaults off unless locally enabled, and does not enlarge the start-screen flow.
 - [ ] The compact 練浪人 / 練將軍 practice selector remains inside the 320×568 viewport and does not push the primary 拔刀 action off-screen.
 - [ ] STEP / 後撤 and the range chip remain clear of the four edge-block regions and the primary centre combat read.
-- [ ] The 44×44 Pause control remains wholly inside the neutral lower-centre tap band at 320×568 and does not overlap STEP or any directional parry region.
+- [ ] The 44×44 Pause control stays in the conventional top-right safe-area/HUD corner at 320×568, remains inside the viewport, sits below the enemy HUD, and does not intrude into the centre play field.
 
 ## Guided first duel
 
@@ -35,7 +35,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Tap near left produces left block.
 - [ ] In overlapping portrait corners the physically nearest edge wins, so intended left/right taps are not swallowed by the expanded top region.
 - [ ] A centre tap does not accidentally trigger an edge block.
-- [ ] The Pause control itself maps to no parry direction, while adjacent top/right taps still reach their intended parry regions.
+- [ ] Pause owns only its own 44×44 top-right hit rectangle: a Pause tap cannot become a parry, while points immediately outside the button still hit the canvas and route to their intended top/right parries.
 - [ ] Swipe direction is recognised for top, right, bottom, and left.
 - [ ] Tap and swipe are not both triggered by one gesture.
 - [ ] Mouse fallback remains usable.
@@ -44,7 +44,7 @@ Run this checklist before marking an evolution pull request complete.
 
 ## Pause and guide
 
-- [ ] Pause is available only during an active duel and does not replace an active directional edge target.
+- [ ] Pause is available only during an active duel; only the bounded HUD button replaces touch surface and the immediately adjacent top/right parry surface remains usable.
 - [ ] Opening Pause freezes game time, combat phase/timing windows and renderer motion; wall-clock time spent paused is not applied on resume.
 - [ ] Opening 玩法 from Pause and closing it returns to the still-paused state.
 - [ ] 繼續 resumes from the frozen phase without an immediate catch-up hit.
@@ -137,7 +137,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
 - [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, both practice entries and blade-read accessibility integrations in the real app document.
-- [ ] Production Combat UX smoke starts the real app at 320×568 and proves adjacent top/right parry routing, neutral Pause placement, frozen phase while paused, 玩法-return-still-paused, resume without catch-up, restart and home behavior.
+- [ ] Production Combat UX smoke starts the real app at 320×568 and proves adjacent top/right parry routing, top-right Pause placement and button-only hit isolation, frozen phase while paused, 玩法-return-still-paused, resume without catch-up, restart and home behavior.
 - [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness clicks both real practice entries and proves Ronin Stage 2 / Shogun Stage 4 entry → selected-duel retry → campaign handoff, with distinct practice result labels and campaign personal-best isolation.

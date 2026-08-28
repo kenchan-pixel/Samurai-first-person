@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.22.0-evolution**
+Version: **0.22.1-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -24,7 +24,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Successful parry, automatic ripostes, STEP evade and guard break use short pointer-transparent action cues instead of dense persistent text.
 - Live combat no longer shows the always-on `READ THE BLADE / PARRY NOW` prompt, footer gesture sentence, block-zone labels or arena subtitle. The compact live HUD keeps HP, stage/enemy and both posture values, while detailed instructions live behind **玩法**.
 - With **刀路清晰** off, the existing centre direction cue remains available. With **刀路清晰** on, its edge rail becomes the sole directional overlay and the centre arrow/label is suppressed to avoid duplicate guidance.
-- A 44×44 **Pause** control sits in a deliberately neutral lower-centre tap band rather than an active directional edge. It opens **繼續 / 玩法 / 重新開始 / 返回主頁** without taking over a top/right/bottom/left parry target.
+- A 44×44 **Pause** control sits in the conventional top-right safe-area/HUD corner, below the enemy HUD rather than in the centre play field. The button intentionally owns only its own bounded hit rectangle; immediately adjacent top/right canvas taps remain available for their directional parries. It opens **繼續 / 玩法 / 重新開始 / 返回主頁**.
 - Pause freezes the game-time clock, combat phase and animation progress. Closing the guide returns to the still-paused menu; resume does not catch up wall-clock pause time. Restart/home reuse the existing normal restart/start flows.
 - No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis/practice passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
 - No remote gameplay analytics/telemetry backend is added. Gameplay statistics remain local-only until a separate privacy/data-retention/backend Decision Gate is approved.
@@ -43,7 +43,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - Four defensive directions: top, right, bottom, left.
 - Portrait input is intentionally asymmetric for thumb reach: the central **top** parry region reaches to 42% of screen height, while left/right/bottom keep the existing 28% edge depth. When regions overlap, the physically nearest edge wins; the neutral centre remains non-parry. Landscape keeps the original symmetric 28% edge map.
-- The Pause control must remain wholly inside that neutral band under the same ergonomic direction mapper; adjacent top/right taps must still reach their intended parry regions.
+- The Pause control may sit over the top/right directional corner, but only its own 44×44 element may intercept input. The production layout contract requires the rendered button to remain bounded in the top-right HUD area while points immediately outside it still hit the canvas and map to **top** and **right** parries.
 - Edge tap attempts a matching directional block; correct timing/direction parries, with a smaller perfect-parry window.
 - Four-direction swipe attacks remain the normal/manual counter during recovery.
 - Wrong direction/timing can result in damage; a manual counterattack can land once per recovery opening.
@@ -145,7 +145,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
 - `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
-- Focused Combat UX coverage proves the 320×568 portrait top-reach map, neutral-centre Pause geometry, adjacent top/right parry routing and pausable-clock freeze/resume semantics. The production query-gated browser contract additionally exercises the real Pause → 玩法 → resume → restart → home flow against the actual app document.
+- Focused Combat UX coverage proves the 320×568 portrait top-reach map, conventional top-right Pause HUD placement, bounded button-only hit isolation, adjacent top/right parry routing and pausable-clock freeze/resume semantics. The production query-gated browser contract additionally exercises the real Pause → 玩法 → resume → restart → home flow against the actual app document.
 - Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
 - Focused run-analysis coverage proves stage-local statistics, missed-counter detection, Ronin-specific advice selection, and that automatic ripostes cannot inflate manual-counter damage coaching.
 - Focused practice coverage proves the optional routes initialize the actual Stage 2 Ronin and Stage 4 Crimson Shogun definitions and terminate after the selected duel. The existing mastery browser harness additionally clicks both player-facing practice routes, requires retry/campaign handoff, renders the matching Stage 2/Stage 4 analysis, and preserves the campaign personal best; the real-app smoke requires both practice entries to initialize inside the production 320×568 layout.
