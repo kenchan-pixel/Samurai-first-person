@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 42,
-  "last_action_type": "FEATURE",
-  "last_action": "Expanded bounded duel practice so the start screen can launch the real Stage 2 Wandering Ronin or Stage 4 Crimson Shogun directly, with retry/campaign handoff and practice-only mastery/run analysis",
-  "last_commit": "ba0874d93bec3f0d47eb57fdf26a19900ea546d1",
+  "run_number": 43,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Reworked the mobile combat UX from direct physical-iPhone feedback: reachable portrait top-parry input, non-duplicated blade-read cues, quieter live combat text and a true time-freezing Pause/玩法 flow; added a production-composition Shogun-practice Blood Moon regression",
+  "last_commit": "5d7f1b64a3882102da27428da063e04dec6ff4b8",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Use direct Ronin and Shogun practice on the same physical iPhone to compare readability, missed counters, Perfect Parry/Perfect STEP feel and boss Phase II pressure before any balance change",
-    "Re-check all four enemy blade trajectories plus the first-person two-hand grip and optional blade-read mode for sustained phone readability/performance",
-    "Consider one bounded challenge-mode or boss signature-motion refinement after physical-phone core acceptance; keep remote gameplay telemetry behind its separate privacy Decision Gate"
+    "Physical-iPhone re-check: upper-parry thumb reach, pause-button collision, blade-read rails and reduced live text during Ronin/Shogun practice",
+    "Repeat Ronin/Shogun practice and use the local stage analysis before any balance change",
+    "After core acceptance consider one bounded challenge-mode or boss signature-motion refinement; keep remote telemetry behind the separate privacy Decision Gate"
   ]
 }

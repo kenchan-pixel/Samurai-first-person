@@ -1,6 +1,9 @@
-import { CombatEngine, Direction, directionFromSwipe, directionFromTap } from './game-core.js';
+import { CombatEngine, Direction, directionFromSwipe } from './game-core.js';
 import { View } from './renderer.js';
 import { motionPhaseForSnapshot } from './animation-motion.js';
+import { PausableCombatClock, directionFromErgonomicTap, installCombatUx } from './combat-ux.js';
+
+installCombatUx();
 
 const $ = (selector) => document.querySelector(selector);
 const canvas = $('#game-canvas');
@@ -27,10 +30,17 @@ const U = {
   rt: $('#result-title'),
   rs: $('#result-summary'),
   rscore: $('#result-score'),
+  pauseButton: $('#pause-button'),
+  pauseScreen: $('#pause-screen'),
+  pauseResume: $('#pause-resume-button'),
+  pauseGuide: $('#pause-guide-button'),
+  pauseRestart: $('#pause-restart-button'),
+  pauseHome: $('#pause-home-button'),
 };
 
 const zones = [...document.querySelectorAll('.zone')];
 const engine = new CombatEngine();
+const clock = new PausableCombatClock(performance.now());
 const D = {
   [Direction.TOP]: ['↑', '上段', 0],
   [Direction.RIGHT]: ['→', '右方', 1],
@@ -51,8 +61,7 @@ const P = {
 
 let run = false;
 let ptr = null;
-let last = performance.now();
-let pause = 0;
+let hitStopUntil = 0;
 let msg = null;
 let msgUntil = 0;
 let action = 0;
@@ -117,10 +126,11 @@ try {
   document.documentElement.dataset.webgl = 'failed';
 }
 document.documentElement.dataset.startReady = String(!$('#start-button').disabled);
+document.documentElement.dataset.gamePaused = 'false';
 
 function say(a, b, d = 0) {
   msg = [a, b];
-  msgUntil = d ? performance.now() + d : Infinity;
+  msgUntil = d ? clock.now + d : Infinity;
 }
 
 function fmt(n) {
@@ -147,8 +157,8 @@ function hud(s, n) {
   U.stage.textContent = `STAGE ${s.stage} / ${s.stageCount}`;
   U.enemy.textContent = s.enemy.name;
   U.arena.textContent = s.enemy.title;
-  U.combo.textContent = `連擊 ${s.combo} · 架勢 ${s.playerPosture}/${s.playerPostureMax}`;
-  U.score.textContent = `敵勢 ${s.enemyPosture}/${s.enemyPostureMax} · ${fmt(s.score)}`;
+  U.combo.textContent = `架勢 ${s.playerPosture}/${s.playerPostureMax}`;
+  U.score.textContent = `敵勢 ${s.enemyPosture}/${s.enemyPostureMax}`;
   const p = P[s.phase] || P.ready;
   U.phase.textContent = p[0];
   if (msg && n < msgUntil) {
@@ -168,6 +178,40 @@ function hud(s, n) {
   } else {
     U.ind.classList.remove('direction-indicator--visible', 'direction-indicator--danger');
   }
+  document.documentElement.dataset.combatPhase = s.phase;
+}
+
+function setPauseUi(paused) {
+  if (U.pauseScreen) U.pauseScreen.hidden = !paused;
+  if (U.pauseButton) U.pauseButton.hidden = paused || !run;
+  document.documentElement.dataset.gamePaused = String(Boolean(paused));
+}
+
+function pauseGame() {
+  if (!run || clock.paused) return;
+  ptr = null;
+  clock.pause();
+  setPauseUi(true);
+}
+
+function resumeGame() {
+  if (!run || !clock.paused) return;
+  clock.resume();
+  setPauseUi(false);
+  audio.on().catch(() => {});
+}
+
+function returnHome() {
+  ptr = null;
+  run = false;
+  clock.pause();
+  engine.reset(clock.now);
+  result.classList.remove('modal--visible');
+  start.classList.add('modal--visible');
+  msg = null;
+  action = 0;
+  shake = 0;
+  setPauseUi(false);
 }
 
 function events(n) {
@@ -175,33 +219,31 @@ function events(n) {
     const d = e.detail;
     if (e.type === 'stage-start') {
       audio.cue('stage');
-      say(`STAGE ${d.stage}`, d.enemyName, 1200);
+      say(`STAGE ${d.stage}`, d.enemyName, 900);
     }
     if (e.type === 'telegraph') audio.cue('telegraph');
-    if (e.type === 'feint') say('FEINT', '方向改變，重新判斷', 520);
+    if (e.type === 'feint') say('FEINT', '方向改變，重新判斷', 420);
     if (e.type === 'strike') audio.cue('strike');
     if (e.type === 'parry' || e.type === 'perfect-parry') {
       action = e.type === 'perfect-parry' ? 2 : 1;
       actionDir = d.direction;
       actionAt = n;
       shake = action === 2 ? 1.2 : 0.7;
-      if (action === 2) pause = n + 48;
+      if (action === 2) hitStopUntil = n + 48;
       audio.cue(action === 2 ? 'perfect' : 'parry');
       flash();
       navigator.vibrate?.(action === 2 ? [18, 20, 28] : 22);
-      say(action === 2 ? 'PERFECT PARRY' : 'PARRY', `敵勢 ${d.enemyPosture}/${d.enemyPostureMax} · 掃屏反擊`, 620);
     }
     if (e.type === 'enemy-guard-break') {
       shake = 1.4;
-      pause = n + 58;
+      hitStopUntil = n + 58;
       audio.cue('perfect');
       flash();
       navigator.vibrate?.([24, 18, 34]);
-      say('GUARD BREAK', '敵人架勢崩潰 · 立即反擊', 760);
     }
     if (e.type === 'parry-miss') {
       zone(d.direction, true);
-      say('MISS', d.reason === 'wrong-direction' ? '方向錯誤' : '時機未到', 380);
+      say('MISS', d.reason === 'wrong-direction' ? '方向錯誤' : '時機未到', 320);
     }
     if (e.type === 'counter' || e.type === 'attack-miss') {
       action = 3;
@@ -211,23 +253,23 @@ function events(n) {
       if (e.type === 'counter') {
         hitAt = n;
         shake = d.guardBroken ? 1.1 : 0.65;
-        pause = n + (d.guardBroken ? 52 : 34);
+        hitStopUntil = n + (d.guardBroken ? 52 : 34);
         audio.cue('enemy');
         flash();
-        say(d.guardBroken ? `BREAK -${d.damage} HP` : `-${d.damage} HP`, d.guardBroken ? '破防重擊' : '命中', 480);
+        say(d.guardBroken ? `BREAK -${d.damage} HP` : `-${d.damage} HP`, d.guardBroken ? '破防重擊' : '命中', 420);
       } else {
-        say('NO OPENING', '先格擋再反擊', 420);
+        say('NO OPENING', '先格擋再反擊', 340);
       }
     }
     if (e.type === 'player-hit') {
       shake = d.guardBroken ? 2.3 : 1.8;
-      pause = n + (d.guardBroken ? 82 : 65);
+      hitStopUntil = n + (d.guardBroken ? 82 : 65);
       audio.cue('hit');
       flash(true);
       navigator.vibrate?.(d.guardBroken ? [55, 20, 55] : [40, 20, 40]);
-      say(d.guardBroken ? 'GUARD BROKEN' : `-${d.damage} HP`, d.guardBroken ? `架勢崩潰 · -${d.damage} HP` : '攻擊突破防線', 700);
+      say(d.guardBroken ? 'GUARD BROKEN' : `-${d.damage} HP`, d.guardBroken ? `架勢崩潰 · -${d.damage} HP` : '攻擊突破防線', 560);
     }
-    if (e.type === 'enemy-defeated') say('STAGE CLEAR', '收刀，準備下一場', 1100);
+    if (e.type === 'enemy-defeated') say('STAGE CLEAR', '收刀，準備下一場', 850);
     if (e.type === 'victory' || e.type === 'defeat') {
       const win = e.type === 'victory';
       if (win) audio.cue('victory');
@@ -237,6 +279,8 @@ function events(n) {
       U.rscore.textContent = fmt(d.score);
       result.classList.add('modal--visible');
       run = false;
+      clock.pause();
+      setPauseUi(false);
     }
   }
 }
@@ -245,74 +289,87 @@ function begin() {
   audio.on().catch(() => {});
   start.classList.remove('modal--visible');
   result.classList.remove('modal--visible');
-  engine.start(performance.now());
+  clock.reset(performance.now());
+  engine.start(clock.now);
   action = 0;
   shake = 0;
   msg = null;
+  hitStopUntil = 0;
   run = true;
+  setPauseUi(false);
 }
 
 function end(e) {
-  if (!ptr || ptr.id !== e.pointerId || !run) {
+  if (!ptr || ptr.id !== e.pointerId || !run || clock.paused) {
     ptr = null;
     return;
   }
   const r = canvas.getBoundingClientRect();
   const dx = e.clientX - ptr.x;
   const dy = e.clientY - ptr.y;
-  const sw = performance.now() - ptr.t < 850 ? directionFromSwipe(dx, dy, Math.max(34, r.width * 0.085)) : null;
+  const sw = clock.now - ptr.t < 850 ? directionFromSwipe(dx, dy, Math.max(34, r.width * 0.085)) : null;
   if (sw) {
     zone(sw);
-    const x = engine.attemptAttack(sw, performance.now());
+    const x = engine.attemptAttack(sw, clock.now);
     if (!x.accepted) {
       action = 3;
       actionDir = sw;
-      actionAt = performance.now();
+      actionAt = clock.now;
     }
   } else {
-    const d = directionFromTap(e.clientX - r.left, e.clientY - r.top, r.width, r.height);
+    const d = directionFromErgonomicTap(e.clientX - r.left, e.clientY - r.top, r.width, r.height);
     if (d) {
       zone(d);
       action = 1;
       actionDir = d;
-      actionAt = performance.now();
-      engine.attemptParry(d, performance.now());
-    } else {
-      say('EDGE INPUT', '點擊靠近畫面四邊先可格擋', 460);
+      actionAt = clock.now;
+      engine.attemptParry(d, clock.now);
     }
   }
   ptr = null;
 }
 
-function loop(n) {
+function loop(realNow) {
   requestAnimationFrame(loop);
-  const dt = Math.min(50, n - last);
-  last = n;
-  if (run && n >= pause) engine.update(n);
-  events(n);
-  const s = engine.snapshot(n);
-  hud(s, n);
-  shake = Math.max(0, shake - dt * 0.0048);
-  if (action && n - actionAt > (action === 3 ? 390 : 290)) action = 0;
+  const { now, frameDt } = clock.tick(realNow);
+  if (run && !clock.paused && now >= hitStopUntil) engine.update(now);
+  events(now);
+  const s = engine.snapshot(now);
+  hud(s, now);
+  shake = Math.max(0, shake - frameDt * 0.0048);
+  if (action && now - actionAt > (action === 3 ? 390 : 290)) action = 0;
   const motionPhase = motionPhaseForSnapshot(s);
   const renderState = motionPhase === s.phase ? s : { ...s, phase: motionPhase };
-  view?.draw(renderState, n, {
+  view?.draw(renderState, now, {
     attackDirectionIndex: D[s.attack?.displayedDirection]?.[2] || 0,
     playerAction: action,
     playerDirectionIndex: D[actionDir]?.[2] || 0,
-    hitAge: (n - hitAt) / 320,
+    hitAge: (now - hitAt) / 320,
     shake,
   });
 }
 
 $('#start-button').addEventListener('click', begin);
 $('#restart-button').addEventListener('click', () => {
-  engine.reset(performance.now());
+  engine.reset(clock.now);
   begin();
 });
+U.pauseButton?.addEventListener('click', pauseGame);
+U.pauseResume?.addEventListener('click', resumeGame);
+U.pauseGuide?.addEventListener('click', () => $('#combat-guide-button')?.click());
+U.pauseRestart?.addEventListener('click', () => {
+  setPauseUi(false);
+  $('#restart-button').click();
+});
+U.pauseHome?.addEventListener('click', returnHome);
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || !run || !$('#combat-guide-sheet')?.hidden) return;
+  if (clock.paused) resumeGame();
+  else pauseGame();
+});
 canvas.addEventListener('pointerdown', (e) => {
-  if (run && !ptr) {
-    ptr = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now() };
+  if (run && !clock.paused && !ptr) {
+    ptr = { id: e.pointerId, x: e.clientX, y: e.clientY, t: clock.now };
     canvas.setPointerCapture?.(e.pointerId);
   }
 });
