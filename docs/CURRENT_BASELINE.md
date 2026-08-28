@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.17.0-evolution**
+Version: **0.18.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -20,7 +20,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The start screen includes a prominent **玩法** button with the complete core loop, Perfect Parry, counter direction bonus, posture/guard break, normal STEP, **Perfect STEP**, and Ronin feints.
 - Entering Stage 2 gives one short Ronin cue telling the player to wait for the final blade direction because feints can change the initial read.
 - Successful parry, automatic ripostes, STEP evade and guard break use short pointer-transparent action cues instead of dense persistent text.
-- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
+- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
 - No remote gameplay analytics/telemetry backend is added. Gameplay statistics remain local-only until a separate privacy/data-retention/backend Decision Gate is approved.
 
 ## Core combat
@@ -57,12 +57,15 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Boss blood-moon/ember atmosphere remains bounded, pointer-transparent and honours reduced motion.
 - Restart restores Phase I; victory flows into mastery.
 
-## Mastery and replay feedback
+## Mastery, local run analysis and replay feedback
 
 - Duel telemetry tracks parry attempts/success, Perfect Parries, guard breaks, manual counters, hits, damage and elapsed time **locally** without changing combat resolution.
-- Automatic Perfect Parry / Perfect STEP riposte damage now contributes to local `damageDealt`, while `counters` remains a count of manual swipe counters only.
+- Automatic Perfect Parry / Perfect STEP riposte damage contributes to local `damageDealt`, while `counters` remains a count of manual swipe counters only.
 - Victory produces a 0–100 mastery score and S/A/B/C/D grade; defeat remains D while still showing run statistics.
 - Result screen shows mastery, parry accuracy, Perfect Parries, guard breaks, hits taken, clear time and numeric score.
+- **Run-end battle analysis is now stage-aware and local-only.** During the current run it tracks each reached stage's parry attempts/success, counter openings versus manual counters, STEP attempts/success, hits/damage and clear state using the existing combat event stream.
+- The result screen adds compact per-stage cards plus one actionable coaching tip. On defeat it focuses the last reached stage; on victory it focuses the weakest stage from the run. Examples include missed counter openings, low Ronin parry accuracy, low STEP success, excessive hits or low counter damage.
+- The analysis is deliberately ephemeral: it is held only in memory for the current run and sends nothing to a backend. It stores no raw touch coordinates, device identifier, account data or remote session identifier and does not change the separate remote-telemetry Decision Gate.
 - Better victories may replace a local personal best; worse runs do not. Storage failure is non-fatal.
 - No account, network sync, remote analytics or external gameplay-data service is used.
 
@@ -82,10 +85,11 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Enemy full-body framing remains far enough back to keep helmet-to-feet silhouette and weapon path readable in portrait.
 - Top/right/bottom/left attacks drive the actual `Sword` bone through direction-specific 3D blade-tip trajectories that advance toward/cross the player-facing parry plane and follow through before recovery.
 - The bounded world-space trail follows actual blade-tip history rather than decorating a body pose; the old attached swing echoes remain suppressed by the trajectory layer.
-- The first-person player katana now includes a bounded **two-hand grip silhouette**: two forearms, hands, wrist guards, habaki and pommel are attached to the existing camera-space katana rig. They follow the existing directional parry/counter motion with small action-local wrist/forearm articulation, making the player weapon read as something physically held rather than a floating blade.
-- The added first-person grip is presentation-only: it does not alter swipe/parry direction mapping, damage, timing, hit logic, camera authority or combat state.
+- The first-person player katana includes a bounded **two-hand grip silhouette**: two forearms, hands, wrist guards, habaki and pommel are attached to the existing camera-space katana rig. They follow the existing directional parry/counter motion with small action-local wrist/forearm articulation, making the player weapon read as something physically held rather than a floating blade.
+- The first-person grip is presentation-only: it does not alter swipe/parry direction mapping, damage, timing, hit logic, camera authority or combat state.
 - Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
 - Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
+- The new result analysis lives only on the post-run modal; it does not add persistent combat HUD text or cover the live blade-reading area.
 
 ## Mobile performance baseline
 
@@ -94,6 +98,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
+- Run analysis reuses the already-drained combat event stream and a small per-run in-memory record; it creates no network request and no gameplay-loop object growth.
 - Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
 
@@ -101,15 +106,17 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact and automatic-riposte systems are bounded adapters around that core.
 - `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old later perfect damage bonus only for the same opening.
-- `src/perfect-step.js` wraps the existing footwork seam only after a STEP has genuinely escaped attack reach. It owns the narrower Perfect STEP timing grade, 1-damage automatic sidestep riposte, guide/cue integration and conversion of its raw event into the existing visible counter event. Its riposte event now carries whether the opening was closed by Blood Moon/defeat so presentation never advertises an impossible manual follow-up. It does not change normal STEP reach, timing window, posture or manual-counter rules.
+- `src/perfect-step.js` wraps the existing footwork seam only after a STEP has genuinely escaped attack reach. It owns the narrower Perfect STEP timing grade, 1-damage automatic sidestep riposte, guide/cue integration and conversion of its raw event into the existing visible counter event. Its riposte event carries whether the opening was closed by Blood Moon/defeat so presentation never advertises an impossible manual follow-up. It does not change normal STEP reach, timing window, posture or manual-counter rules.
 - `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II HP threshold. Manual counter, Perfect Parry auto-riposte and Perfect STEP auto-riposte all invoke the same gate.
 - `src/onboarding-coach.js` owns the Guided Duel and phone-first gameplay-clarity sheet; Perfect STEP appends one additional guide card without changing combat authority.
 - `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
+- `src/run-analysis.js` is a local-only observer/result adapter. It keeps stage-level counters in a `WeakMap` for the active run, derives a single coaching tip, and injects the compact result analysis panel. It does not patch damage/timing/input authority, persist gameplay records, or use network APIs.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
 - `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
-- Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and now also proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
-- The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates without adding another broad test harness.
+- Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
+- Focused run-analysis coverage proves stage-local statistics, missed-counter detection and Ronin-specific advice selection. The existing mastery browser harness also requires the real run-analysis observer/result panel to render and remain inside the 320×568 result flow, without adding a parallel broad browser suite.
+- The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates.
 
 ## Approved 3D direction
 

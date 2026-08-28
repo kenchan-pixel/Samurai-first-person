@@ -1,3 +1,4 @@
+import './run-analysis.js';
 import { CombatEngine } from './game-core.js';
 import {
   createMasterySession,

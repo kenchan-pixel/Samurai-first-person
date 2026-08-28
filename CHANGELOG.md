@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0-evolution — Local post-run battle analysis
+
+- Added local-only per-stage run analysis for parry accuracy, manual counter openings/counters, STEP attempts/success, hits/damage and stage-clear state using the existing combat event stream.
+- The result screen now shows compact stage cards plus one actionable coaching tip; defeat focuses the last reached stage, while victory highlights the weakest stage from the run.
+- Advice can distinguish missed counter openings, low Ronin parry accuracy/final-direction reading, poor STEP matchups, excessive hits and low counter damage without changing any combat balance value.
+- The analysis is ephemeral and in-memory only: no backend, remote analytics, identifier, raw input position or persistent gameplay log is introduced. The separate telemetry/privacy Decision Gate remains unchanged.
+- Added focused Node coverage and extended the existing mastery browser harness so the real result analysis renders and the complete result/restart flow stays inside the 320×568 acceptance viewport.
+
 ## 0.17.0-evolution — First-person two-hand katana rig
 
 - Replaced the floating first-person katana silhouette with a bounded two-hand presentation layer on the existing PlayCanvas player rig: two forearms, two hands, wrist guards, habaki and pommel now visibly connect the weapon to the player.

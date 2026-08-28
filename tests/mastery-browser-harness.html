@@ -82,6 +82,15 @@
         if (!firstSummary.includes(label)) throw new Error(`result summary missing ${label}`);
       }
 
+      const analysis = document.querySelector('#result-analysis');
+      const analysisReady =
+        root.dataset.runAnalysisReady === 'true' &&
+        root.dataset.runAnalysisRendered === 'true' &&
+        Boolean(analysis && !analysis.hidden) &&
+        (analysis?.querySelectorAll('.result-analysis__stage').length || 0) >= 1 &&
+        Boolean((analysis?.querySelector('[data-analysis-tip]')?.textContent || '').trim());
+      root.dataset.runAnalysis = String(analysisReady);
+
       await completeVictory({ missFirst: true, lateParry: true });
       root.dataset.masteryBestPreserved = String(localStorage.getItem(BEST_KEY) === firstBest);
 
@@ -102,10 +111,16 @@
 
       const contentRect = document.querySelector('#result-content').getBoundingClientRect();
       const restartRect = document.querySelector('#restart-button').getBoundingClientRect();
-      const fitsViewport = contentRect.top >= 0 && restartRect.bottom <= window.innerHeight && contentRect.width <= window.innerWidth;
+      const analysisRect = document.querySelector('#result-analysis')?.getBoundingClientRect();
+      const fitsViewport =
+        contentRect.top >= 0 &&
+        restartRect.bottom <= window.innerHeight &&
+        contentRect.width <= window.innerWidth &&
+        (!analysisRect || (analysisRect.left >= 0 && analysisRect.right <= window.innerWidth));
       root.dataset.resultLayout = fitsViewport ? 'pass' : 'fail';
 
       const passed =
+        root.dataset.runAnalysis === 'true' &&
         root.dataset.masteryBestPreserved === 'true' &&
         root.dataset.masteryStorageFallback === 'true' &&
         root.dataset.resultLayout === 'pass';

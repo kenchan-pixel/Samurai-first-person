@@ -151,3 +151,46 @@ Chosen slice: candidate 1.
 - Same-device Stage 2 Ronin re-check after the gameplay guide; tune only if the difficulty wall remains.
 - Same-device enemy blade + new first-person grip + Perfect Parry/Perfect STEP readability/performance check.
 - Privacy Decision Gate for anonymous balancing telemetry before any backend collection is implemented.
+
+## Run 036 — Local post-run battle analysis
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Turn the existing local combat event stream into useful per-stage feedback so a difficult run can show whether the player struggled with reading/parry accuracy, missed counter openings, STEP use or incoming hits without prematurely nerfing Stage 2 or introducing remote tracking.
+
+### Preflight / evidence
+
+- Exact previous HEAD `7f7398fb358c4974e216ecfa88c8aaa64757428b`: CI #64 / run `33129854462` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- The exact-head Second Hourly review reported **no actionable P0/P1/P2** finding. Remaining concerns were physical-iPhone readability/performance acceptance only.
+- The latest product evidence says Stage 2 felt difficult, but the SOT still requires a post-clarity phone re-check before changing Ronin timing/damage/health. A remote analytics backend also remains prohibited pending the separate privacy/data-retention Decision Gate.
+
+### Candidate selection
+
+1. **Local stage-by-stage run analysis** — impact 5 / goal alignment 5 / novelty 4 / confidence 5 / safety 5. Gives immediate evidence on why a run failed while staying inside the approved local-only privacy boundary.
+2. **Stage-select / Ronin practice mode** — impact 5 / goal alignment 5 / novelty 5 / confidence 3 / safety 3. Useful, but it touches campaign/mastery/progression semantics and is a larger integration surface.
+3. **Timing-assist accessibility mode** — impact 4 / goal alignment 4 / novelty 4 / confidence 4 / safety 3. Helpful, but changes difficulty/scoring semantics and could mask the still-unmeasured Stage 2 balance issue.
+
+Chosen slice: candidate 1.
+
+### Delivered slice
+
+- Added a bounded `src/run-analysis.js` observer that keeps per-stage run statistics in memory using the existing CombatEngine event stream; it does not modify combat resolution.
+- Tracks parry attempts/success, Perfect Parries, manual counter openings/counters, unused openings, STEP attempts/success/Perfect STEP, hits/damage, damage dealt and stage-clear state.
+- On defeat the analysis focuses the last reached stage; on victory it chooses the weakest stage from the run. It then emits one concrete coaching tip, such as waiting for Ronin's final blade path, using a missed counter opening, avoiding STEP against tracking attacks, or using opposite-direction counter damage.
+- The result modal now shows compact per-stage cards (`格擋`, `受擊`, `反擊`, `STEP`) plus the single coaching tip. The live combat HUD remains unchanged and uncluttered.
+- The analysis is ephemeral and local-only: no backend, fetch/XHR, identifier, raw touch position, device fingerprint or persistent gameplay log is introduced. The separate remote-telemetry Decision Gate remains unapproved and unchanged.
+
+### Verification / regression boundaries
+
+- Added focused Node tests for stage-local accounting, Ronin low-accuracy diagnosis, unused counter-opening detection and STEP outcomes.
+- Extended the existing mastery browser harness rather than adding another broad browser suite: it requires the run-analysis observer/result panel to render through the real patched CombatEngine victory flow and keeps the complete result/restart flow inside 320×568.
+- Existing mastery personal-best and blocked-localStorage checks remain in the same harness; run analysis itself does not use localStorage.
+- No Ronin timing/damage/HP/posture, combat input, parry/STEP window, boss logic, mastery scoring, renderer/asset pipeline, network/privacy boundary or merge authority changed.
+- Physical-iPhone acceptance remains the next evidence gate: retry Stage 2, then use the new Stage 2 card/tip together with feel/readability observations before any balance change.
+
+### Next candidates
+
+- Same-device Stage 2 Ronin re-check using the new local stage analysis; tune only if the difficulty wall remains after the rules are understood.
+- Same-device enemy blade + first-person grip + Perfect Parry/Perfect STEP readability/performance check.
+- Privacy Decision Gate for anonymous backend telemetry only if local analysis proves the signals are worth collecting remotely.
