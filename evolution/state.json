@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 51,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Aligned the outer production browser gate with the accepted top-right Pause HUD contract by requiring HUD safety and button-only hit isolation instead of the retired neutral-band marker",
-  "last_commit": "905971762630ec32e81d96a9a447971347f1a7af",
+  "run_number": 52,
+  "last_action_type": "FEATURE",
+  "last_action": "Reworked enemy attack presentation so the existing skinned Chest/arms/forearms and HandR-attached katana move as one direction-specific cut, with bottom attacks now reading as a committed low-to-high rising cut",
+  "last_commit": "f8f8e7a166225e92108012c47eae4fc6db71feee",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Physical-iPhone attack-animation repair: make hand, forearm, torso and katana read as one continuous committed cut for every enemy and all four directions, with bottom attacks redesigned as a clear low thrust, rising cut or downward low-line cut instead of an ambiguous disconnected move",
-    "After the base sword choreography is readable without overlays, add an optional Easy mode rhythm/timing ring that shows direction and the parry moment without becoming the normal-mode crutch",
+    "Physical-iPhone choreography acceptance: verify top/right/bottom/left attacks now read as continuous body-to-hand-to-katana cuts at normal speed, especially the new bottom rising cut and Crimson Shogun Blood Moon readability",
+    "After the base attack choreography is accepted, add an optional Easy mode rhythm/timing ring that communicates direction and parry moment without changing normal-mode combat authority",
     "Repeat Ronin/Shogun practice and use local stage analysis plus physical feel before any balance change"
   ]
 }

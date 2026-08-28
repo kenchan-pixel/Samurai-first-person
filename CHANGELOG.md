@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.23.0-evolution — Connected enemy attack choreography
+
+- Reworked the existing world-space enemy blade layer so every top/right/bottom/left attack now coordinates the skinned Chest, both upper arms, both forearms and the HandR-attached katana as one continuous direction-specific action rather than moving the sword independently of the body.
+- The sword hilt remains physically parented to `HandR`; the trajectory adapter samples the animated arm pose first, applies bounded direction-specific joint offsets, then aligns the attached weapon toward the existing player-facing cut path. Combat timing, hit logic, parry windows and damage remain renderer-neutral and unchanged.
+- Bottom attacks are now an explicit **rising cut**: the opponent sinks into a low guard, commits farther toward the player, crosses the player-facing plane and follows through upward instead of producing an ambiguous disconnected lower attack.
+- Side attacks gain mirrored torso/arm commitment and longer cross-body follow-through; the top attack retains a readable overhead wind-up/downward cut.
+- Added focused deterministic choreography coverage for four distinct cut paths, mirrored side commitment, low-to-high bottom motion and phase-boundary continuity. The existing production PlayCanvas browser gate still verifies all four blade paths cross the player-facing plane and the bounded six-segment actual-tip trail remains intact.
+- No new assets, gameplay backend, network work, timers or per-frame entity allocation are introduced. The optional Easy-mode rhythm/timing ring remains a later assistance layer after physical-phone acceptance of the base animation.
+
 ## 0.22.1-evolution — Top-right Pause HUD placement repair
 
 - Moved the live 44×44 Pause control from the lower-centre play field to the conventional top-right safe-area/HUD corner after direct physical-phone owner feedback.

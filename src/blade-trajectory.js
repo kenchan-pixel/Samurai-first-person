@@ -1,20 +1,11 @@
 import * as pc from 'playcanvas';
+import { STRIKE_CONTACT, enemyAttackChoreographyFrame } from './enemy-attack-choreography.js';
 
-const installed = Symbol.for('blade-reversal.blade-trajectory-v2');
+const installed = Symbol.for('blade-reversal.blade-trajectory-v3');
 const BLADE_LENGTH = 1.78;
 const PARRY_PLANE_Z = 2.25;
 const MAX_TRAIL_SEGMENTS = 6;
-const STRIKE_CONTACT = 0.62;
-
-// World-space blade axes, not unreachable absolute tip positions. Positive Z points
-// toward the first-person camera. Each cut begins from a readable guard, commits
-// through the player-facing plane, then exits on the opposite side.
-const PATHS = Object.freeze([
-  Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
-  Object.freeze({ wind: [0.73, 0.67, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
-  Object.freeze({ wind: [0.00, -0.985, 0.12], contact: [0.00, 0.18, 0.984], follow: [0.05, 0.84, 0.54] }),
-  Object.freeze({ wind: [-0.73, 0.67, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
-]);
+const GRIP_BONES = Object.freeze(['Chest', 'UpperArmR', 'ForearmR', 'UpperArmL', 'ForearmL', 'HandR']);
 
 const clamp01 = (v) => Math.max(0, Math.min(1, Number.isFinite(v) ? v : 0));
 const smooth = (v) => {
@@ -23,7 +14,7 @@ const smooth = (v) => {
 };
 const cutEase = (v) => {
   const x = clamp01(v);
-  return 1 - Math.pow(1 - x, 2.35);
+  return 1 - Math.pow(1 - x, 2.45);
 };
 const mix = (a, b, t) => a + (b - a) * t;
 const vec = (values) => new pc.Vec3(values[0], values[1], values[2]);
@@ -108,15 +99,39 @@ function pathDirection(path, phase, progress, baseDirection, recoveryDirection) 
   return baseDirection.clone().normalize();
 }
 
-function depthFor(phase, progress) {
+function depthFor(phase, progress, depthScale = 1) {
   const p = clamp01(progress);
-  if (phase === 'telegraph') return 0.08 * smooth(p);
-  if (phase === 'strike') {
-    if (p <= STRIKE_CONTACT) return mix(0.08, 1.02, cutEase(p / STRIKE_CONTACT));
-    return mix(1.02, 0.42, smooth((p - STRIKE_CONTACT) / (1 - STRIKE_CONTACT)));
+  let depth = 0;
+  if (phase === 'telegraph') depth = 0.08 * smooth(p);
+  else if (phase === 'strike') {
+    if (p <= STRIKE_CONTACT) depth = mix(0.08, 1.02, cutEase(p / STRIKE_CONTACT));
+    else depth = mix(1.02, 0.42, smooth((p - STRIKE_CONTACT) / (1 - STRIKE_CONTACT)));
+  } else if (phase === 'recovery' || phase === 'recovery-interrupted') depth = 0.42 * (1 - smooth(p));
+  return depth * depthScale;
+}
+
+function captureGripPose(view) {
+  const pose = {};
+  for (const name of GRIP_BONES) {
+    const bone = view.bladeGripBones?.[name];
+    if (!bone) continue;
+    const euler = bone.getLocalEulerAngles();
+    pose[name] = [euler.x, euler.y, euler.z];
   }
-  if (phase === 'recovery' || phase === 'recovery-interrupted') return 0.42 * (1 - smooth(p));
-  return 0;
+  return pose;
+}
+
+function applyGripChoreography(view, frame, basePose) {
+  if (!view.bladeGripBones || !basePose) return false;
+  let applied = 0;
+  for (const [name, offset] of Object.entries(frame.joints || {})) {
+    const bone = view.bladeGripBones[name];
+    const base = basePose[name];
+    if (!bone || !base) continue;
+    bone.setLocalEulerAngles(base[0] + offset[0], base[1] + offset[1], base[2] + offset[2]);
+    applied += 1;
+  }
+  return applied >= 5;
 }
 
 export function installBladeTrajectoryView(view) {
@@ -124,18 +139,23 @@ export function installBladeTrajectoryView(view) {
   Object.defineProperty(view, installed, { value: true });
 
   view.bladeWorldTrail = [];
+  view.bladeGripBones = null;
   view.bladeTrajectoryState = {
     ready: false,
     phase: 'ready',
     directionIndex: 0,
+    attackStyle: 'overhead-cut',
     tipX: 0,
     tipY: 0,
     tipZ: 0,
     crossedPlane: false,
     trailSegments: 0,
+    gripDistance: 999,
+    gripConnected: false,
+    choreographyApplied: false,
   };
 
-  let current = { phase: 'ready', progress: 0, directionIndex: 0, baseDirection: null };
+  let current = { phase: 'ready', progress: 0, directionIndex: 0, baseDirection: null, baseGripPose: null };
   let history = [];
   let lastPhase = 'ready';
   let lastDirection = 0;
@@ -143,12 +163,19 @@ export function installBladeTrajectoryView(view) {
   let lastBladeDirection = null;
   let recoveryDirection = null;
   let lastHistoryKey = '';
+  let baseModelPosition = null;
 
   const ready = view.characterReady?.then?.(() => {
     if (!view.skinnedSword || !view.skinnedModel) return false;
+    const bones = {};
+    for (const name of GRIP_BONES) bones[name] = view.skinnedModel.findByName(name);
+    if (GRIP_BONES.some((name) => !bones[name])) return false;
+    view.bladeGripBones = bones;
+    baseModelPosition = view.skinnedModel.getLocalPosition().clone();
     view.bladeWorldTrail = Array.from({ length: MAX_TRAIL_SEGMENTS }, (_, index) => trailEntity(view, index));
     view.bladeTrajectoryState.ready = true;
     document.documentElement.dataset.bladeTrajectory = 'worldspace-v2';
+    document.documentElement.dataset.enemyAttackChoreography = 'body-grip-blade-v1';
     return true;
   }).catch(() => false);
 
@@ -163,9 +190,13 @@ export function installBladeTrajectoryView(view) {
     const progress = clamp01(current.progress);
     const directionIndex = Math.max(0, Math.min(3, current.directionIndex | 0));
     const active = ['telegraph', 'strike', 'recovery', 'recovery-interrupted'].includes(phase);
-
-    const modelPos = model.getLocalPosition();
-    model.setLocalPosition(modelPos.x, modelPos.y, active ? depthFor(phase, progress) : 0);
+    const frame = enemyAttackChoreographyFrame(phase, progress, directionIndex);
+    const basePos = baseModelPosition || new pc.Vec3(0, 0, 0);
+    model.setLocalPosition(
+      basePos.x,
+      basePos.y + (active ? frame.modelY : 0),
+      basePos.z + (active ? depthFor(phase, progress, frame.depthScale) : 0),
+    );
 
     if (!active) {
       hideTrail(view);
@@ -175,14 +206,24 @@ export function installBladeTrajectoryView(view) {
       recoveryDirection = null;
       lastPhase = phase;
       lastDirection = directionIndex;
-      view.bladeTrajectoryState = { ...view.bladeTrajectoryState, phase, directionIndex, crossedPlane: false, trailSegments: 0 };
+      view.bladeTrajectoryState = {
+        ...view.bladeTrajectoryState,
+        phase,
+        directionIndex,
+        attackStyle: frame.id,
+        crossedPlane: false,
+        trailSegments: 0,
+        choreographyApplied: false,
+      };
       return;
     }
 
-    // `baseDirection` is sampled immediately after skeletal animation in draw(),
-    // before this presentation layer overrides the Sword's world orientation.
-    // Keeping that sample prevents the prerender pass from feeding our own
-    // trajectory back into telegraph/recovery blending.
+    const choreographyApplied = applyGripChoreography(view, frame, current.baseGripPose);
+
+    // Sampled immediately after skeletal animation and before this bounded
+    // presentation layer aligns the hand-attached Sword to the directional cut.
+    // The Sword origin remains parented to HandR; only its world orientation is
+    // corrected, so the hilt follows the animated arm chain instead of floating.
     const baseDirection = current.baseDirection?.clone() || sampledBladeDirection(sword);
 
     if (phase !== lastPhase || directionIndex !== lastDirection) {
@@ -195,10 +236,13 @@ export function installBladeTrajectoryView(view) {
       }
     }
 
-    const bladeDirection = pathDirection(PATHS[directionIndex], phase, progress, baseDirection, recoveryDirection);
+    const bladeDirection = pathDirection(frame.blade, phase, progress, baseDirection, recoveryDirection);
     sword.setRotation(quatFromUp(bladeDirection));
 
     const hilt = sword.getPosition().clone();
+    const hand = view.bladeGripBones?.HandR?.getPosition?.();
+    const gripDistance = hand ? hilt.clone().sub(hand).length() : 999;
+    const gripConnected = gripDistance <= 0.18;
     const actualTip = hilt.clone().add(bladeDirection.clone().mulScalar(BLADE_LENGTH));
     lastTip = actualTip.clone();
     lastBladeDirection = bladeDirection.clone();
@@ -222,11 +266,15 @@ export function installBladeTrajectoryView(view) {
       ready: true,
       phase,
       directionIndex,
+      attackStyle: frame.id,
       tipX: actualTip.x,
       tipY: actualTip.y,
       tipZ: actualTip.z,
       crossedPlane: phase === 'strike' && actualTip.z >= PARRY_PLANE_Z,
       trailSegments,
+      gripDistance,
+      gripConnected,
+      choreographyApplied,
     };
     lastPhase = phase;
     lastDirection = directionIndex;
@@ -239,9 +287,11 @@ export function installBladeTrajectoryView(view) {
       progress: snapshot?.phaseProgress || 0,
       directionIndex: meta?.attackDirectionIndex ?? 0,
       baseDirection: null,
+      baseGripPose: null,
     };
     const result = originalDraw(snapshot, now, meta);
     if (view.skinnedSword) current.baseDirection = sampledBladeDirection(view.skinnedSword);
+    if (view.bladeGripBones) current.baseGripPose = captureGripPose(view);
     apply();
     return result;
   };

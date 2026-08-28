@@ -33,29 +33,32 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Runs 045–048:** repaired the production Combat UX exact-head gate until it genuinely proves the real Start/parry path under a CDP-emulated 320×568 portrait viewport instead of desktop window-size assumptions.
 - **Run 049:** added presentation-only Crimson Shogun signature phase language: deliberate Phase I heavy preparation plus lower, more forward, more directional and more crimson Blood Moon motion on the existing shared rig without changing combat balance.
 - **Run 050:** restored Pause to a conventional top-right safe-area/HUD position after direct physical-iPhone owner feedback, with button-only hit isolation and 320×568 proof that immediately adjacent top/right canvas taps still reach their directional parries.
+- **Run 051:** repaired the outer browser gate so it validates the accepted top-right Pause HUD + button-only hit-isolation contract rather than the retired lower-centre neutral-band rule.
+- **Run 052:** rebuilt enemy attack presentation around a shared **body → arms → hand → katana** choreography layer. Top/side/bottom cuts now coordinate the existing skinned joints with the actual HandR-attached sword path; bottom is an explicit low-to-high rising cut and all four cuts keep the existing player-facing plane/trail contract.
 
 ## Highest priority — physical-phone acceptance
 
-1. **Ronin + Shogun repeated practice re-check** — use the direct Stage 2 and Stage 4 practice routes for several same-device attempts. Compare local stage cards/tips and distinguish reading, missed counters, STEP misuse, raw timing pressure and boss Phase II pressure before changing any balance values.
-2. **Physical-iPhone blade + Shogun signature re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, the trail follows the actual weapon path, and the stronger Blood Moon body/weapon language does not hide direction.
+1. **Connected attack-choreography acceptance** — on the target iPhone, verify top/right/bottom/left attacks read at normal speed as one continuous body → forearm → hand → katana action rather than a floating sword. Pay special attention to the new bottom rising cut, side-cut follow-through and whether Crimson Shogun Blood Moon remains readable without hiding direction.
+2. **Ronin + Shogun repeated practice re-check** — use the direct Stage 2 and Stage 4 practice routes for several same-device attempts. Compare local stage cards/tips and distinguish reading, missed counters, STEP misuse, raw timing pressure and boss Phase II pressure before changing any balance values.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
-4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
+4. **First-person grip acceptance** — confirm the existing player two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
 5. **STEP + blade-read + Pause layout** — confirm normal STEP vs Perfect STEP feedback, the opt-in high-contrast rails and the quiet top-right Pause stay easy to use without restoring dense combat text; Pause should consume only its own 44×44 button while immediately adjacent top/right parries remain reachable.
 6. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
 
 ## High-value candidates after core acceptance
 
+- **Easy-mode timing ring:** after the base enemy animation reads correctly by itself, add an optional rhythm-game-like shrinking/timing ring that communicates both incoming direction and the parry moment. It must be an assistance layer, not a Normal-mode crutch, and must not change combat authority unless a separate difficulty decision explicitly approves wider timing.
 - **Difficulty tuning from evidence:** if repeated Ronin/Shogun practice still shows a wall after the learning pass, use the corrected local stage analysis plus same-device feel to tune one bounded rhythm/window/phase-pressure slice rather than weakening the whole campaign.
 - Accessibility follow-ups: left-handed layout, timing assistance and broader motion controls. High-contrast directional telegraphs are now delivered as the optional **刀路清晰** mode; do not duplicate them as another system.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
 - Boss refinement: the first Shogun Phase I/Blood Moon signature-motion slice is delivered; make further motion/phase changes only from physical-phone readability/performance evidence.
-- Deeper first-person weapon fidelity only if the new bounded hand/grip silhouette passes phone readability and performance acceptance.
+- Deeper first-person weapon fidelity only if the current bounded player hand/grip silhouette passes phone readability and performance acceptance.
 
 ## Data / telemetry Decision Gate
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–050 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and local-only presentation/accessibility preferences to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–052 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and local-only presentation/accessibility preferences to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 

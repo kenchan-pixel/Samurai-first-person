@@ -396,3 +396,52 @@ Chosen slice: candidate 1.
 - Once the new exact HEAD is terminal green, prioritise the direct physical-iPhone attack-animation problem: all enemies need one continuous hand → forearm → torso → katana action, with bottom attacks redesigned into an unmistakable low thrust, rising cut or low-line cut rather than a disconnected ambiguous move.
 - Only after the base animation reads clearly without overlays, consider the proposed optional Easy-mode rhythm/timing ring as a separate assistance layer.
 - Keep balance changes behind repeated Ronin/Shogun practice evidence.
+
+## Run 052 — Connected enemy attack choreography
+
+**Date:** 2026-08-29  
+**Action type:** FEATURE  
+**Goal:** Address direct physical-phone owner feedback that all enemies still look like the katana moves independently of the hands/body, that directional cuts lack committed swing feel, and that the bottom attack is especially ambiguous. Make the base animation itself readable before adding any Easy-mode timing overlay.
+
+### Preflight / evidence
+
+- Exact previous HEAD `f8f8e7a166225e92108012c47eae4fc6db71feee`: CI #85 / run `33194743810` = **success**; exact-head GitHub `Vercel` status = **success / Preview Ready**.
+- Exact-head submitted review reports **no new actionable P0/P1/P2 findings**; inline review threads are empty. Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
+- Direct owner physical-phone feedback identifies a player-visible root problem rather than a balance issue: Shogun motion remains subtle because the sword does not read as being driven by the hands; bottom and other directions can look disconnected/unclear; every enemy lacks convincing swing/slash feel.
+- Current code confirms the mechanism: the skinned clip animates torso/arms, then `blade-trajectory.js` independently sets the `Sword` world rotation. The Sword is structurally parented to `HandR`, but the arm chain was not directionally coordinated with the final world-space blade path.
+
+### Candidate selection
+
+1. **Connected body → grip → katana choreography** — impact 5 / goal alignment 5 / novelty 5 / confidence 4 / safety 4. Directly fixes the owner-observed root cause for every enemy and all four directions while retaining current combat authority.
+2. **Easy-mode rhythm/timing ring now** — impact 4 / goal alignment 4 / novelty 4 / confidence 4 / safety 4. Helpful assistance, but the owner explicitly wants the base sword motion fixed first; adding a cue now risks hiding the animation defect.
+3. **Further Shogun-only Blood Moon exaggeration** — impact 3 / goal alignment 4 / novelty 2 / confidence 4 / safety 5. Low risk but repeats Run 049 and does not fix the shared hand/sword disconnection across all enemies.
+
+Chosen slice: candidate 1.
+
+### Delivered feature
+
+- Added pure `src/enemy-attack-choreography.js` as one direction/phase source for four physical cuts: overhead downward, mirrored right/left cross-body, and a dedicated low-to-high **rising cut** for bottom.
+- The choreography maps telegraph → contact → follow-through into bounded additive transforms for `Chest`, both upper arms and both forearms, plus model-height/depth commitment. Phase-boundary poses are mathematically continuous so the presentation layer does not introduce a new snap between wind-up, strike and recovery.
+- `src/blade-trajectory.js` now samples the normal skeletal clip, applies those existing-bone offsets, then aligns the actual **HandR-attached Sword** into the established world-space player-facing cut. The sword origin/hilt remains in the hand hierarchy while the arm chain and weapon share the same directional commitment.
+- Bottom attacks now sink into a low guard, drive farther forward through the strike and rise into a high follow-through. Side cuts use mirrored torso/arm commitment and longer cross-body follow-through; top retains the readable overhead-to-downward path.
+- The existing bounded actual-tip trail, player-facing parry-plane crossing, stage identities, Shogun signature layer, PlayCanvas/WebGL fallback seam and combat-neutral timing/damage authority are preserved.
+- The optional Easy-mode rhythm/timing ring remains deliberately deferred until this base motion is physically accepted.
+
+### Verification / regression boundaries
+
+- Pre-commit local `node --check` passed for the new choreography helper and modified blade-trajectory adapter.
+- Focused pure Node coverage passed **4/4** locally: four distinct blade reads toward the player, low-to-high bottom body/arm movement, mirrored side commitment and exact telegraph→strike→recovery boundary continuity.
+- No CombatEngine timing/window, damage, posture, reach, STEP, boss/Ronin balance, score, input, persistence, network/privacy boundary, asset licence or merge authority changes.
+- No new runtime entity pool is introduced; the choreography updates existing skinned joints/Sword and reuses the existing maximum six world-space trail segments.
+- Exact-head CI and Vercel Preview for this single implementation commit are pending post-commit self-verification; the Draft PR run comment will be the authoritative receipt.
+
+### Human acceptance / residual risk
+
+- Physical iPhone remains the subjective gate: verify all four cuts actually feel like a held weapon at normal speed, especially the bottom rising cut and the Shogun Blood Moon composition.
+- This is bounded procedural joint choreography rather than full inverse kinematics; if a specific direction still shows wrist/elbow misalignment on-device, refine that direction’s offsets/path rather than covering it with more effects or changing combat timing.
+
+### Next candidates
+
+- Run repeated Ronin/Shogun practice on the target phone and confirm top/right/bottom/left cuts remain readable through normal and Blood Moon pressure.
+- After base choreography acceptance, implement the optional Easy-mode rhythm/timing ring as an assistance layer without changing Normal-mode authority.
+- Keep any balance change behind repeated practice/local-analysis evidence.

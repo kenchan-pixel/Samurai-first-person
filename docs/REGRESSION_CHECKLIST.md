@@ -108,6 +108,9 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] WebGL scene renders a first-person arena, enemy, enemy sword, and player katana.
 - [ ] Telegraph animation visibly matches the incoming direction.
+- [ ] Enemy top/right/bottom/left attacks read as one continuous **torso → upper arm → forearm → hand → katana** action rather than a sword moving independently of the body; the skinned sword hilt remains attached to `HandR` throughout the active cut.
+- [ ] The top attack clearly winds overhead then cuts downward; right/left attacks are mirrored cross-body cuts; the bottom attack clearly starts from a low guard and rises through the player-facing line into a high follow-through.
+- [ ] Telegraph → strike → recovery joint offsets are continuous at phase boundaries without a visible pose snap, and the actual blade-tip trail follows the same physical cut rather than masking a disconnected weapon move.
 - [ ] Player parry/attack animation matches input direction.
 - [ ] Player/enemy posture values remain visible without blocking the combat view.
 - [ ] Enemy and player guard breaks show distinct feedback without hiding directional input cues.
@@ -136,9 +139,10 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
+- [ ] Enemy-attack choreography Node coverage proves four distinct cut paths, mirrored side commitment, the low-to-high bottom rising cut and continuous telegraph/strike/recovery boundaries without importing combat rules into presentation code.
 - [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, both practice entries and blade-read accessibility integrations in the real app document.
 - [ ] Production Combat UX smoke starts the real app at 320×568 and proves adjacent top/right parry routing, top-right Pause placement and button-only hit isolation, frozen phase while paused, 玩法-return-still-paused, resume without catch-up, restart and home behavior.
-- [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas.
+- [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas; its four-direction trajectory assertions continue to prove top/right/bottom/left cuts cross the player-facing plane.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness clicks both real practice entries and proves Ronin Stage 2 / Shogun Stage 4 entry → selected-duel retry → campaign handoff, with distinct practice result labels and campaign personal-best isolation.
 - [ ] Browser mastery harness proves a worse victory cannot overwrite the current personal best and blocked storage writes remain non-fatal.
