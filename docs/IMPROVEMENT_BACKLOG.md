@@ -23,10 +23,12 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 035:** upgraded the first-person katana from a floating weapon silhouette to a bounded two-hand grip with forearms, hands, wrist guards, habaki/pommel and action-local articulation on the existing PlayCanvas rig.
 - **Run 036:** added local-only stage-by-stage post-run battle analysis: parry accuracy, missed counter openings, STEP use, hits and targeted coaching are derived from the existing combat event stream without backend telemetry or identifiers.
 - **Run 037:** repaired local battle-analysis coaching so automatic Perfect Parry/Perfect STEP riposte damage cannot inflate the average damage of manual swipe counters or suppress the opposite-direction swipe tip.
+- **Run 038:** repaired the local analysis denominator so Blood Moon/defeat-closed automatic-riposte recoveries are not counted as manual counter opportunities that never legally existed.
+- **Run 039:** added a repeatable **Stage 2 Ronin practice duel** using the real current Ronin rules and local analysis, with practice results excluded from campaign personal-best storage.
 
 ## Highest priority — physical-phone acceptance
 
-1. **Stage 2 Ronin re-check after the clarity + local-analysis pass** — confirm whether the difficulty wall remains after the player is explicitly taught that normal parry needs a swipe counter, opposite-direction swipe gains +1, STEP is range-limited, Ronin feints require waiting for the final blade direction, and the result screen can now show whether the run failed from low parry accuracy, unused counter openings or genuinely weak manual counter direction.
+1. **Stage 2 Ronin repeated practice + re-check** — use the new direct Stage 2 practice route for several same-device attempts. Compare the local Ronin card/tip across attempts and distinguish low final-direction parry accuracy, unused counter openings, weak swipe direction, STEP misuse or raw timing pressure before changing balance values.
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
@@ -35,7 +37,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 ## High-value candidates after core acceptance
 
-- **Difficulty tuning from evidence:** if Ronin remains a wall after the learning pass, use the corrected local Stage 2 analysis plus same-device feel to tune Stage 2 rhythm/window/feint pressure as one bounded balance slice rather than weakening the whole campaign.
+- **Difficulty tuning from evidence:** if repeated Ronin practice still shows a wall after the learning pass, use the corrected local Stage 2 analysis plus same-device feel to tune Stage 2 rhythm/window/feint pressure as one bounded balance slice rather than weakening the whole campaign.
 - Accessibility: timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
 - Boss refinement: stronger signature motion/phase language using play evidence.
@@ -45,7 +47,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Run 036 deliberately does **not** cross that boundary: it uses an ephemeral in-memory per-run summary and shows the diagnosis only to the current player on the result screen. Nothing is uploaded or retained as a gameplay record. This local slice can validate which balancing signals are actually useful before any remote collection is approved.
+Runs 036–039 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary and now a repeatable local Ronin practice route to validate which balancing signals are actually useful before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 
@@ -57,7 +59,7 @@ Before any backend implementation, define at minimum:
 - whether test/owner sessions should be marked separately from public play;
 - dashboard/AI analysis output actually needed to justify collection.
 
-Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the Run 036/037 result analysis for balancing decisions.
+Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the repeatable Stage 2 practice/local analysis for balancing decisions.
 
 ## Technical opportunities
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.19.0-evolution — Repeatable Stage 2 Ronin practice
+
+- Added a compact **第二關練習** entry on the start screen that launches the real current Wandering Ronin directly without changing its timing, feints, reach, STEP, posture, HP, damage or score rules.
+- A practice clear ends after the Ronin instead of advancing to Oni Guard; practice results offer **再練浪人** or **開始完整主線** while the normal start/restart path remains the four-duel campaign.
+- Reused the existing local mastery and stage analysis for practice feedback, while explicitly labelling practice and preventing it from reading or overwriting the campaign personal-best record.
+- Added focused Node coverage plus existing-browser-harness coverage for Stage 2 initialization, practice termination, Ronin result analysis, personal-best isolation and real-app practice UI initialization.
+- No backend telemetry, network request, identifier, account system or persistence schema was introduced.
+
 ## 0.18.1-evolution — Local battle-analysis counter coaching repair
 
 - Separated manual swipe-counter damage from total player damage in the local run-analysis stage record.

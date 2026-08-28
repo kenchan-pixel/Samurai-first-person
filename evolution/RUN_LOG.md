@@ -263,3 +263,48 @@ Chosen slice: candidate 1.
 - Same-device Stage 2 Ronin re-check using the corrected local stage analysis; tune only if the difficulty wall remains after the rules are understood.
 - Same-device enemy blade + first-person grip + Perfect Parry/Perfect STEP readability/performance check.
 - Privacy Decision Gate for anonymous backend telemetry only if local analysis proves the signals are worth collecting remotely.
+
+## Run 039 — Repeatable Stage 2 Ronin practice duel
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Make the reported Stage 2 difficulty wall directly testable on phone without prematurely nerfing the Ronin or adding remote gameplay tracking.
+
+### Preflight / evidence
+
+- Exact previous HEAD `8bee62d0992b4d4a1d438483fc58f2434772226b`: CI #67 / run `33139545846` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; the review-thread list was empty.
+- The exact-head All Repos review reported **no new actionable P0/P1/P2 finding** and confirmed the Run 038 counter-opening repair.
+- Owner evidence still says Stage 2 is difficult. Runs 030 and 036–038 improved learnability and local diagnosis, but the current SOT deliberately requires more same-device evidence before changing Ronin timing/damage/health.
+- Remote gameplay telemetry remains outside the approved privacy boundary and was not implemented.
+
+### Candidate selection
+
+1. **Repeatable Stage 2 Ronin practice duel** — impact 5 / goal alignment 5 / novelty 5 / confidence 5 / safety 4. Directly enables repeated evidence on the reported difficulty wall using the real Stage 2 combat and existing local analysis, while leaving campaign balance untouched.
+2. **Timing-assist accessibility mode** — 4 / 4 / 4 / 4 / 3. Valuable, but changes difficulty/scoring semantics before the current difficulty signal is understood.
+3. **Challenge/endless mode** — 4 / 5 / 5 / 3 / 3. Strong replay value, but a wider progression/scoring surface and less directly tied to the current owner feedback.
+
+Chosen slice: candidate 1.
+
+### Delivered slice
+
+- Added a compact **第二關練習** start-screen entry that launches the real Wandering Ronin directly, including its current feints, timing, reach/STEP profiles, posture rules and Stage 2 action cue.
+- Practice uses the existing composed CombatEngine/adapters rather than a second combat implementation. It starts at Stage 2, and defeating the Ronin ends the practice result instead of advancing to Oni Guard.
+- The existing local mastery and per-stage battle analysis render on practice victory/defeat, so repeated attempts expose Ronin parry accuracy, missed counter openings, STEP use and incoming hits.
+- Practice results are explicitly labelled `RONIN PRACTICE` / `不計個人最佳` and cannot read or overwrite the campaign personal-best record.
+- Practice result actions offer **再練浪人** and **開始完整主線**. A normal start/restart remains the unchanged four-duel campaign path.
+- No Ronin timing/damage/HP/posture/score value, remote analytics, identifier, network request, account system or storage schema was added.
+
+### Verification / regression boundaries
+
+- Added focused Node coverage proving practice initializes the actual Stage 2 Ronin and that its stage-clear terminates at victory without advancing the campaign enemy index.
+- Extended the existing mastery browser harness rather than creating a parallel broad suite: it requires a real practice Stage 2 event, Stage 2/Ronin result analysis, `RONIN PRACTICE` copy, `不計個人最佳`, and preservation of the existing campaign best.
+- The real-app browser smoke now requires the practice module and start-screen entry to initialize alongside PlayCanvas, mastery, boss, onboarding, footwork and impact integrations.
+- Default campaign engine order, boss injection, directional input, parry/STEP timing, damage, score, renderer/asset pipeline, local analysis privacy boundary and merge authority remain unchanged.
+- Physical-iPhone acceptance remains the next product gate: use several practice attempts to judge whether the difficulty wall is final-direction reading, missed counter conversion, raw timing pressure or presentation/readability before tuning Stage 2.
+
+### Next candidates
+
+- Repeat the new Ronin practice on the same physical iPhone and use its local Stage 2 card plus feel observations before any balance change.
+- Re-check enemy blade trajectory, first-person grip and Perfect Parry/Perfect STEP readability/performance on the same device.
+- Open a privacy Decision Gate for anonymous backend telemetry only if repeated local practice proves remote aggregation is worth the added privacy/backend cost.

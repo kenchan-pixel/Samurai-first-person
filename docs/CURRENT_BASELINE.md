@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.18.1-evolution**
+Version: **0.19.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -8,6 +8,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - Mobile-first portrait start screen → **four sequential duels** → victory/defeat → restart without page reload.
 - Three baseline enemies are followed by the Crimson Shogun boss.
+- The start screen also offers a bounded **第二關練習** route that launches the real Wandering Ronin directly and ends after that duel, without replacing the four-stage campaign.
+- Practice results can restart the Ronin immediately or return to the complete campaign.
 - Touch, stylus and mouse input remain supported.
 
 ## Guided first duel and combat clarity
@@ -18,9 +20,9 @@ These capabilities are approved for the current evolution branch and cumulative.
 - A Perfect Parry automatic riposte is a reward, not proof of the Guided Duel manual swipe-counter step.
 - Completion stores only a local preference; blocked storage is non-fatal and the start-screen toggle remains available.
 - The start screen includes a prominent **玩法** button with the complete core loop, Perfect Parry, counter direction bonus, posture/guard break, normal STEP, **Perfect STEP**, and Ronin feints.
-- Entering Stage 2 gives one short Ronin cue telling the player to wait for the final blade direction because feints can change the initial read.
+- Entering Stage 2 — in campaign or Ronin practice — gives one short Ronin cue telling the player to wait for the final blade direction because feints can change the initial read.
 - Successful parry, automatic ripostes, STEP evade and guard break use short pointer-transparent action cues instead of dense persistent text.
-- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
+- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis/practice passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
 - No remote gameplay analytics/telemetry backend is added. Gameplay statistics remain local-only until a separate privacy/data-retention/backend Decision Gate is approved.
 
 ## Core combat
@@ -66,14 +68,15 @@ These capabilities are approved for the current evolution branch and cumulative.
 - **Run-end battle analysis is stage-aware and local-only.** During the current run it tracks each reached stage's parry attempts/success, counter openings versus manual counters, STEP attempts/success, hits/damage and clear state using the existing combat event stream.
 - The analysis keeps **manual counter damage separate from automatic riposte damage**. Opposite-direction swipe coaching uses only manual counter damage, so Perfect Parry/Perfect STEP auto-ripostes cannot make weak swipe counters look stronger than they were.
 - The result screen adds compact per-stage cards plus one actionable coaching tip. On defeat it focuses the last reached stage; on victory it focuses the weakest stage from the run. Examples include missed counter openings, low Ronin parry accuracy, low STEP success, excessive hits or low manual counter damage.
+- Ronin practice reuses the same mastery and local analysis surfaces, but its result is explicitly labelled `RONIN PRACTICE` / `不計個人最佳`; practice never reads or overwrites the campaign personal-best record.
 - The analysis is deliberately ephemeral: it is held only in memory for the current run and sends nothing to a backend. It stores no raw touch coordinates, device identifier, account data or remote session identifier and does not change the separate remote-telemetry Decision Gate.
-- Better victories may replace a local personal best; worse runs do not. Storage failure is non-fatal.
+- Better completed campaign victories may replace a local personal best; worse campaign runs and all Ronin-practice runs do not. Storage failure is non-fatal.
 - No account, network sync, remote analytics or external gameplay-data service is used.
 
 ## Enemy differentiation
 
 - Ashigaru Scout: low HP, broad timing, simple attacks, low posture; mixes close cuts with a committed longer strike.
-- Wandering Ronin: faster rhythm, feints, mixed directions, lateral footwork, close/mid reach.
+- Wandering Ronin: faster rhythm, feints, mixed directions, lateral footwork, close/mid reach. The optional Stage 2 practice route uses this exact enemy definition rather than a softened training clone.
 - Oni Guard: heavy damage, shorter strike windows, higher HP/posture, strong tracking/heavy posture pressure.
 - Crimson Shogun: multi-phase boss, higher posture resistance, heavy/feint signatures, Blood Moon ruleset shift and long-reach pressure.
 - The shared skinned GLB adds distinct stage silhouettes on the actual Head / Chest / Sword bones. Identity parts are presentation-only and do not change reach, hitboxes, timing, parry windows or damage.
@@ -91,6 +94,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
 - Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
 - The result analysis lives only on the post-run modal; it does not add persistent combat HUD text or cover the live blade-reading area.
+- The practice entry is a compact secondary start action. On short 320×568-class portrait viewports the start-screen spacing compresses rather than moving the primary **拔刀** action off-screen.
 
 ## Mobile performance baseline
 
@@ -99,24 +103,26 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
-- Run analysis reuses the already-drained combat event stream and a small per-run in-memory record; it creates no network request and no gameplay-loop object growth.
+- Run analysis and Ronin practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
 - Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
 
 ## Technical baseline
 
-- `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact and automatic-riposte systems are bounded adapters around that core.
+- `src/game-core.js` remains the deterministic combat authority; boss, mastery, onboarding, footwork, impact, automatic-riposte and practice systems are bounded adapters around that core.
 - `src/perfect-riposte.js` adds the automatic 1-damage Perfect Parry riposte and suppresses the old later perfect damage bonus only for the same opening.
 - `src/perfect-step.js` wraps the existing footwork seam only after a STEP has genuinely escaped attack reach. It owns the narrower Perfect STEP timing grade, 1-damage automatic sidestep riposte, guide/cue integration and conversion of its raw event into the existing visible counter event. Its riposte event carries whether the opening was closed by Blood Moon/defeat so presentation never advertises an impossible manual follow-up. It does not change normal STEP reach, timing window, posture or manual-counter rules.
 - `src/boss-encounter.js` owns the reusable Crimson Shogun Phase II HP threshold. Manual counter, Perfect Parry auto-riposte and Perfect STEP auto-riposte all invoke the same gate.
 - `src/onboarding-coach.js` owns the Guided Duel and phone-first gameplay-clarity sheet; Perfect STEP appends one additional guide card without changing combat authority.
 - `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
 - `src/run-analysis.js` is a local-only observer/result adapter. It keeps stage-level counters in a `WeakMap` for the active run, tracks both total damage and manual-only `counterDamage`, derives one coaching tip, and injects the compact result analysis panel. It does not patch damage/timing/input authority, persist gameplay records, or use network APIs.
+- `src/practice-mode.js` is installed after the existing combat adapters and before `main.js`. It initializes all normal sessions first, then redirects only an explicitly requested practice run to the existing Wandering Ronin, emits the real Stage 2 start event, intercepts that practice stage-clear before campaign advancement, and labels practice terminal events. Normal campaign start/restart remains unchanged.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
 - `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
 - Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
-- Focused run-analysis coverage proves stage-local statistics, missed-counter detection, Ronin-specific advice selection, and that automatic ripostes cannot inflate manual-counter damage coaching. The existing mastery browser harness also requires the real run-analysis observer/result panel to render and remain inside the 320×568 result flow, without adding a parallel broad browser suite.
+- Focused run-analysis coverage proves stage-local statistics, missed-counter detection, Ronin-specific advice selection, and that automatic ripostes cannot inflate manual-counter damage coaching.
+- Focused practice coverage proves the optional route initializes the actual Stage 2 Ronin and terminates after that stage. The existing mastery browser harness additionally requires the practice result to render Stage 2/Ronin analysis while preserving the campaign personal best, and the real-app smoke requires the practice entry/module to initialize in the production document.
 - The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates.
 
 ## Approved 3D direction

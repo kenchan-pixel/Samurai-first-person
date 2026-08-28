@@ -37,27 +37,34 @@ function formatScore(value) {
   return Math.max(0, Math.round(Number(value) || 0)).toString().padStart(6, '0');
 }
 
-function renderReport(report) {
+function renderReport(report, { practice = false } = {}) {
   const eyebrow = document.querySelector('#result-eyebrow');
   const title = document.querySelector('#result-title');
   const summary = document.querySelector('#result-summary');
   const score = document.querySelector('#result-score');
   if (!eyebrow || !title || !summary || !score) return;
 
-  const previousBest = readBest();
-  const newBest = report.won && isBetterMastery(report, previousBest);
+  const previousBest = practice ? null : readBest();
+  const newBest = !practice && report.won && isBetterMastery(report, previousBest);
   if (newBest) writeBest(report);
   const best = newBest ? report : previousBest;
 
-  eyebrow.textContent = report.won ? `VICTORY · MASTERY ${report.masteryPoints}` : `DEFEAT · MASTERY ${report.masteryPoints}`;
-  title.textContent = report.won ? `${report.grade} 級` : '敗北';
+  if (practice) {
+    eyebrow.textContent = `RONIN PRACTICE · MASTERY ${report.masteryPoints}`;
+    title.textContent = report.won ? `${report.grade} 級 · 修行完成` : '修行敗北';
+  } else {
+    eyebrow.textContent = report.won ? `VICTORY · MASTERY ${report.masteryPoints}` : `DEFEAT · MASTERY ${report.masteryPoints}`;
+    title.textContent = report.won ? `${report.grade} 級` : '敗北';
+  }
 
   const accuracy = Math.round(report.accuracy * 100);
-  const bestText = best
-    ? newBest
-      ? ' · 新紀錄'
-      : ` · BEST ${best.grade} ${formatScore(best.score)}`
-    : '';
+  const bestText = practice
+    ? ' · 不計個人最佳'
+    : best
+      ? newBest
+        ? ' · 新紀錄'
+        : ` · BEST ${best.grade} ${formatScore(best.score)}`
+      : '';
 
   summary.textContent =
     `格擋 ${accuracy}% · 完美 ${report.perfectParries}/${report.parries} · ` +
@@ -84,12 +91,13 @@ if (!CombatEngine.prototype[patched]) {
     for (const event of events) {
       observeMasteryEvent(session, event);
       if (event.type === 'victory' || event.type === 'defeat') {
+        const practice = Boolean(event.detail?.practice);
         const report = finishMastery(session, {
           now: performance.now(),
           score: event.detail?.score,
           won: event.type === 'victory',
         });
-        queueMicrotask(() => renderReport(report));
+        queueMicrotask(() => renderReport(report, { practice }));
       }
     }
 

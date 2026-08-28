@@ -22,6 +22,7 @@
 
   <script type="module">
     import '../src/mastery-overlay.js';
+    import { requestRoninPractice } from '../src/practice-mode.js';
     import { CombatEngine, Direction } from '../src/game-core.js';
 
     const BEST_KEY = 'blade-reversal-mastery-v1';
@@ -48,6 +49,7 @@
     }
 
     async function completeVictory({ missFirst = false, lateParry = false } = {}) {
+      requestRoninPractice(false);
       const combat = new CombatEngine({ enemies: [enemy] });
       combat.start(0);
       combat.drainEvents();
@@ -66,6 +68,33 @@
       combat.update(parryAt + 1452);
       combat.drainEvents();
       await flush();
+    }
+
+    async function completeRoninPracticeVictory() {
+      requestRoninPractice(true);
+      const combat = new CombatEngine();
+      combat.start(0);
+      const startEvents = combat.drainEvents();
+      const stageStart = startEvents.find((event) => event.type === 'stage-start');
+      if (combat.enemy?.id !== 'wandering-ronin' || stageStart?.detail?.stage !== 2 || !stageStart?.detail?.practice) {
+        throw new Error('practice run did not initialize the real Stage 2 Wandering Ronin');
+      }
+
+      combat.enemyHp = 0;
+      combat.phase = 'stage-clear';
+      combat.phaseStartedAt = 100;
+      combat.phaseEndsAt = 120;
+      combat.events.push({
+        type: 'enemy-defeated',
+        detail: { enemyId: 'wandering-ronin', stage: 2 },
+      });
+      combat.update(120);
+      const terminalEvents = combat.drainEvents();
+      if (!terminalEvents.some((event) => event.type === 'victory' && event.detail?.practice)) {
+        throw new Error('practice run did not finish after the Ronin duel');
+      }
+      await flush();
+      requestRoninPractice(false);
     }
 
     try {
@@ -90,6 +119,18 @@
         (analysis?.querySelectorAll('.result-analysis__stage').length || 0) >= 1 &&
         Boolean((analysis?.querySelector('[data-analysis-tip]')?.textContent || '').trim());
       root.dataset.runAnalysis = String(analysisReady);
+
+      await completeRoninPracticeVictory();
+      const practiceAnalysisText = document.querySelector('#result-analysis')?.textContent || '';
+      const practiceSummary = document.querySelector('#result-summary')?.textContent || '';
+      const practiceEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
+      root.dataset.roninPracticeIntegration = String(
+        localStorage.getItem(BEST_KEY) === firstBest &&
+        practiceEyebrow.includes('RONIN PRACTICE') &&
+        practiceSummary.includes('不計個人最佳') &&
+        practiceAnalysisText.includes('第2關') &&
+        practiceAnalysisText.includes('浪人'),
+      );
 
       await completeVictory({ missFirst: true, lateParry: true });
       root.dataset.masteryBestPreserved = String(localStorage.getItem(BEST_KEY) === firstBest);
@@ -121,11 +162,13 @@
 
       const passed =
         root.dataset.runAnalysis === 'true' &&
+        root.dataset.roninPracticeIntegration === 'true' &&
         root.dataset.masteryBestPreserved === 'true' &&
         root.dataset.masteryStorageFallback === 'true' &&
         root.dataset.resultLayout === 'pass';
       root.dataset.masteryIntegration = passed ? 'pass' : 'fail';
     } catch (error) {
+      requestRoninPractice(false);
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);
       root.dataset.masteryIntegration = 'fail';

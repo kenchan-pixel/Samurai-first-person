@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 38,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Removed auto-riposte-closed recovery windows from the local run-analysis manual counter denominator so result cards count only legal swipe opportunities",
-  "last_commit": "a3a1a4a9d3a35ffb2a0b05910d28505824fb71bc",
+  "run_number": 39,
+  "last_action_type": "FEATURE",
+  "last_action": "Added a Stage 2 Wandering Ronin practice duel that reuses the real combat and local analysis without changing campaign balance or personal best",
+  "last_commit": "8bee62d0992b4d4a1d438483fc58f2434772226b",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,7 +18,7 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Re-test Stage 2 Ronin on the same physical iPhone and use the corrected local stage analysis to separate low parry accuracy, missed counter openings and genuinely weak manual counter direction before tuning balance",
+    "Use the new repeatable Stage 2 practice duel on the same physical iPhone and compare Ronin parry accuracy, missed counter openings and feel before changing any balance values",
     "Re-check all four enemy blade trajectories plus the first-person two-hand grip and Perfect Parry/Perfect STEP feel/readability on the same physical iPhone",
     "Open a privacy Decision Gate for the owner-proposed anonymous gameplay telemetry backend before implementing any external analytics/tracking"
   ]
