@@ -52,6 +52,21 @@ export function directionFromErgonomicTap(x, y, width, height, edgeRatio = 0.28,
   return candidates[0][0];
 }
 
+export function rectIsNeutralForErgonomicTap(rect, width, height) {
+  if (!rect || ![rect.left, rect.top, rect.right, rect.bottom, width, height].every(Number.isFinite)) return false;
+  if (rect.left < 0 || rect.top < 0 || rect.right > width || rect.bottom > height || rect.right <= rect.left || rect.bottom <= rect.top) return false;
+
+  const inset = Math.min(2, Math.max(0.5, Math.min(rect.right - rect.left, rect.bottom - rect.top) * 0.04));
+  const points = [
+    [rect.left + inset, rect.top + inset],
+    [rect.right - inset, rect.top + inset],
+    [rect.left + inset, rect.bottom - inset],
+    [rect.right - inset, rect.bottom - inset],
+    [(rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2],
+  ];
+  return points.every(([x, y]) => directionFromErgonomicTap(x, y, width, height) === null);
+}
+
 function installStyles() {
   if (document.querySelector('style[data-combat-ux]')) return;
   const style = document.createElement('style');
@@ -61,9 +76,9 @@ function installStyles() {
     .zone span,.hud__stage>span{display:none!important}
     .zone--top{height:42%!important;left:28%!important;right:28%!important;padding:0!important}
     html[data-readability-mode="on"] .direction-indicator{opacity:0!important;visibility:hidden!important}
-    .pause-button{position:absolute;z-index:26;top:calc(var(--safe-top) + 2px);right:calc(var(--safe-right) + 2px);width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:13px;background:rgba(7,8,11,.58);color:rgba(248,241,231,.82);font-size:17px;font-weight:900;line-height:1;backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,.24);cursor:pointer}
+    .pause-button{position:absolute;z-index:26;left:50%;bottom:calc(28% + 10px);width:44px;height:44px;padding:0;transform:translateX(-50%);border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(7,8,11,.46);color:rgba(248,241,231,.74);font-size:17px;font-weight:900;line-height:1;backdrop-filter:blur(6px);box-shadow:0 5px 18px rgba(0,0,0,.2);cursor:pointer}
     .pause-button[hidden],.pause-screen[hidden]{display:none!important}
-    .pause-button:active{transform:scale(.96)}
+    .pause-button:active{transform:translateX(-50%) scale(.96)}
     .pause-screen{position:absolute;z-index:28;inset:0;display:grid;place-items:center;padding:calc(var(--safe-top) + 18px) calc(var(--safe-right) + 18px) calc(var(--safe-bottom) + 18px) calc(var(--safe-left) + 18px);background:rgba(5,6,9,.88);backdrop-filter:blur(10px)}
     .pause-card{width:min(100%,330px);padding:24px 18px 20px;border:1px solid rgba(239,196,129,.22);border-radius:18px;background:linear-gradient(160deg,rgba(31,25,24,.96),rgba(9,10,13,.98));box-shadow:0 18px 50px rgba(0,0,0,.42);text-align:center}
     .pause-card__eyebrow{margin:0;color:rgba(239,196,129,.64);font-size:9px;font-weight:850;letter-spacing:.18em}
@@ -74,7 +89,7 @@ function installStyles() {
     .pause-actions button:active{transform:translateY(1px)}
     .pause-card__note{margin:13px 0 0;color:rgba(236,230,219,.48);font-size:8px;line-height:1.45}
     @media(max-width:360px){.pause-card{padding:20px 14px 16px}.pause-card h2{font-size:34px}.pause-actions button{min-height:44px}}
-    @media(prefers-reduced-motion:reduce){.pause-button:active,.pause-actions button:active{transform:none}}
+    @media(prefers-reduced-motion:reduce){.pause-button:active{transform:translateX(-50%)}.pause-actions button:active{transform:none}}
   `;
   document.head.append(style);
 }
@@ -124,7 +139,19 @@ export function installCombatUx() {
     const button = document.querySelector('#pause-button');
     const rect = button?.getBoundingClientRect();
     const fits = Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight);
+    const neutral = Boolean(rect && rectIsNeutralForErgonomicTap(rect, window.innerWidth, window.innerHeight));
     document.documentElement.dataset.pauseLayout = fits ? 'pass' : 'fail';
+    document.documentElement.dataset.pauseInputSafe = neutral ? 'pass' : 'fail';
   });
   document.documentElement.dataset.combatUxReady = 'true';
+}
+
+if (typeof location !== 'undefined' && new URLSearchParams(location.search).get('browser-smoke') === 'combat-ux') {
+  setTimeout(() => {
+    import('./combat-ux-contract-smoke.js').catch((error) => {
+      console.error(error);
+      document.documentElement.dataset.combatUxBrowser = 'fail';
+      document.documentElement.dataset.combatUxBrowserError = error?.message || String(error);
+    });
+  }, 0);
 }

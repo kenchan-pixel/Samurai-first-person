@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.21.1-evolution — Mobile Pause / parry-surface repair
+
+- Moved the 44×44 live Pause control from the active top-right parry surface into a lower-centre neutral tap band while preserving the Run 043 portrait top-parry reach and side/bottom mapping.
+- Pause layout now validates its actual rectangle against the same ergonomic direction mapper; the production browser gate fails if Pause consumes a directional target or adjacent top/right routing regresses.
+- Added a real-app Pause contract covering frozen combat phase, 玩法-return-still-paused, resume without wall-clock catch-up, restart and home.
+- Recorded the accepted asymmetric portrait input, quiet live-HUD and true Pause semantics in Current Baseline / Regression Checklist; combat timing, damage, STEP and enemy balance are unchanged.
+
 ## 0.21.0-evolution — Direct Crimson Shogun practice
 
 - Expanded the bounded practice selector into a compact two-button **練浪人 / 練將軍** row without adding another vertical block to the phone start screen.
@@ -41,7 +48,7 @@
 ## 0.18.0-evolution — Local post-run battle analysis
 
 - Added local-only per-stage run analysis for parry accuracy, manual counter openings/counters, STEP attempts/success, hits/damage and stage-clear state using the existing combat event stream.
-- The result screen now shows compact stage cards plus one actionable coaching tip; defeat focuses the last reached stage, while victory highlights the weakest stage from the run.
+- The result screen now shows compact per-stage cards plus one actionable coaching tip; defeat focuses the last reached stage, while victory highlights the weakest stage from the run.
 - Advice can distinguish missed counter openings, low Ronin parry accuracy/final-direction reading, poor STEP matchups, excessive hits and low counter damage without changing any combat balance value.
 - The analysis is ephemeral and in-memory only: no backend, remote analytics, identifier, raw input position or persistent gameplay log is introduced. The separate telemetry/privacy Decision Gate remains unchanged.
 - Added focused Node coverage and extended the existing mastery browser harness so the real result analysis renders and the complete result/restart flow stays inside the 320×568 acceptance viewport.

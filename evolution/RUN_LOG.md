@@ -81,3 +81,44 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - Repeat Ronin/Shogun practice on the same device and use local analysis plus feel before any balance change.
 - Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified live HUD.
 - After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.
+
+## Run 044 — Pause / directional-input collision repair
+
+**Date:** 2026-08-28  
+**Action type:** REGRESSION_FIX  
+**Goal:** Close the exact-head review finding that the new 44×44 top-right Pause button stole part of the active top/right parry surface, and make the accepted asymmetric portrait input + Pause contract durable in the baseline/checklist.
+
+### Preflight / evidence
+
+- Exact previous HEAD `9c2d2fcdfde64747b6df565b554de8ab9f0b40aa`: CI #72 / run `33156238023` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads were empty.
+- Exact-head All Repos review found two actionable P2s: the top-right Pause control intercepted a geometrically valid top/right parry region, and `CURRENT_BASELINE.md` / `REGRESSION_CHECKLIST.md` did not yet record the Run 043 input/Pause contract.
+- No P0/P1, failed CI, broken Preview, security/privacy/data-loss issue or separate gameplay-balance regression was present.
+
+### Delivered repair
+
+- Moved the same 44×44 Pause control to the lower-centre neutral tap band. At the 320×568 acceptance viewport its whole hit rectangle remains between the left/right 28% regions, below the portrait top 42% region and above the bottom 28% region.
+- Added `rectIsNeutralForErgonomicTap()` so the actual Pause rectangle is checked against the same production direction mapper, not against a second hard-coded idea of the parry zones. Production now exposes `data-pause-input-safe="pass"` only when all Pause corners/centre resolve to no parry direction.
+- Preserved adjacent top/right directional access and the 42% portrait top reach; the repair changes Pause placement only, not parry timing, directional authority or STEP.
+- Added a query-gated production Combat UX browser contract on the real app: start a duel, route representative top/right taps, verify the Pause hit rectangle is neutral, freeze a live phase across a long wall-clock wait, open/close 玩法 while remaining paused, resume without catch-up, then exercise restart and home.
+- Updated `CURRENT_BASELINE.md`, `REGRESSION_CHECKLIST.md` and `IMPROVEMENT_BACKLOG.md` with the accepted asymmetric portrait input, quiet live HUD, neutral Pause placement and frozen-clock semantics.
+
+### Verification / regression boundaries
+
+- Previous exact HEAD was terminal green before the repair was selected.
+- `node --check` passes for the modified Combat UX module, focused Node test and new production browser contract module.
+- Focused Node coverage now proves the representative 320×568 Pause rectangle is neutral while adjacent top/right points still map correctly; landscape retains the symmetric 28% map.
+- The production browser contract is added to the existing browser gate rather than creating a parallel product path.
+- No enemy HP/damage, parry/Perfect windows, STEP/Perfect STEP, boss/Ronin balance, score, persistence, analytics/network, renderer authority or merge behavior is changed.
+- Exact-head CI and Vercel Preview for this single repair commit are pending post-commit self-verification; the PR run comment is the authoritative receipt.
+
+### Human acceptance / residual risk
+
+- Physical-iPhone acceptance should confirm the lower-centre Pause location is easy enough to reach without feeling visually central or becoming an accidental swipe-start target during aggressive counter play.
+- Re-check the 42% top-parry reach and adjacent side precedence with the preferred one-hand grip; automated geometry proves non-overlap, not subjective thumb comfort.
+
+### Next candidates
+
+- Repeat Ronin/Shogun practice on the same device and use local analysis plus feel before any balance change.
+- Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified HUD and neutral Pause placement.
+- After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.

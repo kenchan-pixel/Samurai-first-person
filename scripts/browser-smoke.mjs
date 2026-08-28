@@ -157,6 +157,19 @@ try {
     throw new Error('Blade-read accessibility toggle overflowed the 320x568 production viewport');
   }
 
+  const combatUxDom = await dumpDom(browser, '/?browser-smoke=combat-ux', { budget: 6500 });
+  if (!combatUxDom.includes('data-combat-ux-browser="pass"')) {
+    throw new Error(`Production Combat UX integration failed. DOM:\n${combatUxDom.slice(0, 6000)}`);
+  }
+  if (!combatUxDom.includes('data-pause-input-safe="pass"')) throw new Error('Pause control overlaps a directional parry region');
+  if (!combatUxDom.includes('data-combat-ux-top-parry-path="true"') || !combatUxDom.includes('data-combat-ux-right-parry-path="true"')) throw new Error('Adjacent top/right parry routing failed around the neutral Pause band');
+  if (!combatUxDom.includes('data-combat-ux-pause-neutral="true"')) throw new Error('Pause control did not stay wholly inside the neutral tap band');
+  if (!combatUxDom.includes('data-combat-ux-pause-freeze="true"')) throw new Error('Pause did not freeze the live combat phase across wall-clock time');
+  if (!combatUxDom.includes('data-combat-ux-guide-keeps-paused="true"')) throw new Error('玩法 did not return to the still-paused state');
+  if (!combatUxDom.includes('data-combat-ux-resume="true"')) throw new Error('Resume did not continue from the frozen combat phase');
+  if (!combatUxDom.includes('data-combat-ux-restart="true"')) throw new Error('Pause restart did not re-enter Stage 1 through the normal restart path');
+  if (!combatUxDom.includes('data-combat-ux-home="true"')) throw new Error('Pause home did not return to the start screen cleanly');
+
   const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 3200 });
   if (!masteryDom.includes('data-mastery-integration="pass"')) throw new Error(`Mastery event-stream integration failed. DOM:\n${masteryDom.slice(0, 5000)}`);
   if (!masteryDom.includes('data-ronin-practice-integration="true"')) throw new Error('Ronin practice did not stop after Stage 2, render Stage 2 analysis, or preserve the campaign personal best');
@@ -209,7 +222,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + mastery/Ronin+Shogun-practice-controls + boss + onboarding + footwork + blade-read accessibility + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + combat-ux + mastery/Ronin+Shogun-practice-controls + boss + onboarding + footwork + blade-read accessibility + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

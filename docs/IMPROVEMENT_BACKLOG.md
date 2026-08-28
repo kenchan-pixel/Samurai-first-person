@@ -28,6 +28,8 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 040:** closed the Ronin-practice browser verification gap by driving the actual **第二關練習 → 再練浪人 → 開始完整主線** controls through the patched CombatEngine and requiring the real 320×568 start-screen layout gate.
 - **Run 041:** added optional **刀路清晰** accessibility mode: four pointer-transparent high-contrast edge rails follow telegraph → Ronin feint resolution → strike direction, strengthen only at the live strike, and clear after resolution without changing combat timing or difficulty.
 - **Run 042:** expanded bounded duel practice with a compact **練將軍** route alongside **練浪人**. It launches the real Stage 4 Crimson Shogun at Phase I, preserves Blood Moon rules, reuses local mastery/analysis, supports immediate boss retry or campaign return, and never writes campaign personal-best data.
+- **Run 043:** simplified live combat from direct physical-iPhone feedback: portrait top-parry reach extends lower for the thumb, persistent instruction clutter is removed, 刀路清晰 suppresses the duplicate centre direction cue, and Pause/玩法 uses a true frozen game clock.
+- **Run 044:** repaired the Pause/input collision by moving the 44×44 Pause control wholly into a neutral lower-centre tap band, adding real-app Pause/parry/freeze/resume/restart/home browser coverage, and recording the accepted ergonomic input/Pause contract in the cumulative SOT.
 
 ## Highest priority — physical-phone acceptance
 
@@ -35,7 +37,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
-5. **STEP + optional blade-read readability/layout** — confirm normal STEP vs Perfect STEP feedback and the new opt-in high-contrast rails stay readable without entering bottom/right block regions, intercepting input or restoring dense combat text.
+5. **STEP + blade-read + Pause layout** — confirm normal STEP vs Perfect STEP feedback, the opt-in high-contrast rails and the neutral lower-centre Pause control remain easy to reach without intercepting intended top/right/bottom/left parries or restoring dense combat text.
 6. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
 
 ## High-value candidates after core acceptance
@@ -50,7 +52,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–042 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and a local-only optional accessibility preference to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–044 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and a local-only optional accessibility preference to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 

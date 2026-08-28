@@ -12,6 +12,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Optional 刀路清晰 toggle remains inside the 320×568 viewport, defaults off unless locally enabled, and does not enlarge the start-screen flow.
 - [ ] The compact 練浪人 / 練將軍 practice selector remains inside the 320×568 viewport and does not push the primary 拔刀 action off-screen.
 - [ ] STEP / 後撤 and the range chip remain clear of the four edge-block regions and the primary centre combat read.
+- [ ] The 44×44 Pause control remains wholly inside the neutral lower-centre tap band at 320×568 and does not overlap STEP or any directional parry region.
 
 ## Guided first duel
 
@@ -27,16 +28,27 @@ Run this checklist before marking an evolution pull request complete.
 
 ## Input
 
+- [ ] Portrait central top taps are accepted down to 42% of screen height for thumb reach; landscape keeps the symmetric 28% edge depth.
 - [ ] Tap near top produces top block.
 - [ ] Tap near right produces right block.
 - [ ] Tap near bottom produces bottom block.
 - [ ] Tap near left produces left block.
+- [ ] In overlapping portrait corners the physically nearest edge wins, so intended left/right taps are not swallowed by the expanded top region.
 - [ ] A centre tap does not accidentally trigger an edge block.
+- [ ] The Pause control itself maps to no parry direction, while adjacent top/right taps still reach their intended parry regions.
 - [ ] Swipe direction is recognised for top, right, bottom, and left.
 - [ ] Tap and swipe are not both triggered by one gesture.
 - [ ] Mouse fallback remains usable.
 - [ ] STEP pointerdown/pointerup captures its own pointer, stops propagation outside the control, rejects dragged gestures beyond the travel threshold, and leaves subsequent canvas pointer state clear.
 - [ ] 刀路清晰 overlay is pointer-transparent and cannot consume parry/swipe/STEP input.
+
+## Pause and guide
+
+- [ ] Pause is available only during an active duel and does not replace an active directional edge target.
+- [ ] Opening Pause freezes game time, combat phase/timing windows and renderer motion; wall-clock time spent paused is not applied on resume.
+- [ ] Opening 玩法 from Pause and closing it returns to the still-paused state.
+- [ ] 繼續 resumes from the frozen phase without an immediate catch-up hit.
+- [ ] 重新開始 reuses the normal campaign/practice restart path; 返回主頁 returns to the start screen with Pause hidden.
 
 ## Combat
 
@@ -106,6 +118,8 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Impact FX remain pointer-transparent, never exceed three concurrent burst containers, and self-remove after the bounded lifetime.
 - [ ] Reduced-motion preference suppresses traveling impact sparks/slash afterimages while retaining a short readable contact cue.
 - [ ] Optional 刀路清晰 mode follows telegraph direction, updates to the final direction after a feint, strengthens the strike cue, clears after resolution, and remains static rather than pulsing under reduced motion.
+- [ ] With 刀路清晰 enabled, the old centre arrow/label is suppressed so only one directional overlay is shown.
+- [ ] Live combat omits the persistent READ/PARRY prompt, footer gesture sentence, passive block-zone labels and arena subtitle; detailed instructions remain available through 玩法.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
 - [ ] Blood Moon Phase II displays a short explicit phase banner and stronger moon/ember state; reduced-motion preference disables looping ember motion and the banner still hides after its bounded display lifetime.
 - [ ] Victory copy reflects the complete four-stage campaign.
@@ -120,6 +134,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
 - [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, both practice entries and blade-read accessibility integrations in the real app document.
+- [ ] Production Combat UX smoke starts the real app at 320×568 and proves adjacent top/right parry routing, neutral Pause placement, frozen phase while paused, 玩法-return-still-paused, resume without catch-up, restart and home behavior.
 - [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
 - [ ] Browser mastery harness clicks both real practice entries and proves Ronin Stage 2 / Shogun Stage 4 entry → selected-duel retry → campaign handoff, with distinct practice result labels and campaign personal-best isolation.
