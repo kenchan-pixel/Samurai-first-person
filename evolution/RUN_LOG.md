@@ -1,447 +1,73 @@
 # Evolution Run Log
 
-This file keeps autonomous-evolution history concise. Full implementation detail and exact verification receipts remain in Git history and Draft PR #1.
+This file intentionally keeps autonomous-evolution history concise. Full implementation detail, exact SHAs, CI receipts and Preview links remain in Git history and Draft PR #1.
 
 ## Runs 000–020 — Core systems and renderer evolution
 
-- **Run 000 — BASELINE:** mobile-first first-person WebGL duel, four-direction parry/swipe combat, three enemies, progression, tests and SOT.
+- **Run 000 — BASELINE:** mobile-first first-person WebGL duel, directional parry/swipe combat, three enemies, progression, tests and SOT.
 - **Run 001 — BLOCKER_FIX:** exact-head CI/Vercel fence plus P0/P1/P2 review-gate semantics.
 - **Runs 002–003 — FEATURE/BLOCKER_FIX:** readable combat motion plus renderer/WebGL correctness and executable browser smoke.
-- **Runs 004–006 — FEATURE/BLOCKER_FIX:** player/enemy posture, guard break, mastery grading/local best and browser/storage hardening.
+- **Runs 004–006 — FEATURE/BLOCKER_FIX:** posture/guard break, mastery grading/local best and browser/storage hardening.
 - **Runs 007–010 — FEATURE/BLOCKER_FIX:** Crimson Shogun and Guided Duel with integration/reduced-motion repairs.
-- **Runs 011–014 — FEATURE/BLOCKER_FIX:** close/mid/far spacing, STEP, impact choreography and wider samurai/dojo framing.
+- **Runs 011–014 — FEATURE/BLOCKER_FIX:** spacing/STEP, impact choreography and wider samurai/dojo framing.
 - **Runs 015–020 — FEATURE/BLOCKER_FIX:** elapsed-time four-beat motion, dropped-frame recovery repair, PlayCanvas production renderer and real combat-motion browser contract.
 
-## Runs 021–032 — Skinned samurai, phone readability and learnability
+## Runs 021–042 — Skinned character, mobile combat and practice
 
-- **Run 021 — FEATURE:** deterministic local 19-joint skinned GLB samurai with layered armour and `Idle / Windup / Strike / Recovery / Parry` clips.
-- **Runs 022–023 — BLOCKER_FIX:** stale baseline assertions and PlayCanvas animation-asset binding repaired so the real skinned production path loads.
-- **Runs 024–025 — FEATURE:** direction-specific skinned body choreography and four stage-specific silhouettes/weapon profiles on the shared rig.
-- **Run 026 — REGRESSION_FIX:** physical-iPhone readability repair: smoother strike presentation, stronger parry clash, quieter HUD and STEP relocation.
-- **Run 027 — REGRESSION_FIX:** real four-direction blade-tip cuts toward/crossing the player-facing plane, actual-path trail, larger STEP and Perfect Parry automatic riposte.
-- **Run 028 — BLOCKER_FIX:** repaired the failed blade-path browser contract with hilt-relative normalized blade axes and faster early commitment.
-- **Run 029 — BLOCKER_FIX:** unified Crimson Shogun Phase II threshold so Perfect Parry automatic damage cannot bypass Blood Moon.
-- **Run 030 — FEATURE:** phone-first 玩法 guide, transient action cues and Stage 2 Ronin final-direction/feint lesson without changing Ronin balance.
-- **Runs 031–032 — BLOCKER_FIX:** aligned duplicated Node/browser clarity assertions and restored the exact-head verification fence.
+- **Runs 021–025:** locally generated 19-joint skinned samurai GLB, animation binding, directional body reads and stage-specific silhouettes.
+- **Runs 026–029:** physical-iPhone readability repair, real world-space four-direction blade paths, Perfect Parry riposte and Blood Moon phase-integrity repair.
+- **Runs 030–034:** phone-first guide/Ronin lesson, exact-head clarity repairs, Perfect STEP and phase-priority repair.
+- **Runs 035–038:** first-person two-hand weapon grip, local post-run analysis and analysis-denominator/damage repairs.
+- **Runs 039–042:** repeatable Ronin/Shogun practice, practice browser verification and optional high-contrast blade-read mode.
 
-## Runs 033–042 — Skill differentiation, local diagnosis and direct practice
+## Runs 043–051 — Combat UX and exact-head hardening
 
-- **Run 033 — FEATURE:** split STEP into normal evade and narrower Perfect STEP with 1-damage automatic sidestep riposte, no posture gain and retained legal manual follow-up.
-- **Run 034 — BLOCKER_FIX:** Blood Moon/defeat now takes priority over Perfect STEP follow-up copy when the recovery opening closes.
-- **Run 035 — FEATURE:** added bounded two-hand/forearm first-person katana embodiment on the existing PlayCanvas rig.
-- **Run 036 — FEATURE:** added local-only stage-by-stage post-run analysis for parry, counter openings, STEP and hits.
-- **Run 037 — BLOCKER_FIX:** separated manual counter damage from automatic riposte damage for accurate swipe-direction coaching.
-- **Run 038 — BLOCKER_FIX:** removed impossible Blood Moon/defeat-closed openings from the visible manual-counter denominator.
-- **Run 039 — FEATURE:** added repeatable real Stage 2 Ronin practice with local analysis and no campaign personal-best writes.
-- **Run 040 — BLOCKER_FIX:** browser gate now exercises the actual Ronin practice entry → retry → campaign handoff and 320×568 start layout.
-- **Run 041 — FEATURE:** added optional pointer-transparent high-contrast blade-read edge rails following telegraph → feint → strike.
-- **Run 042 — FEATURE:** added direct real Stage 4 Crimson Shogun practice with retry/campaign handoff and unchanged boss balance.
+- **Run 043 — REGRESSION_FIX:** simplified live combat, extended portrait top-parry reach, true Pause/玩法 frozen clock, and production Shogun-practice Blood Moon coverage.
+- **Run 044 — REGRESSION_FIX:** moved Pause to a neutral lower-centre band to repair a parry-surface collision.
+- **Runs 045–048 — BLOCKER_FIX:** hardened the real production Start/parry/Pause browser gate and replaced desktop window-size assumptions with true 320×568 CDP mobile emulation.
+- **Run 049 — FEATURE:** presentation-only Crimson Shogun Phase I/Blood Moon signature motion.
+- **Run 050 — REGRESSION_FIX:** restored Pause to the conventional top-right safe-area/HUD position after direct physical-phone feedback, with button-only hit isolation.
+- **Run 051 — BLOCKER_FIX:** aligned the outer browser gate with the accepted top-right Pause contract; exact-head CI #85 and Vercel were green before Run 52 began.
 
-## Run 043 — Mobile combat UX and thumb-reach repair
+## Run 052 — Rejected connected enemy attack choreography
 
-**Date:** 2026-08-28  
-**Action type:** REGRESSION_FIX  
-**Goal:** Resolve direct physical-iPhone owner feedback that the upper parry target was outside comfortable thumb reach, the optional blade-read mode duplicated the centre direction cue, and the live combat screen carried too much explanatory text. Move detailed instructions behind a true Pause/玩法 surface while preserving combat authority.
+**Date:** 2026-08-29  
+**Action type:** FEATURE — **rejected by physical-device acceptance**
 
-### Preflight / evidence
+Run 52 added procedural per-frame Chest/upper-arm/forearm offsets plus HandR-attached katana alignment in an attempt to make all four enemy attacks read as one connected body-to-blade action. Node and browser contracts were green, and exact-head CI #86 plus Vercel succeeded.
 
-- Exact previous HEAD `5d7f1b64a3882102da27428da063e04dec6ff4b8`: CI #71 / run `33152508290` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
-- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads were empty.
-- Direct owner physical-iPhone feedback is P1 by repository authority: `刀路清晰` should not duplicate the centre arrow, and top parry must extend materially lower into a one-hand portrait thumb-reach zone without stealing side/bottom/STEP intent.
-- The owner then explicitly requested a cleaner combat screen with a Pause entry for reviewing controls, allowing persistent explanatory text to be removed from live play.
-- The exact-head reviewer also found one blocking P2 verification gap: Shogun practice reached Stage 4 in browser tests but did not prove the composed practice route crosses the real 7→6 HP Blood Moon threshold before terminal flow.
+The primary physical-iPhone acceptance immediately failed: the owner reported the animation was completely broken/collapsed. The exact-head PR review therefore classified Run 52 as a P1 playability/baseline regression. The failure exposed a verification gap: descriptor/path arithmetic and headless browser checks did not prove anatomical continuity of the real skinned hierarchy under combined joint overrides and world-space sword rotation.
 
-### Delivered repair
+Run 52 must not be treated as an accepted baseline or a foundation for Easy mode, VFX or further feature work.
 
-- Added `src/combat-ux.js` as a bounded input/presentation helper. Portrait top parry now reaches to 42% of screen height while left/right/bottom retain the existing 28% edge depth. Overlapping corner candidates still choose the physically nearest edge, so a reachable upper-middle top zone does not silently turn upper-side taps into top parries. Landscape retains the symmetric 28% map and the neutral centre remains neutral.
-- The visible top feedback zone mirrors the new 42% portrait reach. The actual combat timing, perfect window, damage and directional authority are unchanged.
-- When optional **刀路清晰** is ON, its edge rail becomes the sole directional overlay and the old centre arrow/label is suppressed. With the mode OFF, the standard centre direction cue remains unchanged.
-- Removed the always-on combat prompt, footer gesture sentence, block-zone labels and arena subtitle from live combat. The compact HUD keeps HP, stage/enemy and player/enemy posture; existing short action cues, impact feedback, audio/haptics and the optional Guided Duel remain available for moment-to-moment learning.
-- Added a 44×44 **Pause** control with **繼續 / 玩法 / 重新開始 / 返回主頁**. `玩法` reuses the existing full guide instead of creating duplicate instructions. Restart reuses the existing campaign/practice restart path.
-- Pause uses a game-time clock rather than merely hiding the screen: combat updates, timing windows and renderer motion stop advancing while paused, pointer input is ignored, and resuming does not catch up the elapsed wall-clock pause duration.
-- Added a production-composition Shogun-practice regression: the real boss adapter plus practice adapter must legally counter from 7 HP to 6 HP, emit `boss-phase`, switch to `BOSS_PHASE_TWO`, remain Stage 4 practice, and only then complete as a practice victory.
-
-### Verification / regression boundaries
-
-- Pre-commit syntax checks passed for modified `src/main.js`, new `src/combat-ux.js`, and both focused tests.
-- Focused input tests cover 320×568 portrait upper-middle top reach, side precedence in upper corners, bottom direction, neutral centre and unchanged landscape symmetry.
-- Focused clock coverage proves a long wall-clock Pause interval contributes zero game time and normal elapsed-time progression resumes from the frozen value.
-- The Shogun practice test closes the review P2 using the composed production boss/practice wrappers rather than forcing terminal state before Blood Moon.
-- No parry/Perfect/STEP timing, damage, boss balance, Ronin balance, score, renderer/asset authority, persistence/network/privacy boundary or merge authority is changed.
-- Exact-head CI and Vercel Preview for this single implementation commit are pending post-commit self-verification; the PR run comment is the authoritative verification receipt.
-
-### Human acceptance / residual risk
-
-- Re-check on the same physical iPhone that the 42% top target feels comfortably reachable without accidental top blocks from intended left/right taps.
-- Confirm the 44×44 Pause control does not materially reduce the usable upper-right combat area in the preferred grip.
-- Confirm the quieter HUD still leaves enough feedback with Guided Duel off, and that `刀路清晰` ON now reads cleaner with no centre-arrow duplication.
-
-### Next candidates
-
-- Repeat Ronin/Shogun practice on the same device and use local analysis plus feel before any balance change.
-- Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified live HUD.
-- After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.
-
-## Run 044 — Pause / directional-input collision repair
-
-**Date:** 2026-08-28  
-**Action type:** REGRESSION_FIX  
-**Goal:** Close the exact-head review finding that the new 44×44 top-right Pause button stole part of the active top/right parry surface, and make the accepted asymmetric portrait input + Pause contract durable in the baseline/checklist.
-
-### Preflight / evidence
-
-- Exact previous HEAD `9c2d2fcdfde64747b6df565b554de8ab9f0b40aa`: CI #72 / run `33156238023` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
-- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads were empty.
-- Exact-head All Repos review found two actionable P2s: the top-right Pause control intercepted a geometrically valid top/right parry region, and `CURRENT_BASELINE.md` / `REGRESSION_CHECKLIST.md` did not yet record the Run 043 input/Pause contract.
-- No P0/P1, failed CI, broken Preview, security/privacy/data-loss issue or separate gameplay-balance regression was present.
-
-### Delivered repair
-
-- Moved the same 44×44 Pause control to the lower-centre neutral tap band. At the 320×568 acceptance viewport its whole hit rectangle remains between the left/right 28% regions, below the portrait top 42% region and above the bottom 28% region.
-- Added `rectIsNeutralForErgonomicTap()` so the actual Pause rectangle is checked against the same production direction mapper, not against a second hard-coded idea of the parry zones. Production now exposes `data-pause-input-safe="pass"` only when all Pause corners/centre resolve to no parry direction.
-- Preserved adjacent top/right directional access and the 42% portrait top reach; the repair changes Pause placement only, not parry timing, directional authority or STEP.
-- Added a query-gated production Combat UX browser contract on the real app: start a duel, route representative top/right taps, verify the Pause hit rectangle is neutral, freeze a live phase across a long wall-clock wait, open/close 玩法 while remaining paused, resume without catch-up, then exercise restart and home.
-- Updated `CURRENT_BASELINE.md`, `REGRESSION_CHECKLIST.md` and `IMPROVEMENT_BACKLOG.md` with the accepted asymmetric portrait input, quiet live HUD, neutral Pause placement and frozen-clock semantics.
-
-### Verification / regression boundaries
-
-- Previous exact HEAD was terminal green before the repair was selected.
-- `node --check` passes for the modified Combat UX module, focused Node test and new production browser contract module.
-- Focused Node coverage now proves the representative 320×568 Pause rectangle is neutral while adjacent top/right points still map correctly; landscape retains the symmetric 28% map.
-- The production browser contract is added to the existing browser gate rather than creating a parallel product path.
-- No enemy HP/damage, parry/Perfect windows, STEP/Perfect STEP, boss/Ronin balance, score, persistence, analytics/network, renderer authority or merge behavior is changed.
-- Exact-head CI and Vercel Preview for this single repair commit are pending post-commit self-verification; the PR run comment is the authoritative receipt.
-
-### Human acceptance / residual risk
-
-- Physical-iPhone acceptance should confirm the lower-centre Pause location is easy enough to reach without feeling visually central or becoming an accidental swipe-start target during aggressive counter play.
-- Re-check the 42% top-parry reach and adjacent side precedence with the preferred one-hand grip; automated geometry proves non-overlap, not subjective thumb comfort.
-
-### Next candidates
-
-- Repeat Ronin/Shogun practice on the same device and use local analysis plus feel before any balance change.
-- Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified HUD and neutral Pause placement.
-- After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.
-
-## Run 045 — Combat UX exact-head browser-gate repair
-
-**Date:** 2026-08-28  
-**Action type:** BLOCKER_FIX  
-**Goal:** Restore the exact-head CI fence after Run 044’s production Combat UX gate failed even though the intended Pause placement was geometrically neutral and Vercel Preview was healthy.
-
-### Preflight / evidence
-
-- Exact current HEAD `991d717c8a03679fe909c6643ddb1facd4c3ff57`: GitHub `Vercel` status = success / Preview Ready, but CI #73 / run `33160196291` failed twice.
-- Both CI attempts passed all 57 Node tests and failed only `npm run test:browser`. The failure DOM consistently reported `pause-layout=pass` but `pause-input-safe=fail`, `top-parry-path=false`, and `resume=false`; right-parry, pause-freeze, guide-return, restart and home were already passing.
-- Root cause 1: `installCombatUx()` measured the Pause button in its initial `hidden` state, where `getBoundingClientRect()` is a zero-size rectangle, so the safety diagnostic could never prove neutrality even though the visible CSS placement was correct.
-- Root cause 2: the browser contract attempted to infer the top path from a short-lived visual zone state and resume from a later phase sample. Those are timing-sensitive proxies for the actual acceptance criteria: the rendered point must remain an unobstructed directional canvas target, and the Pause UI/state must return to running while the already-tested game clock remains no-catch-up.
-- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads were empty. The prior input/Pause P2 contract is represented in Current Baseline / Regression Checklist; this run repairs its exact-head verification rather than adding new product scope.
-
-### Delivered repair
-
-- Pause input-safety measurement is now lifecycle-aware: the diagnostic stays pending while the control is hidden, re-measures after the live Pause button becomes visible, and re-checks on viewport resize/orientation changes. It still validates the real rendered rectangle through the production ergonomic direction mapper.
-- The production browser gate waits until the duel and visible Pause geometry are genuinely ready before evaluating input safety.
-- Representative top/right checks now verify the real rendered point resolves to the game canvas with `elementFromPoint`, maps through the production ergonomic direction mapper to the intended guard, and receives the dispatched pointer event. This directly protects the input-surface collision that Run 044 was meant to fix without depending on transient feedback CSS.
-- Pause neutrality in the browser gate uses `rectIsNeutralForErgonomicTap()` on the actual rendered Pause rectangle rather than duplicating the 28%/42% geometry in test code.
-- Browser Pause verification keeps the strong long-wait frozen-phase check and 玩法-return-still-paused check. Resume now verifies the production unpaused state, hidden Pause modal and restored neutral Pause control; the focused `PausableCombatClock` test continues to prove that elapsed wall-clock Pause time is never caught up after resume.
-
-### Verification / regression boundaries
-
-- `node --check` passed locally for both modified modules before creating the final Git tree.
-- No gameplay timing, parry/Perfect/STEP mapping, Pause position, enemy balance, score, persistence/network/privacy boundary, renderer authority or player-facing copy changed; this is a delivery-gate/runtime-diagnostic repair.
-- Existing 57 Node tests were green on the failed exact HEAD; the repaired production browser contract remains fail-closed on actual rendered hit-testing, mapper direction, Pause neutrality/freeze/guide/resume, restart and home.
-- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the PR run comment is the authoritative verification receipt.
-
-### Human acceptance / residual risk
-
-- Automated geometry/runtime evidence can prove the lower-centre Pause control does not consume a directional region; physical-iPhone acceptance is still required for subjective reach and accidental-touch feel.
-- The 42% top-parry depth remains unchanged and should still be re-checked with the preferred grip.
-
-### Next candidates
-
-- Repeat Ronin/Shogun practice on the same physical phone and use local stage analysis before changing balance.
-- Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified HUD and neutral Pause placement.
-- After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.
-
-## Run 046 — Production Start/parry verification repair
-
-**Date:** 2026-08-28  
-**Action type:** BLOCKER_FIX  
-**Goal:** Repair the still-failing exact-head Combat UX gate by proving that the real production Start handler is actually registered/executed and that representative top/right taps reach the real production `CombatEngine.attemptParry()` path.
-
-### Preflight / evidence
-
-- Exact current HEAD `846e6cb2f5a236958fc54041d839f092bcb40692`: CI run `33162287386` failed `npm run test:browser` while all **57/57 Node tests passed**.
-- Failure DOM remained at `data-combat-phase="ready"`, `data-pause-layout="pending"`, `data-pause-input-safe="pending"`, `data-combat-ux-browser="fail-live-layout"`, so Run 045 never proved a real duel started.
-- Exact-head All Repos review found **P1** that `data-start-ready` was published before the real Start click listener was registered, making blind click/retry timing incapable of distinguishing premature clicks from startup exceptions.
-- The same review found a material **P2**: the top/right smoke installed its own `pointerup` listener, so it could pass without proving production `main.js` actually routed the gesture through `engine.attemptParry()`.
-- Exact-head GitHub `Vercel` status is also failed because of the external project build-rate limit (`Deployment rate limited — retry in 24 hours`). This is not treated as a product-code defect, but the exact-head fence remains blocked until Preview can deploy again.
-- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads remained empty.
-
-### Delivered repair
-
-- Added a query-gated production-composition observer before `main.js`. During the Combat UX smoke only, it observes the actual `#start-button` click-listener registration and publishes `data-start-handler-ready="true"` only after that real listener exists.
-- The same observer captures `window.error` / `unhandledrejection` into a bounded diagnostic, so startup exceptions are distinguishable from an early/missed click.
-- The browser contract now waits for the real Start-handler marker, clicks Start once, and requires explicit post-click evidence: the start modal is gone, Pause is live, the game is unpaused and combat has left `ready`.
-- The query-gated observer wraps the existing composed `CombatEngine.attemptParry()` only for this smoke and records its actual result. The top/right assertions now dispatch through the real viewport hit target and require that production parry marker to change for the intended direction; the smoke-owned `pointerup` success shortcut is removed.
-- Normal gameplay receives no CombatEngine patch or extra input behavior: the observer is inert unless `?browser-smoke=combat-ux` is present.
-
-### Verification / regression boundaries
-
-- Current failed-head evidence already proves all 57 Node tests remain green; this run changes only the production browser verification seam and an inert query-gated observer.
-- No player-visible control placement, 42% top mapping, parry/Perfect timing, STEP, Pause semantics, HP/damage, enemy balance, renderer, storage/network/privacy boundary or merge authority is changed.
-- The exact-head browser gate remains fail-closed on Start execution, runtime errors, actual production top/right parry routing, neutral Pause placement, freeze, guide return, resume, restart and home.
-- Exact-head CI for this single blocker-fix commit is pending post-commit self-verification. Vercel Preview is expected to remain externally blocked until the provider build-rate window resets; the PR receipt will record the observed status rather than claiming a green Preview.
-
-### Human acceptance / residual risk
-
-- This is verification-only: physical-iPhone acceptance of Pause reach and the 42% upper-parry zone remains unchanged.
-- No feature work is eligible while exact-head Preview remains rate-limited or CI is not terminal green.
-
-### Next candidates
-
-- Re-check exact-head CI and Vercel once the external build-rate limit resets; hold feature work until both are green.
-- Then continue physical-iPhone Ronin/Shogun practice and input/readability acceptance before any balance change.
-
-## Run 047 — Direct production Start boundary verification repair
-
-**Date:** 2026-08-28  
-**Action type:** BLOCKER_FIX  
-**Goal:** Close the still-red exact-head Combat UX browser fence by removing the ambiguous external listener inference and instrumenting the real `main.js` Start and parry boundaries directly.
-
-### Preflight / evidence
-
-- Exact current HEAD `55c632eec1e2b043d44fb81f35d884f480bb04e8`: CI #79 / run `33163321185` failed only `npm run test:browser`; all **57/57 Node tests passed**.
-- Exact-head Vercel deployment is healthy again: GitHub `Vercel` commit status = success / Preview Ready. The previous state entry claiming an active build-rate limit is stale.
-- Failure DOM proves the issue precisely: `start-handler-ready=true` but `combat-phase=ready`, `combat-ux-start-executed=false`, and Pause layout/input remained pending. The external observer therefore detected a Start-button listener without proving that the production `begin()` listener had registered or executed.
-- Exact-head Second Hourly review marks this as a blocking **P1** and explicitly requires readiness/entry/completion diagnostics from `main.js` itself. No inline review threads are open; Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
-
-### Delivered repair
-
-- `main.js` now owns the query-gated smoke diagnostics at the authoritative boundaries. `data-start-handler-ready=true` is published only after the real `#start-button → begin` listener registration line executes.
-- `begin()` publishes separate entry and completion markers around the real production start path. Completion occurs only after `engine.start()`, `run=true` and live Pause UI activation have executed.
-- The real `end()` pointer path records the actual `engine.attemptParry()` result for the representative top/right smoke taps. The smoke no longer monkey-patches `CombatEngine.prototype` to infer production routing.
-- The former runtime observer module is retained only as an inert stable path; it no longer patches `EventTarget` or combat methods. Runtime errors remain query-gated and are captured directly by `main.js`.
-- The production browser contract now requires both `begin` entry and completion in addition to the existing live-layout, actual parry, Pause-neutrality/freeze/guide/resume/restart/home gates.
-
-### Verification / regression boundaries
-
-- Previous exact HEAD already proves all 57 Node combat/input/clock/boss/practice tests green; no gameplay rule, control geometry, player-facing copy, renderer, balance, persistence/network/privacy or merge behavior changes in this repair.
-- The modified browser gate remains fail-closed and now binds its Start evidence to the same module that owns the production listener instead of relying on module execution order.
-- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the PR run comment is the authoritative receipt.
-
-### Human acceptance / residual risk
-
-- This repair changes verification only. Physical-iPhone acceptance of the 42% top-parry reach, neutral lower-centre Pause position, simplified HUD and blade-read rails remains unchanged.
-- Feature work remains prohibited unless this new exact HEAD reaches terminal-green CI and Vercel Preview.
-
-### Next candidates
-
-- If exact-head CI/Preview turn green, resume physical-iPhone Ronin/Shogun practice and readability/input acceptance before any balance changes.
-- After core acceptance, choose the next substantial player-visible slice from the existing backlog rather than adding more verification-only work.
-
-## Run 048 — Real 320×568 portrait browser-emulation repair
-
-**Date:** 2026-08-28  
-**Action type:** BLOCKER_FIX  
-**Goal:** Restore the exact-head CI fence by making the production Combat UX gate genuinely execute the approved 320×568 portrait input branch instead of relying on desktop Chrome `--window-size` semantics.
-
-### Preflight / evidence
-
-- Exact current HEAD `d7dae6272996189c2936da1d75d5b1e45930dd51`: CI #80 / run `33167476369` has **57/57 Node tests green** and fails only `npm run test:browser`; exact-head GitHub `Vercel` status = success / Preview Ready.
-- Run 047 successfully proved the real production Start boundary, right parry path and Pause neutrality/freeze/玩法/resume/restart/home behavior. Only the representative top-parry path remained false.
-- Exact-head All Repos review identified the blocking **P1** root cause: desktop `--window-size=320,568` does not guarantee `window.innerWidth/innerHeight` or the canvas are actually 320×568 portrait. The 36%-height top probe therefore fell through to the 28% landscape mapper branch even though the Node `(320,568)` mapper contract was correct.
-- The reviewer explicitly required real device-metrics emulation plus actual viewport/canvas receipts and prohibited making the tap easier or weakening the assertion. Inline review threads remain empty; Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
-
-### Delivered repair
-
-- Added `scripts/cdp-mobile-dom.mjs`, a bounded Chrome DevTools Protocol helper that launches the existing headless Chromium/SwiftShader path, applies `Emulation.setDeviceMetricsOverride` at **320×568, DPR 1, mobile portrait**, enables touch emulation, then navigates the production app and returns its final DOM.
-- Only the production Combat UX gate uses the new CDP path; renderer, mastery, boss, onboarding, footwork, readability and impact harnesses keep the existing runner so the blocker repair remains narrow.
-- `src/combat-ux-contract-smoke.js` now records the actual `window.innerWidth × innerHeight` and canvas rectangle, requires both to resolve to 320×568 before attempting the directional checks, and fails as `fail-viewport` otherwise.
-- The top probe remains at 36% of canvas height, so it still proves the **42% portrait-only** reach instead of being moved into the old 28% region. Top/right taps still must pass through the real `main.js → end() → engine.attemptParry()` receipt.
-- `scripts/browser-smoke.mjs` now requires explicit `data-combat-ux-portrait-viewport="true"`, `data-combat-ux-viewport="320x568"` and `data-combat-ux-canvas="320x568"` before accepting the Combat UX gate.
-
-### Verification / regression boundaries
-
-- `node --check` passed for the new CDP helper and modified Combat UX contract smoke before creating the Git tree; the browser runner change is limited to importing that helper and replacing only the Combat UX invocation/assertions.
-- The failed exact HEAD already proves all 57 Node combat/input/clock/boss/practice tests green. No production gameplay code, 42% input mapping, Pause geometry, timing/damage, STEP, enemy balance, renderer/asset authority, persistence/network/privacy boundary or player-facing copy changes in this repair.
-- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the Draft PR run comment remains the authoritative receipt.
-
-### Human acceptance / residual risk
-
-- CDP device metrics prove automated phone geometry and production routing, not subjective thumb comfort, sustained frame rate or thermals on a physical iPhone.
-- The 42% upper-parry reach, neutral lower-centre Pause position, simplified HUD and blade-read rails still require the existing direct-device acceptance check.
-
-### Next candidates
-
-- Verify exact-head CI and Vercel before any feature work.
-- If both are green, resume same-device Ronin/Shogun practice plus input/readability acceptance before changing balance.
-- After core acceptance, choose the next substantial player-visible slice from the existing backlog rather than adding more verification-only work.
-
-## Run 049 — Crimson Shogun signature phase language
-
-**Date:** 2026-08-28  
-**Action type:** FEATURE  
-**Goal:** Make the existing Crimson Shogun boss feel materially more distinctive through body/weapon motion — especially when Blood Moon Phase II begins — without adding HUD clutter or changing any combat balance value.
-
-### Preflight / evidence
-
-- Exact previous HEAD `cd65ebcb07b54354d6af548ab49e01f2ce40aa50`: CI #81 / run `33171534505` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
-- Exact-head All Repos review reports **no new actionable P0/P1/P2 finding**; inline review threads are empty. Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
-- The backlog still requires physical-phone evidence before any Ronin/Shogun balance tuning. Presentation-only boss refinement is therefore safer than changing timing/HP/damage, and it advances the Product Goal requirement for memorable boss encounters.
-
-### Candidate selection
-
-1. **Crimson Shogun signature phase motion** — impact 4 / goal alignment 5 / novelty 4 / confidence 5 / safety 4. Uses existing boss phase/direction state to make Phase I and Blood Moon feel visibly different without touching combat authority.
-2. **Challenge / endless mode** — impact 5 / goal alignment 5 / novelty 5 / confidence 3 / safety 2. Strong replay value but much broader progression/scoring risk for one bounded run.
-3. **Left-handed/accessibility layout follow-up** — impact 3 / goal alignment 4 / novelty 4 / confidence 4 / safety 4. Useful, but it returns immediately to the recently changed Combat UX subsystem before more physical-phone evidence.
-
-Chosen slice: candidate 1.
-
-### Delivered feature
-
-- Added pure `bossSignatureFrame()` presentation logic driven only by the current renderer-neutral boss snapshot, attack direction and phase progress.
-- Phase I heavy reads now settle into a deliberate crouch/forward preparation. Blood Moon Phase II adds a lower stance, stronger forward pressure, larger directional torso commitment and slightly enlarged enemy/sword/read-trail emphasis.
-- Phase II also shifts the existing Shogun accent/read-trail materials toward a stronger crimson emissive, reinforcing Blood Moon through the opponent itself instead of adding more combat text.
-- The stage-identity adapter applies the signature to existing skinned transforms/materials and retains bounded body displacement on the primitive character fallback. No new 3D asset, entity pool, timer, network request or gameplay state is introduced.
-- No HP, damage, parry/Perfect window, STEP, reach, posture, score, boss phase threshold or attack-set authority is changed.
-
-### Verification / regression boundaries
-
-- Previous exact HEAD was terminal green before feature selection.
-- Local `node --check` passed for the new helper and modified stage-identity adapter.
-- Focused deterministic coverage passed **5/5**: non-boss neutrality, Phase I heavy commitment, stronger Blood Moon commitment, mirrored left/right body motion and recovery pressure release.
-- Existing renderer/browser, combat, boss, practice and input gates remain unchanged and will run through exact-head CI after this single commit.
-- Exact-head CI and Vercel Preview are pending post-commit self-verification; the Draft PR run comment will carry the new SHA and terminal verification receipt.
-
-### Human acceptance / residual risk
-
-- Physical-iPhone Shogun practice should confirm that Blood Moon now feels more aggressive while the actual blade direction remains easy to read and the added motion does not reduce sustained frame rate.
-- The visual delta is deliberately bounded; if the stronger phase motion obscures top/right/bottom/left reads on-device, tune the presentation multipliers rather than combat timing.
-
-### Next candidates
-
-- Re-check the new Shogun Phase I/Blood Moon language on the target phone together with blade trajectory and first-person grip.
-- Repeat Ronin/Shogun practice and use local analysis plus feel before any balance change.
-- After core phone acceptance, consider one bounded challenge-mode slice rather than further verification-only work.
-
-## Run 050 — Top-right Pause HUD placement repair
+## Run 053 — Restore last usable enemy-animation baseline
 
 **Date:** 2026-08-29  
 **Action type:** REGRESSION_FIX  
-**Goal:** Resolve the direct owner P1 that the lower-centre Pause control sits inside the play field and undermines the simplified combat composition. Restore a conventional top-right Pause without weakening the 42% thumb-reach parry map or hiding an input collision behind a neutral-zone workaround.
+**Goal:** remove the Run 52 physical-device animation collapse before any new feature work.
 
 ### Preflight / evidence
 
-- Exact previous HEAD `93c8fecfd5994adec189e6e32707ef2d05c14c53`: CI #82 / run `33180868751` = success; exact-head GitHub `Vercel` status = success / Preview Ready.
-- Draft PR #1 remains open, Draft and unmerged; `main` remains untouched; inline review threads are empty.
-- The current exact-head All Repos review reports no new P0/P1/P2 finding on the Shogun signature slice, but that does not supersede the earlier direct owner P1 on PR comment `#issuecomment-5453794517`. By repository authority and review-gate rules, the owner P1 still applies and blocks another feature.
-- The stale baseline/checklist still described the Run 044 lower-centre neutral-band compromise as accepted behaviour. This run therefore repairs both the production placement and its verification/SOT contract.
+- Exact incoming HEAD: `5fcc042205cbdde00c57175e0231c27d80784871`.
+- CI #86 / workflow run `33200157967` = **success** and GitHub `Vercel` status = **success**, proving the regression was not detectable by the existing automated fence.
+- Exact-head PR review contains a blocking **P1** based on direct owner physical-iPhone rejection; inline review threads are empty.
+- The last pre-Run-52 branch state `f8f8e7a166225e92108012c47eae4fc6db71feee` had terminal-green CI #85 / Vercel and is the bounded known-good rollback target for this subsystem.
 
 ### Delivered repair
 
-- Moved the same 44×44 **Pause** button from `left:50% / lower-centre` to the conventional top-right safe-area/HUD corner, offset below the top enemy HUD so the centre combat read stays clean. The visual treatment is slightly quieter than the old lower-centre button.
-- Replaced “Pause must be neutral under the parry mapper” as the placement contract with `pauseRectIsTopRightHudSafe()`: the rendered button must remain bounded in the top-right HUD area and points immediately left/below it must still map to **top** and **right** parries respectively.
-- Added explicit pointerdown/pointerup propagation isolation on the Pause element. The button intentionally owns its own 44×44 hit rectangle; it does not attempt to make that rectangle a simultaneous parry target.
-- Updated the real 320×568 CDP Combat UX gate to prove the actual rendered button centre hits Pause, while immediately adjacent points hit the canvas and retain their top/right production direction mapping. Existing freeze → 玩法 → resume → restart → home checks remain intact.
-- Updated Current Baseline, Regression Checklist, Improvement Backlog and Changelog so future runs do not move Pause back into the centre merely to satisfy the retired neutral-Pause assumption.
+- Restored `src/blade-trajectory.js` exactly to the pre-Run-52 world-space blade-path implementation from `f8f8e7a166225e92108012c47eae4fc6db71feee`.
+- Removed the rejected `src/enemy-attack-choreography.js` runtime joint-override layer and its descriptor-only test.
+- Restored Current Baseline, Regression Checklist, Improvement Backlog and Changelog to their pre-Run-52 versions so the broken choreography is no longer represented as accepted product behaviour.
+- CombatEngine timing, parry/Perfect windows, damage, posture, STEP, boss/Ronin balance, score, input, persistence/network/privacy boundaries and `main` are unchanged.
 
-### Verification / regression boundaries
+### Verification / regression boundary
 
-- Previous exact HEAD was terminal green before selecting this repair.
-- `node --check` passes for the modified `src/combat-ux.js`, `src/combat-ux-contract-smoke.js` and focused `tests/combat-ux.test.mjs`.
-- A focused geometry check proves the expected 320×568 top-right Pause rectangle is accepted, its left neighbour resolves to top, its lower neighbour resolves to right, and the old lower-centre rectangle is no longer accepted as the Pause HUD placement.
-- The 42% portrait top mapper itself is unchanged. No parry/Perfect/STEP timing, damage, boss/Ronin balance, score, renderer/asset authority, persistence/network/privacy boundary or merge authority is changed.
-- Exact-head CI and Vercel Preview for this single implementation commit are pending post-commit self-verification; the Draft PR run comment is the authoritative receipt.
-
-### Human acceptance / residual risk
-
-- The button deliberately consumes its own 44×44 top-right hitbox; automation proves neighbouring parry access, not subjective one-hand reach. Re-check on the target iPhone that Pause feels conventional and visually quiet while the 42% upper-parry reach remains comfortable.
-- If physical play shows the button too close to the enemy blade/HUD, tune the HUD offset rather than reintroducing a centre control or changing combat timing.
+- This is an exact bounded rollback of the Run 52 runtime/SOT delta rather than another attempt to tune the broken transforms.
+- Automated post-commit CI and Vercel Preview must be terminal green before another implementation run.
+- Physical-iPhone re-check remains mandatory because Run 52 proved CI cannot certify anatomical animation quality.
 
 ### Next candidates
 
-- Re-check the top-right Pause together with the 42% upper-parry reach, blade trajectory and Shogun Blood Moon presentation on the target phone.
-- Repeat Ronin/Shogun practice and use local stage analysis plus feel before any balance change.
-- After core phone acceptance, consider one bounded challenge-mode slice rather than further verification-only work.
-
-## Run 051 — Top-right Pause browser-contract repair
-
-**Date:** 2026-08-29  
-**Action type:** BLOCKER_FIX  
-**Goal:** Restore the exact-head CI fence after Run 050 correctly moved Pause back to the top-right HUD but the outer browser runner still enforced the retired lower-centre neutral-band contract.
-
-### Preflight / evidence
-
-- Exact current HEAD `905971762630ec32e81d96a9a447971347f1a7af`: CI #84 / run `33190838753` failed only `npm run test:browser`; all **62/62 Node tests passed**.
-- Exact-head GitHub `Vercel` status is **success / Preview Ready**.
-- Exact-head All Repos review identifies one blocking P2: `src/combat-ux-contract-smoke.js`, Current Baseline and Regression Checklist already use the new top-right HUD + button-only hit-isolation contract, while `scripts/browser-smoke.mjs` still requires `data-combat-ux-pause-neutral="true"` and neutral-band diagnostics.
-- Inline review threads are empty; Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
-
-### Delivered repair
-
-- Updated only the outer production browser runner to require `data-combat-ux-pause-hud-safe="true"` and `data-combat-ux-pause-hit-isolation="true"` instead of the retired `pause-neutral` marker.
-- Updated stale neutral-band error wording so future failures point at the accepted top-right HUD contract rather than suggesting Pause should be moved back into the play field.
-- Retained the existing exact 320×568 portrait viewport/canvas proof, real production top/right parry routing, Pause freeze, 玩法-return-still-paused, resume, restart and home checks.
-- No production gameplay or UI code changed in this blocker repair.
-
-### Verification / regression boundaries
-
-- The failed exact HEAD already proves all 62 Node tests green; the observed browser failure is deterministic and limited to the stale outer assertion after the inner Combat UX contract completed the new markers.
-- No Pause geometry, parry/Perfect/STEP timing, damage, boss/Ronin balance, renderer/asset authority, persistence/network/privacy boundary or player-facing copy changed.
-- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the Draft PR run comment is the authoritative receipt.
-
-### Next candidates
-
-- Once the new exact HEAD is terminal green, prioritise the direct physical-iPhone attack-animation problem: all enemies need one continuous hand → forearm → torso → katana action, with bottom attacks redesigned into an unmistakable low thrust, rising cut or low-line cut rather than a disconnected ambiguous move.
-- Only after the base animation reads clearly without overlays, consider the proposed optional Easy-mode rhythm/timing ring as a separate assistance layer.
-- Keep balance changes behind repeated Ronin/Shogun practice evidence.
-
-## Run 052 — Connected enemy attack choreography
-
-**Date:** 2026-08-29  
-**Action type:** FEATURE  
-**Goal:** Address direct physical-phone owner feedback that all enemies still look like the katana moves independently of the hands/body, that directional cuts lack committed swing feel, and that the bottom attack is especially ambiguous. Make the base animation itself readable before adding any Easy-mode timing overlay.
-
-### Preflight / evidence
-
-- Exact previous HEAD `f8f8e7a166225e92108012c47eae4fc6db71feee`: CI #85 / run `33194743810` = **success**; exact-head GitHub `Vercel` status = **success / Preview Ready**.
-- Exact-head submitted review reports **no new actionable P0/P1/P2 findings**; inline review threads are empty. Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
-- Direct owner physical-phone feedback identifies a player-visible root problem rather than a balance issue: Shogun motion remains subtle because the sword does not read as being driven by the hands; bottom and other directions can look disconnected/unclear; every enemy lacks convincing swing/slash feel.
-- Current code confirms the mechanism: the skinned clip animates torso/arms, then `blade-trajectory.js` independently sets the `Sword` world rotation. The Sword is structurally parented to `HandR`, but the arm chain was not directionally coordinated with the final world-space blade path.
-
-### Candidate selection
-
-1. **Connected body → grip → katana choreography** — impact 5 / goal alignment 5 / novelty 5 / confidence 4 / safety 4. Directly fixes the owner-observed root cause for every enemy and all four directions while retaining current combat authority.
-2. **Easy-mode rhythm/timing ring now** — impact 4 / goal alignment 4 / novelty 4 / confidence 4 / safety 4. Helpful assistance, but the owner explicitly wants the base sword motion fixed first; adding a cue now risks hiding the animation defect.
-3. **Further Shogun-only Blood Moon exaggeration** — impact 3 / goal alignment 4 / novelty 2 / confidence 4 / safety 5. Low risk but repeats Run 049 and does not fix the shared hand/sword disconnection across all enemies.
-
-Chosen slice: candidate 1.
-
-### Delivered feature
-
-- Added pure `src/enemy-attack-choreography.js` as one direction/phase source for four physical cuts: overhead downward, mirrored right/left cross-body, and a dedicated low-to-high **rising cut** for bottom.
-- The choreography maps telegraph → contact → follow-through into bounded additive transforms for `Chest`, both upper arms and both forearms, plus model-height/depth commitment. Phase-boundary poses are mathematically continuous so the presentation layer does not introduce a new snap between wind-up, strike and recovery.
-- `src/blade-trajectory.js` now samples the normal skeletal clip, applies those existing-bone offsets, then aligns the actual **HandR-attached Sword** into the established world-space player-facing cut. The sword origin/hilt remains in the hand hierarchy while the arm chain and weapon share the same directional commitment.
-- Bottom attacks now sink into a low guard, drive farther forward through the strike and rise into a high follow-through. Side cuts use mirrored torso/arm commitment and longer cross-body follow-through; top retains the readable overhead-to-downward path.
-- The existing bounded actual-tip trail, player-facing parry-plane crossing, stage identities, Shogun signature layer, PlayCanvas/WebGL fallback seam and combat-neutral timing/damage authority are preserved.
-- The optional Easy-mode rhythm/timing ring remains deliberately deferred until this base motion is physically accepted.
-
-### Verification / regression boundaries
-
-- Pre-commit local `node --check` passed for the new choreography helper and modified blade-trajectory adapter.
-- Focused pure Node coverage passed **4/4** locally: four distinct blade reads toward the player, low-to-high bottom body/arm movement, mirrored side commitment and exact telegraph→strike→recovery boundary continuity.
-- No CombatEngine timing/window, damage, posture, reach, STEP, boss/Ronin balance, score, input, persistence, network/privacy boundary, asset licence or merge authority changes.
-- No new runtime entity pool is introduced; the choreography updates existing skinned joints/Sword and reuses the existing maximum six world-space trail segments.
-- Exact-head CI and Vercel Preview for this single implementation commit are pending post-commit self-verification; the Draft PR run comment will be the authoritative receipt.
-
-### Human acceptance / residual risk
-
-- Physical iPhone remains the subjective gate: verify all four cuts actually feel like a held weapon at normal speed, especially the bottom rising cut and the Shogun Blood Moon composition.
-- This is bounded procedural joint choreography rather than full inverse kinematics; if a specific direction still shows wrist/elbow misalignment on-device, refine that direction’s offsets/path rather than covering it with more effects or changing combat timing.
-
-### Next candidates
-
-- Run repeated Ronin/Shogun practice on the target phone and confirm top/right/bottom/left cuts remain readable through normal and Blood Moon pressure.
-- After base choreography acceptance, implement the optional Easy-mode rhythm/timing ring as an assistance layer without changing Normal-mode authority.
-- Keep any balance change behind repeated practice/local-analysis evidence.
+1. Confirm on the target iPhone that the skeletal collapse is gone and the prior four-direction world-space blade baseline has returned.
+2. For the next animation upgrade, prefer an original rigged enemy-samurai + katana asset with authored attack clips over stacking procedural runtime offsets on the current skeleton. Combat timing remains renderer-neutral.
+3. Add the proposed Easy-mode rhythm/timing ring only after the base attack animation is physically accepted; it must assist direction/timing rather than hide an unreadable Normal-mode animation.

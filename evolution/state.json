@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 52,
-  "last_action_type": "FEATURE",
-  "last_action": "Reworked enemy attack presentation so the existing skinned Chest/arms/forearms and HandR-attached katana move as one direction-specific cut, with bottom attacks now reading as a committed low-to-high rising cut",
-  "last_commit": "f8f8e7a166225e92108012c47eae4fc6db71feee",
+  "run_number": 53,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Removed the Run 52 procedural body/arm/HandR choreography that collapsed on the primary physical-iPhone acceptance device and restored the last usable world-space enemy blade-trajectory baseline from f8f8e7a166225e92108012c47eae4fc6db71feee",
+  "last_commit": "5fcc042205cbdde00c57175e0231c27d80784871",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Physical-iPhone choreography acceptance: verify top/right/bottom/left attacks now read as continuous body-to-hand-to-katana cuts at normal speed, especially the new bottom rising cut and Crimson Shogun Blood Moon readability",
-    "After the base attack choreography is accepted, add an optional Easy mode rhythm/timing ring that communicates direction and parry moment without changing normal-mode combat authority",
-    "Repeat Ronin/Shogun practice and use local stage analysis plus physical feel before any balance change"
+    "Physical-iPhone rollback acceptance: confirm the Run 52 skeletal collapse is gone and the restored four-direction world-space blade path is back to the last usable baseline before any new animation feature",
+    "Replace the rejected runtime joint-override approach with an original rigged enemy-samurai + katana asset pipeline containing authored top/right/bottom/left attack clips, keeping CombatEngine timing/damage/parry authority renderer-neutral",
+    "Only after the base authored attack animation is physically accepted, add the optional Easy-mode rhythm/timing ring for direction and parry timing assistance"
   ]
 }
