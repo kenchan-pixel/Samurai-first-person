@@ -90,7 +90,7 @@ Chosen slice: candidate 1.
 
 ### Delivered repair
 
-- Perfect STEP riposte events now retain whether their automatic damage closes the opening through Blood Moon Phase II or enemy defeat.
+- Perfect STEP riposte events now retain whether their automatic damage closes the recovery opening through Blood Moon Phase II or enemy defeat.
 - The normal Perfect STEP result is unchanged: `無敵勢 · 仲可掃屏` still appears when a real recovery opening remains.
 - If Blood Moon takes priority, the immediate STEP feedback is corrected before the next render and the larger cue says `BLOOD MOON 先行 · 等下一次開口`; neither surface tells the player to swipe.
 - If the automatic riposte defeats the enemy, the cue reports the defeat rather than advertising a nonexistent follow-up.
@@ -192,5 +192,39 @@ Chosen slice: candidate 1.
 ### Next candidates
 
 - Same-device Stage 2 Ronin re-check using the new local stage analysis; tune only if the difficulty wall remains after the rules are understood.
+- Same-device enemy blade + first-person grip + Perfect Parry/Perfect STEP readability/performance check.
+- Privacy Decision Gate for anonymous backend telemetry only if local analysis proves the signals are worth collecting remotely.
+
+## Run 037 — Manual-counter coaching metric repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Repair the current-head P2 where automatic Perfect Parry / Perfect STEP riposte damage could inflate the local run-analysis average used to judge manual swipe-counter quality.
+
+### Preflight / evidence
+
+- Exact previous HEAD `813f67082d5563386007590b1a4ca27f1f4b6886`: CI #65 / run `33133357066` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- The exact-head All Repos review identified one actionable P2: `damageDealt` includes automatic ripostes while `counters` counts only manual swipes, so `damageDealt / counters` could make a 1-damage manual counter appear strong and suppress the intended opposite-direction swipe coaching.
+- Earlier review findings are demonstrably addressed by later reviewed heads. No additional current-head P0/P1 or material deployment/runtime blocker was found.
+- Remote gameplay telemetry remains outside the approved privacy boundary and was not implemented.
+
+### Delivered repair
+
+- Added stage-local `counterDamage` as a manual-only metric while retaining `damageDealt` as total player damage for general analysis.
+- Only real `counter` events add to `counterDamage`; Perfect Parry and Perfect STEP automatic ripostes continue to contribute only to total `damageDealt`.
+- Opposite-direction swipe coaching now computes average counter damage from `counterDamage / counters`, so free/automatic ripostes cannot hide weak manual swipe direction.
+- Player-facing analysis cards and live combat remain unchanged; this is a correctness repair to the advice selection behind the existing result screen.
+
+### Verification / regression boundaries
+
+- Extended focused run-analysis coverage with a mixed-damage case: one 1-damage manual counter plus two automatic ripostes must retain total damage 3, manual `counterDamage` 1, and still select the opposite-direction swipe coaching.
+- Existing stage-local, Ronin-reading, missed-opening, STEP and browser result-panel coverage remains unchanged.
+- No combat timing, damage, score, parry/STEP window, input, boss logic, mastery result, renderer/asset pipeline, persistence/network/privacy boundary or Ronin balance value changed.
+- Post-commit CI/Preview remain pending self-verification by protocol; the Draft PR run comment will carry the exact commit SHA and verification receipt.
+
+### Next candidates
+
+- Same-device Stage 2 Ronin re-check using the corrected local stage analysis; tune only if the difficulty wall remains after the rules are understood.
 - Same-device enemy blade + first-person grip + Perfect Parry/Perfect STEP readability/performance check.
 - Privacy Decision Gate for anonymous backend telemetry only if local analysis proves the signals are worth collecting remotely.

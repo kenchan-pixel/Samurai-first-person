@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.18.1-evolution — Local battle-analysis counter coaching repair
+
+- Separated manual swipe-counter damage from total player damage in the local run-analysis stage record.
+- Opposite-direction swipe coaching now computes average damage from manual counters only, so automatic Perfect Parry / Perfect STEP ripostes cannot hide a weak manual counter pattern.
+- Added a focused mixed-damage regression proving total damage can include auto-ripostes while manual counter coaching still uses the real swipe damage.
+- No combat timing, damage, scoring, input, persistence, network/privacy boundary or Ronin balance value changed.
+
 ## 0.18.0-evolution — Local post-run battle analysis
 
 - Added local-only per-stage run analysis for parry accuracy, manual counter openings/counters, STEP attempts/success, hits/damage and stage-clear state using the existing combat event stream.

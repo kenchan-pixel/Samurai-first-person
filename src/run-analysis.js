@@ -21,6 +21,7 @@ function createStageRecord(detail = {}) {
     guardBreaks: 0,
     counterOpenings: 0,
     counters: 0,
+    counterDamage: 0,
     missedCounters: 0,
     attackMisses: 0,
     stepAttempts: 0,
@@ -110,8 +111,10 @@ export function observeRunAnalysisEvent(session, event) {
   } else if (event.type === 'perfect-riposte') {
     stage.damageDealt += Math.max(0, Number(detail.damage) || 0);
   } else if (event.type === 'counter') {
+    const damage = Math.max(0, Number(detail.damage) || 0);
     stage.counters += 1;
-    stage.damageDealt += Math.max(0, Number(detail.damage) || 0);
+    stage.counterDamage += damage;
+    stage.damageDealt += damage;
     closeCounterWindow(session, false);
   } else if (event.type === 'attack-miss') {
     stage.attackMisses += 1;
@@ -175,7 +178,7 @@ export function buildRunAdvice(report) {
     : stages[stages.length - 1];
 
   const missedRatio = focus.counterOpenings > 0 ? focus.missedCounters / focus.counterOpenings : 0;
-  const averageCounterDamage = focus.counters > 0 ? focus.damageDealt / focus.counters : 0;
+  const averageCounterDamage = focus.counters > 0 ? focus.counterDamage / focus.counters : 0;
   let tip;
 
   if (focus.missedCounters >= 2 || (focus.missedCounters >= 1 && missedRatio >= 0.34)) {

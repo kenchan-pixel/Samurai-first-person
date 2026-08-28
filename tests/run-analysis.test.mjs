@@ -65,5 +65,28 @@ test('run analysis counts unused counter openings and STEP outcomes without remo
   assert.equal(stage.stepSuccesses, 1);
   assert.equal(stage.perfectSteps, 1);
   assert.equal(stage.damageDealt, 4);
+  assert.equal(stage.counterDamage, 2);
   assert.match(advice.tip, /反擊空隙/);
+});
+
+test('automatic ripostes do not inflate manual counter damage coaching', () => {
+  const session = createRunAnalysisSession();
+  observeRunAnalysisEvent(session, {
+    type: 'stage-start',
+    detail: { stage: 1, enemyId: 'ashigaru-scout', enemyName: 'Ashigaru Scout' },
+  });
+
+  observeRunAnalysisEvent(session, { type: 'perfect-parry', detail: {} });
+  observeRunAnalysisEvent(session, { type: 'perfect-riposte', detail: { damage: 1 } });
+  observeRunAnalysisEvent(session, { type: 'perfect-step-riposte', detail: { damage: 1 } });
+  observeRunAnalysisEvent(session, { type: 'counter', detail: { damage: 1 } });
+
+  const report = finishRunAnalysis(session, { won: false, score: 700 });
+  const stage = report.stages[0];
+  const advice = buildRunAdvice(report);
+
+  assert.equal(stage.counters, 1);
+  assert.equal(stage.counterDamage, 1);
+  assert.equal(stage.damageDealt, 3);
+  assert.match(advice.tip, /相反方向掃/);
 });

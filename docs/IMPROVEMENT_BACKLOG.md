@@ -22,10 +22,11 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 034:** repaired Perfect STEP phase-priority messaging so a Blood Moon transition or enemy defeat closes the recovery opening without briefly/inaccurately telling the player to swipe; the existing browser footwork gate now covers the exact boss 7→6 path.
 - **Run 035:** upgraded the first-person katana from a floating weapon silhouette to a bounded two-hand grip with forearms, hands, wrist guards, habaki/pommel and action-local articulation on the existing PlayCanvas rig.
 - **Run 036:** added local-only stage-by-stage post-run battle analysis: parry accuracy, missed counter openings, STEP use, hits and targeted coaching are derived from the existing combat event stream without backend telemetry or identifiers.
+- **Run 037:** repaired local battle-analysis coaching so automatic Perfect Parry/Perfect STEP riposte damage cannot inflate the average damage of manual swipe counters or suppress the opposite-direction swipe tip.
 
 ## Highest priority — physical-phone acceptance
 
-1. **Stage 2 Ronin re-check after the clarity + local-analysis pass** — confirm whether the difficulty wall remains after the player is explicitly taught that normal parry needs a swipe counter, opposite-direction swipe gains +1, STEP is range-limited, Ronin feints require waiting for the final blade direction, and the result screen can now show whether the run failed from low parry accuracy or unused counter openings.
+1. **Stage 2 Ronin re-check after the clarity + local-analysis pass** — confirm whether the difficulty wall remains after the player is explicitly taught that normal parry needs a swipe counter, opposite-direction swipe gains +1, STEP is range-limited, Ronin feints require waiting for the final blade direction, and the result screen can now show whether the run failed from low parry accuracy, unused counter openings or genuinely weak manual counter direction.
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
 4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
@@ -34,7 +35,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 
 ## High-value candidates after core acceptance
 
-- **Difficulty tuning from evidence:** if Ronin remains a wall after the learning pass, use the new local Stage 2 analysis plus same-device feel to tune Stage 2 rhythm/window/feint pressure as one bounded balance slice rather than weakening the whole campaign.
+- **Difficulty tuning from evidence:** if Ronin remains a wall after the learning pass, use the corrected local Stage 2 analysis plus same-device feel to tune Stage 2 rhythm/window/feint pressure as one bounded balance slice rather than weakening the whole campaign.
 - Accessibility: timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
 - Boss refinement: stronger signature motion/phase language using play evidence.
@@ -56,7 +57,7 @@ Before any backend implementation, define at minimum:
 - whether test/owner sessions should be marked separately from public play;
 - dashboard/AI analysis output actually needed to justify collection.
 
-Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the Run 036 result analysis for balancing decisions.
+Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the Run 036/037 result analysis for balancing decisions.
 
 ## Technical opportunities
 
