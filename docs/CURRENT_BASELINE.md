@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.16.1-evolution**
+Version: **0.17.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -82,6 +82,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Enemy full-body framing remains far enough back to keep helmet-to-feet silhouette and weapon path readable in portrait.
 - Top/right/bottom/left attacks drive the actual `Sword` bone through direction-specific 3D blade-tip trajectories that advance toward/cross the player-facing parry plane and follow through before recovery.
 - The bounded world-space trail follows actual blade-tip history rather than decorating a body pose; the old attached swing echoes remain suppressed by the trajectory layer.
+- The first-person player katana now includes a bounded **two-hand grip silhouette**: two forearms, hands, wrist guards, habaki and pommel are attached to the existing camera-space katana rig. They follow the existing directional parry/counter motion with small action-local wrist/forearm articulation, making the player weapon read as something physically held rather than a floating blade.
+- The added first-person grip is presentation-only: it does not alter swipe/parry direction mapping, damage, timing, hit logic, camera authority or combat state.
 - Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
 - Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
 
@@ -91,6 +93,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - PlayCanvas adapts internal pixel ratio conservatively from rolling frame time; quality may fall before gameplay timing/responsiveness does.
 - The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
+- The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
 - Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
 
@@ -103,8 +106,10 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/onboarding-coach.js` owns the Guided Duel and phone-first gameplay-clarity sheet; Perfect STEP appends one additional guide card without changing combat authority.
 - `src/mastery.js` counts raw automatic-riposte damage in local damage dealt while preserving manual counter count semantics.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
-- `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory and phone control readability.
+- `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
+- `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
 - Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and now also proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
+- The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates without adding another broad test harness.
 
 ## Approved 3D direction
 

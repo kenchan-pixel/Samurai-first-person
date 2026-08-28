@@ -108,3 +108,46 @@ Chosen slice: candidate 1.
 - Same-device Stage 2 Ronin re-check after the gameplay guide; tune only if the difficulty wall remains.
 - Same-device blade trajectory plus Perfect Parry/Perfect STEP differentiation check.
 - Privacy Decision Gate for anonymous balancing telemetry before any backend collection is implemented.
+
+## Run 035 — First-person two-hand katana embodiment
+
+**Date:** 2026-08-28  
+**Action type:** FEATURE  
+**Goal:** Improve first-person physicality without changing combat rules by making the player katana read as a weapon held by the samurai rather than a floating camera-space blade.
+
+### Preflight / evidence
+
+- Exact previous HEAD `8dfe66db257732283975c22b7dfbd1696bd7790e`: CI #63 / run `33126286358` = success; exact-head GitHub `Vercel` commit status = success.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; no inline review threads existed.
+- Exact-head Second Hourly review reported **no actionable P0/P1/P2** finding and confirmed the Perfect STEP closed-opening repair.
+- The highest-priority Ronin balance item still calls for another same-device post-clarity re-check before changing timings; remote telemetry remains behind an unapproved privacy Decision Gate.
+
+### Candidate selection
+
+1. **First-person two-hand katana embodiment** — impact 4 / goal alignment 5 / novelty 4 / confidence 5 / safety 5. Strong visible gain, low gameplay risk, and directly strengthens the first-person physicality pillar.
+2. **Immediate Ronin timing/feint tuning** — 5 / 5 / 3 / 2 / 4. Deferred because the current SOT still requires a post-clarity physical-phone re-check before changing Stage 2 balance.
+3. **Anonymous gameplay telemetry backend** — 5 / 4 / 5 / 3 / 1. Deferred because analytics/external tracking remains explicitly blocked pending privacy/data-retention/backend approval.
+
+Chosen slice: candidate 1.
+
+### Delivered slice
+
+- Added `src/player-weapon-fidelity.js` as a bounded PlayCanvas presentation adapter around the existing player katana rig.
+- Added two forearms, two hands, two wrist guards, habaki and pommel using existing local materials; no downloaded asset or new dependency is introduced.
+- The grip follows the existing player katana transform and adds small action-local wrist/forearm articulation for parry and counter movement, without creating a second animation or combat authority.
+- The adapter creates eight primitive entities once and reuses their transforms in-place during draw calls.
+- Legacy WebGL2 fallback remains unchanged; if the PlayCanvas path fails, the existing fallback policy still applies.
+
+### Verification / regression boundaries
+
+- Existing exact-head CI and production renderer-contract coverage were green before feature selection.
+- The existing PlayCanvas real-app smoke already drives telegraph → strike → parry → counter through the same player rig and will fail if the new adapter breaks PlayCanvas initialization, fallback policy or directional player-katana motion.
+- No combat timing, damage, parry/swipe mapping, STEP, boss, mastery, storage, network/privacy or merge-authority behavior is changed.
+- Physical-iPhone acceptance remains required for the subjective target: hands/forearms should increase embodiment without hiding the enemy blade path or adding distracting foreground clutter.
+- Post-commit CI/Preview remain pending self-verification by protocol; the Draft PR run comment will carry the exact commit SHA and verification receipt.
+
+### Next candidates
+
+- Same-device Stage 2 Ronin re-check after the gameplay guide; tune only if the difficulty wall remains.
+- Same-device enemy blade + new first-person grip + Perfect Parry/Perfect STEP readability/performance check.
+- Privacy Decision Gate for anonymous balancing telemetry before any backend collection is implemented.

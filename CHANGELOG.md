@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.17.0-evolution — First-person two-hand katana rig
+
+- Replaced the floating first-person katana silhouette with a bounded two-hand presentation layer on the existing PlayCanvas player rig: two forearms, two hands, wrist guards, habaki and pommel now visibly connect the weapon to the player.
+- Added small action-local forearm/wrist articulation that follows the existing directional parry and counter-slash motion instead of introducing a new combat animation authority.
+- The new grip creates eight simple entities once at renderer initialization and reuses them in-place; no per-frame objects, assets, network calls or combat-rule changes are introduced.
+- Existing PlayCanvas/legacy fallback, directional input, parry/counter timing, damage, STEP, boss, mastery and mobile HUD behaviour remain unchanged.
+
 ## 0.16.1-evolution — Perfect STEP phase-priority cue repair
 
 - Fixed a player-facing contradiction where Perfect STEP could trigger Crimson Shogun Blood Moon Phase II and close the recovery opening while the STEP feedback still told the player to swipe.

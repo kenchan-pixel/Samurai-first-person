@@ -20,14 +20,16 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Run 032:** completed the exact-head gameplay-clarity gate repair by aligning the existing browser integration assertion with the same semantic `掃屏反擊` contract, without changing production gameplay.
 - **Run 033:** separated STEP into normal evade and a narrower **Perfect STEP** skill reward: automatic 1-damage sidestep riposte, no posture damage, manual swipe still available, tracking attacks still punish STEP, and boss Phase II remains authoritative.
 - **Run 034:** repaired Perfect STEP phase-priority messaging so a Blood Moon transition or enemy defeat closes the recovery opening without briefly/inaccurately telling the player to swipe; the existing browser footwork gate now covers the exact boss 7→6 path.
+- **Run 035:** upgraded the first-person katana from a floating weapon silhouette to a bounded two-hand grip with forearms, hands, wrist guards, habaki/pommel and action-local articulation on the existing PlayCanvas rig.
 
 ## Highest priority — physical-phone acceptance
 
 1. **Stage 2 Ronin re-check after the clarity pass** — confirm whether the difficulty wall remains after the player is explicitly taught that normal parry needs a swipe counter, opposite-direction swipe gains +1, STEP is range-limited, and Ronin feints require waiting for the final blade direction.
 2. **Physical-iPhone blade re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, and the trail follows the actual weapon path.
 3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
-4. **STEP readability/layout** — confirm normal STEP vs Perfect STEP feedback is readable without entering bottom/right block regions and without restoring dense combat text.
-5. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
+4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
+5. **STEP readability/layout** — confirm normal STEP vs Perfect STEP feedback is readable without entering bottom/right block regions and without restoring dense combat text.
+6. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
 
 ## High-value candidates after core acceptance
 
@@ -35,7 +37,7 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - Accessibility: timing assistance, left-handed layout, high-contrast telegraphs and broader motion controls.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
 - Boss refinement: stronger signature motion/phase language using play evidence.
-- First-person player weapon fidelity: improve hands/katana grip, silhouette and motion after opponent blade acceptance is stable.
+- Deeper first-person weapon fidelity only if the new bounded hand/grip silhouette passes phone readability and performance acceptance.
 
 ## Data / telemetry Decision Gate
 

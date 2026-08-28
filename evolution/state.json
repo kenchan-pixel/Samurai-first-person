@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 34,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired Perfect STEP follow-up messaging so Blood Moon or defeat closes the recovery opening without telling the player to swipe, with exact boss-threshold browser coverage",
-  "last_commit": "42b5daa876bab8d7b1c4b62bc45980f684ec69c7",
+  "run_number": 35,
+  "last_action_type": "FEATURE",
+  "last_action": "Upgraded the first-person katana with a bounded two-hand grip, forearms, wrist guards and action-local articulation on the existing PlayCanvas player rig",
+  "last_commit": "8dfe66db257732283975c22b7dfbd1696bd7790e",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -19,7 +19,7 @@
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
     "Re-test Stage 2 Ronin on the same physical iPhone after the gameplay-clarity pass; only tune timings/pressure if the difficulty wall remains after the rules are understood",
-    "Re-check all four real blade trajectories plus Perfect Parry versus Perfect STEP feel/readability on the same physical iPhone",
+    "Re-check all four enemy blade trajectories plus the new first-person two-hand grip and Perfect Parry/Perfect STEP feel/readability on the same physical iPhone",
     "Open a privacy Decision Gate for the owner-proposed anonymous gameplay telemetry backend before implementing any external analytics/tracking"
   ]
 }
