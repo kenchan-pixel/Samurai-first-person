@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 50,
-  "last_action_type": "REGRESSION_FIX",
-  "last_action": "Moved the live Pause control out of the lower-centre play field into the conventional top-right safe-area HUD corner with bounded button-only hit isolation and adjacent top/right parry verification",
-  "last_commit": "93c8fecfd5994adec189e6e32707ef2d05c14c53",
+  "run_number": 51,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Aligned the outer production browser gate with the accepted top-right Pause HUD contract by requiring HUD safety and button-only hit isolation instead of the retired neutral-band marker",
+  "last_commit": "905971762630ec32e81d96a9a447971347f1a7af",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Physical-iPhone re-check: confirm the restored top-right Pause stays visually quiet and adjacent top/right parries remain comfortable with the 42% upper-parry reach",
-    "Repeat Ronin/Shogun practice and use local stage analysis plus feel before any balance change",
-    "After core phone acceptance, consider one bounded challenge-mode slice rather than more verification-only work"
+    "Physical-iPhone attack-animation repair: make hand, forearm, torso and katana read as one continuous committed cut for every enemy and all four directions, with bottom attacks redesigned as a clear low thrust, rising cut or downward low-line cut instead of an ambiguous disconnected move",
+    "After the base sword choreography is readable without overlays, add an optional Easy mode rhythm/timing ring that shows direction and the parry moment without becoming the normal-mode crutch",
+    "Repeat Ronin/Shogun practice and use local stage analysis plus physical feel before any balance change"
   ]
 }

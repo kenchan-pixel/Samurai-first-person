@@ -364,3 +364,35 @@ Chosen slice: candidate 1.
 - Re-check the top-right Pause together with the 42% upper-parry reach, blade trajectory and Shogun Blood Moon presentation on the target phone.
 - Repeat Ronin/Shogun practice and use local stage analysis plus feel before any balance change.
 - After core phone acceptance, consider one bounded challenge-mode slice rather than further verification-only work.
+
+## Run 051 — Top-right Pause browser-contract repair
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX  
+**Goal:** Restore the exact-head CI fence after Run 050 correctly moved Pause back to the top-right HUD but the outer browser runner still enforced the retired lower-centre neutral-band contract.
+
+### Preflight / evidence
+
+- Exact current HEAD `905971762630ec32e81d96a9a447971347f1a7af`: CI #84 / run `33190838753` failed only `npm run test:browser`; all **62/62 Node tests passed**.
+- Exact-head GitHub `Vercel` status is **success / Preview Ready**.
+- Exact-head All Repos review identifies one blocking P2: `src/combat-ux-contract-smoke.js`, Current Baseline and Regression Checklist already use the new top-right HUD + button-only hit-isolation contract, while `scripts/browser-smoke.mjs` still requires `data-combat-ux-pause-neutral="true"` and neutral-band diagnostics.
+- Inline review threads are empty; Draft PR #1 remains open, Draft and unmerged; `main` remains untouched.
+
+### Delivered repair
+
+- Updated only the outer production browser runner to require `data-combat-ux-pause-hud-safe="true"` and `data-combat-ux-pause-hit-isolation="true"` instead of the retired `pause-neutral` marker.
+- Updated stale neutral-band error wording so future failures point at the accepted top-right HUD contract rather than suggesting Pause should be moved back into the play field.
+- Retained the existing exact 320×568 portrait viewport/canvas proof, real production top/right parry routing, Pause freeze, 玩法-return-still-paused, resume, restart and home checks.
+- No production gameplay or UI code changed in this blocker repair.
+
+### Verification / regression boundaries
+
+- The failed exact HEAD already proves all 62 Node tests green; the observed browser failure is deterministic and limited to the stale outer assertion after the inner Combat UX contract completed the new markers.
+- No Pause geometry, parry/Perfect/STEP timing, damage, boss/Ronin balance, renderer/asset authority, persistence/network/privacy boundary or player-facing copy changed.
+- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the Draft PR run comment is the authoritative receipt.
+
+### Next candidates
+
+- Once the new exact HEAD is terminal green, prioritise the direct physical-iPhone attack-animation problem: all enemies need one continuous hand → forearm → torso → katana action, with bottom attacks redesigned into an unmistakable low thrust, rising cut or low-line cut rather than a disconnected ambiguous move.
+- Only after the base animation reads clearly without overlays, consider the proposed optional Easy-mode rhythm/timing ring as a separate assistance layer.
+- Keep balance changes behind repeated Ronin/Shogun practice evidence.

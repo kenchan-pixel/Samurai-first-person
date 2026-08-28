@@ -172,9 +172,10 @@ try {
   if (!combatUxDom.includes('data-combat-ux-viewport="320x568"') || !combatUxDom.includes('data-combat-ux-canvas="320x568"')) {
     throw new Error(`Combat UX viewport/canvas metrics did not resolve to 320x568. DOM:\n${combatUxDom.slice(0, 6000)}`);
   }
-  if (!combatUxDom.includes('data-pause-input-safe="pass"')) throw new Error('Pause control overlaps a directional parry region');
-  if (!combatUxDom.includes('data-combat-ux-top-parry-path="true"') || !combatUxDom.includes('data-combat-ux-right-parry-path="true"')) throw new Error('Adjacent top/right parry routing failed around the neutral Pause band');
-  if (!combatUxDom.includes('data-combat-ux-pause-neutral="true"')) throw new Error('Pause control did not stay wholly inside the neutral tap band');
+  if (!combatUxDom.includes('data-pause-input-safe="pass"')) throw new Error('Pause control failed the top-right HUD safety check');
+  if (!combatUxDom.includes('data-combat-ux-top-parry-path="true"') || !combatUxDom.includes('data-combat-ux-right-parry-path="true"')) throw new Error('Adjacent top/right parry routing failed around the top-right Pause control');
+  if (!combatUxDom.includes('data-combat-ux-pause-hud-safe="true"')) throw new Error('Pause control did not stay inside the accepted top-right HUD area');
+  if (!combatUxDom.includes('data-combat-ux-pause-hit-isolation="true"')) throw new Error('Pause hit isolation or adjacent top/right canvas routing failed');
   if (!combatUxDom.includes('data-combat-ux-pause-freeze="true"')) throw new Error('Pause did not freeze the live combat phase across wall-clock time');
   if (!combatUxDom.includes('data-combat-ux-guide-keeps-paused="true"')) throw new Error('玩法 did not return to the still-paused state');
   if (!combatUxDom.includes('data-combat-ux-resume="true"')) throw new Error('Resume did not continue from the frozen combat phase');
