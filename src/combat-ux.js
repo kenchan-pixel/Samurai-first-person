@@ -94,6 +94,47 @@ function installStyles() {
   document.head.append(style);
 }
 
+function measurePauseInputSafety(button) {
+  if (!button || button.hidden) return false;
+  const rect = button.getBoundingClientRect();
+  const fits = Boolean(
+    rect.width > 0 &&
+    rect.height > 0 &&
+    rect.left >= 0 &&
+    rect.top >= 0 &&
+    rect.right <= window.innerWidth &&
+    rect.bottom <= window.innerHeight,
+  );
+  const neutral = Boolean(fits && rectIsNeutralForErgonomicTap(rect, window.innerWidth, window.innerHeight));
+  document.documentElement.dataset.pauseLayout = fits ? 'pass' : 'fail';
+  document.documentElement.dataset.pauseInputSafe = neutral ? 'pass' : 'fail';
+  return fits && neutral;
+}
+
+function bindPauseInputSafety(button) {
+  if (!button || button.dataset.pauseSafetyBound === 'true') return;
+  button.dataset.pauseSafetyBound = 'true';
+  document.documentElement.dataset.pauseLayout = 'pending';
+  document.documentElement.dataset.pauseInputSafe = 'pending';
+
+  let frame = 0;
+  const refresh = () => {
+    if (button.hidden) return;
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      measurePauseInputSafety(button);
+    });
+  };
+
+  const observer = new MutationObserver((records) => {
+    if (records.some((record) => record.attributeName === 'hidden')) refresh();
+  });
+  observer.observe(button, { attributes: true, attributeFilter: ['hidden'] });
+  window.addEventListener('resize', refresh, { passive: true });
+  refresh();
+}
+
 export function installCombatUx() {
   if (typeof document === 'undefined') return;
   installStyles();
@@ -135,14 +176,7 @@ export function installCombatUx() {
     app.append(screen);
   }
 
-  requestAnimationFrame(() => {
-    const button = document.querySelector('#pause-button');
-    const rect = button?.getBoundingClientRect();
-    const fits = Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight);
-    const neutral = Boolean(rect && rectIsNeutralForErgonomicTap(rect, window.innerWidth, window.innerHeight));
-    document.documentElement.dataset.pauseLayout = fits ? 'pass' : 'fail';
-    document.documentElement.dataset.pauseInputSafe = neutral ? 'pass' : 'fail';
-  });
+  bindPauseInputSafety(document.querySelector('#pause-button'));
   document.documentElement.dataset.combatUxReady = 'true';
 }
 

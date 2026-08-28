@@ -122,3 +122,43 @@ This file keeps autonomous-evolution history concise. Full implementation detail
 - Repeat Ronin/Shogun practice on the same device and use local analysis plus feel before any balance change.
 - Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified HUD and neutral Pause placement.
 - After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.
+
+## Run 045 — Combat UX exact-head browser-gate repair
+
+**Date:** 2026-08-28  
+**Action type:** BLOCKER_FIX  
+**Goal:** Restore the exact-head CI fence after Run 044’s production Combat UX gate failed even though the intended Pause placement was geometrically neutral and Vercel Preview was healthy.
+
+### Preflight / evidence
+
+- Exact current HEAD `991d717c8a03679fe909c6643ddb1facd4c3ff57`: GitHub `Vercel` status = success / Preview Ready, but CI #73 / run `33160196291` failed twice.
+- Both CI attempts passed all 57 Node tests and failed only `npm run test:browser`. The failure DOM consistently reported `pause-layout=pass` but `pause-input-safe=fail`, `top-parry-path=false`, and `resume=false`; right-parry, pause-freeze, guide-return, restart and home were already passing.
+- Root cause 1: `installCombatUx()` measured the Pause button in its initial `hidden` state, where `getBoundingClientRect()` is a zero-size rectangle, so the safety diagnostic could never prove neutrality even though the visible CSS placement was correct.
+- Root cause 2: the browser contract attempted to infer the top path from a short-lived visual zone state and resume from a later phase sample. Those are timing-sensitive proxies for the actual acceptance criteria: the rendered point must remain an unobstructed directional canvas target, and the Pause UI/state must return to running while the already-tested game clock remains no-catch-up.
+- Draft PR #1 remained open, Draft and unmerged; `main` remained untouched; inline review threads were empty. The prior input/Pause P2 contract is represented in Current Baseline / Regression Checklist; this run repairs its exact-head verification rather than adding new product scope.
+
+### Delivered repair
+
+- Pause input-safety measurement is now lifecycle-aware: the diagnostic stays pending while the control is hidden, re-measures after the live Pause button becomes visible, and re-checks on viewport resize/orientation changes. It still validates the real rendered rectangle through the production ergonomic direction mapper.
+- The production browser gate waits until the duel and visible Pause geometry are genuinely ready before evaluating input safety.
+- Representative top/right checks now verify the real rendered point resolves to the game canvas with `elementFromPoint`, maps through the production ergonomic direction mapper to the intended guard, and receives the dispatched pointer event. This directly protects the input-surface collision that Run 044 was meant to fix without depending on transient feedback CSS.
+- Pause neutrality in the browser gate uses `rectIsNeutralForErgonomicTap()` on the actual rendered Pause rectangle rather than duplicating the 28%/42% geometry in test code.
+- Browser Pause verification keeps the strong long-wait frozen-phase check and 玩法-return-still-paused check. Resume now verifies the production unpaused state, hidden Pause modal and restored neutral Pause control; the focused `PausableCombatClock` test continues to prove that elapsed wall-clock Pause time is never caught up after resume.
+
+### Verification / regression boundaries
+
+- `node --check` passed locally for both modified modules before creating the final Git tree.
+- No gameplay timing, parry/Perfect/STEP mapping, Pause position, enemy balance, score, persistence/network/privacy boundary, renderer authority or player-facing copy changed; this is a delivery-gate/runtime-diagnostic repair.
+- Existing 57 Node tests were green on the failed exact HEAD; the repaired production browser contract remains fail-closed on actual rendered hit-testing, mapper direction, Pause neutrality/freeze/guide/resume, restart and home.
+- Exact-head CI and Vercel Preview for this single blocker-fix commit are pending post-commit self-verification; the PR run comment is the authoritative verification receipt.
+
+### Human acceptance / residual risk
+
+- Automated geometry/runtime evidence can prove the lower-centre Pause control does not consume a directional region; physical-iPhone acceptance is still required for subjective reach and accidental-touch feel.
+- The 42% top-parry depth remains unchanged and should still be re-checked with the preferred grip.
+
+### Next candidates
+
+- Repeat Ronin/Shogun practice on the same physical phone and use local stage analysis before changing balance.
+- Re-check blade trajectory, first-person grip, Perfect Parry/Perfect STEP and sustained phone performance with the simplified HUD and neutral Pause placement.
+- After core acceptance, consider one bounded challenge-mode or boss signature-motion refinement; remote gameplay telemetry remains behind its separate privacy Decision Gate.

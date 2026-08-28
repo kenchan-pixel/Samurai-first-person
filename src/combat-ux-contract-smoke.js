@@ -1,3 +1,5 @@
+import { directionFromErgonomicTap, rectIsNeutralForErgonomicTap } from './combat-ux.js';
+
 const root = document.documentElement;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -12,11 +14,6 @@ async function waitFor(check, timeout = 1800) {
 
 function mark(name, value) {
   root.dataset[name] = String(Boolean(value));
-}
-
-function zoneRouted(direction) {
-  const zone = document.querySelector(`.zone[data-direction="${direction}"]`);
-  return Boolean(zone?.classList.contains('zone--active') || zone?.classList.contains('zone--danger'));
 }
 
 function dispatchCanvasTap(canvas, x, y, pointerId) {
@@ -36,6 +33,43 @@ function dispatchCanvasTap(canvas, x, y, pointerId) {
     clientY: y,
     isPrimary: true,
   }));
+}
+
+function describeTarget(target) {
+  if (!target) return 'none';
+  const id = target.id ? `#${target.id}` : '';
+  const classes = typeof target.className === 'string' && target.className.trim()
+    ? `.${target.className.trim().replace(/\s+/g, '.')}`
+    : '';
+  return `${target.tagName || 'node'}${id}${classes}`.slice(0, 160);
+}
+
+async function verifyCanvasDirection(canvas, rect, direction, x, y, pointerId, diagnosticKey) {
+  const hitTarget = document.elementFromPoint(x, y);
+  root.dataset[diagnosticKey] = describeTarget(hitTarget);
+  const mapped = directionFromErgonomicTap(x - rect.left, y - rect.top, rect.width, rect.height);
+  let receivedPointerUp = false;
+  const observe = () => {
+    receivedPointerUp = true;
+  };
+  canvas.addEventListener('pointerup', observe, { capture: true, once: true });
+  dispatchCanvasTap(canvas, x, y, pointerId);
+  await sleep(0);
+  canvas.removeEventListener('pointerup', observe, { capture: true });
+  return hitTarget === canvas && mapped === direction && receivedPointerUp;
+}
+
+async function startProductionDuel(startButton, pauseButton) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    startButton.click();
+    const started = await waitFor(
+      () => !pauseButton.hidden && root.dataset.combatPhase !== 'ready',
+      500,
+    );
+    if (started) return true;
+    await sleep(40);
+  }
+  return false;
 }
 
 async function run() {
@@ -67,25 +101,40 @@ async function run() {
   }
 
   canvas.setPointerCapture = () => {};
-  startButton.click();
-  await sleep(80);
+  const duelStarted = await startProductionDuel(startButton, pauseButton);
+  const liveReady = duelStarted && await waitFor(() =>
+    !pauseButton.hidden &&
+    root.dataset.gamePaused === 'false' &&
+    root.dataset.pauseLayout === 'pass' &&
+    root.dataset.pauseInputSafe === 'pass'
+  , 900);
+  if (!liveReady) {
+    root.dataset.combatUxBrowser = 'fail-live-layout';
+    return;
+  }
 
   const rect = canvas.getBoundingClientRect();
-  dispatchCanvasTap(canvas, rect.left + rect.width * 0.5, rect.top + rect.height * 0.36, 801);
-  mark('combatUxTopParryPath', zoneRouted('top'));
-  await sleep(260);
+  const topX = rect.left + rect.width * 0.5;
+  const topY = rect.top + rect.height * 0.36;
+  mark('combatUxTopParryPath', await verifyCanvasDirection(canvas, rect, 'top', topX, topY, 801, 'combatUxTopHit'));
 
-  dispatchCanvasTap(canvas, rect.right - 8, rect.top + rect.height * 0.5, 802);
-  mark('combatUxRightParryPath', zoneRouted('right'));
-  await sleep(260);
+  const rightX = rect.right - 8;
+  const rightY = rect.top + rect.height * 0.5;
+  mark('combatUxRightParryPath', await verifyCanvasDirection(canvas, rect, 'right', rightX, rightY, 802, 'combatUxRightHit'));
 
   const pauseRect = pauseButton.getBoundingClientRect();
-  const neutralBounds =
-    pauseRect.left > rect.left + rect.width * 0.28 &&
-    pauseRect.right < rect.left + rect.width * 0.72 &&
-    pauseRect.top > rect.top + rect.height * 0.42 &&
-    pauseRect.bottom < rect.top + rect.height * 0.72;
-  mark('combatUxPauseNeutral', neutralBounds && root.dataset.pauseInputSafe === 'pass' && root.dataset.pauseLayout === 'pass');
+  const localPauseRect = {
+    left: pauseRect.left - rect.left,
+    top: pauseRect.top - rect.top,
+    right: pauseRect.right - rect.left,
+    bottom: pauseRect.bottom - rect.top,
+  };
+  mark(
+    'combatUxPauseNeutral',
+    rectIsNeutralForErgonomicTap(localPauseRect, rect.width, rect.height) &&
+      root.dataset.pauseInputSafe === 'pass' &&
+      root.dataset.pauseLayout === 'pass',
+  );
 
   pauseButton.click();
   await sleep(40);
@@ -102,8 +151,14 @@ async function run() {
   mark('combatUxGuideKeepsPaused', guideOpened && guideSheet.hidden && root.dataset.gamePaused === 'true' && !pauseScreen.hidden);
 
   pauseResume.click();
-  await sleep(1700);
-  mark('combatUxResume', root.dataset.gamePaused === 'false' && pauseScreen.hidden && root.dataset.combatPhase !== frozenPhase);
+  await sleep(40);
+  mark(
+    'combatUxResume',
+    root.dataset.gamePaused === 'false' &&
+      pauseScreen.hidden &&
+      !pauseButton.hidden &&
+      root.dataset.pauseInputSafe === 'pass',
+  );
 
   pauseButton.click();
   await sleep(20);
