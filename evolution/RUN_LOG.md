@@ -89,3 +89,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No gameplay, renderer, animation, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, input, network/privacy or asset behaviour changed.
 - This repair is complete only if the post-commit exact-head Node + browser workflow is green and GitHub `Vercel` status is terminal success; otherwise the next run remains BLOCKER_FIX.
+
+## Run 067 — Make SOT smoke semantic instead of sentence-literal
+
+**Date:** 2026-08-30  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `4ad06968b28e96eb06e93bfc606ad342db766ddd`.
+- Exact-head CI #100 was terminal green: `npm test` and `npm run test:browser` both passed. GitHub `Vercel` commit status was `success`; Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
+- The Run 65 owner P1 is demonstrably cleared on this HEAD by the fail-closed real PlayCanvas Guard-axis and player-screen RIGHT/LEFT travel gates.
+- The current All Repos review raised an actionable P2: `repo-smoke` was coupled to exact editorial sentences, and Run 66 had duplicated baseline prose solely to satisfy that literal contract. Because this defect can deterministically turn harmless SOT edits into red CI and consume future evolution runs, it is treated as a delivery-loop blocker repair before feature work.
+
+### Delivered repair
+
+- Reworked `tests/repo-smoke.test.mjs` to extract the relevant Current Baseline sections and assert independent semantic invariants instead of exact sentences.
+- The playable-flow guard now requires four sequential duels plus Ashigaru, Wandering Ronin, Oni Guard and Crimson Shogun within the playable-flow section.
+- The renderer guard now requires PlayCanvas, primary renderer authority, Vite, WebGL2 and fallback/compatibility semantics within the presentation section.
+- Removed the duplicate four-duel sentence and restored concise renderer wording. The real runtime/browser gates — including Guard axis, screen-space RIGHT/LEFT travel, grip lock, directional plane crossing, mobile Combat UX and timing-assist lifecycle — are unchanged.
+
+### Regression boundary
+
+- No gameplay, renderer, animation, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, input, asset or network/privacy behaviour changed.
+- The smoke remains fail-closed on the protected product/architecture semantics while allowing editorial prose changes that preserve those invariants.
+- Post-commit exact-head Node/browser CI and GitHub Vercel status must both be terminal green before feature work resumes.

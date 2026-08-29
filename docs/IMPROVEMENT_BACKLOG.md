@@ -13,7 +13,8 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 062: optional default-off 節拍提示 using authoritative telegraph/Perfect timing.
 - Run 063: made default-off 節拍提示 truly DOM-idle; exact-head browser gate then exposed a harness scheduling blocker.
 - Run 064: repaired the timing-assist browser harness without weakening its default-off off/on/off mutation contract; exact-head CI #98 and Vercel returned green.
-- **Run 065:** repaired the remaining owner animation P1: authored player-facing `Guard` plus explicit player-screen RIGHT/LEFT cut-travel semantics with enemy-only horizontal mirroring.
+- Run 065: repaired the remaining owner animation P1 with authored player-facing `Guard` plus explicit player-screen RIGHT/LEFT cut-travel semantics and enemy-only horizontal mirroring.
+- Runs 066–067: restored exact-head SOT verification after wording drift, then replaced the brittle sentence-literal smoke with section-scoped semantic invariants so harmless editorial rewrites cannot consume another blocker run.
 
 ## Highest priority — autonomous visual/runtime acceptance
 

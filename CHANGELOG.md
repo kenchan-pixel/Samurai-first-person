@@ -1,5 +1,11 @@
 # Changelog
 
+## Run 067 — Semantic SOT verification hardening
+
+- Replaced sentence-literal `CURRENT_BASELINE.md` smoke assertions with section-scoped semantic invariants for the four-duel roster and PlayCanvas/Vite/WebGL2 renderer architecture.
+- Removed the duplicate four-duel sentence and restored concise renderer wording without changing any approved product or technical baseline.
+- Kept all real Node, PlayCanvas/browser, mobile Combat UX, Guard-axis and player-screen RIGHT/LEFT acceptance gates unchanged.
+
 ## 0.24.1-evolution — Player-facing guard and screen-space cut semantics
 
 - Added an original authored `Guard` to the local animation-only pack. Ready/stage-intro/gap and every Attack* start/end share the same HandR-solved blade axis pointing strongly toward the player; Sword remains directly parented to HandR with no runtime Sword rotation.

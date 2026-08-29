@@ -7,7 +7,6 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 ## Playable flow and controls
 
 - Mobile-first portrait start screen → four sequential duels → victory/defeat → restart without page reload. Ashigaru, Wandering Ronin and Oni Guard lead into Stage 4 Crimson Shogun.
-- Three baseline enemies are followed by the Crimson Shogun boss, forming the four sequential duels.
 - Optional direct **練浪人 / 練將軍** practice launches the real Stage 2 / Stage 4 definitions, ends after the selected duel, supports immediate retry or return to the full campaign, and never writes campaign personal best.
 - Touch, stylus and mouse remain supported. Four defensive directions and four-direction swipe counters are unchanged.
 - Portrait parry regions are intentionally asymmetric for thumb reach: central top extends to 42% height; left/right/bottom retain 28% edge depth; nearest edge wins overlaps; centre remains neutral. Landscape keeps symmetric 28% mapping.
@@ -62,7 +61,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 
 ## Presentation and renderer
 
-- PlayCanvas Engine standalone remains the primary production-facing renderer; Vite remains the build path, and the older WebGL2 renderer remains compatibility fallback.
+- PlayCanvas standalone + Vite remains the primary renderer/build path; the older WebGL2 renderer remains compatibility fallback.
 - Visible opponents use the original locally generated `samurai-v1.glb`: ~315 KiB, ~1,972 triangles, 19-joint skin, no texture payload, base clips `Idle/Windup/Strike/Recovery/Parry`.
 - The animation-only Guard + four-direction pack is ~26 KiB and contains no mesh/texture/downloaded motion. It reuses the same skeleton and fixed Sword→HandR relationship.
 - Stage-specific skinned silhouettes distinguish all four enemies without changing reach/hitboxes/timing. Enemy full-body framing remains readable in portrait.

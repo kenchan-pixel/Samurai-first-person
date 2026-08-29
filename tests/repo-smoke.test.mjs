@@ -14,6 +14,21 @@ const files = {
   rules: new URL('../docs/EVOLUTION_RULES.md', import.meta.url),
 };
 
+function markdownSection(markdown, heading) {
+  const marker = `## ${heading}`;
+  const start = markdown.indexOf(marker);
+  assert.notEqual(start, -1, `missing SOT section: ${heading}`);
+  const bodyStart = markdown.indexOf('\n', start) + 1;
+  const next = markdown.indexOf('\n## ', bodyStart);
+  return markdown.slice(bodyStart, next === -1 ? undefined : next);
+}
+
+function assertTerms(text, terms, label) {
+  for (const term of terms) {
+    assert.match(text, term, `${label} missing semantic invariant ${term}`);
+  }
+}
+
 test('entry document references local source files', async () => {
   const html = await readFile(files.html, 'utf8');
   assert.match(html, /src="\.\/src\/main\.js"/);
@@ -65,11 +80,26 @@ test('evolution source of truth is present', async () => {
     readFile(files.baseline, 'utf8'),
     readFile(files.rules, 'utf8'),
   ]);
+  const playableFlow = markdownSection(baseline, 'Playable flow and controls');
+  const presentation = markdownSection(baseline, 'Presentation and renderer');
+
   assert.match(baseline, /Four defensive directions/);
-  assert.match(baseline, /four sequential duels/i);
-  assert.match(baseline, /Three baseline enemies are followed by the Crimson Shogun boss/);
+  assertTerms(playableFlow, [
+    /four sequential duels/i,
+    /Ashigaru/i,
+    /Wandering Ronin/i,
+    /Oni Guard/i,
+    /Crimson Shogun/i,
+  ], 'playable flow');
   assert.match(baseline, /Windup.*Strike.*Recovery.*Parry/is);
-  assert.match(baseline, /PlayCanvas Engine standalone.*primary production-facing renderer/is);
+  assertTerms(presentation, [
+    /PlayCanvas/i,
+    /primary/i,
+    /renderer/i,
+    /Vite/i,
+    /WebGL2/i,
+    /fallback|compatibility/i,
+  ], 'presentation');
   assert.match(rules, /substantial visible vertical slice/i);
   assert.match(rules, /Never merge the pull request/i);
 });
