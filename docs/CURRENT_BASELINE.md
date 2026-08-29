@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.22.1-evolution**
+Version: **0.23.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -26,7 +26,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - With **刀路清晰** off, the existing centre direction cue remains available. With **刀路清晰** on, its edge rail becomes the sole directional overlay and the centre arrow/label is suppressed to avoid duplicate guidance.
 - A 44×44 **Pause** control sits in the conventional top-right safe-area/HUD corner, below the enemy HUD rather than in the centre play field. The button intentionally owns only its own bounded hit rectangle; immediately adjacent top/right canvas taps remain available for their directional parries. It opens **繼續 / 玩法 / 重新開始 / 返回主頁**.
 - Pause freezes the game-time clock, combat phase and animation progress. Closing the guide returns to the still-paused menu; resume does not catch up wall-clock pause time. Restart/home reuse the existing normal restart/start flows.
-- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis/practice passes. Ronin balance remains an evidence-based follow-up after physical-phone play.
+- No Stage 2 timing, damage, health, posture or score value is changed by the current clarity/footwork/analysis/practice passes. Ronin balance remains an evidence-based follow-up driven by local practice/run-analysis plus available Preview/runtime or device feedback.
 - No remote gameplay analytics/telemetry backend is added. Gameplay statistics remain local-only until a separate privacy/data-retention/backend Decision Gate is approved.
 
 ## Optional high-contrast blade-read mode
@@ -103,7 +103,9 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - PlayCanvas Engine standalone remains the primary production-facing renderer; the older custom WebGL2 renderer remains the compatibility fallback.
 - The visible opponent is an original locally generated skinned glTF/GLB samurai once the asset loads; the articulated primitive remains character-level fallback.
-- The generated model has a 19-joint skin, layered armour and real `Idle / Windup / Strike / Recovery / Parry` clips. Combat authority remains renderer-neutral.
+- The generated base model has a 19-joint skin, layered armour and real `Idle / Windup / Strike / Recovery / Parry` clips. Combat authority remains renderer-neutral.
+- A separate original local animation-only `samurai-attacks-v1.glb` pack binds `AttackTop / AttackRight / AttackBottom / AttackLeft` to that same 19-joint hierarchy. Normal telegraph → strike → recovery keeps one directional `Attack*` state active continuously; generic `Windup/Strike/Recovery` remain compatibility labels only and do not interrupt the authored track. A feint/displayed-direction change switches directly to the new directional `Attack*`; an interrupted recovery still deliberately uses the base `Parry` reaction.
+- The authored attack pack animates hips/spine/chest/head, both upper arms/forearms/hands and the sword as one clip and does not use the rejected Run 52 per-frame Chest/arm/HandR overrides.
 - Enemy full-body framing remains far enough back to keep helmet-to-feet silhouette and weapon path readable in portrait.
 - Top/right/bottom/left attacks drive the actual `Sword` bone through direction-specific 3D blade-tip trajectories that advance toward/cross the player-facing parry plane and follow through before recovery.
 - The bounded world-space trail follows actual blade-tip history rather than decorating a body pose; the old attached swing echoes remain suppressed by the trajectory layer.
@@ -120,14 +122,15 @@ These capabilities are approved for the current evolution branch and cumulative.
 
 - Gameplay and animation timing remain elapsed-time based rather than frame-count based.
 - PlayCanvas adapts internal pixel ratio conservatively from rolling frame time; quality may fall before gameplay timing/responsiveness does.
-- The skinned character reuses one loaded scene hierarchy and five clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
+- The skinned character reuses one loaded scene hierarchy and five base clips; stage identity and blade trajectory reuse bounded entities with no per-frame model/trail allocation.
+- The authored four-direction attack pack is animation-only: it adds no mesh/texture payload, reuses the existing 19-joint skinned hierarchy, and samples normalized time in-place without per-frame joint-object allocation or runtime joint overrides.
 - The world-space blade trail allocates at most six segment entities after character readiness and reuses them during strikes.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
 - The Shogun signature layer allocates no runtime entity, timer, network request or animation loop; it derives one small frame description from the existing snapshot and updates already-existing transforms/materials in place.
 - The blade-read accessibility layer creates one fixed overlay and four DOM rails once. It updates classes/text only when combat events arrive and creates no per-frame nodes, timers or network work.
 - Run analysis and direct duel practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
-- Generated GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
-- Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Direct-device evidence remains the human acceptance gate.
+- Generated base GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
+- Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Human/device evidence is supplemental: when supplied it can override automation by revealing a real defect, but its absence is not a HOLD condition.
 
 ## Technical baseline
 
@@ -143,7 +146,8 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/practice-mode.js` is installed after the existing combat adapters and before `main.js`. It initializes all normal sessions first, then redirects only an explicitly requested practice run to the existing Wandering Ronin or already-installed Crimson Shogun, emits the real stage-start event, intercepts that selected practice stage-clear before campaign advancement, and labels practice terminal events. Normal campaign start/restart remains unchanged.
 - `src/readability-mode.js` is a presentation-only observer installed after practice mode and before `main.js`. It reads the same composed event stream to mirror telegraph → feint → strike direction on an optional four-rail overlay, then returns the untouched events to the game runtime. It never calls parry/attack/STEP authority or changes combat state.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
-- `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
+- `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes authored enemy attacks, stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
+- `src/authored-enemy-attacks.js` loads/binds the animation-only four-direction attack pack and owns the continuous normalized telegraph→strike→recovery sampling seam. While one `Attack*` is active it preserves base root-direction/read-trail presentation without allowing generic phase transitions to replace that state; interrupted recovery intentionally falls back to `Parry`.
 - `src/player-weapon-fidelity.js` decorates only the existing PlayCanvas player katana rig with bounded primitive hands/forearms and action-local articulation. It does not patch CombatEngine or allocate objects during gameplay frames.
 - Focused Combat UX coverage proves the 320×568 portrait top-reach map, conventional top-right Pause HUD placement, bounded button-only hit isolation, adjacent top/right parry routing and pausable-clock freeze/resume semantics. The production query-gated browser contract additionally exercises the real Pause → 玩法 → resume → restart → home flow against the actual app document.
 - Focused Node coverage distinguishes normal STEP vs Perfect STEP, proves tracking attacks cannot Perfect STEP, preserves the manual follow-up, and proves Perfect STEP boss damage cannot bypass Blood Moon. The existing footwork browser harness drives the actual STEP pointer path and proves the exact boss 7→6 HP Perfect STEP path enters `gap`, labels Blood Moon, and suppresses all swipe-follow-up copy while the opening is closed.
@@ -152,7 +156,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The separate boss Node/browser coverage remains authoritative for Blood Moon Phase II behaviour, including one-time transition, restart to Phase I and final boss victory; direct Shogun practice reuses that production boss adapter rather than duplicating phase logic.
 - Focused Shogun-signature coverage proves non-boss neutrality, Phase I heavy commitment, stronger Blood Moon crouch/forward/directional motion and mirrored left/right body commitment without importing combat rules into the presentation helper.
 - The blade-read browser harness uses a real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and requires the optional toggle, four pointer-safe rails, direction flow, stronger strike state, parry cleanup and bounded layout.
-- The production PlayCanvas renderer-contract smoke still drives telegraph → strike → parry → counter through the same player katana rig, so the added grip remains behind the existing renderer/fallback and directional-motion gates.
+- The production PlayCanvas renderer-contract smoke drives telegraph → strike → parry → counter through the same player katana rig and additionally instruments the authored animation layer: one `AttackTop` must remain active across normal telegraph→strike→recovery, generic phase transitions are forbidden during that sequence, and a right→left displayed-direction switch must transition directly between `AttackRight` and `AttackLeft`.
 
 ## Approved 3D direction
 

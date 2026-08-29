@@ -36,6 +36,7 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
   const enemy = impl.enemy.getLocalPosition();
   const character = impl.skinnedModel?.getLocalEulerAngles();
   const trajectory = impl.bladeTrajectoryState || {};
+  const authored = impl.authoredAttackState || {};
   return {
     backend: view.backend,
     phase: snapshot.phase,
@@ -53,6 +54,10 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
     characterYaw: Number(character?.y) || 0,
     characterRoll: Number(character?.z) || 0,
     readTrailEnabled: Boolean(impl.skinnedReadTrail?.enabled),
+    authoredAttackClip: authored.clip || '',
+    authoredAttackPhase: authored.phase || '',
+    authoredAttackProgress: Number(authored.progress) || 0,
+    authoredLayerState: impl.skinnedModel?.anim?.baseLayer?.activeState || '',
     bladeTipX: Number(trajectory.tipX) || 0,
     bladeTipY: Number(trajectory.tipY) || 0,
     bladeTipZ: Number(trajectory.tipZ) || 0,
@@ -70,8 +75,18 @@ try {
   assert(view.backend === 'playcanvas', 'PlayCanvas backend was not active');
   const characterReady = await view.impl.characterReady;
   assert(characterReady && view.impl.skinnedModel, 'Skinned GLB samurai did not load on the PlayCanvas backend');
+  assert(root.dataset.authoredAttackPack === 'four-direction-v1', 'Authored four-direction enemy attack pack did not load');
+  assert(view.impl.authoredAttackClipsReady === true, 'Authored attack clips were not bound to the skinned rig');
   await view.impl.bladeTrajectoryReady;
   assert(root.dataset.bladeTrajectory === 'worldspace-v2', 'World-space enemy blade trajectory adapter was not installed');
+
+  const attackTransitions = [];
+  const animLayer = view.impl.skinnedModel.anim.baseLayer;
+  const originalTransition = animLayer.transition.bind(animLayer);
+  animLayer.transition = (...args) => {
+    attackTransitions.push(String(args[0]));
+    return originalTransition(...args);
+  };
 
   const identities = [];
   const activeCounts = [];
@@ -105,7 +120,7 @@ try {
   engine.update(1550);
   const wind = render(engine, 2150);
   assert(wind.phase === 'telegraph' && wind.wind > 0.35, 'Telegraph did not reach a readable wind-up pose');
-  assert(wind.characterReady && wind.characterClip === 'Windup', 'Skinned rig did not enter the Windup clip');
+  assert(wind.characterReady && wind.characterClip === 'Windup', 'Skinned rig did not enter the Windup compatibility phase');
   assert(wind.readTrailEnabled, 'Skinned sword did not expose the in-world blade-read trail during telegraph');
 
   const windRight = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
@@ -116,15 +131,18 @@ try {
   assert(windBottom.enemyY < wind.enemyY - 0.04, 'Bottom telegraph did not lower the opponent stance');
   assert(windRight.bladeTipX > 0.7 && windLeft.bladeTipX < -0.7, 'Right/left wind-up blade tips did not occupy opposite sides in world space');
   assert(windBottom.bladeTipY < wind.bladeTipY - 0.55, 'Bottom wind-up blade tip did not start materially below the top attack');
+  assert(windRight.authoredLayerState === 'AttackRight' && windLeft.authoredLayerState === 'AttackLeft' && windBottom.authoredLayerState === 'AttackBottom', 'Direction changes did not switch to the matching authored Attack* clips');
 
   const topWind = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
+  assert(topWind.authoredAttackClip === 'AttackTop' && topWind.authoredLayerState === 'AttackTop', 'Top telegraph did not run the authored AttackTop clip');
 
   engine.update(2430);
   const strikeEarly = render(engine, 2470);
   render(engine, 2525);
   const strike = render(engine, 2580);
   assert(strike.phase === 'strike' && strike.swing > 0.2, 'Strike motion did not progress on the PlayCanvas rig');
-  assert(strike.characterClip === 'Strike', 'Skinned rig did not enter the Strike clip');
+  assert(strike.characterClip === 'Strike', 'Skinned rig did not expose the Strike compatibility phase');
+  assert(strike.authoredAttackClip === 'AttackTop' && strike.authoredLayerState === 'AttackTop', 'Telegraph -> strike did not stay on the continuous AttackTop authored track');
   assert(strike.readTrailEnabled, 'Skinned sword trail did not persist through the strike path');
   assert(Math.abs(strike.swordZ - wind.swordZ) > 12, 'Enemy sword transform did not move from telegraph into strike');
   assert(Math.abs(strike.enemyZ - wind.enemyZ) > 0.08, 'Enemy body transform did not commit into the strike');
@@ -159,6 +177,29 @@ try {
   assert(counterPose.playerAction === 3, 'Counter action did not reach the PlayCanvas view');
   assert(Math.abs(counterPose.playerSwordZ - parryPose.playerSwordZ) > 24, 'Player katana did not progress from parry into counter slash');
 
+  // Browser-level regression for Run 55: normal authored attacks must keep one Attack*
+  // state across telegraph -> strike -> recovery. Generic compatibility phase labels may
+  // change, but they must never become animation transitions while the authored track is active.
+  attackTransitions.length = 0;
+  const continuityBase = engine.snapshot(3000);
+  const continuityMeta = { attackDirectionIndex: DIRECTION_INDEX[Direction.TOP], playerAction: 0, playerDirectionIndex: 0, hitAge: 999, shake: 0 };
+  view.draw({ ...continuityBase, phase: 'telegraph', phaseProgress: 0.62 }, 3100, continuityMeta);
+  assert(animLayer.activeState === 'AttackTop', 'Authored continuity test did not enter AttackTop');
+  view.draw({ ...continuityBase, phase: 'strike', phaseProgress: 0.42 }, 3200, continuityMeta);
+  assert(animLayer.activeState === 'AttackTop', 'Generic Strike state interrupted AttackTop at the phase boundary');
+  view.draw({ ...continuityBase, phase: 'recovery', phaseProgress: 0.35 }, 3300, continuityMeta);
+  assert(animLayer.activeState === 'AttackTop', 'Generic Recovery state interrupted AttackTop at the phase boundary');
+  assert(!attackTransitions.some((clip) => clip === 'Windup' || clip === 'Strike' || clip === 'Recovery'), `Generic attack transition leaked into authored track: ${attackTransitions.join(',')}`);
+
+  const directionSwitchStart = attackTransitions.length;
+  view.draw({ ...continuityBase, phase: 'telegraph', phaseProgress: 0.48 }, 3400, { ...continuityMeta, attackDirectionIndex: DIRECTION_INDEX[Direction.RIGHT] });
+  assert(animLayer.activeState === 'AttackRight', 'Telegraph direction switch did not enter AttackRight');
+  view.draw({ ...continuityBase, phase: 'telegraph', phaseProgress: 0.56 }, 3450, { ...continuityMeta, attackDirectionIndex: DIRECTION_INDEX[Direction.LEFT] });
+  assert(animLayer.activeState === 'AttackLeft', 'Ronin-style telegraph direction switch did not enter AttackLeft');
+  const directionSwitchTransitions = attackTransitions.slice(directionSwitchStart);
+  assert(directionSwitchTransitions.includes('AttackRight') && directionSwitchTransitions.includes('AttackLeft'), 'Direction switch did not transition between authored directional tracks');
+  assert(!directionSwitchTransitions.includes('Windup'), 'Direction switch leaked through the generic Windup state');
+
   root.dataset.rendererMotionIntegration = 'pass';
   root.dataset.rendererMotionSequence = 'telegraph-strike-parry-counter';
   root.dataset.rendererMotionBackend = view.backend;
@@ -167,6 +208,8 @@ try {
   root.dataset.rendererDirectionalRead = 'top-right-bottom-left';
   root.dataset.rendererBladeTrajectory = 'worldspace-v2';
   root.dataset.rendererStageIdentity = identities.join(',');
+  root.dataset.rendererAuthoredAttacks = 'continuous-four-direction-v1';
+  root.dataset.rendererAuthoredTransitions = attackTransitions.join(',');
 } catch (error) {
   console.error('PlayCanvas renderer contract smoke failed', error);
   root.dataset.rendererMotionIntegration = 'fail';

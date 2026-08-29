@@ -1,6 +1,6 @@
 # Improvement Backlog
 
-This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates priority against current SOT, exact-head verification, PR findings and direct physical-phone evidence.
+This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates priority against current SOT, exact-head verification, PR findings, self-observable Preview/browser/runtime evidence and any supplemental owner/device evidence that is actually available.
 
 ## Recently delivered
 
@@ -33,29 +33,33 @@ This is a candidate pool, not a fixed roadmap. Each evolution run re-evaluates p
 - **Runs 045–048:** repaired the production Combat UX exact-head gate until it genuinely proves the real Start/parry path under a CDP-emulated 320×568 portrait viewport instead of desktop window-size assumptions.
 - **Run 049:** added presentation-only Crimson Shogun signature phase language: deliberate Phase I heavy preparation plus lower, more forward, more directional and more crimson Blood Moon motion on the existing shared rig without changing combat balance.
 - **Run 050:** restored Pause to a conventional top-right safe-area/HUD position after direct physical-iPhone owner feedback, with button-only hit isolation and 320×568 proof that immediately adjacent top/right canvas taps still reach their directional parries.
+- **Runs 052–053:** rejected a broken runtime joint-override choreography after owner device evidence exposed skeletal collapse, then restored the last usable world-space enemy-animation baseline.
+- **Run 054:** removed the mistaken mandatory human-test HOLD; autonomous runs now use the strongest available self-verification while treating later owner/device feedback as supplemental evidence that can still expose regressions.
+- **Runs 055–056:** introduced the original animation-only four-direction `AttackTop/Right/Bottom/Left` pack on the shared 19-joint rig, then repaired exact-head verification and phase-boundary continuity so normal telegraph→strike→recovery stays on one authored `Attack*` state instead of blending through generic clips.
 
-## Highest priority — physical-phone acceptance
+## Highest priority — autonomous visual/runtime acceptance
 
-1. **Ronin + Shogun repeated practice re-check** — use the direct Stage 2 and Stage 4 practice routes for several same-device attempts. Compare local stage cards/tips and distinguish reading, missed counters, STEP misuse, raw timing pressure and boss Phase II pressure before changing any balance values.
-2. **Physical-iPhone blade + Shogun signature re-check** — verify the enemy katana visibly points/cuts toward the player in top/right/bottom/left attacks, reads as one continuous cut at normal speed, the trail follows the actual weapon path, and the stronger Blood Moon body/weapon language does not hide direction.
-3. **Perfect Parry / Perfect STEP feel** — confirm both automatic ripostes are immediate and obvious, while their strategic roles remain distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
-4. **First-person grip acceptance** — confirm the new two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy on the target iPhone.
-5. **STEP + blade-read + Pause layout** — confirm normal STEP vs Perfect STEP feedback, the opt-in high-contrast rails and the quiet top-right Pause stay easy to use without restoring dense combat text; Pause should consume only its own 44×44 button while immediately adjacent top/right parries remain reachable.
-6. **Sustained phone performance** — inspect frame time, heat and load time; tune shadows/material/pixel-ratio budget only from evidence.
+1. **Authored attack self-inspection and refinement** — inspect the current Preview/browser/runtime evidence for all four authored cuts. Confirm the active directional track, body/arms/sword continuity, player-facing blade path and trail remain coherent at normal speed. Refine only concrete observed defects; do not return to per-frame Chest/arm/HandR overrides.
+2. **Ronin + Shogun repeated practice evidence** — use the direct Stage 2 and Stage 4 practice routes and local stage cards/tips to distinguish reading, missed counters, STEP misuse, raw timing pressure and boss Phase II pressure before changing balance. Supplemental owner/device attempts strengthen this evidence when supplied but are not required to continue.
+3. **Perfect Parry / Perfect STEP clarity** — verify both automatic ripostes remain immediate and obvious while their strategic roles stay distinct: Perfect Parry builds enemy posture; Perfect STEP does not and only works when spacing actually escapes reach.
+4. **First-person grip readability** — verify the bounded two-hand/forearm silhouette improves embodiment without covering the enemy blade read or making parry/counter motion visually noisy. Use Preview/runtime evidence first; device feedback can override if later supplied.
+5. **STEP + blade-read + Pause layout** — keep normal STEP vs Perfect STEP feedback, the opt-in high-contrast rails and the quiet top-right Pause usable without restoring dense combat text; Pause must consume only its own 44×44 button while immediately adjacent top/right parries remain reachable.
+6. **Performance evidence** — use browser/runtime frame evidence and conservative budgets; tune shadows/material/pixel ratio only from concrete evidence. Supplemental physical-device heat/frame feedback is valuable when available but not a prerequisite.
 
 ## High-value candidates after core acceptance
 
-- **Difficulty tuning from evidence:** if repeated Ronin/Shogun practice still shows a wall after the learning pass, use the corrected local stage analysis plus same-device feel to tune one bounded rhythm/window/phase-pressure slice rather than weakening the whole campaign.
-- Accessibility follow-ups: left-handed layout, timing assistance and broader motion controls. High-contrast directional telegraphs are now delivered as the optional **刀路清晰** mode; do not duplicate them as another system.
+- **Easy-mode rhythm/timing assistance:** add a bounded optional shrinking/timing ring that communicates incoming direction and parry timing without changing Normal-mode animation readability or hiding the opponent. It must not widen timing windows unless a separate difficulty decision explicitly approves that rule change.
+- **Difficulty tuning from evidence:** if repeated Ronin/Shogun practice still shows a wall after the learning pass, use the corrected local stage analysis plus self-observed/runtime evidence and any available device feedback to tune one bounded rhythm/window/phase-pressure slice rather than weakening the whole campaign.
+- Accessibility follow-ups: left-handed layout and broader motion controls. High-contrast directional telegraphs are now delivered as the optional **刀路清晰** mode; do not duplicate them as another system.
 - Challenge mode: endless/seeded pressure with mastery-aware scoring and clean restart.
-- Boss refinement: the first Shogun Phase I/Blood Moon signature-motion slice is delivered; make further motion/phase changes only from physical-phone readability/performance evidence.
-- Deeper first-person weapon fidelity only if the new bounded hand/grip silhouette passes phone readability and performance acceptance.
+- Boss refinement: the first Shogun Phase I/Blood Moon signature-motion slice is delivered; make further motion/phase changes only from concrete readability/performance evidence.
+- Deeper first-person weapon fidelity only if the bounded hand/grip silhouette remains readable and performant under available self-verification evidence.
 
 ## Data / telemetry Decision Gate
 
 The owner has proposed recording player gameplay data in a backend to support balancing analysis. This is potentially high value, especially for stage-clear rate, death stage, parry/Perfect/STEP success and missed counter opportunities, but it is **not yet an approved implementation** because current repository rules prohibit analytics/external tracking without a privacy Decision Gate.
 
-Runs 036–050 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and local-only presentation/accessibility preferences to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
+Runs 036–056 deliberately do **not** cross that boundary: they use an ephemeral in-memory per-run summary, repeatable local Ronin/Shogun practice routes and local-only presentation/accessibility preferences to validate useful balancing/clarity signals before any remote collection is approved. Nothing is uploaded or retained as a gameplay record.
 
 Before any backend implementation, define at minimum:
 
@@ -67,11 +71,11 @@ Before any backend implementation, define at minimum:
 - whether test/owner sessions should be marked separately from public play;
 - dashboard/AI analysis output actually needed to justify collection.
 
-Until that gate is approved, keep gameplay statistics local-only and use direct physical-phone evidence plus the repeatable Stage 2/Stage 4 practice and local analysis for balancing decisions.
+Until that gate is approved, keep gameplay statistics local-only and use Preview/browser/runtime evidence plus repeatable Stage 2/Stage 4 practice/local analysis. Supplemental owner/device evidence can refine or override conclusions when supplied.
 
 ## Technical opportunities
 
-- Compact physical-device performance readout only if needed for 60 Hz tuning.
+- Compact performance readout only if needed for 60 Hz tuning.
 - KTX2/Basis only when textured materials are introduced and memory/transfer evidence justifies it.
 - Deterministic replay only if future combat complexity exceeds current focused regressions.
 - PWA/offline shell after renderer/asset loading stabilises.
@@ -82,5 +86,5 @@ Until that gate is approved, keep gameplay statistics local-only and use direct 
 - React migration solely to host the renderer.
 - Physics engine without a gameplay requirement.
 - Downloaded 3D assets without explicit provenance/licence review.
-- Retiring primitive/WebGL2 fallbacks before physical-phone evidence is adequate.
+- Retiring primitive/WebGL2 fallbacks before strong self-verification and available device evidence are adequate.
 - Test/refactor work that does not protect a demonstrated risk or unlock visible player value.

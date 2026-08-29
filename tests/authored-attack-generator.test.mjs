@@ -15,6 +15,10 @@ function parseGlbJson(buffer) {
   return JSON.parse(buffer.subarray(20, 20 + jsonLength).toString('utf8').trim());
 }
 
+function assertNear(actual, expected, epsilon = 1e-12) {
+  assert.ok(Math.abs(actual - expected) <= epsilon, `expected ${actual} to be within ${epsilon} of ${expected}`);
+}
+
 test('directional attack generator emits four original animation-only clips on the shared 19-joint rig', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'samurai-attacks-'));
   try {
@@ -39,10 +43,11 @@ test('directional attack generator emits four original animation-only clips on t
 });
 
 test('authored clip timeline stays continuous across telegraph, strike and recovery', () => {
-  assert.equal(authoredAttackProgress('telegraph', 0), 0);
-  assert.equal(authoredAttackProgress('telegraph', 1), 0.34);
-  assert.equal(authoredAttackProgress('strike', 0), 0.34);
-  assert.equal(authoredAttackProgress('strike', 1), 0.84);
-  assert.equal(authoredAttackProgress('recovery', 0), 0.84);
-  assert.equal(authoredAttackProgress('recovery', 1), 1);
+  assertNear(authoredAttackProgress('telegraph', 0), 0);
+  assertNear(authoredAttackProgress('telegraph', 1), 0.34);
+  assertNear(authoredAttackProgress('strike', 0), 0.34);
+  assertNear(authoredAttackProgress('strike', 1), 0.84);
+  assertNear(authoredAttackProgress('recovery', 0), 0.84);
+  assertNear(authoredAttackProgress('recovery', 1), 1);
+  assertNear(authoredAttackProgress('strike', 1), authoredAttackProgress('recovery', 0));
 });

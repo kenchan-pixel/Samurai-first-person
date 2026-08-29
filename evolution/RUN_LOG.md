@@ -86,3 +86,29 @@ The Run 52 approach is rejected and must not be reused as the foundation for Nor
 - Existing stage identity, Shogun signature, player weapon, input, persistence/network/privacy and legacy renderer fallbacks remain intact.
 - The existing world-space blade path continues to guarantee that all four cuts cross the player-facing parry plane independently of animation aesthetics.
 - Human/device feedback remains supplemental; if supplied later and it exposes a real animation defect, it overrides this autonomous acceptance and becomes a regression repair.
+
+## Run 056 — Restore exact-head authored-attack verification and continuity
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX
+
+### Preflight / blocker evidence
+
+- Incoming exact HEAD: `bc400debf2683e856892a8820c24f133e6263aca`.
+- GitHub Actions CI #89 failed in `npm test`: 63/64 tests passed and the only failure compared `0.8400000000000001` against exact decimal `0.84`; the browser gate therefore never ran. GitHub `Vercel` status for the same SHA was already success.
+- Current same-HEAD PR review also identified a blocking P2: the base animation sync briefly transitioned to generic `Windup/Strike/Recovery` at phase boundaries before the wrapper returned to the same directional `Attack*` state, risking a visible blend/pop and contradicting the intended continuous authored track.
+- Inline review threads were empty. New feature work remained prohibited until both findings were repaired.
+
+### Delivered repair
+
+- Replaced exact decimal boundary comparisons with a tight floating-point tolerance while keeping the intended 0.00 → 0.34 → 0.84 → 1.00 authored timeline contract unchanged.
+- During normal authored telegraph/strike/recovery, the adapter now lets the base renderer update only its established root-direction/read-trail presentation work while pre-setting the compatibility phase label so the base `syncSkinnedAnimation()` does not issue a generic animation transition.
+- The same directional `AttackTop/Right/Bottom/Left` state therefore remains active across telegraph → strike → normal recovery. A displayed-direction/feint change transitions directly to the new authored directional clip. `recovery-interrupted` still deliberately leaves the authored track for the existing `Parry` reaction.
+- Expanded the production PlayCanvas browser renderer contract to instrument real animation transitions. It now fails if generic `Windup/Strike/Recovery` transitions leak into an active authored attack, proves one `AttackTop` state spans all three normal phases, and proves a right→left telegraph direction switch transitions directly between authored tracks.
+
+### Regression boundary
+
+- Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input and persistence/network/privacy authority are unchanged.
+- The Run 52 runtime joint-override approach remains prohibited; no per-frame Chest/arm/HandR writes were added.
+- The stable world-space blade-tip path and bounded actual-tip trail remain authoritative presentation safeguards.
+- Post-commit exact-head CI and Vercel Preview must both be terminal green before another feature run.

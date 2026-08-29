@@ -72,15 +72,18 @@ export function installAuthoredEnemyAttacks(view) {
   view.syncSkinnedAnimation = (state, directionIndex) => {
     const phase = state?.phase || 'ready';
     const direction = Math.max(0, Math.min(3, directionIndex | 0));
-
-    // Keep the established root-direction pose, read trail and Parry reaction. The new
-    // pack replaces only the normal telegraph -> strike -> recovery skeletal track,
-    // avoiding any per-frame direct joint mutation like the rejected Run 52 approach.
-    originalSync(state, direction);
     const genericClip = phaseClip(phase);
     const useAuthored = view.authoredAttackClipsReady
       && ['telegraph', 'strike', 'recovery'].includes(phase)
       && view.skinnedModel?.anim?.baseLayer;
+
+    // Keep the established root-direction pose and read-trail work from the base view,
+    // but do not let its generic Windup/Strike/Recovery state transition interrupt the
+    // currently active directional Attack* track. Setting the compatibility label first
+    // makes originalSync skip its animation transition while still updating those safe
+    // renderer-level transforms. This avoids the Run 55 generic->Attack* double blend.
+    if (useAuthored) view.characterClip = genericClip;
+    originalSync(state, direction);
 
     if (!useAuthored) {
       view.authoredAttackActiveClip = null;
