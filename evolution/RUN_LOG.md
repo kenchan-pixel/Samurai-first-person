@@ -121,3 +121,32 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - The fixed Sword→HandR grip, authored guard geometry, player-facing strike paths and ±0.700 lateral thresholds are unchanged.
 - Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input, persistence and network/privacy authority are unchanged.
 - The extra evaluation is a zero-delta update of one 19-joint animation layer during the existing renderer draw; post-commit browser CI must confirm both correctness and the broader PlayCanvas contract before feature work resumes.
+
+## Run 061 — Preserve continuous authored forward commitment
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX  
+**Goal:** repair the new exact-head top-strike depth/continuity failure exposed after Run 060 fixed same-draw pose evaluation.
+
+### Preflight / blocker evidence
+
+- Incoming exact HEAD: `1f410dc414e97cfccc6a886b4d7c5f6fbc67a175`.
+- GitHub Actions CI #94: `npm test` passed 65/65; `npm run test:browser` failed on the unchanged real PlayCanvas contract `Top strike blade tip did not advance continuously toward the player`.
+- Run 060 simultaneously proved its intended lateral repair: measured wind-up tips changed to `rightX=+1.761`, `leftX=-1.249`, clearing the retained `>+0.700 / <-0.700` gate.
+- Exact-head GitHub `Vercel` status was success; PR #1 remained Draft/open/unmerged; inline review threads were empty.
+- The failure occurs after the real authored pose is now evaluated correctly, so the next repair must preserve that pose authority and the fixed Sword→HandR grip rather than masking the issue with another Sword/joint override.
+
+### Delivered repair
+
+- Retained the existing rigid whole-model depth-assist mechanism, but added an authored-strike **forward-reach floor** anchored to the final telegraph blade-tip Z position.
+- Before the established 62% contact point, the floor grows with the existing cut-ease commitment curve to a bounded 1.08 world-unit reach; after contact it releases with the existing follow-through curve. The actual authored pose remains free to advance farther on its own.
+- If the animated body/arm pose would temporarily pull the blade behind that floor, only the complete skinned model receives the minimum extra Z assist required, capped by the unchanged 1.10 depth-assist budget. Sword local rotation remains untouched and HandR remains the animation authority.
+- The original player-facing parry-plane assist remains active; the stricter existing browser assertions for early/late forward progression, plane crossing, downward top cut, actual world trail and all four directional paths are not weakened.
+- Added runtime diagnostics for the computed forward floor and whether the actual tip meets it, without adding any new gameplay timing or animation clock.
+
+### Regression boundary
+
+- No Run 52-style Chest/arm/HandR runtime manipulation and no normal authored world-space Sword rotation is introduced.
+- The `AttackTop/Right/Bottom/Left` tracks, same-draw pose synchronization, fixed Sword→HandR grip, lateral side-read thresholds and all combat/input/boss rules remain unchanged.
+- The assist moves the complete skinned character rigidly in camera depth only and remains inside the pre-existing 1.10 assist cap; it cannot change hit timing, parry/Perfect windows, damage, STEP, posture, boss phase, score or persistence/network/privacy behavior.
+- Exact-head Node/browser CI and Vercel Preview must both be terminal green before feature work resumes.

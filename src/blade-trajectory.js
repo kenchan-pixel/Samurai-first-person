@@ -6,6 +6,7 @@ const PARRY_PLANE_Z = 2.25;
 const MAX_TRAIL_SEGMENTS = 6;
 const STRIKE_CONTACT = 0.62;
 const GRIP_DEPTH_ASSIST_MAX = 1.10;
+const AUTHORED_FORWARD_REACH = 1.08;
 
 // Fallback world-space blade axes. The authored Attack* clips own the Sword bone during
 // normal telegraph/strike/recovery; these axes remain for primitive/base-animation and
@@ -65,14 +66,28 @@ function authoredGripLockActive(view, phase) {
     && /^Attack(Top|Right|Bottom|Left)$/.test(view.authoredAttackState?.clip || '');
 }
 
-function authoredDepthAssist(phase, progress, rawTipZ) {
-  if (phase !== 'strike') return 0;
+function strikeCommitment(progress) {
   const p = clamp01(progress);
-  const commitment = p <= STRIKE_CONTACT
+  return p <= STRIKE_CONTACT
     ? cutEase(p / STRIKE_CONTACT)
     : 1 - 0.62 * smooth((p - STRIKE_CONTACT) / (1 - STRIKE_CONTACT));
-  const shortfall = Math.max(0, PARRY_PLANE_Z + 0.08 - rawTipZ);
-  return Math.min(GRIP_DEPTH_ASSIST_MAX, shortfall * commitment);
+}
+
+function authoredForwardFloor(progress, strikeOriginTipZ) {
+  if (!Number.isFinite(strikeOriginTipZ)) return null;
+  return strikeOriginTipZ + AUTHORED_FORWARD_REACH * strikeCommitment(progress);
+}
+
+function authoredDepthAssist(phase, progress, rawTipZ, strikeOriginTipZ) {
+  if (phase !== 'strike') return { assist: 0, forwardFloorZ: null };
+  const commitment = strikeCommitment(progress);
+  const planeShortfall = Math.max(0, PARRY_PLANE_Z + 0.08 - rawTipZ) * commitment;
+  const forwardFloorZ = authoredForwardFloor(progress, strikeOriginTipZ);
+  const forwardShortfall = Number.isFinite(forwardFloorZ) ? Math.max(0, forwardFloorZ - rawTipZ) : 0;
+  return {
+    assist: Math.min(GRIP_DEPTH_ASSIST_MAX, Math.max(planeShortfall, forwardShortfall)),
+    forwardFloorZ,
+  };
 }
 
 function trailEntity(view, index) {
@@ -160,6 +175,8 @@ export function installBladeTrajectoryView(view) {
     gripLocked: false,
     orientationDeltaDeg: 0,
     depthAssist: 0,
+    forwardFloorZ: null,
+    forwardFloorMet: true,
   };
 
   let current = { phase: 'ready', progress: 0, directionIndex: 0, baseDirection: null };
@@ -169,6 +186,7 @@ export function installBladeTrajectoryView(view) {
   let lastTip = null;
   let lastBladeDirection = null;
   let recoveryDirection = null;
+  let strikeOriginTipZ = null;
   let lastHistoryKey = '';
 
   const ready = view.characterReady?.then?.(() => {
@@ -202,6 +220,7 @@ export function installBladeTrajectoryView(view) {
       lastTip = null;
       lastBladeDirection = null;
       recoveryDirection = null;
+      strikeOriginTipZ = null;
       lastPhase = phase;
       lastDirection = directionIndex;
       view.bladeTrajectoryState = {
@@ -213,6 +232,8 @@ export function installBladeTrajectoryView(view) {
         gripLocked: false,
         orientationDeltaDeg: 0,
         depthAssist: 0,
+        forwardFloorZ: null,
+        forwardFloorMet: true,
       };
       return;
     }
@@ -226,6 +247,9 @@ export function installBladeTrajectoryView(view) {
       if (phase === 'recovery' || phase === 'recovery-interrupted') {
         recoveryDirection = lastBladeDirection?.clone() || baseDirection.clone();
       }
+      if (phase === 'strike' && lastPhase !== 'strike') {
+        strikeOriginTipZ = Number.isFinite(lastTip?.z) ? lastTip.z : null;
+      }
       if (phase === 'strike' || directionIndex !== lastDirection) {
         history = lastTip ? [lastTip.clone()] : [];
         lastHistoryKey = '';
@@ -234,15 +258,18 @@ export function installBladeTrajectoryView(view) {
 
     let bladeDirection = baseDirection.clone().normalize();
     let depthAssist = 0;
+    let forwardFloorZ = null;
 
     if (gripLocked) {
-      // Preserve authored Sword rotation. If the authored cut needs a little more camera-
-      // depth to reach the established parry plane, move the complete skinned model as one
-      // rigid body instead of rotating Sword away from HandR. This keeps animation authority
-      // in the clip while retaining the proven player-facing contact contract.
+      // Preserve authored Sword rotation. The established whole-model depth assist now
+      // also enforces a bounded forward-reach floor anchored to the last telegraph tip.
+      // This prevents an authored body/arm pose from visually pulling the katana back
+      // toward the opponent during early commitment while keeping Sword fixed to HandR.
       const rawHilt = sword.getPosition().clone();
       const rawTipZ = rawHilt.z + bladeDirection.z * BLADE_LENGTH;
-      depthAssist = authoredDepthAssist(phase, progress, rawTipZ);
+      const assist = authoredDepthAssist(phase, progress, rawTipZ, strikeOriginTipZ);
+      depthAssist = assist.assist;
+      forwardFloorZ = assist.forwardFloorZ;
       if (depthAssist > 0) model.setLocalPosition(modelPos.x, modelPos.y, baseDepth + depthAssist);
     } else {
       bladeDirection = pathDirection(PATHS[directionIndex], phase, progress, baseDirection, recoveryDirection);
@@ -271,6 +298,7 @@ export function installBladeTrajectoryView(view) {
 
     const trailSegments = (view.bladeWorldTrail || []).filter((segment) => segment.enabled).length;
     const orientationDeltaDeg = angleBetween(baseDirection, finalDirection);
+    const forwardFloorMet = !Number.isFinite(forwardFloorZ) || actualTip.z >= forwardFloorZ - 0.015;
     view.bladeTrajectoryState = {
       ready: true,
       phase,
@@ -283,8 +311,11 @@ export function installBladeTrajectoryView(view) {
       gripLocked,
       orientationDeltaDeg,
       depthAssist,
+      forwardFloorZ,
+      forwardFloorMet,
     };
     document.documentElement.dataset.bladeGripLock = gripLocked ? 'authored-handr' : 'fallback-path';
+    document.documentElement.dataset.bladeForwardFloor = forwardFloorMet ? 'pass' : 'shortfall';
     lastPhase = phase;
     lastDirection = directionIndex;
   };
