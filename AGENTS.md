@@ -9,12 +9,14 @@
 
 ## Delivery rules
 
-- Mobile-first is mandatory. Primary acceptance is a recent iPhone in portrait orientation.
+- Mobile-first is mandatory. Primary acceptance target is a recent iPhone in portrait orientation, but autonomous runs must verify with the strongest self-observable evidence available and must not wait for a human device test.
 - Every product request is cumulative unless Ken explicitly removes a requirement.
 - Preserve the current playable baseline before adding features.
 - Do not merge pull requests. Final merge belongs to Ken.
 - Do not replace the technology stack without a documented Decision Gate.
 - An approved Decision Gate may be executed incrementally without asking again for each internal refactor/test/migration step; stop for human input only if the approved assumptions, hard constraints, licensing/cost/privacy boundary, or product direction materially changes.
+- Human/device testing and owner visual feedback are supplemental evidence, never a prerequisite for autonomous continuation. When supplied, they can reveal or override a mistaken automated conclusion and trigger a blocker/regression repair; their absence alone must never cause HOLD or a Decision Gate.
+- The agent must inspect the Preview/runtime itself using available browser, screenshot, DOM/runtime, CI, renderer-state and deterministic test evidence. If one evidence channel is unavailable, use the strongest remaining evidence and continue with a bounded, reversible decision rather than asking for a human test.
 - Testing and refactoring are supporting tools, not delivery goals. Prefer the smallest risk-proportionate verification set that proves the changed behaviour and protects the critical playable baseline. Do not inflate test count or spend an evolution run on test/refactor-only work unless it repairs a material blocker/regression.
 - Do not add login, payments, analytics, advertising, external tracking, paid APIs, or sensitive permissions without approval.
 - Do not use copyrighted game assets, character likenesses, music, logos, or copied level designs.
@@ -38,6 +40,7 @@ The recurring ChatGPT Scheduled Task is intentionally different from normal feat
 - If there is any unresolved blocker, failed CI, material regression, or broken preview, repair that before starting a new feature.
 - Resolve the exact current branch HEAD before feature selection. Required CI and Vercel Preview for that exact HEAD must both be terminal green. Missing, queued, or in-progress verification means **HOLD: no commit**. Failed verification means **BLOCKER_FIX**.
 - Any unresolved P0/P1 finding from a human reviewer or the established PR-review automations blocks new feature work while the finding still applies, even if the review did not use the literal word `BLOCKER` or was posted against an earlier HEAD.
+- Human/device feedback blocks only when it reports an actual applicable defect/regression; the lack of a fresh human re-test is never itself an unresolved blocker.
 - Every actionable P2 finding must be inspected and explicitly dispositioned before feature selection. P2 blocks only when it represents material correctness, baseline-regression, security/privacy/data-loss, runtime, deployment, or playability risk.
 - If a run only inspects/waits and makes no product code change or material blocker/regression repair, do not create a commit merely to prove the schedule ran.
 
@@ -62,7 +65,7 @@ Then inspect current code, the long-lived Draft PR, unresolved review threads/co
 
 A run is complete only when:
 
-- the improvement is visibly usable on mobile, or a material blocker/regression is actually repaired;
+- the improvement is visibly usable on mobile through available self-verification evidence, or a material blocker/regression is actually repaired;
 - all existing tests pass;
 - the regression checklist has been checked;
 - no browser runtime error is introduced;

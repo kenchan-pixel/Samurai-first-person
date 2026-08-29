@@ -64,10 +64,34 @@ Run 52 must not be treated as an accepted baseline or a foundation for Easy mode
 
 - This is an exact bounded rollback of the Run 52 runtime/SOT delta rather than another attempt to tune the broken transforms.
 - Automated post-commit CI and Vercel Preview must be terminal green before another implementation run.
-- Physical-iPhone re-check remains mandatory because Run 52 proved CI cannot certify anatomical animation quality.
+- Run 53 originally recorded a mandatory physical-iPhone re-check. **Run 54 supersedes that process rule:** human/device testing is supplemental evidence only and its absence must not block autonomous continuation.
 
 ### Next candidates
 
-1. Confirm on the target iPhone that the skeletal collapse is gone and the prior four-direction world-space blade baseline has returned.
+1. Autonomously inspect the restored baseline using the strongest available Preview/browser/runtime/renderer-state evidence; do not wait for a human re-test.
 2. For the next animation upgrade, prefer an original rigged enemy-samurai + katana asset with authored attack clips over stacking procedural runtime offsets on the current skeleton. Combat timing remains renderer-neutral.
-3. Add the proposed Easy-mode rhythm/timing ring only after the base attack animation is physically accepted; it must assist direction/timing rather than hide an unreadable Normal-mode animation.
+3. Add the proposed Easy-mode rhythm/timing ring only after the base attack animation passes autonomous visual/runtime verification; later human feedback may still reveal regressions and override that conclusion.
+
+## Run 054 — Remove mandatory human-test gate from autonomous evolution
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX  
+**Goal:** repair an autonomy-process regression that incorrectly turned physical-iPhone confirmation into a mandatory HOLD condition.
+
+### Evidence
+
+- Incoming exact HEAD `a3fe834b782e2b5e140c7ee8754b8c47b002a260` had terminal-green CI #87 and GitHub `Vercel` success.
+- The Run 53 log/state and latest PR review nevertheless required a fresh physical-iPhone confirmation before any new enemy-animation feature.
+- Ken directly clarified the intended operating model: the agent must confirm the screen/result itself; human testing and decisions are auxiliary and must never pause autonomous work merely because they are unavailable.
+
+### Delivered repair
+
+- Updated `AGENTS.md`, `docs/SCHEDULED_TASK_PROMPT.md` and `docs/EVOLUTION_RULES.md` so autonomous runs must self-verify using the strongest available Preview/browser/screenshot/runtime/DOM/renderer-state/test evidence.
+- Explicitly removed human/device-test absence from HOLD and Decision Gate conditions.
+- Preserved the value of owner/device feedback: when supplied and it reports a real defect, it can override a prior automated conclusion and trigger a blocker/regression repair, as Run 52 correctly demonstrated.
+- Updated persistent state/candidates so the next run can autonomously verify the restored baseline and continue toward authored rigged enemy-samurai + katana attack clips without waiting for manual confirmation.
+
+### Regression boundary
+
+- This changes autonomous delivery governance only; no gameplay, renderer, combat timing, damage, input, persistence, network/privacy, asset or `main` behaviour changes.
+- Post-commit CI and Vercel Preview remain required exact-head gates.

@@ -12,6 +12,8 @@ At the start of every run, read the latest `autonomous-evolution` branch and the
 
 For Vercel, prefer direct project/deployment data when available. If the Vercel connector cannot enumerate the imported project, use GitHub's `Vercel` commit status on the current branch head as the authoritative deployment signal.
 
+Human/device testing is auxiliary evidence only. Autonomous runs must not pause, HOLD, or request a Decision Gate merely because a fresh human/physical-iPhone test is unavailable. The agent must make the best bounded decision from available Preview/browser/runtime/screenshot/DOM/renderer-state/CI/test evidence. If later human feedback reveals a real regression, that evidence overrides the earlier automated conclusion and must be handled as a blocker/regression repair.
+
 ## Exact-head verification fence
 
 Before selecting any new feature, resolve the exact current `autonomous-evolution` HEAD and inspect required CI plus Vercel Preview for that exact SHA.
@@ -20,7 +22,7 @@ Before selecting any new feature, resolve the exact current `autonomous-evolutio
 - CI or Preview missing, queued, or in progress → `HOLD`; make no commit and do not start feature work.
 - CI or Preview failed → `BLOCKER_FIX`; repair before any feature work.
 
-Do not infer success from an older SHA.
+Do not infer success from an older SHA. Lack of human/device testing is not part of this HOLD fence.
 
 ## Review gate
 
@@ -28,6 +30,7 @@ Inspect all PR review submissions, top-level comments, and inline threads, inclu
 
 - Any unresolved P0/P1 finding from a human reviewer or the established PR-review automations blocks new feature work while the finding still applies, even if it does not contain the literal word `BLOCKER`.
 - Any explicit `BLOCKER` finding blocks new feature work while applicable.
+- Human/device feedback blocks only when it reports an actual applicable defect/regression. A reviewer note that merely requests future/manual/physical-device confirmation is a limitation, not a blocker.
 - Every actionable P2 must be inspected and explicitly dispositioned before feature selection. P2 blocks only when it represents material correctness, baseline-regression, security/privacy/data-loss, runtime, deployment, or playability risk.
 - A finding is cleared only when the current repository state demonstrably addresses it or a concise PR disposition explains why it no longer applies.
 
@@ -40,7 +43,7 @@ Apply this order strictly:
 3. Else repair any material baseline regression.
 4. Else propose at least 3 materially different player-visible improvements, score them for impact / goal alignment / novelty / confidence / safety, and implement the strongest bounded vertical slice.
 
-Never add a new feature while a blocker, unverified/failed exact HEAD, broken preview, or material regression remains unresolved.
+Never add a new feature while a blocker, unverified/failed exact HEAD, broken preview, or material regression remains unresolved. Do not convert absence of human testing into a blocker.
 
 ## Minimum work threshold
 
@@ -58,7 +61,7 @@ Ken has delegated the detailed sequencing of testing, refactoring and continued 
 - Preserve deterministic combat/timing logic independently from rendering/animation so visual upgrades do not silently change parry windows or encounter rules.
 - The PlayCanvas-first 3D direction documented in `docs/3D_PIPELINE_DECISION_GATE.md` is approved for incremental implementation. The agent may introduce the approved renderer/build/asset pipeline without a new human gate, provided hard constraints remain satisfied.
 - Stop for a new Decision Gate only when evidence would require changing the approved product direction, introducing material cost/privacy/licensing risk, removing cumulative behaviour, or adopting a substantially different stack than the approved 3D direction.
-- Physical iPhone evidence remains the primary performance acceptance signal, but lack of immediate device access must not force a HOLD for bounded implementation work. Use browser/runtime evidence, conservative budgets and a graceful fallback until the next physical-device check.
+- A recent iPhone remains the design target, but human/device testing is supplemental. Use self-observed mobile browser/runtime/Preview evidence for autonomous acceptance; never wait for physical-device confirmation before continuing bounded work.
 
 ## Git / PR protocol
 
@@ -76,6 +79,8 @@ Before committing, inspect/run all available tests and regression evidence. Prot
 
 Verification should be proportionate to the change. Reuse existing coverage when it already proves an unchanged path; add focused tests only for new high-risk behaviour or a regression that previously escaped. Do not build parallel test harnesses for the same behaviour without a concrete failure mode.
 
+For visual/animation changes, the agent must inspect the Preview itself using every available self-observable channel: browser rendering, screenshots when supported, runtime/DOM/renderer-state instrumentation, animation/transform invariants and deterministic browser tests. If pixel-level inspection is unavailable in the current tool surface, record that limitation and use the strongest remaining self-verification; do not ask for a human test as a prerequisite to proceed.
+
 After a successful implementation commit, inspect exact-head CI and Vercel Preview status. A preview may deploy before reviewer approval; production remains tied to Ken merging `main`.
 
 ## Persistent state
@@ -92,7 +97,7 @@ After an implementation commit, add one concise PR comment with:
 
 Then Before, After, Verification, Regression, Risk, commit SHA, Preview status/link or Vercel status target, and disposition of any review finding handled by the run.
 
-If no qualifying implementation is safe, do not commit; leave a concise PR Decision Gate comment only when human input is genuinely required.
+If no qualifying implementation is safe, do not commit; leave a concise PR Decision Gate comment only when a genuinely material product/architecture/cost/privacy/licensing decision is required. Never create a Decision Gate solely to request human testing.
 
 ## Hard constraints
 

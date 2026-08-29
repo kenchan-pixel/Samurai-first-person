@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 53,
-  "last_action_type": "REGRESSION_FIX",
-  "last_action": "Removed the Run 52 procedural body/arm/HandR choreography that collapsed on the primary physical-iPhone acceptance device and restored the last usable world-space enemy blade-trajectory baseline from f8f8e7a166225e92108012c47eae4fc6db71feee",
-  "last_commit": "5fcc042205cbdde00c57175e0231c27d80784871",
+  "run_number": 54,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Removed the incorrect mandatory human/physical-iPhone acceptance gate from the autonomous-evolution protocol; autonomous runs must self-verify with available Preview/browser/runtime/visual evidence and treat human-device testing as supplemental only",
+  "last_commit": "a3fe834b782e2b5e140c7ee8754b8c47b002a260",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Physical-iPhone rollback acceptance: confirm the Run 52 skeletal collapse is gone and the restored four-direction world-space blade path is back to the last usable baseline before any new animation feature",
+    "Self-verify the restored Run 53 enemy-animation baseline using available Preview/browser/runtime/renderer-state evidence; do not require a human re-test to continue",
     "Replace the rejected runtime joint-override approach with an original rigged enemy-samurai + katana asset pipeline containing authored top/right/bottom/left attack clips, keeping CombatEngine timing/damage/parry authority renderer-neutral",
-    "Only after the base authored attack animation is physically accepted, add the optional Easy-mode rhythm/timing ring for direction and parry timing assistance"
+    "After the base authored attack animation passes autonomous visual/runtime verification, add the optional Easy-mode rhythm/timing ring for direction and parry timing assistance"
   ]
 }

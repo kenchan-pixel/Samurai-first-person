@@ -4,6 +4,8 @@
 
 Run a high-frequency, human-supervised autonomous product-evolution experiment. ChatGPT periodically reads the latest repository state, chooses the highest-value next action, implements it, verifies it, and keeps moving the playable game toward — and where justified beyond — the product goal.
 
+Human supervision means owner feedback can redirect or override the system when supplied; it does **not** mean autonomous runs wait for manual testing or approval between bounded iterations.
+
 ## High-frequency operating model
 
 - Cadence target: hourly.
@@ -23,6 +25,7 @@ Before any new feature selection, resolve the exact current `autonomous-evolutio
 - Missing, queued, or in-progress verification means `HOLD`; make no commit and start no feature work.
 - Failed CI or Preview means `BLOCKER_FIX`.
 - Never treat an older SHA's successful verification as evidence for the current HEAD.
+- Missing human/device testing is not a HOLD condition.
 
 ## Review blocker semantics
 
@@ -30,6 +33,7 @@ Review findings are machine-operational gates, not dependent on one literal keyw
 
 - Any explicit `BLOCKER` finding blocks new feature work while applicable.
 - Any unresolved P0/P1 finding from a human reviewer or the established PR-review automations blocks new feature work while it still applies, including findings posted against an earlier HEAD.
+- Human/device feedback blocks only when it reports an actual applicable defect/regression. A request for future physical-device confirmation by itself is a limitation, not a blocker.
 - Every actionable P2 finding must be inspected and explicitly dispositioned before feature selection. P2 blocks only when it represents material correctness, baseline-regression, security/privacy/data-loss, runtime, deployment, or playability risk.
 - A review finding is cleared only when the current repository state demonstrably addresses it or a concise PR disposition explains why it no longer applies.
 
@@ -40,7 +44,7 @@ Review findings are machine-operational gates, not dependent on one literal keyw
 3. Repair material regressions against `CURRENT_BASELINE.md` or `REGRESSION_CHECKLIST.md`.
 4. Only when the above are clear: one new high-value visible improvement.
 
-While a blocker/regression exists, or exact-head verification is not terminal green, **new feature work is prohibited**.
+While a blocker/regression exists, or exact-head verification is not terminal green, **new feature work is prohibited**. Absence of a new human test does not create a blocker/regression.
 
 ## Required outcome per implementation run
 
@@ -99,8 +103,12 @@ Before completing an implementation run:
 - check the full regression checklist;
 - inspect changed code for runtime/schema/security issues;
 - perform a mobile-oriented browser/runtime check when tooling permits;
+- for visual/animation work, inspect the Preview using all self-observable evidence available: browser output, screenshots when supported, DOM/runtime/renderer-state instrumentation, transform/animation invariants and deterministic browser tests;
+- if pixel-level inspection is unavailable, explicitly record that limitation and use the strongest remaining evidence rather than requesting a human test as a gate;
 - verify the Draft PR remains open and unmerged;
 - inspect exact-head CI and deployment status.
+
+A recent iPhone remains the target design surface, but physical human-device testing is supplemental evidence only. When supplied, it can expose regressions that automation missed and must be acted on. Its absence must never stop bounded autonomous work.
 
 ## Required Draft PR run comment
 
@@ -118,4 +126,6 @@ For each implementation commit append one concise top-level PR comment:
 
 ## Stop / hold conditions
 
-Do not force a low-value change. Missing/queued/in-progress exact-head verification is `HOLD` and must produce no commit. If no safe qualifying improvement is available, or the next move requires a product/architecture decision that could materially redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.
+Do not force a low-value change. Missing/queued/in-progress exact-head verification is `HOLD` and must produce no commit. If no safe qualifying improvement is available, or the next move requires a material product/architecture/cost/privacy/licensing decision that could redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.
+
+Do not create a HOLD or Decision Gate solely because a human/device test has not happened yet.
