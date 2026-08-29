@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.24.0-evolution — Optional rhythm / timing assist
+
+- Added a default-off **節拍提示** start-screen toggle and one hollow pointer-transparent timing ring around the opponent.
+- The ring shrinks through the authoritative telegraph clock, follows the currently displayed/final direction through Ronin feints, reaches contact at strike start, and distinguishes the existing Perfect window from the later normal-parry strike state.
+- The assist changes presentation only: no parry/Perfect window, enemy timing, damage, reach, STEP, score, input, authored animation or boss rule is widened or altered.
+- Reduced motion keeps a static preparation ring plus discrete strike-state changes; blocked localStorage is non-fatal and no network/analytics identifier is introduced.
+- Added focused Node and 320×568 browser coverage plus production initialization/layout gates.
+
 ## 0.23.0-evolution — Authored four-direction enemy katana attacks
 
 - Added a deterministic original animation-only `samurai-attacks-v1.glb` pack with `AttackTop`, `AttackRight`, `AttackBottom`, and `AttackLeft` clips on the same 19-joint hierarchy as the existing samurai.

@@ -10,6 +10,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] The primary combat view is not blocked by instructions or panels.
 - [ ] Guided-duel toggle is reachable on the start screen without pushing the primary Start control outside the viewport.
 - [ ] Optional 刀路清晰 toggle remains inside the 320×568 viewport, defaults off unless locally enabled, and does not enlarge the start-screen flow.
+- [ ] Optional 節拍提示 toggle remains inside the 320×568 viewport below 刀路清晰, defaults off unless locally enabled, and does not enlarge the start-screen flow.
 - [ ] The compact 練浪人 / 練將軍 practice selector remains inside the 320×568 viewport and does not push the primary 拔刀 action off-screen.
 - [ ] STEP / 後撤 and the range chip remain clear of the four edge-block regions and the primary centre combat read.
 - [ ] The 44×44 Pause control stays in the conventional top-right safe-area/HUD corner at 320×568, remains inside the viewport, sits below the enemy HUD, and does not intrude into the centre play field.
@@ -41,6 +42,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Mouse fallback remains usable.
 - [ ] STEP pointerdown/pointerup captures its own pointer, stops propagation outside the control, rejects dragged gestures beyond the travel threshold, and leaves subsequent canvas pointer state clear.
 - [ ] 刀路清晰 overlay is pointer-transparent and cannot consume parry/swipe/STEP input.
+- [ ] 節拍提示 ring/layer is pointer-transparent and cannot consume parry/swipe/STEP/Pause input.
 
 ## Pause and guide
 
@@ -119,6 +121,8 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Reduced-motion preference suppresses traveling impact sparks/slash afterimages while retaining a short readable contact cue.
 - [ ] Optional 刀路清晰 mode follows telegraph direction, updates to the final direction after a feint, strengthens the strike cue, clears after resolution, and remains static rather than pulsing under reduced motion.
 - [ ] With 刀路清晰 enabled, the old centre arrow/label is suppressed so only one directional overlay is shown.
+- [ ] Optional 節拍提示 shrinks from a larger preparation circle toward a fixed target using authoritative telegraph progress, follows the current displayed/final direction through feints, shows the existing Perfect window distinctly from the later normal-parry strike window, and clears outside telegraph/strike.
+- [ ] 節拍提示 does not widen timing windows, change enemy attack timing/damage/reach/STEP/score/input, or create a second combat clock; reduced motion keeps a static preparation ring plus discrete strike-state changes.
 - [ ] Live combat omits the persistent READ/PARRY prompt, footer gesture sentence, passive block-zone labels and arena subtitle; detailed instructions remain available through 玩法.
 - [ ] Crimson Shogun stage activates the pointer-transparent blood-moon/ember atmosphere without covering HUD or directional input regions.
 - [ ] Crimson Shogun Phase I heavy reads use a deliberate signature crouch/forward preparation while preserving the authoritative blade direction and timing.
@@ -136,7 +140,7 @@ Run this checklist before marking an evolution pull request complete.
 
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
-- [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, both practice entries and blade-read accessibility integrations in the real app document.
+- [ ] Browser smoke confirms the production Vite app initializes the PlayCanvas primary renderer, preserves the WebGL2 fallback contract, enables the start control, and initializes mastery, boss, onboarding, footwork, impact, both practice entries, blade-read accessibility and timing-assist integrations in the real app document.
 - [ ] Production Combat UX smoke starts the real app at 320×568 and proves adjacent top/right parry routing, top-right Pause placement and button-only hit isolation, frozen phase while paused, 玩法-return-still-paused, resume without catch-up, restart and home behavior.
 - [ ] The real-app PlayCanvas smoke drives one representative CombatEngine telegraph → strike → parry → counter sequence and proves enemy body/blade transform progression, authoritative interrupted recovery, player parry motion and player counter-slash motion while the backend remains PlayCanvas.
 - [ ] Browser mastery harness drives the actual patched `CombatEngine` event stream to victory and renders the mastery fields.
@@ -151,6 +155,7 @@ Run this checklist before marking an evolution pull request complete.
 - [ ] Footwork Node coverage proves short-range evade + counter, long/heavy tracking, and wrong-time STEP rejection.
 - [ ] Footwork browser harness drives actual STEP pointerdown/pointerup, observes pointer capture/isolation, rejects a dragged STEP, proves a short evade/counter, proves a long tracked strike, and confirms later canvas pointer state resets cleanly.
 - [ ] Blade-read browser harness drives the real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and proves optional toggle activation, direction flow, strike emphasis, cleanup and pointer-safe four-rail reuse.
+- [ ] Timing-assist Node/browser coverage drives the real CombatEngine clock and proves telegraph shrink, displayed/final direction authority, existing Perfect-window boundary, later normal-parry state, successful-parry cleanup, pointer safety and 320×568 toggle layout.
 - [ ] Impact Node coverage proves event-to-effect profile selection and direction-origin mapping without touching combat resolution.
 - [ ] Impact browser harness drives actual perfect-parry, counter and player-hit events, proves 320×568 pointer-safe layout, and confirms all burst nodes clean themselves up.
 - [ ] CI configuration remains valid.

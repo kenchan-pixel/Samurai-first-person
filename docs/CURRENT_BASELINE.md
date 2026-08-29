@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.23.0-evolution**
+Version: **0.24.0-evolution**
 
 These capabilities are approved for the current evolution branch and cumulative. Future work may improve or replace their implementation, but must not silently remove user-facing behaviour. `main` remains the owner-approved production baseline until Ken merges Draft PR #1.
 
@@ -38,6 +38,16 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Reduced-motion preference removes the pulsing animation while retaining the static high-contrast direction cue.
 - The preference is local-only; blocked `localStorage` is non-fatal and simply falls back to the default-off state. No account, network request, analytics or remote identifier is introduced.
 - The top-left toggle and four edge rails remain pointer-safe and bounded at the 320×568 acceptance viewport.
+
+## Optional rhythm / timing assist
+
+- The start screen includes an optional **節拍提示** toggle below **刀路清晰**. It defaults off, so Normal-mode combat presentation and difficulty remain unchanged unless the player explicitly enables it.
+- When enabled, a hollow pointer-transparent ring around the opponent shrinks through the **authoritative telegraph clock** toward a fixed contact ring. The direction marker follows `displayedDirection`, so Ronin feints switch the marker only when the real combat state resolves to the final direction.
+- At strike start the ring reaches the target and shows a distinct **完美** timing state for exactly the existing enemy `perfectWindowMs`; after that window the same ring changes to the normal **格擋** state for the remainder of the legal strike.
+- The assist is presentation-only. It does **not** widen parry or Perfect windows, change enemy timing, damage, reach, STEP, score, input routing, auto-block, or alter CombatEngine authority.
+- Pause naturally freezes the ring because its state is derived only from the same paused game-time `CombatEngine.update()` calls; no wall-clock timer or second combat clock is introduced.
+- Reduced-motion keeps a static preparation ring and the discrete Perfect/normal timing-state change instead of continuously shrinking the ring.
+- The overlay is pointer-transparent and leaves the centre opponent/blade visible; the preference is local-only, blocked `localStorage` is non-fatal, and no network/analytics identifier is introduced.
 
 ## Core combat
 
@@ -115,6 +125,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - Successful parry feedback combines audio/haptic/camera/impact with direction-aware contact wash/ring/blade clash. Perfect Parry and Perfect STEP automatic ripostes reuse the existing first-person counter-slash feedback so the offensive reward is visible without adding another persistent HUD panel.
 - Live combat text remains intentionally quiet and reduced-motion preserves short readable contact cues while suppressing travelling effects.
 - The optional high-contrast blade-read layer uses four reusable pointer-transparent edge rails and only one active rail at a time; it reinforces the current/final attack direction without covering the centre blade-reading area.
+- The optional timing-assist layer uses one hollow target ring, one reusable sweep ring, one directional marker and one small state label. It stays pointer-transparent and does not cover the opponent silhouette or authoritative blade path with a filled panel.
 - The result analysis lives only on the post-run modal; it does not add persistent combat HUD text or cover the live blade-reading area.
 - Direct practice is presented as one compact two-button row (**練浪人 / 練將軍**) beneath the primary start action. On short 320×568-class portrait viewports the start-screen spacing compresses rather than moving **拔刀** off-screen.
 
@@ -128,6 +139,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The first-person two-hand grip adds eight simple reused primitive entities once at renderer initialization; their transforms update in-place and create no per-frame objects.
 - The Shogun signature layer allocates no runtime entity, timer, network request or animation loop; it derives one small frame description from the existing snapshot and updates already-existing transforms/materials in place.
 - The blade-read accessibility layer creates one fixed overlay and four DOM rails once. It updates classes/text only when combat events arrive and creates no per-frame nodes, timers or network work.
+- The timing-assist layer creates one fixed overlay/ring and updates only reused DOM attributes/styles from the existing engine update clock. It adds no timer, network request, per-frame node allocation or second gameplay clock.
 - Run analysis and direct duel practice reuse the already-drained combat event stream/current CombatEngine. They create no gameplay backend, network request or unbounded gameplay-loop object growth.
 - Generated base GLB remains lightweight (about 315 KiB / about 1,972 triangles / 19 joints / no texture payload).
 - Headless Chromium/SwiftShader proves production initialization and deterministic renderer contracts but cannot certify sustained 60 Hz, heat or subjective sword feel on a physical iPhone. Human/device evidence is supplemental: when supplied it can override automation by revealing a real defect, but its absence is not a HOLD condition.
@@ -145,6 +157,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - `src/run-analysis.js` is a local-only observer/result adapter. It keeps stage-level counters in a `WeakMap` for the active run, tracks both total damage and manual-only `counterDamage`, derives one coaching tip, and injects the compact result analysis panel. It does not patch damage/timing/input authority, persist gameplay records, or use network APIs.
 - `src/practice-mode.js` is installed after the existing combat adapters and before `main.js`. It initializes all normal sessions first, then redirects only an explicitly requested practice run to the existing Wandering Ronin or already-installed Crimson Shogun, emits the real stage-start event, intercepts that selected practice stage-clear before campaign advancement, and labels practice terminal events. Normal campaign start/restart remains unchanged.
 - `src/readability-mode.js` is a presentation-only observer installed after practice mode and before `main.js`. It reads the same composed event stream to mirror telegraph → feint → strike direction on an optional four-rail overlay, then returns the untouched events to the game runtime. It never calls parry/attack/STEP authority or changes combat state.
+- `src/timing-assist.js` is a presentation-only adapter installed after blade readability and before `main.js`. It derives its shrinking ring, displayed direction and Perfect-vs-normal strike state directly from `CombatEngine.phaseProgress()`, `currentAttack.displayedDirection`, `strikeStartedAt` and the existing enemy `perfectWindowMs`; it never writes combat timing/damage/input state or creates a parallel timer.
 - `src/main.js` owns gameplay/input/HUD orchestration and passes renderer-neutral snapshot values to `View`.
 - `src/renderer.js` keeps PlayCanvas primary / legacy WebGL2 fallback and composes authored enemy attacks, stage identity, mobile combat readability, world-space blade trajectory, phone control readability and the player-weapon fidelity adapter.
 - `src/authored-enemy-attacks.js` loads/binds the animation-only four-direction attack pack and owns the continuous normalized telegraph→strike→recovery sampling seam. While one `Attack*` is active it preserves base root-direction/read-trail presentation without allowing generic phase transitions to replace that state; interrupted recovery intentionally falls back to `Parry`.
@@ -156,6 +169,7 @@ These capabilities are approved for the current evolution branch and cumulative.
 - The separate boss Node/browser coverage remains authoritative for Blood Moon Phase II behaviour, including one-time transition, restart to Phase I and final boss victory; direct Shogun practice reuses that production boss adapter rather than duplicating phase logic.
 - Focused Shogun-signature coverage proves non-boss neutrality, Phase I heavy commitment, stronger Blood Moon crouch/forward/directional motion and mirrored left/right body commitment without importing combat rules into the presentation helper.
 - The blade-read browser harness uses a real CombatEngine stage-intro → telegraph → strike → successful parry path at 320×568 and requires the optional toggle, four pointer-safe rails, direction flow, stronger strike state, parry cleanup and bounded layout.
+- The timing-assist Node/browser regressions use the real CombatEngine clock to prove telegraph shrink, Ronin displayed-direction authority, exact existing Perfect-window boundary, later normal-parry state, parry cleanup, pointer safety and 320×568 toggle layout without modifying combat rules.
 - The production PlayCanvas renderer-contract smoke drives telegraph → strike → parry → counter through the same player katana rig and additionally instruments the authored animation layer: one `AttackTop` must remain active across normal telegraph→strike→recovery, generic phase transitions are forbidden during that sequence, and a right→left displayed-direction switch must transition directly between `AttackRight` and `AttackLeft`.
 
 ## Approved 3D direction

@@ -150,3 +150,31 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - The `AttackTop/Right/Bottom/Left` tracks, same-draw pose synchronization, fixed Sword→HandR grip, lateral side-read thresholds and all combat/input/boss rules remain unchanged.
 - The assist moves the complete skinned character rigidly in camera depth only and remains inside the pre-existing 1.10 assist cap; it cannot change hit timing, parry/Perfect windows, damage, STEP, posture, boss phase, score or persistence/network/privacy behavior.
 - Exact-head Node/browser CI and Vercel Preview must both be terminal green before feature work resumes.
+
+## Run 062 — Optional rhythm / timing assist
+
+**Date:** 2026-08-29  
+**Action type:** FEATURE  
+**Goal:** add one visible optional aid for learning incoming rhythm and the existing Perfect-vs-normal parry timing without weakening Normal-mode authored animation or combat rules.
+
+### Preflight / selection evidence
+
+- Incoming exact HEAD: `883ff199e084a1b83343952da384dfd1df7286a6`.
+- GitHub Actions CI #95 was terminal green for both `npm test` (65/65) and the complete production/browser PlayCanvas gate; exact-head GitHub `Vercel` status was success.
+- Draft PR #1 remained open/Draft/unmerged; inline review threads were empty and the exact-head automated review reported no actionable P0/P1/P2 finding.
+- Candidate scoring favoured the already-approved timing-aid backlog slice over balance tuning (insufficient evidence to alter difficulty) and endless/challenge mode (larger scope/risk): high visible impact, direct learning value, high confidence, and a bounded presentation-only implementation.
+
+### Delivered slice
+
+- Added a default-off **節拍提示** start-screen toggle below 刀路清晰, stored only as a local preference with blocked-storage fallback.
+- When enabled, one hollow pointer-transparent ring shrinks from a larger preparation radius to a fixed target using the authoritative `CombatEngine.phaseProgress()` telegraph clock. A small direction marker follows `currentAttack.displayedDirection`, so the existing Ronin feint resolution remains authoritative.
+- At strike start the ring reaches the target and shows **完美** only while elapsed strike time remains inside the enemy's existing `perfectWindowMs`; afterward it changes to **格擋** for the remaining legal strike. No timing value is copied, widened or replaced.
+- The assist clears outside telegraph/strike, uses no wall-clock timer, and therefore freezes naturally with the existing Pause game clock. Reduced motion keeps a static preparation ring plus discrete strike-state changes.
+- Added focused Node tests for telegraph shrink, Ronin feint direction authority, Perfect/normal timing boundary and presentation-only state; added a 320×568 browser harness plus production initialization/layout fail-closed checks.
+
+### Regression boundary
+
+- Default-off means the existing Normal combat presentation is unchanged unless the player explicitly enables the aid.
+- No change to parry/Perfect windows, enemy telegraph/strike timing, damage, reach, STEP, posture, boss phase, score, input mapping, authored animation, blade trajectory, persistence schema or network/privacy boundary.
+- The overlay is pointer-transparent, reuses one fixed ring/layer without per-frame DOM allocation, and stays visually hollow so the opponent/blade path remain readable.
+- Exact-head Node/browser CI and Vercel Preview must both be terminal green before another feature run.

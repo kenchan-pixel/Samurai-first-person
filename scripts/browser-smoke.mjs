@@ -157,6 +157,12 @@ try {
   if (!appDom.includes('data-readability-start-layout="pass"')) {
     throw new Error('Blade-read accessibility toggle overflowed the 320x568 production viewport');
   }
+  if (!appDom.includes('data-timing-assist-ready="true"') || !appDom.includes('id="timing-assist-toggle"')) {
+    throw new Error('Optional timing assist did not initialize in the real application document');
+  }
+  if (!appDom.includes('data-timing-assist-start-layout="pass"')) {
+    throw new Error('Timing-assist toggle overflowed the 320x568 production viewport');
+  }
 
   const combatUxDom = await dumpDomWithDeviceMetrics(browser, '/?browser-smoke=combat-ux', {
     budget: 6500,
@@ -222,6 +228,15 @@ try {
   if (!readabilityDom.includes('data-readability-pointer-safe="true"')) throw new Error('Blade-read overlay intercepted input or did not create exactly four reusable rails');
   if (!readabilityDom.includes('data-readability-layout="pass"')) throw new Error('Blade-read accessibility control overflowed the 320x568 harness viewport');
 
+  const timingAssistDom = await dumpDom(browser, '/tests/timing-assist-browser-harness.html', { budget: 1500 });
+  if (!timingAssistDom.includes('data-timing-assist-integration="pass"')) throw new Error(`Timing-assist integration failed. DOM:\n${timingAssistDom.slice(0, 5000)}`);
+  if (!timingAssistDom.includes('data-timing-assist-toggle="true"')) throw new Error('Timing-assist toggle did not enable the optional mode');
+  if (!timingAssistDom.includes('data-timing-assist-telegraph="true"') || !timingAssistDom.includes('data-timing-assist-shrink="true"')) throw new Error('Timing-assist ring did not shrink through the authoritative telegraph');
+  if (!timingAssistDom.includes('data-timing-assist-perfect="true"') || !timingAssistDom.includes('data-timing-assist-normal="true"')) throw new Error('Timing assist did not distinguish Perfect timing from the later normal-parry strike window');
+  if (!timingAssistDom.includes('data-timing-assist-clear="true"')) throw new Error('Timing assist did not clear after a successful parry');
+  if (!timingAssistDom.includes('data-timing-assist-pointer-safe="true"')) throw new Error('Timing-assist overlay intercepted pointer input');
+  if (!timingAssistDom.includes('data-timing-assist-layout="pass"')) throw new Error('Timing-assist control overflowed the 320x568 harness viewport');
+
   const impactDom = await dumpDom(browser, '/tests/impact-browser-harness.html', { budget: 1600 });
   if (!impactDom.includes('data-impact-integration="pass"')) throw new Error(`Impact event choreography failed. DOM:\n${impactDom.slice(0, 5000)}`);
   if (!impactDom.includes('data-impact-pointer-safe="true"')) throw new Error('Impact layer intercepted pointer input');
@@ -234,7 +249,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + combat-ux + mastery/Ronin+Shogun-practice-controls + boss + onboarding + footwork + blade-read accessibility + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + combat-ux + mastery/Ronin+Shogun-practice-controls + boss + onboarding + footwork + blade-read accessibility + timing assist + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }
