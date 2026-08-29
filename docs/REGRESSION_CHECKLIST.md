@@ -42,7 +42,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Telegraph body/blade motion matches all four incoming directions; Ronin feints switch to the final authored direction without generic Windup contamination.
 - [ ] Normal telegraph → strike → recovery stays on one Attack* track; interrupted recovery selects Parry. No Run-52-style per-frame Chest/arm/HandR override and no normal runtime Sword rotation returns.
 - [ ] All four actual blade-tip paths advance toward/cross the player-facing parry plane and follow through; RIGHT/LEFT travel in their declared screen direction; top cuts down; bottom rises.
-- [ ] Authored mode keeps Sword/HandR orientation locked; whole-model depth assist stays within its bound; trail follows actual tip history and remains bounded/reused.
+- [ ] Authored mode keeps Sword/HandR orientation locked; whole-model depth assist stays within its bound; tip trail follows actual history; full-blade afterimages sample only actual Sword history, stay bounded/reused and disappear under reduced-motion.
 - [ ] Player first-person katana remains visibly held by two hands/forearms and parry/counter animation follows direct input direction.
 - [ ] Normal/perfect parries, counter, guard break and incoming hit feedback remain visually distinct without covering blade reads; reduced motion preserves readable static/contact cues.
 - [ ] Four stage identities and Shogun Phase I/Blood Moon signature presentation remain distinct without changing hit/timing/reach/damage.
@@ -63,7 +63,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] `npm run test:browser` passes.
 - [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, practice, 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow.
-- [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, telegraph→strike→parry→counter and all directional player-facing cuts.
+- [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, actual-Sword multi-pose afterimage history, telegraph→strike→parry→counter and all directional player-facing cuts.
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
 - [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation.

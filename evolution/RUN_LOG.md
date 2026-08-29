@@ -114,3 +114,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No gameplay, renderer, animation, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, input, asset or network/privacy behaviour changed.
 - The smoke remains fail-closed on the protected product/architecture semantics while allowing editorial prose changes that preserve those invariants.
 - Post-commit exact-head Node/browser CI and GitHub Vercel status must both be terminal green before feature work resumes.
+
+## Run 068 — Actual-Sword full-blade strike afterimages
+
+**Date:** 2026-08-30  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `46bd3bcb4e785a7ee6fd9a7b5a963de3cb4d060d`.
+- Exact-head CI #101 was terminal green with Node + real PlayCanvas/browser gates; GitHub `Vercel` status was success. Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
+- The latest Second Hourly review on this exact SHA reported **no new actionable P0/P1/P2 finding**. Earlier owner blade-direction/Guard P1s are covered by the current fail-closed production renderer contract.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): actual-Sword full-blade afterimages 5/5/4/4/5 = 23; left-handed layout 4/4/5/4/4 = 21; seeded/endless challenge 5/4/5/2/2 = 18. Afterimages won because they strengthen directional physicality and the current sword-motion acceptance with bounded renderer-only risk.
+
+### Delivered slice
+
+- Added a PlayCanvas `enemy-blade-afterimage` adapter with four pooled additive full-blade ghosts sampled only from the real `skinnedSword` world position/rotation. It never rotates Sword, overrides HandR/arms, or changes the authored animation.
+- Uses a fixed five-pose preallocated history. Samples are collected only during strike; the nearest two ghosts may carry briefly into normal recovery, then clear. Reduced-motion disables travelling blade ghosts entirely.
+- The existing `renderer-motion` browser path now fails closed if a progressed strike cannot retain at least two historical actual-Sword poses, while the existing Guard, grip-lock, parry-plane and RIGHT/LEFT travel assertions remain untouched.
+- Integrated the adapter after actual blade trajectory sampling and before player-weapon presentation; combat/input/timing/damage authority is unchanged.
+
+### Regression boundary
+
+- No `CombatEngine`, tap/swipe, parry/Perfect, STEP, posture, boss, score, persistence, network/privacy or asset-generation behaviour changed.
+- HandR/Sword authored grip, player-facing Guard, player-screen RIGHT/LEFT semantics and bounded whole-model depth assist remain authoritative.
+- Local repository checkout was unavailable because this runtime could not resolve `github.com`; syntax of the new module was checked separately, and post-commit exact-head CI + GitHub Vercel status remain the required acceptance evidence. If either is red, the next run is `BLOCKER_FIX`.

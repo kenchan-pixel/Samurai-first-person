@@ -4,6 +4,7 @@ import { installEnemyScreenSpaceDirection } from './enemy-screen-space-direction
 import { installStageIdentity } from './stage-identity.js';
 import { installMobileCombatReadabilityView } from './mobile-combat-readability.js';
 import { installBladeTrajectoryView } from './blade-trajectory.js';
+import { installEnemyBladeAfterimage } from './enemy-blade-afterimage.js';
 import { installMobileControlReadability } from './mobile-control-readability.js';
 import { installPlayerWeaponFidelity } from './player-weapon-fidelity.js';
 import { View as LegacyWebGLView } from './legacy-renderer.js';
@@ -14,9 +15,11 @@ export class View {
       installMobileControlReadability();
       this.impl = installEnemyScreenSpaceDirection(
         installPlayerWeaponFidelity(
-          installBladeTrajectoryView(
-            installMobileCombatReadabilityView(
-              installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+          installEnemyBladeAfterimage(
+            installBladeTrajectoryView(
+              installMobileCombatReadabilityView(
+                installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+              ),
             ),
           ),
         ),

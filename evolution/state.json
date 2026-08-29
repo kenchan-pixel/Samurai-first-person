@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 67,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the delivery-loop P2 caused by sentence-literal SOT smoke assertions by switching to section-scoped semantic invariants and removing the duplicate baseline prose introduced only to satisfy the brittle test",
-  "last_commit": "4ad06968b28e96eb06e93bfc606ad342db766ddd",
+  "run_number": 68,
+  "last_action_type": "FEATURE",
+  "last_action": "Added pooled full-blade strike afterimages sampled from the actual authored enemy Sword world transform so directional cuts and follow-through read more physically without steering the weapon or changing combat",
+  "last_commit": "46bd3bcb4e785a7ee6fd9a7b5a963de3cb4d060d",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Self-inspect the exact Preview at normal speed: initial player-facing Guard plus all four authored cuts, with special attention to screen-space RIGHT/LEFT readability and Ronin feints",
-    "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance",
+    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
+    "Add a left-handed mobile control layout only if it can preserve current parry-region semantics and quiet HUD",
     "Evaluate a bounded endless/seeded challenge vertical slice only if the campaign/practice/readability baseline remains terminal green"
   ]
 }

@@ -15,10 +15,11 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 064: repaired the timing-assist browser harness without weakening its default-off off/on/off mutation contract; exact-head CI #98 and Vercel returned green.
 - Run 065: repaired the remaining owner animation P1 with authored player-facing `Guard` plus explicit player-screen RIGHT/LEFT cut-travel semantics and enemy-only horizontal mirroring.
 - Runs 066–067: restored exact-head SOT verification after wording drift, then replaced the brittle sentence-literal smoke with section-scoped semantic invariants so harmless editorial rewrites cannot consume another blocker run.
+- Run 068: added four pooled full-blade afterimages sampled from the actual authored Sword transform, strengthening cut/follow-through readability without steering the weapon or changing combat.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
-1. **Guard + four cuts self-inspection** — inspect exact Preview/runtime evidence at normal speed. Confirm the initial blade line visibly points at the player, all four authored cuts stay coherent through body/arms/Sword, and RIGHT/LEFT read as screen-space travel. Refine only concrete defects; never return to per-frame Chest/arm/HandR overrides.
+1. **Guard + four cuts self-inspection** — inspect exact Preview/runtime evidence at normal speed. Confirm the initial blade line visibly points at the player, all four authored cuts stay coherent through body/arms/Sword, RIGHT/LEFT read as screen-space travel, and full-blade afterimages remain subordinate to the real blade. Refine only concrete defects; never return to per-frame Chest/arm/HandR overrides.
 2. **Ronin/Shogun repeated practice evidence** — use real Stage 2/4 practice plus local stage analysis to separate reading, missed counters, STEP misuse, raw timing pressure and Blood Moon pressure before changing balance.
 3. **Perfect Parry / Perfect STEP clarity** — keep their rewards visibly distinct: Perfect Parry builds posture; Perfect STEP does not and requires spacing to escape reach.
 4. **Timing-assist coexistence** — keep optional/default-off, subordinate to the real blade, correct through Ronin feints, pointer-transparent and DOM-idle when off.

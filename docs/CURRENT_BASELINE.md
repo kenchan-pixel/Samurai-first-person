@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.24.1-evolution**
+Version: **0.25.0-evolution**
 
 This is the cumulative approved baseline on `autonomous-evolution`. `main` remains Ken-approved production until Draft PR #1 is manually merged. Future work may replace implementations but must not silently remove user-facing behaviour.
 
@@ -66,17 +66,18 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - The animation-only Guard + four-direction pack is ~26 KiB and contains no mesh/texture/downloaded motion. It reuses the same skeleton and fixed Sword→HandR relationship.
 - Stage-specific skinned silhouettes distinguish all four enemies without changing reach/hitboxes/timing. Enemy full-body framing remains readable in portrait.
 - The bounded world-space blade trail follows actual blade-tip history; all directional strikes advance toward/cross the player-facing parry plane and follow through before recovery.
+- Authored strikes now also use four pooled **full-blade afterimages** sampled from the actual Sword world transform. They never steer the weapon or change combat state, retain only bounded historical poses, briefly carry into natural recovery, clear immediately outside that path, and are disabled under reduced-motion.
 - The first-person player katana retains a bounded two-hand grip (forearms, hands, wrist guards, habaki, pommel) and direction-aware parry/counter motion without changing input or combat authority.
 - Successful parry feedback combines audio/haptic/camera/impact; Perfect Parry is stronger. Impact effects and accessibility overlays remain pointer-transparent and bounded; reduced-motion suppresses travelling effects while retaining readable state cues.
 
 ## Performance and technical authority
 
 - Gameplay/animation timing is elapsed-time based. PlayCanvas adaptively caps pixel ratio from rolling frame time before timing/responsiveness is sacrificed.
-- Skinned model, attack pack, stage identity, trails, first-person grip and UI overlays reuse bounded entities/nodes; no unbounded gameplay-loop allocation, timer or network work is allowed.
+- Skinned model, attack pack, stage identity, trails, full-blade afterimages, first-person grip and UI overlays reuse bounded entities/nodes; no unbounded gameplay-loop allocation, timer or network work is allowed.
 - `src/game-core.js` remains deterministic combat authority. Boss, mastery, onboarding, footwork, Perfect Parry, Perfect STEP, practice, run-analysis, accessibility and renderer systems remain bounded adapters.
-- `src/main.js` owns gameplay/input/HUD orchestration. `src/renderer.js` composes PlayCanvas primary/fallback plus authored attacks, stage identity, blade trajectory, mobile readability, player weapon fidelity and the enemy screen-space direction adapter.
+- `src/main.js` owns gameplay/input/HUD orchestration. `src/renderer.js` composes PlayCanvas primary/fallback plus authored attacks, stage identity, blade trajectory, actual-Sword strike afterimages, mobile readability, player weapon fidelity and the enemy screen-space direction adapter.
 - `src/authored-enemy-attacks.js` owns Guard/Attack* binding and continuous normalized authored sampling. `src/enemy-screen-space-direction.js` mirrors only opponent horizontal presentation. `src/blade-trajectory.js` samples the actual Sword/HandR pose and may apply only bounded whole-model depth assist in authored mode.
-- Browser acceptance uses 320×568 mobile rendering plus real production CombatEngine paths. Renderer contract must fail closed if the ready Sword world axis is not player-facing, if player-screen RIGHT/LEFT travel is reversed, if grip-lock continuity fails, or if a directional strike misses the player-facing plane.
+- Browser acceptance uses 320×568 mobile rendering plus real production CombatEngine paths. Renderer contract must fail closed if the ready Sword world axis is not player-facing, if player-screen RIGHT/LEFT travel is reversed, if grip-lock continuity fails, if the actual-Sword afterimage cannot retain multiple historical strike poses, or if a directional strike misses the player-facing plane.
 - Timing-assist browser coverage must prove default-off DOM idleness, off/on/off lifecycle, telegraph shrink, feint/final direction, existing Perfect boundary, normal strike state, cleanup and pointer safety without relying on a top-level RAF wait in the `--dump-dom` harness.
 - Headless Chromium/SwiftShader can prove deterministic production/runtime invariants but cannot certify sustained physical-iPhone 60 Hz, heat or subjective sword feel. Device evidence is supplemental and may override automation when it exposes a real defect; absence of device testing is not a HOLD.
 

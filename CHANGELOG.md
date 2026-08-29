@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.25.0-evolution — Actual-Sword strike afterimages
+
+- Added four pooled full-blade afterimages sampled from the actual enemy Sword world transform during authored strikes, making real cut direction and follow-through easier to read without changing the weapon pose.
+- Afterimages retain only bounded historical poses, briefly carry into normal recovery, clear outside the strike path, and are disabled under reduced-motion.
+- Existing combat timing, player-screen direction semantics, HandR grip lock, blade-tip trajectory/depth assist, input, damage and privacy boundaries are unchanged.
+
 ## Run 067 — Semantic SOT verification hardening
 
 - Replaced sentence-literal `CURRENT_BASELINE.md` smoke assertions with section-scoped semantic invariants for the four-duel roster and PlayCanvas/Vite/WebGL2 renderer architecture.
