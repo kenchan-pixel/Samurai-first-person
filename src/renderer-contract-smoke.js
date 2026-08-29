@@ -1,5 +1,6 @@
 import { CombatEngine, Direction } from './game-core.js';
 import { motionPhaseForSnapshot } from './animation-motion.js';
+import { ENEMY_DIRECTION_SEMANTICS } from './enemy-screen-space-direction.js';
 import { View } from './renderer.js';
 
 const DIRECTION_INDEX = Object.freeze({
@@ -19,6 +20,16 @@ document.body.append(canvas);
 
 let view;
 
+function bladeWorldAxis(entity) {
+  const q = entity?.getRotation?.();
+  if (!q) return { x: 0, y: 0, z: 0 };
+  return {
+    x: 2 * (q.x * q.y - q.w * q.z),
+    y: 1 - 2 * (q.x * q.x + q.z * q.z),
+    z: 2 * (q.y * q.z + q.w * q.x),
+  };
+}
+
 function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, attackDirectionIndex = null) {
   const snapshot = engine.snapshot(now);
   const motionPhase = motionPhaseForSnapshot(snapshot);
@@ -37,6 +48,7 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
   const character = impl.skinnedModel?.getLocalEulerAngles();
   const trajectory = impl.bladeTrajectoryState || {};
   const authored = impl.authoredAttackState || {};
+  const bladeAxis = bladeWorldAxis(impl.skinnedSword);
   return {
     backend: view.backend,
     phase: snapshot.phase,
@@ -58,6 +70,9 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
     authoredAttackPhase: authored.phase || '',
     authoredAttackProgress: Number(authored.progress) || 0,
     authoredLayerState: impl.skinnedModel?.anim?.baseLayer?.activeState || '',
+    bladeAxisX: Number(bladeAxis.x) || 0,
+    bladeAxisY: Number(bladeAxis.y) || 0,
+    bladeAxisZ: Number(bladeAxis.z) || 0,
     bladeTipX: Number(trajectory.tipX) || 0,
     bladeTipY: Number(trajectory.tipY) || 0,
     bladeTipZ: Number(trajectory.tipZ) || 0,
@@ -78,7 +93,9 @@ try {
   assert(view.backend === 'playcanvas', 'PlayCanvas backend was not active');
   const characterReady = await view.impl.characterReady;
   assert(characterReady && view.impl.skinnedModel, 'Skinned GLB samurai did not load on the PlayCanvas backend');
-  assert(root.dataset.authoredAttackPack === 'four-direction-v1', 'Authored four-direction enemy attack pack did not load');
+  assert(root.dataset.authoredAttackPack === 'guard-four-direction-v2', 'Authored Guard + four-direction enemy attack pack did not load');
+  assert(root.dataset.authoredGuard === 'player-facing-tip-v1', 'Authored player-facing Guard contract was not installed');
+  assert(root.dataset.enemyDirectionSemantics === ENEMY_DIRECTION_SEMANTICS, 'Enemy horizontal presentation did not declare player screen-space direction semantics');
   assert(view.impl.authoredAttackClipsReady === true, 'Authored attack clips were not bound to the skinned rig');
   assert(view.impl.skinnedSword?.parent?.name === 'HandR', 'Skinned katana is not attached directly to HandR');
   await view.impl.bladeTrajectoryReady;
@@ -117,6 +134,16 @@ try {
   assert(parseFloat(stepStyle.fontSize) >= 14, 'STEP primary label remained too small for the 320px phone acceptance viewport');
   assert(!stepSecondary || getComputedStyle(stepSecondary).display === 'none', 'STEP retained tiny secondary copy after the phone readability repair');
 
+  // The opponent must already present a real player-facing point guard before the first
+  // attack. This samples the actual world Sword axis on the production PlayCanvas rig,
+  // not generator metadata or a later strike position.
+  const guardEngine = new CombatEngine();
+  const guard = render(guardEngine, 0);
+  const guardDiagnostic = `axis=(${guard.bladeAxisX.toFixed(3)},${guard.bladeAxisY.toFixed(3)},${guard.bladeAxisZ.toFixed(3)}), required z>0.90 / |x|<0.25 / |y|<0.40`;
+  root.dataset.rendererGuardAxis = guardDiagnostic;
+  assert(guard.phase === 'ready' && guard.authoredLayerState === 'Guard' && guard.authoredAttackClip === 'Guard', 'Ready state did not use the authored Guard clip');
+  assert(guard.bladeAxisZ > 0.90 && Math.abs(guard.bladeAxisX) < 0.25 && Math.abs(guard.bladeAxisY) < 0.40, `Initial katana tip/blade axis did not face the player (${guardDiagnostic})`);
+
   const engine = new CombatEngine();
   engine.start(0);
   engine.drainEvents();
@@ -128,17 +155,20 @@ try {
   assert(wind.readTrailEnabled, 'Skinned sword did not expose the in-world blade-read trail during telegraph');
   assert(wind.bladeGripLocked && wind.bladeOrientationDeltaDeg < 0.25, 'Top telegraph did not preserve the authored HandR-to-sword orientation');
 
+  // RIGHT/LEFT are defined by the player's screen-space travel direction. Because the
+  // opponent faces the player, the renderer mirrors only the enemy horizontal index:
+  // RIGHT starts on screen-left and cuts right; LEFT starts right and cuts left.
   const windRight = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
   const windLeft = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
   const windBottom = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
-  assert(windRight.characterYaw < -8 && windLeft.characterYaw > 8, 'Right/left telegraphs did not produce mirrored full-body skeletal orientation');
+  assert(windRight.characterYaw > 8 && windLeft.characterYaw < -8, 'Player-screen Right/Left telegraphs did not mirror the opponent full-body orientation correctly');
   assert(Math.abs(windRight.characterYaw - windLeft.characterYaw) > 20, 'Right/left directional body language was not materially distinct');
   assert(windBottom.enemyY < wind.enemyY - 0.04, 'Bottom telegraph did not lower the opponent stance');
-  const lateralWindDiagnostic = `rightX=${windRight.bladeTipX.toFixed(3)}, leftX=${windLeft.bladeTipX.toFixed(3)}, required right>0.700 / left<-0.700`;
+  const lateralWindDiagnostic = `rightStartX=${windRight.bladeTipX.toFixed(3)}, leftStartX=${windLeft.bladeTipX.toFixed(3)}, required right<-0.700 / left>+0.700`;
   root.dataset.rendererLateralWindTips = lateralWindDiagnostic;
-  assert(windRight.bladeTipX > 0.7 && windLeft.bladeTipX < -0.7, `Right/left wind-up blade tips did not occupy opposite sides in world space (${lateralWindDiagnostic})`);
+  assert(windRight.bladeTipX < -0.7 && windLeft.bladeTipX > 0.7, `Player-screen Right/Left wind-up sides were reversed (${lateralWindDiagnostic})`);
   assert(windBottom.bladeTipY < wind.bladeTipY - 0.55, 'Bottom wind-up blade tip did not start materially below the top attack');
-  assert(windRight.authoredLayerState === 'AttackRight' && windLeft.authoredLayerState === 'AttackLeft' && windBottom.authoredLayerState === 'AttackBottom', 'Direction changes did not switch to the matching authored Attack* clips');
+  assert(windRight.authoredLayerState === 'AttackLeft' && windLeft.authoredLayerState === 'AttackRight' && windBottom.authoredLayerState === 'AttackBottom', 'Player-screen direction adapter did not select the mirrored opponent-local authored side clips');
   assert([windRight, windLeft, windBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional telegraphs rotated the blade away from the authored HandR grip');
 
   const topWind = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
@@ -166,8 +196,8 @@ try {
   const strikeBottom = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
   assert(strikeRight.bladeCrossedPlane && strikeLeft.bladeCrossedPlane && strikeBottom.bladeCrossedPlane, 'One or more directional strikes failed to cross the player-facing parry plane');
   assert([strikeRight, strikeLeft, strikeBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional strikes rotated the blade away from the authored HandR grip');
-  assert(strikeRight.bladeTipX < windRight.bladeTipX - 0.20, 'Right strike did not travel inward/across from its wind-up side');
-  assert(strikeLeft.bladeTipX > windLeft.bladeTipX + 0.20, 'Left strike did not travel inward/across from its wind-up side');
+  assert(strikeRight.bladeTipX > windRight.bladeTipX + 0.20, 'RIGHT did not travel toward the player screen-right from its left-side wind-up');
+  assert(strikeLeft.bladeTipX < windLeft.bladeTipX - 0.20, 'LEFT did not travel toward the player screen-left from its right-side wind-up');
   assert(strikeBottom.bladeTipY > windBottom.bladeTipY + 0.35, 'Bottom strike did not rise through its player-facing cut path');
 
   render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
@@ -208,22 +238,24 @@ try {
 
   const directionSwitchStart = attackTransitions.length;
   view.draw({ ...continuityBase, phase: 'telegraph', phaseProgress: 0.48 }, 3400, { ...continuityMeta, attackDirectionIndex: DIRECTION_INDEX[Direction.RIGHT] });
-  assert(animLayer.activeState === 'AttackRight', 'Telegraph direction switch did not enter AttackRight');
+  assert(animLayer.activeState === 'AttackLeft', 'Player-screen RIGHT telegraph did not enter the mirrored opponent-local AttackLeft clip');
   view.draw({ ...continuityBase, phase: 'telegraph', phaseProgress: 0.56 }, 3450, { ...continuityMeta, attackDirectionIndex: DIRECTION_INDEX[Direction.LEFT] });
-  assert(animLayer.activeState === 'AttackLeft', 'Ronin-style telegraph direction switch did not enter AttackLeft');
+  assert(animLayer.activeState === 'AttackRight', 'Player-screen LEFT telegraph did not enter the mirrored opponent-local AttackRight clip');
   const directionSwitchTransitions = attackTransitions.slice(directionSwitchStart);
-  assert(directionSwitchTransitions.includes('AttackRight') && directionSwitchTransitions.includes('AttackLeft'), 'Direction switch did not transition between authored directional tracks');
+  assert(directionSwitchTransitions.includes('AttackLeft') && directionSwitchTransitions.includes('AttackRight'), 'Direction switch did not transition between the mirrored authored directional tracks');
   assert(!directionSwitchTransitions.includes('Windup'), 'Direction switch leaked through the generic Windup state');
 
   root.dataset.rendererMotionIntegration = 'pass';
   root.dataset.rendererMotionSequence = 'telegraph-strike-parry-counter';
   root.dataset.rendererMotionBackend = view.backend;
   root.dataset.rendererCharacterPipeline = 'skinned-gltf-v1';
-  root.dataset.rendererCharacterClips = 'Windup,Strike,Parry';
+  root.dataset.rendererCharacterClips = 'Guard,Windup,Strike,Parry';
   root.dataset.rendererDirectionalRead = 'top-right-bottom-left';
+  root.dataset.rendererDirectionSemantics = ENEMY_DIRECTION_SEMANTICS;
+  root.dataset.rendererGuardFacing = 'player-facing-tip-v1';
   root.dataset.rendererBladeTrajectory = 'grip-locked-authored-v3';
   root.dataset.rendererStageIdentity = identities.join(',');
-  root.dataset.rendererAuthoredAttacks = 'continuous-four-direction-v1';
+  root.dataset.rendererAuthoredAttacks = 'guard-continuous-four-direction-v2';
   root.dataset.rendererAuthoredTransitions = attackTransitions.join(',');
 } catch (error) {
   console.error('PlayCanvas renderer contract smoke failed', error);

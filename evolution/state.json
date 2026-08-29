@@ -3,11 +3,11 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 64,
+  "run_number": 65,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the exact-head timing-assist browser verification blocker by replacing the top-level requestAnimationFrame wait with synchronous layout readiness plus a focused MutationObserver filter that preserves the disabled/off/on/off no-DOM-churn contract under the existing virtual-time dump-dom runner",
-  "last_commit": "b37fdae99f07c161c88b9cbcb7efe4b04b556d3d",
-  "active_blocker": "P1 owner visual feedback remains applicable: LEFT/RIGHT slash semantics appear reversed from the player perspective and the opponent's initial/neutral katana guard still does not point the blade tip toward the player. No feature work is allowed until this is repaired with explicit screen-space/trajectory and player-facing guard geometry evidence.",
+  "last_action": "Repaired the remaining owner animation P1 by adding an authored player-facing neutral Guard shared by every attack entry/return and defining RIGHT/LEFT as explicit player-screen cut-travel semantics while mirroring only opponent horizontal presentation",
+  "last_commit": "1364a052ca673f3eaaaa92bd1a178f8064737ac1",
+  "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "BLOCKER_FIX: define LEFT/RIGHT as an explicit player-perspective slash-trajectory contract and retarget authored side attacks so the named slash travels in the matching screen-space direction",
-    "BLOCKER_FIX: make the opponent's base Idle and authored attack entry/return guard share a fixed HandR-attached katana pose whose blade axis points materially toward the player, with deterministic runtime geometry acceptance",
-    "After both owner animation blockers are green, self-inspect all four authored cuts at normal speed before any further assist/VFX/feature work"
+    "Self-inspect the exact Preview at normal speed: initial player-facing Guard plus all four authored cuts, with special attention to screen-space RIGHT/LEFT readability and Ronin feints",
+    "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance",
+    "Evaluate a bounded endless/seeded challenge vertical slice only if the campaign/practice/readability baseline remains terminal green"
   ]
 }

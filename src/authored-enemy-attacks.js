@@ -1,6 +1,8 @@
 const installed = Symbol.for('blade-reversal.authored-enemy-attacks-v1');
 const ATTACK_URL = '/assets/samurai-attacks-v1.glb';
+export const AUTHORED_GUARD_CLIP = 'Guard';
 export const AUTHORED_ATTACK_CLIPS = Object.freeze(['AttackTop', 'AttackRight', 'AttackBottom', 'AttackLeft']);
+export const AUTHORED_PACK_CLIPS = Object.freeze([AUTHORED_GUARD_CLIP, ...AUTHORED_ATTACK_CLIPS]);
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
 const phaseClip = (phase) => phase === 'telegraph' ? 'Windup'
@@ -8,6 +10,7 @@ const phaseClip = (phase) => phase === 'telegraph' ? 'Windup'
     : phase === 'recovery' ? 'Recovery'
       : phase === 'recovery-interrupted' ? 'Parry'
         : 'Idle';
+const guardPhase = (phase) => ['ready', 'stage-intro', 'gap'].includes(phase);
 
 export function authoredAttackProgress(phase, phaseProgress) {
   const p = clamp01(phaseProgress);
@@ -23,6 +26,7 @@ export function authoredAttackTransitionSeconds(phase, previousClip, nextClip) {
     && AUTHORED_ATTACK_CLIPS.includes(previousClip)
     && AUTHORED_ATTACK_CLIPS.includes(nextClip);
   if (directionalTelegraphSwitch) return 0;
+  if (nextClip === AUTHORED_GUARD_CLIP) return 0;
   return phase === 'telegraph' ? 0.055 : 0.025;
 }
 
@@ -64,13 +68,14 @@ function loadAttackPack(view, baseCharacterReady) {
       try {
         const tracks = (asset.resource.animations || []).map((animationAsset) => animationAsset?.resource).filter(Boolean);
         const byName = new Map(tracks.map((track) => [track.name, track]));
-        for (const clip of AUTHORED_ATTACK_CLIPS) if (!byName.has(clip)) throw new Error(`Missing authored attack clip: ${clip}`);
+        for (const clip of AUTHORED_PACK_CLIPS) if (!byName.has(clip)) throw new Error(`Missing authored attack-pack clip: ${clip}`);
         const layer = view.skinnedModel.anim.baseLayer;
-        for (const clip of AUTHORED_ATTACK_CLIPS) layer.assignAnimation(clip, byName.get(clip), 1, false);
-        view.authoredAttackClipNames = [...AUTHORED_ATTACK_CLIPS];
+        for (const clip of AUTHORED_PACK_CLIPS) layer.assignAnimation(clip, byName.get(clip), 1, false);
+        view.authoredAttackClipNames = [...AUTHORED_PACK_CLIPS];
         view.authoredAttackClipsReady = true;
-        document.documentElement.dataset.authoredAttackPack = 'four-direction-v1';
-        document.documentElement.dataset.authoredAttackClips = AUTHORED_ATTACK_CLIPS.join(',');
+        document.documentElement.dataset.authoredAttackPack = 'guard-four-direction-v2';
+        document.documentElement.dataset.authoredAttackClips = AUTHORED_PACK_CLIPS.join(',');
+        document.documentElement.dataset.authoredGuard = 'player-facing-tip-v1';
         resolve(true);
       } catch (setupError) {
         console.warn('Authored directional attack pack failed to bind; keeping base skeletal clips.', setupError);
@@ -103,15 +108,17 @@ export function installAuthoredEnemyAttacks(view) {
     const phase = state?.phase || 'ready';
     const direction = Math.max(0, Math.min(3, directionIndex | 0));
     const genericClip = phaseClip(phase);
-    const useAuthored = view.authoredAttackClipsReady
+    const layer = view.skinnedModel?.anim?.baseLayer;
+    const useAuthoredAttack = view.authoredAttackClipsReady
       && ['telegraph', 'strike', 'recovery'].includes(phase)
-      && view.skinnedModel?.anim?.baseLayer;
+      && layer;
+    const useAuthoredGuard = view.authoredAttackClipsReady && guardPhase(phase) && layer;
+    const useAuthored = Boolean(useAuthoredAttack || useAuthoredGuard);
 
     // Keep the established root-direction pose and read-trail work from the base view,
-    // but do not let its generic Windup/Strike/Recovery state transition interrupt the
-    // currently active directional Attack* track. Setting the compatibility label first
-    // makes originalSync skip its animation transition while still updating those safe
-    // renderer-level transforms. This avoids the Run 55 generic->Attack* double blend.
+    // but do not let generic Idle/Windup/Strike/Recovery transitions interrupt the
+    // authored Guard/Attack* tracks. Compatibility labels remain available to older
+    // renderer diagnostics while the authored layer owns the connected rig pose.
     if (useAuthored) view.characterClip = genericClip;
     originalSync(state, direction);
 
@@ -128,18 +135,15 @@ export function installAuthoredEnemyAttacks(view) {
       return;
     }
 
-    const clip = AUTHORED_ATTACK_CLIPS[direction];
-    const progress = authoredAttackProgress(phase, state?.phaseProgress);
-    const layer = view.skinnedModel.anim.baseLayer;
+    const clip = useAuthoredGuard ? AUTHORED_GUARD_CLIP : AUTHORED_ATTACK_CLIPS[direction];
+    const progress = useAuthoredGuard ? 0 : authoredAttackProgress(phase, state?.phaseProgress);
     if (clip !== view.authoredAttackActiveClip || layer.activeState !== clip) {
-      const previousClip = AUTHORED_ATTACK_CLIPS.includes(layer.activeState)
+      const previousClip = AUTHORED_PACK_CLIPS.includes(layer.activeState)
         ? layer.activeState
         : view.authoredAttackActiveClip;
-      // A telegraph direction change is already the authoritative read shown to the
-      // player. Crossfading from the previous Attack* briefly leaves the blade on the
-      // old side, so commit authored->authored feint switches immediately. Initial
-      // Idle/base -> Attack* entry keeps the short blend, and normal phase continuity
-      // never transitions because the clip remains unchanged.
+      // Telegraph feints must commit immediately to the new authored cut. Guard entry
+      // is also immediate because every Attack* recovery ends on the exact Guard target;
+      // Guard -> Attack* retains the established short initial anticipation blend.
       const blend = authoredAttackTransitionSeconds(phase, previousClip, clip);
       layer.transition(clip, blend, progress);
       view.authoredAttackActiveClip = clip;
@@ -147,8 +151,6 @@ export function installAuthoredEnemyAttacks(view) {
 
     const poseSynchronized = layer.activeState === clip && scrubAuthoredPoseNow(layer, progress);
 
-    // Preserve the compatibility label used by the existing renderer contract while
-    // exposing the real authored clip independently for diagnostics/review.
     view.characterClip = genericClip;
     view.authoredAttackState = { ready: true, clip, phase, progress, directionIndex: direction, poseSynchronized };
     document.documentElement.dataset.authoredAttackClip = clip;

@@ -89,6 +89,7 @@ const neutral = Object.freeze({
   sword: [0, 0, -18],
 });
 const frame = (time, pose = {}) => ({ time, ...neutral, ...pose });
+const guardFrames = [frame(0), frame(1)];
 
 const attacks = {
   AttackTop: [
@@ -125,30 +126,30 @@ const attacks = {
   ],
 };
 
-// These axes are the authored blade intent at guard/contact/follow-through. The sword
-// keeps one fixed local rotation relative to HandR; HandR itself is solved per keyframe
-// so the weapon direction is part of the animation hierarchy rather than a later runtime
-// world-space override. Side guards are deliberately more lateral than the contact path
-// so right/left attacks remain distinguishable before commitment on the portrait view.
+// Pack-local AttackRight/AttackLeft labels describe the opponent rig's authored side.
+// The production renderer mirrors those horizontal indices at the presentation boundary
+// so CombatEngine RIGHT/LEFT remain defined in the player's screen space.
 const bladePaths = Object.freeze({
   AttackTop: Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
   AttackRight: Object.freeze({ wind: [0.90, 0.42, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
   AttackBottom: Object.freeze({ wind: [0.00, -0.985, 0.12], contact: [0.00, 0.18, 0.984], follow: [0.05, 0.84, 0.54] }),
   AttackLeft: Object.freeze({ wind: [-0.90, 0.42, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
 });
+const PLAYER_GUARD_AXIS = Object.freeze([0.00, 0.10, 0.995]);
 const swordGripQuat = qnormalize(quat(...neutral.sword));
 const upstreamWorldQuat = (pose) => [pose.spine, pose.chest, pose.upperArmR, pose.forearmR]
   .reduce((world, euler) => qmul(world, quat(...euler)), [0, 0, 0, 1]);
-const neutralWorldSwordQuat = qnormalize(qmul(qmul(upstreamWorldQuat(neutral), quat(...neutral.handR)), swordGripQuat));
-const targetWorldQuats = (name) => {
+const playerGuardQuat = quatFromUp(PLAYER_GUARD_AXIS);
+const targetWorldQuats = (name, frameCount) => {
+  if (name === 'Guard') return Array.from({ length: frameCount }, () => playerGuardQuat);
   const path = bladePaths[name];
   return [
-    neutralWorldSwordQuat,
+    playerGuardQuat,
     quatFromUp(path.wind),
     quatFromUp(mixAxis(path.wind, path.contact, 0.55)),
     quatFromUp(path.contact),
     quatFromUp(path.follow),
-    neutralWorldSwordQuat,
+    playerGuardQuat,
   ];
 };
 const solvedHandQuat = (pose, targetWorldQuat) => qnormalize(
@@ -168,11 +169,12 @@ const channelMap = Object.freeze({
   handL: ['HandL', 'rotation'],
   sword: ['Sword', 'rotation'],
 });
+const animationFrames = Object.freeze({ Guard: guardFrames, ...attacks });
 const animations = [];
-for (const [name, frames] of Object.entries(attacks)) {
+for (const [name, frames] of Object.entries(animationFrames)) {
   const samplers = [];
   const channels = [];
-  const worldTargets = targetWorldQuats(name);
+  const worldTargets = targetWorldQuats(name, frames.length);
   for (const [key, [joint, path]] of Object.entries(channelMap)) {
     const times = frames.map(({ time }) => time);
     const values = frames.flatMap((pose, index) => {
@@ -200,7 +202,7 @@ for (let i = 0; i < jointSpecs.length; i += 1) {
 align4();
 const bin = Buffer.concat(chunks);
 const gltf = {
-  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v3 hand-grip lateral-guard calibrated', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
+  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v4 player-facing guard', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
   scene: 0,
   scenes: [{ name: 'SamuraiAttackRig', nodes: [jointIndex.Root] }],
   nodes,
@@ -225,15 +227,28 @@ binHeader.writeUInt32LE(0x004e4942, 4);
 const glb = Buffer.concat([header, jsonHeader, json, binHeader, bin]);
 if (glb.readUInt32LE(0) !== 0x46546c67 || glb.readUInt32LE(4) !== 2 || glb.readUInt32LE(8) !== glb.length) throw new Error('Attack GLB self-validation failed');
 
+export const SAMURAI_GUARD_CLIP = 'Guard';
 export const SAMURAI_ATTACK_CLIPS = Object.freeze(Object.keys(attacks));
+export const SAMURAI_ATTACK_PACK_CLIPS = Object.freeze([SAMURAI_GUARD_CLIP, ...SAMURAI_ATTACK_CLIPS]);
 export const SAMURAI_ATTACK_GRIP = 'handr-locked-v1';
+export const SAMURAI_ATTACK_GUARD = 'player-facing-tip-v1';
+export const SAMURAI_ATTACK_GUARD_AXIS = Object.freeze([...normalizeAxis(PLAYER_GUARD_AXIS)]);
 export function generateSamuraiAttacksGlb(outPath = defaultOut) {
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, glb);
-  return { path: outPath, bytes: glb.length, clips: [...SAMURAI_ATTACK_CLIPS], joints: jointSpecs.length, grip: SAMURAI_ATTACK_GRIP };
+  return {
+    path: outPath,
+    bytes: glb.length,
+    clips: [...SAMURAI_ATTACK_PACK_CLIPS],
+    attackClips: [...SAMURAI_ATTACK_CLIPS],
+    joints: jointSpecs.length,
+    grip: SAMURAI_ATTACK_GRIP,
+    guard: SAMURAI_ATTACK_GUARD,
+    guardAxis: [...SAMURAI_ATTACK_GUARD_AXIS],
+  };
 }
 
 if (isCli) {
   const info = generateSamuraiAttacksGlb(cliOutPath);
-  console.log(`generated ${info.path} (${info.bytes} bytes, ${info.joints} joints, ${info.clips.length} clips, ${info.grip})`);
+  console.log(`generated ${info.path} (${info.bytes} bytes, ${info.joints} joints, ${info.clips.length} clips, ${info.grip}, ${info.guard})`);
 }
