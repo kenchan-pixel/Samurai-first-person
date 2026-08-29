@@ -29,113 +29,42 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - **Run 050 — REGRESSION_FIX:** restored Pause to the conventional top-right safe-area/HUD position after direct owner feedback, with button-only hit isolation.
 - **Run 051 — BLOCKER_FIX:** aligned the outer browser gate with the accepted top-right Pause contract; exact-head CI #85 and Vercel were green before Run 52 began.
 
-## Run 052 — Rejected connected enemy attack choreography
+## Runs 052–054 — Animation regression recovery and autonomy gate
+
+- **Run 052 — REJECTED FEATURE:** procedural per-frame Chest/arm/HandR choreography passed automated checks but owner phone evidence exposed a collapsed body/arm/blade hierarchy. The approach is rejected.
+- **Run 053 — REGRESSION_FIX:** removed the rejected joint-override layer and restored the pre-Run-52 world-space blade-path baseline without changing combat authority.
+- **Run 054 — BLOCKER_FIX:** removed the mistaken mandatory human-test HOLD. Autonomous runs now use the strongest available Preview/browser/runtime evidence; later owner/device evidence can still override when it exposes a real defect.
+
+## Runs 055–057 — Authored four-direction attack pipeline
+
+- **Run 055 — FEATURE:** added original animation-only `samurai-attacks-v1.glb` with `AttackTop/Right/Bottom/Left` on the shared 19-joint hierarchy; no downloaded motion or Run-52-style runtime joint overrides.
+- **Run 056 — BLOCKER_FIX:** fixed a floating-point test false failure and prevented generic `Windup/Strike/Recovery` transitions from interrupting a continuous normal `Attack*` track across telegraph → strike → recovery.
+- **Run 057 — REGRESSION_FIX:** made the normal authored katana orientation come from the HandR animation hierarchy with one fixed Sword→HandR grip; removed the normal authored world-space Sword rotation override and retained player-facing contact through bounded whole-model depth assist. Node tests passed, but exact-head browser CI #91 exposed insufficient left/right wind-up blade-tip separation, so the run remained unaccepted.
+
+## Run 058 — Restore lateral side-guard readability
 
 **Date:** 2026-08-29  
-**Action type:** FEATURE — **rejected by owner device evidence**
-
-Run 52 added procedural per-frame Chest/upper-arm/forearm offsets plus HandR-attached katana alignment. Node/browser contracts were green, but owner phone evidence showed the body/arm/blade hierarchy visibly collapsed. This became a P1 playability regression and proved descriptor/path arithmetic did not certify anatomical continuity under combined runtime joint overrides and world-space sword rotation.
-
-The Run 52 approach is rejected and must not be reused as the foundation for Normal-mode combat animation.
-
-## Run 053 — Restore last usable enemy-animation baseline
-
-**Date:** 2026-08-29  
-**Action type:** REGRESSION_FIX
-
-- Restored `src/blade-trajectory.js` exactly to the pre-Run-52 world-space blade-path implementation.
-- Removed the rejected runtime joint-override layer/test and reverted its SOT claims.
-- Combat timing, parry/Perfect windows, damage, posture, STEP, boss/Ronin balance, score, input and privacy boundaries remained unchanged.
-- Exact-head CI #87 and Vercel succeeded.
-
-## Run 054 — Remove mandatory human-test gate from autonomous evolution
-
-**Date:** 2026-08-29  
-**Action type:** BLOCKER_FIX
-
-- Corrected the process regression that had turned physical-iPhone confirmation into a mandatory HOLD.
-- `AGENTS.md`, Scheduled Task Prompt and Evolution Rules now require self-verification from available Preview/browser/screenshot/runtime/DOM/renderer-state/test evidence.
-- Human/device feedback remains valuable and can override automation when it reports a real defect; absence of a human test cannot block bounded autonomous continuation.
-- Exact-head CI #88 and Vercel succeeded.
-
-## Run 055 — Authored four-direction enemy katana attacks
-
-**Date:** 2026-08-29  
-**Action type:** FEATURE  
-**Goal:** replace generic/direction-implied skeletal attack playback with real authored full-body top/right/bottom/left attack clips without repeating Run 52 runtime joint manipulation.
-
-### Preflight / selection
-
-- Incoming exact HEAD: `826ba156692a517db5489eb78b31413fcdb4ffe9`.
-- CI #88 and GitHub `Vercel` status were terminal green; PR #1 remained Draft/open/unmerged; inline review threads were empty.
-- The older Run 53 review's request for a fresh physical-device confirmation is superseded by Run 54 and is not a blocker.
-- Candidate scoring favoured authored enemy attacks over Easy-mode timing UI or difficulty tuning because the Product Goal prioritises reading enemy intent through animation, and direct owner evidence identified base attack physicality as the unresolved product weakness.
-
-### Delivered slice
-
-- Added deterministic original `samurai-attacks-v1.glb`, generated locally from `tools/generate-samurai-attacks-glb.mjs`, with four animation-only clips: `AttackTop`, `AttackRight`, `AttackBottom`, `AttackLeft`.
-- Each clip continuously animates hips/spine/chest/head, both upper arms/forearms/hands and the sword across anticipation → strike/contact → follow-through/recovery on the same 19-joint hierarchy as the base samurai.
-- Added `src/authored-enemy-attacks.js` to bind those AnimTracks to the existing PlayCanvas model. Normal telegraph/strike/recovery uses the authored directional track; interrupted recovery keeps the established Parry reaction.
-- Kept the safe root direction pose and the Run 53 world-space blade-tip layer. No per-frame direct Chest/arm/HandR joint writes were reintroduced.
-- The authored pack becomes part of `characterReady`, so the existing real-app PlayCanvas browser gate fails closed if the generated pack is missing/malformed instead of silently accepting the old generic animation.
-- Added deterministic generator/timeline coverage and documented asset provenance. No external asset, motion-capture file, paid service or downloaded character content is used.
-
-### Regression boundary
-
-- `CombatEngine` remains the sole authority for timing, damage, parry/Perfect windows, STEP, posture, boss phase and score.
-- Existing stage identity, Shogun signature, player weapon, input, persistence/network/privacy and legacy renderer fallbacks remain intact.
-- The existing world-space blade path continues to guarantee that all four cuts cross the player-facing parry plane independently of animation aesthetics.
-- Human/device feedback remains supplemental; if supplied later and it exposes a real animation defect, it overrides this autonomous acceptance and becomes a regression repair.
-
-## Run 056 — Restore exact-head authored-attack verification and continuity
-
-**Date:** 2026-08-29  
-**Action type:** BLOCKER_FIX
+**Action type:** BLOCKER_FIX  
+**Goal:** close the Run 057 exact-head P1 without weakening the grip-lock or directional-read contracts.
 
 ### Preflight / blocker evidence
 
-- Incoming exact HEAD: `bc400debf2683e856892a8820c24f133e6263aca`.
-- GitHub Actions CI #89 failed in `npm test`: 63/64 tests passed and the only failure compared `0.8400000000000001` against exact decimal `0.84`; the browser gate therefore never ran. GitHub `Vercel` status for the same SHA was already success.
-- Current same-HEAD PR review also identified a blocking P2: the base animation sync briefly transitioned to generic `Windup/Strike/Recovery` at phase boundaries before the wrapper returned to the same directional `Attack*` state, risking a visible blend/pop and contradicting the intended continuous authored track.
-- Inline review threads were empty. New feature work remained prohibited until both findings were repaired.
+- Incoming exact HEAD: `950065bac28aae59eb1508440b6d4ea76e9ec0db`.
+- GitHub Actions CI #91: `npm test` passed; `npm run test:browser` failed on the real PlayCanvas assertion that right/left wind-up blade tips occupy clearly opposite sides. Exact-head GitHub `Vercel` status was success.
+- The same-HEAD automated review classified the failure as P1 because directional defense must remain readable from opponent/body/blade animation. Inline review threads were empty.
+- New feature work remained prohibited until this exact browser/runtime regression was repaired.
 
 ### Delivered repair
 
-- Replaced exact decimal boundary comparisons with a tight floating-point tolerance while keeping the intended 0.00 → 0.34 → 0.84 → 1.00 authored timeline contract unchanged.
-- During normal authored telegraph/strike/recovery, the adapter now lets the base renderer update only its established root-direction/read-trail presentation work while pre-setting the compatibility phase label so the base `syncSkinnedAnimation()` does not issue a generic animation transition.
-- The same directional `AttackTop/Right/Bottom/Left` state therefore remains active across telegraph → strike → normal recovery. A displayed-direction/feint change transitions directly to the new authored directional clip. `recovery-interrupted` still deliberately leaves the authored track for the existing `Parry` reaction.
-- Expanded the production PlayCanvas browser renderer contract to instrument real animation transitions. It now fails if generic `Windup/Strike/Recovery` transitions leak into an active authored attack, proves one `AttackTop` state spans all three normal phases, and proves a right→left telegraph direction switch transitions directly between authored tracks.
+- Kept the fixed Sword→HandR local grip and the prohibition on normal authored world-space Sword rotation overrides.
+- Retuned only the authored side-guard blade targets used to solve HandR: `AttackRight` and `AttackLeft` now use a stronger mirrored lateral wind-up axis (`±0.90, 0.42, 0.12`) while their contact and follow-through targets remain unchanged.
+- This increases pre-commit left/right spatial separation without changing strike timing, contact path, damage, parry windows, STEP, posture, boss phase or score.
+- Preserved the existing fail-closed world-space threshold (`right > +0.700`, `left < -0.700`) and added measured right/left blade-tip X values to the browser failure diagnostic instead of lowering the requirement.
+- The generated attack pack remains deterministic, local, animation-only and build-generated through the existing Vite config.
 
 ### Regression boundary
 
-- Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input and persistence/network/privacy authority are unchanged.
-- The Run 52 runtime joint-override approach remains prohibited; no per-frame Chest/arm/HandR writes were added.
-- The stable world-space blade-tip path and bounded actual-tip trail remain authoritative presentation safeguards.
-- Post-commit exact-head CI and Vercel Preview must both be terminal green before another feature run.
-
-## Run 057 — Lock authored katana to HandR while preserving player-facing contact
-
-**Date:** 2026-08-29  
-**Action type:** REGRESSION_FIX
-
-### Preflight / observed regression
-
-- Incoming exact HEAD: `3a842b809f204c14bb66dd971e9c742db064ec81`.
-- CI #90 and exact-head GitHub `Vercel` status were terminal green; the latest same-HEAD automated review reported no actionable P0/P1/P2 finding; inline review threads were empty.
-- Self-inspection of the production renderer composition found a concrete animation conflict not covered by the previous state-transition test: `Attack*` clips authored `HandR` and `Sword`, but the outer `blade-trajectory` adapter then replaced the Sword's world rotation every frame. The hilt stayed parented to `HandR`, yet the blade orientation no longer came from the hand/weapon animation hierarchy. This could make the weapon read as being steered independently of the grip despite the authored body motion.
-- Pixel-level Preview capture was not available through the current connector surface, so the repair uses the strongest self-observable code/runtime hierarchy and real PlayCanvas browser-contract evidence; no human/device test is required to continue.
-
-### Delivered repair
-
-- Reworked the generated attack pack so `Sword` keeps one fixed local grip rotation under `HandR`; each keyframe solves the `HandR` quaternion needed to place the blade on the intended top/right/bottom/left guard/contact/follow-through axes. The weapon path is therefore authored inside the actual skeleton instead of corrected afterward in world space.
-- Normal authored telegraph/strike/recovery no longer calls a world-space Sword rotation override. The trajectory layer samples the real animated Sword direction and records the trail from that actual tip.
-- To retain the established player-facing parry-plane contract without detaching the weapon, any remaining contact-depth shortfall is handled only by a bounded whole-skinned-model forward assist (maximum 1.10 world units) during strike commitment. HandR, Sword and the rest of the body move together.
-- Interrupted recovery and non-authored fallback paths retain the established fallback world-space trajectory behaviour; Run 52-style direct Chest/arm/HandR runtime overrides remain prohibited.
-- Extended deterministic generator coverage to require the Sword→HandR hierarchy and explicit `handr-locked-v1` grip contract. Expanded the real PlayCanvas browser contract to require HandR parenting, grip-lock on all four normal attacks, near-zero post-animation sword-orientation delta, bounded depth assist, player-facing plane crossing and the existing actual-tip trail/directional path behaviour.
-
-### Regression boundary
-
-- Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input, stage balance and persistence/network/privacy authority are unchanged.
-- Existing authored `Attack*` continuity and direct direction-switch contracts remain intact.
-- The repair changes only how the presentation layer preserves the already-authored weapon orientation and reaches the existing visual contact plane; it does not widen a parry window or change hit resolution.
-- Post-commit exact-head CI and Vercel Preview must both be terminal green before the next implementation run.
+- Run 52-style direct Chest/arm/HandR runtime overrides remain prohibited.
+- The normal authored Sword stays parented to HandR and must retain near-zero post-animation orientation delta.
+- All four strikes must still cross the player-facing parry plane; right/left cuts must travel inward from their now-more-lateral guards; bottom must rise and top must cut downward.
+- Post-commit exact-head Node/browser CI and Vercel Preview must both be terminal green before another feature run.

@@ -128,12 +128,13 @@ const attacks = {
 // These axes are the authored blade intent at guard/contact/follow-through. The sword
 // keeps one fixed local rotation relative to HandR; HandR itself is solved per keyframe
 // so the weapon direction is part of the animation hierarchy rather than a later runtime
-// world-space override.
+// world-space override. Side guards are deliberately more lateral than the contact path
+// so right/left attacks remain distinguishable before commitment on the portrait view.
 const bladePaths = Object.freeze({
   AttackTop: Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
-  AttackRight: Object.freeze({ wind: [0.73, 0.67, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
+  AttackRight: Object.freeze({ wind: [0.90, 0.42, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
   AttackBottom: Object.freeze({ wind: [0.00, -0.985, 0.12], contact: [0.00, 0.18, 0.984], follow: [0.05, 0.84, 0.54] }),
-  AttackLeft: Object.freeze({ wind: [-0.73, 0.67, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
+  AttackLeft: Object.freeze({ wind: [-0.90, 0.42, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
 });
 const swordGripQuat = qnormalize(quat(...neutral.sword));
 const upstreamWorldQuat = (pose) => [pose.spine, pose.chest, pose.upperArmR, pose.forearmR]
@@ -199,7 +200,7 @@ for (let i = 0; i < jointSpecs.length; i += 1) {
 align4();
 const bin = Buffer.concat(chunks);
 const gltf = {
-  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v2 hand-grip locked', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
+  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v3 hand-grip lateral-guard calibrated', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
   scene: 0,
   scenes: [{ name: 'SamuraiAttackRig', nodes: [jointIndex.Root] }],
   nodes,

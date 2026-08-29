@@ -134,7 +134,9 @@ try {
   assert(windRight.characterYaw < -8 && windLeft.characterYaw > 8, 'Right/left telegraphs did not produce mirrored full-body skeletal orientation');
   assert(Math.abs(windRight.characterYaw - windLeft.characterYaw) > 20, 'Right/left directional body language was not materially distinct');
   assert(windBottom.enemyY < wind.enemyY - 0.04, 'Bottom telegraph did not lower the opponent stance');
-  assert(windRight.bladeTipX > 0.7 && windLeft.bladeTipX < -0.7, 'Right/left wind-up blade tips did not occupy opposite sides in world space');
+  const lateralWindDiagnostic = `rightX=${windRight.bladeTipX.toFixed(3)}, leftX=${windLeft.bladeTipX.toFixed(3)}, required right>0.700 / left<-0.700`;
+  root.dataset.rendererLateralWindTips = lateralWindDiagnostic;
+  assert(windRight.bladeTipX > 0.7 && windLeft.bladeTipX < -0.7, `Right/left wind-up blade tips did not occupy opposite sides in world space (${lateralWindDiagnostic})`);
   assert(windBottom.bladeTipY < wind.bladeTipY - 0.55, 'Bottom wind-up blade tip did not start materially below the top attack');
   assert(windRight.authoredLayerState === 'AttackRight' && windLeft.authoredLayerState === 'AttackLeft' && windBottom.authoredLayerState === 'AttackBottom', 'Direction changes did not switch to the matching authored Attack* clips');
   assert([windRight, windLeft, windBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional telegraphs rotated the blade away from the authored HandR grip');

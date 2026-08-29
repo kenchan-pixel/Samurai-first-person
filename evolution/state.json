@@ -3,9 +3,9 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 57,
-  "last_action_type": "REGRESSION_FIX",
-  "last_action": "Removed the normal authored Attack* sword-orientation conflict: HandR now authors the blade direction with a fixed Sword-to-HandR grip, while the trajectory layer preserves that rotation and uses only bounded whole-body depth assistance to retain player-facing contact",
+  "run_number": 58,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Retuned only the authored AttackRight/AttackLeft HandR guard targets to a stronger mirrored lateral angle, restoring the required opposite-side wind-up blade-tip read while preserving the fixed Sword-to-HandR grip and all existing strike/contact paths",
   "last_commit": "3a842b809f204c14bb66dd971e9c742db064ec81",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
@@ -19,7 +19,7 @@
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
     "Continue autonomous Preview/runtime inspection of all four authored attacks, refining only concrete remaining body/weapon/trail defects without per-frame joint overrides",
-    "Add the optional Easy-mode shrinking rhythm/timing ring once the grip-locked Normal-mode attack contract remains exact-head green",
+    "Add the optional Easy-mode shrinking rhythm/timing ring only after the exact-head authored Normal-mode attack contract remains green",
     "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance"
   ]
 }
