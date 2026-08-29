@@ -50,7 +50,7 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Incoming exact HEAD: `1364a052ca673f3eaaaa92bd1a178f8064737ac1`.
 - Exact-head CI #98 was terminal green and GitHub `Vercel` status was success. Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
-- The remaining owner P1 was still applicable: opponent LEFT/RIGHT looked reversed from the player perspective and the initial/neutral katana did not point the blade tip toward the player. Repository state explicitly prohibited feature work until both were repaired with deterministic geometry evidence.
+- The remaining owner P1 was still applicable: opponent LEFT/RIGHT looked reversed from the player perspective and the initial/neutral katana did not point its blade toward the player. Repository state explicitly prohibited feature work until both were repaired with deterministic geometry evidence.
 
 ### Delivered repair
 
@@ -66,3 +66,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No downloaded asset/motion, analytics or backend.
 - Normal telegraph→strike→recovery remains one authored Attack*; interrupted recovery remains Parry; bounded whole-model depth assist remains the only authored-mode reach correction.
 - Post-commit exact-head Node/browser CI and GitHub Vercel status must both be terminal green before feature work resumes.
+
+## Run 066 — Restore exact-head SOT verification path
+
+**Date:** 2026-08-30  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `9de5fcf96139924a67d45e3cd0c6109f5b4a247e`.
+- GitHub `Vercel` status was success, but exact-head CI #99 failed at `npm test`: 68/69 passed and `npm run test:browser` was skipped.
+- The current Second Hourly review therefore remained a blocking P1: Run 65's player-facing Guard and player-screen RIGHT/LEFT repair had not reached the real PlayCanvas acceptance gate.
+- Failure cause was deterministic SOT drift only: `tests/repo-smoke.test.mjs` still protects the cumulative four-duel and PlayCanvas renderer wording contract, while the compacted Current Baseline had removed those exact durable phrases.
+
+### Delivered repair
+
+- Restored the explicit cumulative sentence `Three baseline enemies are followed by the Crimson Shogun boss` while retaining the clearer four-sequential-duel description.
+- Restored the durable `PlayCanvas Engine standalone ... primary production-facing renderer` wording without changing the approved PlayCanvas + Vite + WebGL2-fallback architecture.
+- Did not weaken, remove or bypass `repo-smoke`; the intent is to let the unchanged Node gate complete so the existing real PlayCanvas Guard-axis / RIGHT-LEFT screen-travel browser contract can execute on this exact HEAD.
+
+### Regression boundary
+
+- No gameplay, renderer, animation, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, input, network/privacy or asset behaviour changed.
+- This repair is complete only if the post-commit exact-head Node + browser workflow is green and GitHub `Vercel` status is terminal success; otherwise the next run remains BLOCKER_FIX.
