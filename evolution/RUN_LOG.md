@@ -178,3 +178,31 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - No change to parry/Perfect windows, enemy telegraph/strike timing, damage, reach, STEP, posture, boss phase, score, input mapping, authored animation, blade trajectory, persistence schema or network/privacy boundary.
 - The overlay is pointer-transparent, reuses one fixed ring/layer without per-frame DOM allocation, and stays visually hollow so the opponent/blade path remain readable.
 - Exact-head Node/browser CI and Vercel Preview must both be terminal green before another feature run.
+
+## Run 063 — Make default-off timing assist truly idle
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX  
+**Goal:** close the current-head performance P2 so opting out of 節拍提示 does not add continuous DOM work to normal combat.
+
+### Preflight / blocker evidence
+
+- Incoming exact HEAD: `999f656846525d0566ad2384c35a93f35ad232cb`.
+- GitHub Actions CI #96 was terminal green for both Node and browser gates; exact-head GitHub `Vercel` status was success and Draft PR #1 remained open/Draft/unmerged.
+- Inline review threads were empty. The same-head Second Hourly review reported one actionable P2: `CombatEngine.update()` still called timing-assist render code every live frame even while the default-off preference was disabled, causing avoidable DOM queries/writes on the primary mobile surface.
+- Because that finding affects the documented default-off/no-normal-session-impact and mobile-performance boundary, it is handled before any new feature work.
+
+### Delivered repair
+
+- Cached the timing-assist toggle/ring/marker/label references once at UI installation instead of querying those nodes on every enabled frame.
+- Engine start/reset/update wrappers still remember the latest engine/time so toggle-on can synchronize immediately, but they now return from timing-assist syncing before frame derivation or DOM rendering whenever the assist is disabled.
+- The initial disabled state renders once. Toggling off clears the ring and off-state datasets once, then later engine updates remain timing-assist DOM-idle; toggling on resumes authoritative CombatEngine-clock updates immediately.
+- Repeated enabled renders now skip unchanged toggle, phase, direction and scale writes where possible while retaining the continuously changing telegraph scale when it is actually visible.
+- Extended the existing browser timing-assist harness with a `MutationObserver` regression proving: default-off engine updates cause zero timing-assist DOM mutations after setup; toggle-on activates the existing live timing checks; toggle-off clears once; subsequent updates remain idle.
+
+### Regression boundary
+
+- No parry/Perfect window, enemy timing, damage, reach, STEP, posture, boss phase, score, input routing, authored animation, blade trajectory, persistence or network/privacy rule changes.
+- No second timer/clock is introduced; enabled timing still derives only from the existing CombatEngine clock and Pause semantics remain unchanged.
+- The player-visible assist, Ronin feint direction authority, Perfect-vs-normal state, reduced-motion behavior, pointer safety and 320×568 layout remain covered by the existing browser gate.
+- Post-commit exact-head Node/browser CI and Vercel Preview must both be terminal green before the next feature run.

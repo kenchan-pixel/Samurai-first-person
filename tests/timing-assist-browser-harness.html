@@ -17,11 +17,29 @@
   </main>
   <script type="module">
     import { CombatEngine, Direction } from '../src/game-core.js';
-    import '../src/timing-assist.js';
+
+    try { localStorage.removeItem('blade-reversal-timing-assist-v1'); } catch {}
+    await import('../src/timing-assist.js');
 
     const root = document.documentElement;
     const toggle = document.querySelector('#timing-assist-toggle');
+    const ring = document.querySelector('#timing-assist-ring');
     const engine = new CombatEngine();
+
+    // Let the one-time start-layout render complete before measuring the idle path.
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    let disabledMutations = 0;
+    const disabledObserver = new MutationObserver((records) => { disabledMutations += records.length; });
+    disabledObserver.observe(root, { subtree: true, attributes: true, childList: true, characterData: true });
+    engine.start(0);
+    engine.update(1550);
+    engine.update(1800);
+    engine.update(2200);
+    await Promise.resolve();
+    disabledObserver.disconnect();
+    const disabledIdle = disabledMutations === 0
+      && root.dataset.timingAssist === 'off'
+      && root.dataset.timingAssistPhase === 'hidden';
 
     toggle?.click();
     const toggleOn = root.dataset.timingAssist === 'on' && toggle?.getAttribute('aria-pressed') === 'true';
@@ -46,11 +64,28 @@
     const cleared = parry.accepted === true && root.dataset.timingAssistPhase === 'hidden';
 
     const layer = document.querySelector('#timing-assist-layer');
-    const ring = document.querySelector('#timing-assist-ring');
     const pointerSafe = Boolean(layer && getComputedStyle(layer).pointerEvents === 'none' && ring);
     const toggleRect = toggle?.getBoundingClientRect();
     const layout = Boolean(toggleRect && toggleRect.left >= 0 && toggleRect.top >= 0 && toggleRect.right <= innerWidth && toggleRect.bottom <= innerHeight);
 
+    let offMutations = 0;
+    const offObserver = new MutationObserver((records) => { offMutations += records.length; });
+    offObserver.observe(root, { subtree: true, attributes: true, childList: true, characterData: true });
+    toggle?.click();
+    await Promise.resolve();
+    const mutationsAfterClear = offMutations;
+    const clearedOnDisable = mutationsAfterClear > 0
+      && root.dataset.timingAssist === 'off'
+      && root.dataset.timingAssistPhase === 'hidden'
+      && !ring?.classList.contains('is-visible');
+    engine.update(2600);
+    engine.update(2700);
+    engine.update(2800);
+    await Promise.resolve();
+    const idleAfterDisable = offMutations === mutationsAfterClear;
+    offObserver.disconnect();
+
+    root.dataset.timingAssistDisabledIdle = String(disabledIdle);
     root.dataset.timingAssistToggle = String(toggleOn);
     root.dataset.timingAssistTelegraph = String(telegraph);
     root.dataset.timingAssistShrink = String(shrinks);
@@ -59,7 +94,9 @@
     root.dataset.timingAssistClear = String(cleared);
     root.dataset.timingAssistPointerSafe = String(pointerSafe);
     root.dataset.timingAssistLayout = layout ? 'pass' : 'fail';
-    root.dataset.timingAssistIntegration = toggleOn && telegraph && shrinks && perfectState && normalState && cleared && pointerSafe && layout ? 'pass' : 'fail';
+    root.dataset.timingAssistDisableClear = String(clearedOnDisable);
+    root.dataset.timingAssistDisabledAfterToggle = String(idleAfterDisable);
+    root.dataset.timingAssistIntegration = disabledIdle && toggleOn && telegraph && shrinks && perfectState && normalState && cleared && pointerSafe && layout && clearedOnDisable && idleAfterDisable ? 'pass' : 'fail';
   </script>
 </body>
 </html>

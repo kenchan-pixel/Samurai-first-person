@@ -5,6 +5,20 @@ const installed = Symbol.for('blade-reversal.timing-assist-v1');
 const HIDDEN_FRAME = Object.freeze({ visible: false, phase: 'hidden', direction: null, scale: 1 });
 let enabled = false;
 let latestFrame = HIDDEN_FRAME;
+let activeEngine = null;
+let activeNow = 0;
+let toggleElement = null;
+let ringElement = null;
+let markerElement = null;
+let labelElement = null;
+let lastRender = {
+  enabled: null,
+  visible: null,
+  phase: null,
+  direction: null,
+  visualScale: null,
+  logicalScale: null,
+};
 
 function clamp01(value) {
   return Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
@@ -104,44 +118,69 @@ function phaseLabel(phase) {
   return { telegraph: '準備', perfect: '完美', strike: '格擋' }[phase] || '';
 }
 
-function renderFrame(frame = latestFrame) {
+function renderFrame(frame = latestFrame, force = false) {
   if (typeof document === 'undefined') return;
   latestFrame = frame || HIDDEN_FRAME;
-  const toggle = document.querySelector('#timing-assist-toggle');
-  const ring = document.querySelector('#timing-assist-ring');
-  if (toggle) {
-    toggle.setAttribute('aria-pressed', String(enabled));
-    toggle.textContent = `節拍提示：${enabled ? '開' : '關'}`;
-  }
   const visible = Boolean(enabled && latestFrame.visible);
-  if (ring) {
-    const phase = visible ? latestFrame.phase : 'hidden';
-    const direction = visible ? latestFrame.direction : '';
-    const scale = reducedMotion() && phase === 'telegraph' ? 1.18 : (latestFrame.scale || 1);
-    ring.classList.toggle('is-visible', visible);
-    ring.dataset.phase = phase;
-    ring.dataset.direction = direction;
-    ring.style.setProperty('--timing-scale', String(scale));
-    const arrow = ring.querySelector('.timing-assist-marker');
-    const label = ring.querySelector('.timing-assist-label');
-    if (arrow) arrow.textContent = marker(direction);
-    if (label) label.textContent = phaseLabel(phase);
+  const phase = visible ? latestFrame.phase : 'hidden';
+  const direction = visible ? latestFrame.direction : '';
+  const rawScale = visible ? Number(latestFrame.scale || 1) : 1;
+  const visualScale = reducedMotion() && phase === 'telegraph' ? 1.18 : rawScale;
+  const visualScaleText = String(visualScale);
+  const logicalScaleText = visible ? rawScale.toFixed(3) : '1.000';
+
+  if (toggleElement && (force || lastRender.enabled !== enabled)) {
+    toggleElement.setAttribute('aria-pressed', String(enabled));
+    toggleElement.textContent = `節拍提示：${enabled ? '開' : '關'}`;
   }
-  document.documentElement.dataset.timingAssist = enabled ? 'on' : 'off';
-  document.documentElement.dataset.timingAssistPhase = visible ? latestFrame.phase : 'hidden';
-  document.documentElement.dataset.timingAssistDirection = visible ? latestFrame.direction : 'none';
-  document.documentElement.dataset.timingAssistScale = visible ? Number(latestFrame.scale || 1).toFixed(3) : '1.000';
+
+  if (ringElement) {
+    if (force || lastRender.visible !== visible) ringElement.classList.toggle('is-visible', visible);
+    if (force || lastRender.phase !== phase) {
+      ringElement.dataset.phase = phase;
+      if (labelElement) labelElement.textContent = phaseLabel(phase);
+    }
+    if (force || lastRender.direction !== direction) {
+      ringElement.dataset.direction = direction;
+      if (markerElement) markerElement.textContent = marker(direction);
+    }
+    if (force || lastRender.visualScale !== visualScaleText) {
+      ringElement.style.setProperty('--timing-scale', visualScaleText);
+    }
+  }
+
+  const root = document.documentElement;
+  if (force || lastRender.enabled !== enabled) root.dataset.timingAssist = enabled ? 'on' : 'off';
+  if (force || lastRender.phase !== phase) root.dataset.timingAssistPhase = visible ? latestFrame.phase : 'hidden';
+  if (force || lastRender.direction !== direction) root.dataset.timingAssistDirection = visible ? latestFrame.direction : 'none';
+  if (force || lastRender.logicalScale !== logicalScaleText) root.dataset.timingAssistScale = logicalScaleText;
+
+  lastRender = {
+    enabled,
+    visible,
+    phase,
+    direction,
+    visualScale: visualScaleText,
+    logicalScale: logicalScaleText,
+  };
 }
 
 function markStartLayout() {
   if (typeof document === 'undefined') return;
   requestAnimationFrame(() => {
-    const toggle = document.querySelector('#timing-assist-toggle');
-    if (!toggle) return;
-    const rect = toggle.getBoundingClientRect();
+    if (!toggleElement) return;
+    const rect = toggleElement.getBoundingClientRect();
     const fits = rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight;
     document.documentElement.dataset.timingAssistStartLayout = fits ? 'pass' : 'fail';
   });
+}
+
+function syncEngine(engine, now) {
+  activeEngine = engine;
+  activeNow = Number.isFinite(now) ? now : 0;
+  if (!enabled) return;
+  latestFrame = timingAssistFrame(engine, activeNow);
+  renderFrame(latestFrame);
 }
 
 function installUi() {
@@ -161,6 +200,10 @@ function installUi() {
     app.append(layer);
   }
 
+  ringElement = document.querySelector('#timing-assist-ring');
+  markerElement = ringElement?.querySelector('.timing-assist-marker') || null;
+  labelElement = ringElement?.querySelector('.timing-assist-label') || null;
+
   let toggle = document.querySelector('#timing-assist-toggle');
   if (!toggle) {
     toggle = document.createElement('button');
@@ -172,17 +215,18 @@ function installUi() {
     toggle.addEventListener('click', () => {
       enabled = !enabled;
       writePreference(enabled);
-      renderFrame();
+      if (enabled && activeEngine) {
+        syncEngine(activeEngine, activeNow);
+      } else {
+        latestFrame = HIDDEN_FRAME;
+        renderFrame(HIDDEN_FRAME);
+      }
     });
   }
+  toggleElement = toggle;
 
-  renderFrame();
+  renderFrame(HIDDEN_FRAME, true);
   markStartLayout();
-}
-
-function syncEngine(engine, now) {
-  latestFrame = timingAssistFrame(engine, now);
-  renderFrame(latestFrame);
 }
 
 export function installTimingAssist(Engine = CombatEngine) {

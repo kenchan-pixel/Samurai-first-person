@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 62,
-  "last_action_type": "FEATURE",
-  "last_action": "Added an optional default-off rhythm/timing assist that shrinks a pointer-transparent ring through the authoritative telegraph, follows displayed/final attack direction, and distinguishes the existing Perfect window from later normal-parry strike timing without changing combat rules",
-  "last_commit": "883ff199e084a1b83343952da384dfd1df7286a6",
+  "run_number": 63,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Made the default-off timing assist a true runtime idle path by caching its UI references, skipping timing-assist frame/DOM work while disabled, clearing once on toggle-off, and adding a browser mutation regression for the off/on/off lifecycle",
+  "last_commit": "999f656846525d0566ad2384c35a93f35ad232cb",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Inspect the timing-assist coexistence with authored blade reads and Ronin feints on the exact Preview; refine only concrete overlap/readability defects without changing combat windows",
+    "Self-inspect all four authored attack cuts and the optional timing assist together on the exact Preview; refine only concrete readability/overlap defects",
     "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance",
-    "Evaluate a bounded endless/seeded challenge vertical slice only if the current campaign/practice/readability baseline remains terminal green"
+    "Evaluate a bounded endless/seeded challenge vertical slice only if the campaign/practice/readability baseline remains terminal green"
   ]
 }
