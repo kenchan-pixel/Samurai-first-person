@@ -68,3 +68,29 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - The normal authored Sword stays parented to HandR and must retain near-zero post-animation orientation delta.
 - All four strikes must still cross the player-facing parry plane; right/left cuts must travel inward from their now-more-lateral guards; bottom must rise and top must cut downward.
 - Post-commit exact-head Node/browser CI and Vercel Preview must both be terminal green before another feature run.
+
+## Run 059 — Commit telegraph direction changes to the new authored guard immediately
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX  
+**Goal:** close the remaining Run 058 lateral-read P1 by fixing authored direction-switch transition semantics rather than further exaggerating animation targets or weakening the browser gate.
+
+### Preflight / blocker evidence
+
+- Incoming exact HEAD: `c666e8d2439aa9271be0008e634bbea03156a66a`.
+- GitHub Actions CI #92: `npm test` passed, but `npm run test:browser` failed on the retained real PlayCanvas side-read contract. The measured wind-up tips were `rightX=+1.771` and `leftX=+0.471`, while the accepted contract requires right `> +0.700` and left `< -0.700`.
+- Exact-head GitHub `Vercel` status was success; PR #1 remained Draft/open/unmerged; inline review threads were empty.
+- The same-head automated review identified the cause as the 55 ms telegraph crossfade from the previous authored `AttackRight` state into `AttackLeft`, which left the newly authoritative left read spatially contaminated by the previous-side pose.
+
+### Delivered repair
+
+- Added an explicit authored transition policy: initial base/Idle → `Attack*` telegraph entry retains the existing short 55 ms blend, while an `Attack*` → different `Attack*` telegraph direction/feint change uses a zero-duration commit to the new authored guard.
+- Normal telegraph → strike → recovery continuity remains transition-free on the same `Attack*` state; interrupted recovery still deliberately uses the existing `Parry` reaction.
+- Kept the fixed Sword→HandR grip, existing side-guard target geometry, world-space tip thresholds, player-facing cut paths and bounded depth assist unchanged.
+- Added focused Node coverage for the transition policy while retaining the real browser right→left world-space gate as the acceptance proof.
+
+### Regression boundary
+
+- No Run 52-style direct Chest/arm/HandR per-frame override or normal world-space Sword rotation is reintroduced.
+- Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input, persistence and network/privacy authority remain unchanged.
+- The accepted lateral threshold is not weakened. Exact-head Node/browser CI and Vercel Preview must both be terminal green before feature work resumes.

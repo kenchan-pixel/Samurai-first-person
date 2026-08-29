@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { generateSamuraiAttacksGlb, SAMURAI_ATTACK_CLIPS, SAMURAI_ATTACK_GRIP } from '../tools/generate-samurai-attacks-glb.mjs';
-import { authoredAttackProgress, AUTHORED_ATTACK_CLIPS } from '../src/authored-enemy-attacks.js';
+import { authoredAttackProgress, authoredAttackTransitionSeconds, AUTHORED_ATTACK_CLIPS } from '../src/authored-enemy-attacks.js';
 
 function parseGlbJson(buffer) {
   assert.equal(buffer.readUInt32LE(0), 0x46546c67);
@@ -53,4 +53,11 @@ test('authored clip timeline stays continuous across telegraph, strike and recov
   assertNear(authoredAttackProgress('recovery', 0), 0.84);
   assertNear(authoredAttackProgress('recovery', 1), 1);
   assertNear(authoredAttackProgress('strike', 1), authoredAttackProgress('recovery', 0));
+});
+
+test('telegraph direction changes commit directly to the new authored guard', () => {
+  assert.equal(authoredAttackTransitionSeconds('telegraph', null, 'AttackTop'), 0.055);
+  assert.equal(authoredAttackTransitionSeconds('telegraph', 'AttackRight', 'AttackLeft'), 0);
+  assert.equal(authoredAttackTransitionSeconds('telegraph', 'AttackTop', 'AttackRight'), 0);
+  assert.equal(authoredAttackTransitionSeconds('strike', 'AttackRight', 'AttackLeft'), 0.025);
 });

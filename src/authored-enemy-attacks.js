@@ -17,6 +17,15 @@ export function authoredAttackProgress(phase, phaseProgress) {
   return p;
 }
 
+export function authoredAttackTransitionSeconds(phase, previousClip, nextClip) {
+  const directionalTelegraphSwitch = phase === 'telegraph'
+    && previousClip !== nextClip
+    && AUTHORED_ATTACK_CLIPS.includes(previousClip)
+    && AUTHORED_ATTACK_CLIPS.includes(nextClip);
+  if (directionalTelegraphSwitch) return 0;
+  return phase === 'telegraph' ? 0.055 : 0.025;
+}
+
 function loadAttackPack(view, baseCharacterReady) {
   return Promise.resolve(baseCharacterReady).then((ready) => new Promise((resolve) => {
     if (!ready || !view.skinnedModel?.anim) {
@@ -101,7 +110,15 @@ export function installAuthoredEnemyAttacks(view) {
     const progress = authoredAttackProgress(phase, state?.phaseProgress);
     const layer = view.skinnedModel.anim.baseLayer;
     if (clip !== view.authoredAttackActiveClip || layer.activeState !== clip) {
-      const blend = phase === 'telegraph' ? 0.055 : 0.025;
+      const previousClip = AUTHORED_ATTACK_CLIPS.includes(layer.activeState)
+        ? layer.activeState
+        : view.authoredAttackActiveClip;
+      // A telegraph direction change is already the authoritative read shown to the
+      // player. Crossfading from the previous Attack* briefly leaves the blade on the
+      // old side, so commit authored->authored feint switches immediately. Initial
+      // Idle/base -> Attack* entry keeps the short blend, and normal phase continuity
+      // never transitions because the clip remains unchanged.
+      const blend = authoredAttackTransitionSeconds(phase, previousClip, clip);
       layer.transition(clip, blend, progress);
       view.authoredAttackActiveClip = clip;
     }
