@@ -25,12 +25,24 @@
     const toggle = document.querySelector('#timing-assist-toggle');
     const ring = document.querySelector('#timing-assist-ring');
     const engine = new CombatEngine();
+    const observerOptions = {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-timing-assist', 'data-timing-assist-phase', 'data-timing-assist-direction', 'data-timing-assist-scale', 'aria-pressed', 'class', 'style'],
+      childList: true,
+      characterData: true,
+    };
 
-    // Let the one-time start-layout render complete before measuring the idle path.
-    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    // Do not await requestAnimationFrame here. Chrome --dump-dom with a virtual-time
+    // budget can serialize a module document while a top-level RAF await is suspended.
+    // The assist UI is installed synchronously; a forced layout makes its geometry
+    // available now, while the observer deliberately ignores the separate one-shot
+    // data-timing-assist-start-layout marker written by the production RAF callback.
+    toggle?.getBoundingClientRect();
+
     let disabledMutations = 0;
     const disabledObserver = new MutationObserver((records) => { disabledMutations += records.length; });
-    disabledObserver.observe(root, { subtree: true, attributes: true, childList: true, characterData: true });
+    disabledObserver.observe(root, observerOptions);
     engine.start(0);
     engine.update(1550);
     engine.update(1800);
@@ -70,7 +82,7 @@
 
     let offMutations = 0;
     const offObserver = new MutationObserver((records) => { offMutations += records.length; });
-    offObserver.observe(root, { subtree: true, attributes: true, childList: true, characterData: true });
+    offObserver.observe(root, observerOptions);
     toggle?.click();
     await Promise.resolve();
     const mutationsAfterClear = offMutations;

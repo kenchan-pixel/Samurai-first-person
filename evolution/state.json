@@ -3,11 +3,11 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 63,
+  "run_number": 64,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Made the default-off timing assist a true runtime idle path by caching its UI references, skipping timing-assist frame/DOM work while disabled, clearing once on toggle-off, and adding a browser mutation regression for the off/on/off lifecycle",
-  "last_commit": "999f656846525d0566ad2384c35a93f35ad232cb",
-  "active_blocker": null,
+  "last_action": "Repaired the exact-head timing-assist browser verification blocker by replacing the top-level requestAnimationFrame wait with synchronous layout readiness plus a focused MutationObserver filter that preserves the disabled/off/on/off no-DOM-churn contract under the existing virtual-time dump-dom runner",
+  "last_commit": "b37fdae99f07c161c88b9cbcb7efe4b04b556d3d",
+  "active_blocker": "P1 owner visual feedback remains applicable: LEFT/RIGHT slash semantics appear reversed from the player perspective and the opponent's initial/neutral katana guard still does not point the blade tip toward the player. No feature work is allowed until this is repaired with explicit screen-space/trajectory and player-facing guard geometry evidence.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Self-inspect all four authored attack cuts and the optional timing assist together on the exact Preview; refine only concrete readability/overlap defects",
-    "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance",
-    "Evaluate a bounded endless/seeded challenge vertical slice only if the campaign/practice/readability baseline remains terminal green"
+    "BLOCKER_FIX: define LEFT/RIGHT as an explicit player-perspective slash-trajectory contract and retarget authored side attacks so the named slash travels in the matching screen-space direction",
+    "BLOCKER_FIX: make the opponent's base Idle and authored attack entry/return guard share a fixed HandR-attached katana pose whose blade axis points materially toward the player, with deterministic runtime geometry acceptance",
+    "After both owner animation blockers are green, self-inspect all four authored cuts at normal speed before any further assist/VFX/feature work"
   ]
 }
