@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.23.0-evolution — Authored four-direction enemy katana attacks
+
+- Added a deterministic original animation-only `samurai-attacks-v1.glb` pack with `AttackTop`, `AttackRight`, `AttackBottom`, and `AttackLeft` clips on the same 19-joint hierarchy as the existing samurai.
+- Normal telegraph → strike → recovery now samples one continuous direction-specific authored track across hips, torso, head, both arms/forearms/hands and sword instead of relying on one generic attack clip plus extra runtime joint manipulation.
+- The rejected Run 52 approach remains prohibited: no per-frame direct Chest/arm/HandR overrides were reintroduced. Interrupted recovery still uses the established `Parry` reaction, and the stable world-space blade-tip layer still guarantees the player-facing cut path.
+- The attack pack is generated locally at build time, contains no mesh/texture/downloaded motion, and is part of the fail-closed skinned-character browser readiness contract.
+- Added deterministic generator/timeline coverage. Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input and privacy/network authority remain unchanged.
+
 ## 0.22.1-evolution — Top-right Pause HUD placement repair
 
 - Moved the live 44×44 Pause control from the lower-centre play field to the conventional top-right safe-area/HUD corner after direct physical-phone owner feedback.

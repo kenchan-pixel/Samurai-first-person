@@ -15,7 +15,7 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 ## Runs 021–042 — Skinned character, mobile combat and practice
 
 - **Runs 021–025:** locally generated 19-joint skinned samurai GLB, animation binding, directional body reads and stage-specific silhouettes.
-- **Runs 026–029:** physical-iPhone readability repair, real world-space four-direction blade paths, Perfect Parry riposte and Blood Moon phase-integrity repair.
+- **Runs 026–029:** mobile readability repair, real world-space four-direction blade paths, Perfect Parry riposte and Blood Moon phase-integrity repair.
 - **Runs 030–034:** phone-first guide/Ronin lesson, exact-head clarity repairs, Perfect STEP and phase-priority repair.
 - **Runs 035–038:** first-person two-hand weapon grip, local post-run analysis and analysis-denominator/damage repairs.
 - **Runs 039–042:** repeatable Ronin/Shogun practice, practice browser verification and optional high-contrast blade-read mode.
@@ -26,72 +26,63 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - **Run 044 — REGRESSION_FIX:** moved Pause to a neutral lower-centre band to repair a parry-surface collision.
 - **Runs 045–048 — BLOCKER_FIX:** hardened the real production Start/parry/Pause browser gate and replaced desktop window-size assumptions with true 320×568 CDP mobile emulation.
 - **Run 049 — FEATURE:** presentation-only Crimson Shogun Phase I/Blood Moon signature motion.
-- **Run 050 — REGRESSION_FIX:** restored Pause to the conventional top-right safe-area/HUD position after direct physical-phone feedback, with button-only hit isolation.
+- **Run 050 — REGRESSION_FIX:** restored Pause to the conventional top-right safe-area/HUD position after direct owner feedback, with button-only hit isolation.
 - **Run 051 — BLOCKER_FIX:** aligned the outer browser gate with the accepted top-right Pause contract; exact-head CI #85 and Vercel were green before Run 52 began.
 
 ## Run 052 — Rejected connected enemy attack choreography
 
 **Date:** 2026-08-29  
-**Action type:** FEATURE — **rejected by physical-device acceptance**
+**Action type:** FEATURE — **rejected by owner device evidence**
 
-Run 52 added procedural per-frame Chest/upper-arm/forearm offsets plus HandR-attached katana alignment in an attempt to make all four enemy attacks read as one connected body-to-blade action. Node and browser contracts were green, and exact-head CI #86 plus Vercel succeeded.
+Run 52 added procedural per-frame Chest/upper-arm/forearm offsets plus HandR-attached katana alignment. Node/browser contracts were green, but owner phone evidence showed the body/arm/blade hierarchy visibly collapsed. This became a P1 playability regression and proved descriptor/path arithmetic did not certify anatomical continuity under combined runtime joint overrides and world-space sword rotation.
 
-The primary physical-iPhone acceptance immediately failed: the owner reported the animation was completely broken/collapsed. The exact-head PR review therefore classified Run 52 as a P1 playability/baseline regression. The failure exposed a verification gap: descriptor/path arithmetic and headless browser checks did not prove anatomical continuity of the real skinned hierarchy under combined joint overrides and world-space sword rotation.
-
-Run 52 must not be treated as an accepted baseline or a foundation for Easy mode, VFX or further feature work.
+The Run 52 approach is rejected and must not be reused as the foundation for Normal-mode combat animation.
 
 ## Run 053 — Restore last usable enemy-animation baseline
 
 **Date:** 2026-08-29  
-**Action type:** REGRESSION_FIX  
-**Goal:** remove the Run 52 physical-device animation collapse before any new feature work.
+**Action type:** REGRESSION_FIX
 
-### Preflight / evidence
-
-- Exact incoming HEAD: `5fcc042205cbdde00c57175e0231c27d80784871`.
-- CI #86 / workflow run `33200157967` = **success** and GitHub `Vercel` status = **success**, proving the regression was not detectable by the existing automated fence.
-- Exact-head PR review contains a blocking **P1** based on direct owner physical-iPhone rejection; inline review threads are empty.
-- The last pre-Run-52 branch state `f8f8e7a166225e92108012c47eae4fc6db71feee` had terminal-green CI #85 / Vercel and is the bounded known-good rollback target for this subsystem.
-
-### Delivered repair
-
-- Restored `src/blade-trajectory.js` exactly to the pre-Run-52 world-space blade-path implementation from `f8f8e7a166225e92108012c47eae4fc6db71feee`.
-- Removed the rejected `src/enemy-attack-choreography.js` runtime joint-override layer and its descriptor-only test.
-- Restored Current Baseline, Regression Checklist, Improvement Backlog and Changelog to their pre-Run-52 versions so the broken choreography is no longer represented as accepted product behaviour.
-- CombatEngine timing, parry/Perfect windows, damage, posture, STEP, boss/Ronin balance, score, input, persistence/network/privacy boundaries and `main` are unchanged.
-
-### Verification / regression boundary
-
-- This is an exact bounded rollback of the Run 52 runtime/SOT delta rather than another attempt to tune the broken transforms.
-- Automated post-commit CI and Vercel Preview must be terminal green before another implementation run.
-- Run 53 originally recorded a mandatory physical-iPhone re-check. **Run 54 supersedes that process rule:** human/device testing is supplemental evidence only and its absence must not block autonomous continuation.
-
-### Next candidates
-
-1. Autonomously inspect the restored baseline using the strongest available Preview/browser/runtime/renderer-state evidence; do not wait for a human re-test.
-2. For the next animation upgrade, prefer an original rigged enemy-samurai + katana asset with authored attack clips over stacking procedural runtime offsets on the current skeleton. Combat timing remains renderer-neutral.
-3. Add the proposed Easy-mode rhythm/timing ring only after the base attack animation passes autonomous visual/runtime verification; later human feedback may still reveal regressions and override that conclusion.
+- Restored `src/blade-trajectory.js` exactly to the pre-Run-52 world-space blade-path implementation.
+- Removed the rejected runtime joint-override layer/test and reverted its SOT claims.
+- Combat timing, parry/Perfect windows, damage, posture, STEP, boss/Ronin balance, score, input and privacy boundaries remained unchanged.
+- Exact-head CI #87 and Vercel succeeded.
 
 ## Run 054 — Remove mandatory human-test gate from autonomous evolution
 
 **Date:** 2026-08-29  
-**Action type:** BLOCKER_FIX  
-**Goal:** repair an autonomy-process regression that incorrectly turned physical-iPhone confirmation into a mandatory HOLD condition.
+**Action type:** BLOCKER_FIX
 
-### Evidence
+- Corrected the process regression that had turned physical-iPhone confirmation into a mandatory HOLD.
+- `AGENTS.md`, Scheduled Task Prompt and Evolution Rules now require self-verification from available Preview/browser/screenshot/runtime/DOM/renderer-state/test evidence.
+- Human/device feedback remains valuable and can override automation when it reports a real defect; absence of a human test cannot block bounded autonomous continuation.
+- Exact-head CI #88 and Vercel succeeded.
 
-- Incoming exact HEAD `a3fe834b782e2b5e140c7ee8754b8c47b002a260` had terminal-green CI #87 and GitHub `Vercel` success.
-- The Run 53 log/state and latest PR review nevertheless required a fresh physical-iPhone confirmation before any new enemy-animation feature.
-- Ken directly clarified the intended operating model: the agent must confirm the screen/result itself; human testing and decisions are auxiliary and must never pause autonomous work merely because they are unavailable.
+## Run 055 — Authored four-direction enemy katana attacks
 
-### Delivered repair
+**Date:** 2026-08-29  
+**Action type:** FEATURE  
+**Goal:** replace generic/direction-implied skeletal attack playback with real authored full-body top/right/bottom/left attack clips without repeating Run 52 runtime joint manipulation.
 
-- Updated `AGENTS.md`, `docs/SCHEDULED_TASK_PROMPT.md` and `docs/EVOLUTION_RULES.md` so autonomous runs must self-verify using the strongest available Preview/browser/screenshot/runtime/DOM/renderer-state/test evidence.
-- Explicitly removed human/device-test absence from HOLD and Decision Gate conditions.
-- Preserved the value of owner/device feedback: when supplied and it reports a real defect, it can override a prior automated conclusion and trigger a blocker/regression repair, as Run 52 correctly demonstrated.
-- Updated persistent state/candidates so the next run can autonomously verify the restored baseline and continue toward authored rigged enemy-samurai + katana attack clips without waiting for manual confirmation.
+### Preflight / selection
+
+- Incoming exact HEAD: `826ba156692a517db5489eb78b31413fcdb4ffe9`.
+- CI #88 and GitHub `Vercel` status were terminal green; PR #1 remained Draft/open/unmerged; inline review threads were empty.
+- The older Run 53 review's request for a fresh physical-device confirmation is superseded by Run 54 and is not a blocker.
+- Candidate scoring favoured authored enemy attacks over Easy-mode timing UI or difficulty tuning because the Product Goal prioritises reading enemy intent through animation, and direct owner evidence identified base attack physicality as the unresolved product weakness.
+
+### Delivered slice
+
+- Added deterministic original `samurai-attacks-v1.glb`, generated locally from `tools/generate-samurai-attacks-glb.mjs`, with four animation-only clips: `AttackTop`, `AttackRight`, `AttackBottom`, `AttackLeft`.
+- Each clip continuously animates hips/spine/chest/head, both upper arms/forearms/hands and the sword across anticipation → strike/contact → follow-through/recovery on the same 19-joint hierarchy as the base samurai.
+- Added `src/authored-enemy-attacks.js` to bind those AnimTracks to the existing PlayCanvas model. Normal telegraph/strike/recovery uses the authored directional track; interrupted recovery keeps the established Parry reaction.
+- Kept the safe root direction pose and the Run 53 world-space blade-tip layer. No per-frame direct Chest/arm/HandR joint writes were reintroduced.
+- The authored pack becomes part of `characterReady`, so the existing real-app PlayCanvas browser gate fails closed if the generated pack is missing/malformed instead of silently accepting the old generic animation.
+- Added deterministic generator/timeline coverage and documented asset provenance. No external asset, motion-capture file, paid service or downloaded character content is used.
 
 ### Regression boundary
 
-- This changes autonomous delivery governance only; no gameplay, renderer, combat timing, damage, input, persistence, network/privacy, asset or `main` behaviour changes.
-- Post-commit CI and Vercel Preview remain required exact-head gates.
+- `CombatEngine` remains the sole authority for timing, damage, parry/Perfect windows, STEP, posture, boss phase and score.
+- Existing stage identity, Shogun signature, player weapon, input, persistence/network/privacy and legacy renderer fallbacks remain intact.
+- The existing world-space blade path continues to guarantee that all four cuts cross the player-facing parry plane independently of animation aesthetics.
+- Human/device feedback remains supplemental; if supplied later and it exposes a real animation defect, it overrides this autonomous acceptance and becomes a regression repair.

@@ -7,3 +7,4 @@ coverage/
 .env.*
 !.env.example
 public/assets/samurai-v1.glb
+public/assets/samurai-attacks-v1.glb
