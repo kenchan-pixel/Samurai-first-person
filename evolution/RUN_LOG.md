@@ -112,3 +112,30 @@ The Run 52 approach is rejected and must not be reused as the foundation for Nor
 - The Run 52 runtime joint-override approach remains prohibited; no per-frame Chest/arm/HandR writes were added.
 - The stable world-space blade-tip path and bounded actual-tip trail remain authoritative presentation safeguards.
 - Post-commit exact-head CI and Vercel Preview must both be terminal green before another feature run.
+
+## Run 057 — Lock authored katana to HandR while preserving player-facing contact
+
+**Date:** 2026-08-29  
+**Action type:** REGRESSION_FIX
+
+### Preflight / observed regression
+
+- Incoming exact HEAD: `3a842b809f204c14bb66dd971e9c742db064ec81`.
+- CI #90 and exact-head GitHub `Vercel` status were terminal green; the latest same-HEAD automated review reported no actionable P0/P1/P2 finding; inline review threads were empty.
+- Self-inspection of the production renderer composition found a concrete animation conflict not covered by the previous state-transition test: `Attack*` clips authored `HandR` and `Sword`, but the outer `blade-trajectory` adapter then replaced the Sword's world rotation every frame. The hilt stayed parented to `HandR`, yet the blade orientation no longer came from the hand/weapon animation hierarchy. This could make the weapon read as being steered independently of the grip despite the authored body motion.
+- Pixel-level Preview capture was not available through the current connector surface, so the repair uses the strongest self-observable code/runtime hierarchy and real PlayCanvas browser-contract evidence; no human/device test is required to continue.
+
+### Delivered repair
+
+- Reworked the generated attack pack so `Sword` keeps one fixed local grip rotation under `HandR`; each keyframe solves the `HandR` quaternion needed to place the blade on the intended top/right/bottom/left guard/contact/follow-through axes. The weapon path is therefore authored inside the actual skeleton instead of corrected afterward in world space.
+- Normal authored telegraph/strike/recovery no longer calls a world-space Sword rotation override. The trajectory layer samples the real animated Sword direction and records the trail from that actual tip.
+- To retain the established player-facing parry-plane contract without detaching the weapon, any remaining contact-depth shortfall is handled only by a bounded whole-skinned-model forward assist (maximum 1.10 world units) during strike commitment. HandR, Sword and the rest of the body move together.
+- Interrupted recovery and non-authored fallback paths retain the established fallback world-space trajectory behaviour; Run 52-style direct Chest/arm/HandR runtime overrides remain prohibited.
+- Extended deterministic generator coverage to require the Sword→HandR hierarchy and explicit `handr-locked-v1` grip contract. Expanded the real PlayCanvas browser contract to require HandR parenting, grip-lock on all four normal attacks, near-zero post-animation sword-orientation delta, bounded depth assist, player-facing plane crossing and the existing actual-tip trail/directional path behaviour.
+
+### Regression boundary
+
+- Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input, stage balance and persistence/network/privacy authority are unchanged.
+- Existing authored `Attack*` continuity and direct direction-switch contracts remain intact.
+- The repair changes only how the presentation layer preserves the already-authored weapon orientation and reaches the existing visual contact plane; it does not widen a parry window or change hit resolution.
+- Post-commit exact-head CI and Vercel Preview must both be terminal green before the next implementation run.

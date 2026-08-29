@@ -12,6 +12,34 @@ const quat = (xd = 0, yd = 0, zd = 0) => {
   const [cx, sx, cy, sy, cz, sz] = [Math.cos(x / 2), Math.sin(x / 2), Math.cos(y / 2), Math.sin(y / 2), Math.cos(z / 2), Math.sin(z / 2)];
   return [sx * cy * cz + cx * sy * sz, cx * sy * cz - sx * cy * sz, cx * cy * sz + sx * sy * cz, cx * cy * cz - sx * sy * sz];
 };
+const qmul = (a, b) => {
+  const [ax, ay, az, aw] = a;
+  const [bx, by, bz, bw] = b;
+  return [
+    aw * bx + ax * bw + ay * bz - az * by,
+    aw * by - ax * bz + ay * bw + az * bx,
+    aw * bz + ax * by - ay * bx + az * bw,
+    aw * bw - ax * bx - ay * by - az * bz,
+  ];
+};
+const qnormalize = (q) => {
+  const length = Math.hypot(...q) || 1;
+  return q.map((value) => value / length);
+};
+const qinverse = (q) => {
+  const [x, y, z, w] = qnormalize(q);
+  return [-x, -y, -z, w];
+};
+const normalizeAxis = (axis) => {
+  const length = Math.hypot(...axis) || 1;
+  return axis.map((value) => value / length);
+};
+const mixAxis = (a, b, t) => normalizeAxis(a.map((value, index) => value + (b[index] - value) * t));
+const quatFromUp = (axis) => {
+  const [x, y, z] = normalizeAxis(axis);
+  if (y < -0.999) return [1, 0, 0, 0];
+  return qnormalize([z, 0, -x, 1 + y]);
+};
 
 const jointSpecs = [
   ['Root', null, [0, 0, 0]], ['Hips', 'Root', [0, 0.92, 0]], ['Spine', 'Hips', [0, 0.38, 0]], ['Chest', 'Spine', [0, 0.42, 0]],
@@ -97,6 +125,35 @@ const attacks = {
   ],
 };
 
+// These axes are the authored blade intent at guard/contact/follow-through. The sword
+// keeps one fixed local rotation relative to HandR; HandR itself is solved per keyframe
+// so the weapon direction is part of the animation hierarchy rather than a later runtime
+// world-space override.
+const bladePaths = Object.freeze({
+  AttackTop: Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
+  AttackRight: Object.freeze({ wind: [0.73, 0.67, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
+  AttackBottom: Object.freeze({ wind: [0.00, -0.985, 0.12], contact: [0.00, 0.18, 0.984], follow: [0.05, 0.84, 0.54] }),
+  AttackLeft: Object.freeze({ wind: [-0.73, 0.67, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
+});
+const swordGripQuat = qnormalize(quat(...neutral.sword));
+const upstreamWorldQuat = (pose) => [pose.spine, pose.chest, pose.upperArmR, pose.forearmR]
+  .reduce((world, euler) => qmul(world, quat(...euler)), [0, 0, 0, 1]);
+const neutralWorldSwordQuat = qnormalize(qmul(qmul(upstreamWorldQuat(neutral), quat(...neutral.handR)), swordGripQuat));
+const targetWorldQuats = (name) => {
+  const path = bladePaths[name];
+  return [
+    neutralWorldSwordQuat,
+    quatFromUp(path.wind),
+    quatFromUp(mixAxis(path.wind, path.contact, 0.55)),
+    quatFromUp(path.contact),
+    quatFromUp(path.follow),
+    neutralWorldSwordQuat,
+  ];
+};
+const solvedHandQuat = (pose, targetWorldQuat) => qnormalize(
+  qmul(qmul(qinverse(upstreamWorldQuat(pose)), targetWorldQuat), qinverse(swordGripQuat)),
+);
+
 const channelMap = Object.freeze({
   hips: ['Hips', 'translation'],
   spine: ['Spine', 'rotation'],
@@ -114,9 +171,15 @@ const animations = [];
 for (const [name, frames] of Object.entries(attacks)) {
   const samplers = [];
   const channels = [];
+  const worldTargets = targetWorldQuats(name);
   for (const [key, [joint, path]] of Object.entries(channelMap)) {
     const times = frames.map(({ time }) => time);
-    const values = frames.flatMap((pose) => path === 'rotation' ? quat(...pose[key]) : pose[key]);
+    const values = frames.flatMap((pose, index) => {
+      if (path !== 'rotation') return pose[key];
+      if (key === 'handR') return solvedHandQuat(pose, worldTargets[index]);
+      if (key === 'sword') return swordGripQuat;
+      return quat(...pose[key]);
+    });
     const input = addAccessor(times, 'SCALAR', times.length, [times[0]], [times.at(-1)]);
     const output = addAccessor(values, path === 'rotation' ? 'VEC4' : 'VEC3', times.length);
     const sampler = samplers.length;
@@ -136,7 +199,7 @@ for (let i = 0; i < jointSpecs.length; i += 1) {
 align4();
 const bin = Buffer.concat(chunks);
 const gltf = {
-  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v1', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
+  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v2 hand-grip locked', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
   scene: 0,
   scenes: [{ name: 'SamuraiAttackRig', nodes: [jointIndex.Root] }],
   nodes,
@@ -162,13 +225,14 @@ const glb = Buffer.concat([header, jsonHeader, json, binHeader, bin]);
 if (glb.readUInt32LE(0) !== 0x46546c67 || glb.readUInt32LE(4) !== 2 || glb.readUInt32LE(8) !== glb.length) throw new Error('Attack GLB self-validation failed');
 
 export const SAMURAI_ATTACK_CLIPS = Object.freeze(Object.keys(attacks));
+export const SAMURAI_ATTACK_GRIP = 'handr-locked-v1';
 export function generateSamuraiAttacksGlb(outPath = defaultOut) {
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, glb);
-  return { path: outPath, bytes: glb.length, clips: [...SAMURAI_ATTACK_CLIPS], joints: jointSpecs.length };
+  return { path: outPath, bytes: glb.length, clips: [...SAMURAI_ATTACK_CLIPS], joints: jointSpecs.length, grip: SAMURAI_ATTACK_GRIP };
 }
 
 if (isCli) {
   const info = generateSamuraiAttacksGlb(cliOutPath);
-  console.log(`generated ${info.path} (${info.bytes} bytes, ${info.joints} joints, ${info.clips.length} clips)`);
+  console.log(`generated ${info.path} (${info.bytes} bytes, ${info.joints} joints, ${info.clips.length} clips, ${info.grip})`);
 }

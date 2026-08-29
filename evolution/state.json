@@ -3,10 +3,10 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 56,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired Run 55 exact-head verification and authored-animation continuity by using tolerant floating-point boundary assertions, preventing generic Windup/Strike/Recovery transitions while a directional Attack* track is active, and adding a real PlayCanvas browser regression for telegraph-to-strike-to-recovery continuity plus direction switching",
-  "last_commit": "bc400debf2683e856892a8820c24f133e6263aca",
+  "run_number": 57,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Removed the normal authored Attack* sword-orientation conflict: HandR now authors the blade direction with a fixed Sword-to-HandR grip, while the trajectory layer preserves that rotation and uses only bounded whole-body depth assistance to retain player-facing contact",
+  "last_commit": "3a842b809f204c14bb66dd971e9c742db064ec81",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
@@ -18,8 +18,8 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Self-inspect the authored four-direction attack presentation from Preview/browser/runtime evidence and refine only concrete readability defects without runtime joint overrides",
-    "Add the optional Easy-mode rhythm/timing ring for direction and parry timing assistance once the authored Normal-mode attack foundation remains exact-head green",
-    "Use local practice/run-analysis plus available Preview/device evidence for one bounded Ronin/Shogun difficulty refinement only if a real gameplay wall is demonstrated"
+    "Continue autonomous Preview/runtime inspection of all four authored attacks, refining only concrete remaining body/weapon/trail defects without per-frame joint overrides",
+    "Add the optional Easy-mode shrinking rhythm/timing ring once the grip-locked Normal-mode attack contract remains exact-head green",
+    "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance"
   ]
 }

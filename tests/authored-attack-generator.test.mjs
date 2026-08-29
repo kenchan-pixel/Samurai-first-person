@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { generateSamuraiAttacksGlb, SAMURAI_ATTACK_CLIPS } from '../tools/generate-samurai-attacks-glb.mjs';
+import { generateSamuraiAttacksGlb, SAMURAI_ATTACK_CLIPS, SAMURAI_ATTACK_GRIP } from '../tools/generate-samurai-attacks-glb.mjs';
 import { authoredAttackProgress, AUTHORED_ATTACK_CLIPS } from '../src/authored-enemy-attacks.js';
 
 function parseGlbJson(buffer) {
@@ -29,9 +29,12 @@ test('directional attack generator emits four original animation-only clips on t
     assert.deepEqual(info.clips, SAMURAI_ATTACK_CLIPS);
     assert.deepEqual(info.clips, AUTHORED_ATTACK_CLIPS);
     assert.equal(info.joints, 19);
+    assert.equal(info.grip, 'handr-locked-v1');
+    assert.equal(info.grip, SAMURAI_ATTACK_GRIP);
     assert.ok(info.bytes > 10_000 && info.bytes < 64_000, `unexpected attack-pack size ${info.bytes}`);
     assert.equal(gltf.meshes, undefined, 'attack pack must remain animation-only');
     assert.equal(gltf.nodes.length, 19);
+    assert.equal(gltf.nodes.find((node) => node.name === 'HandR')?.children?.some((index) => gltf.nodes[index]?.name === 'Sword'), true, 'Sword must remain parented directly under HandR');
     assert.deepEqual(gltf.animations.map((animation) => animation.name), info.clips);
     for (const animation of gltf.animations) {
       assert.ok(animation.channels.length >= 10, `${animation.name} did not animate the connected body/arms/hands/sword chain`);

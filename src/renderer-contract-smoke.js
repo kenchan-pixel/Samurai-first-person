@@ -63,6 +63,9 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
     bladeTipZ: Number(trajectory.tipZ) || 0,
     bladeCrossedPlane: trajectory.crossedPlane === true,
     worldTrailSegments: Number(trajectory.trailSegments) || 0,
+    bladeGripLocked: trajectory.gripLocked === true,
+    bladeOrientationDeltaDeg: Number(trajectory.orientationDeltaDeg) || 0,
+    bladeDepthAssist: Number(trajectory.depthAssist) || 0,
   };
 }
 
@@ -77,8 +80,9 @@ try {
   assert(characterReady && view.impl.skinnedModel, 'Skinned GLB samurai did not load on the PlayCanvas backend');
   assert(root.dataset.authoredAttackPack === 'four-direction-v1', 'Authored four-direction enemy attack pack did not load');
   assert(view.impl.authoredAttackClipsReady === true, 'Authored attack clips were not bound to the skinned rig');
+  assert(view.impl.skinnedSword?.parent?.name === 'HandR', 'Skinned katana is not attached directly to HandR');
   await view.impl.bladeTrajectoryReady;
-  assert(root.dataset.bladeTrajectory === 'worldspace-v2', 'World-space enemy blade trajectory adapter was not installed');
+  assert(root.dataset.bladeTrajectory === 'worldspace-v3-grip-lock', 'Grip-locked enemy blade trajectory adapter was not installed');
 
   const attackTransitions = [];
   const animLayer = view.impl.skinnedModel.anim.baseLayer;
@@ -122,6 +126,7 @@ try {
   assert(wind.phase === 'telegraph' && wind.wind > 0.35, 'Telegraph did not reach a readable wind-up pose');
   assert(wind.characterReady && wind.characterClip === 'Windup', 'Skinned rig did not enter the Windup compatibility phase');
   assert(wind.readTrailEnabled, 'Skinned sword did not expose the in-world blade-read trail during telegraph');
+  assert(wind.bladeGripLocked && wind.bladeOrientationDeltaDeg < 0.25, 'Top telegraph did not preserve the authored HandR-to-sword orientation');
 
   const windRight = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
   const windLeft = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
@@ -132,6 +137,7 @@ try {
   assert(windRight.bladeTipX > 0.7 && windLeft.bladeTipX < -0.7, 'Right/left wind-up blade tips did not occupy opposite sides in world space');
   assert(windBottom.bladeTipY < wind.bladeTipY - 0.55, 'Bottom wind-up blade tip did not start materially below the top attack');
   assert(windRight.authoredLayerState === 'AttackRight' && windLeft.authoredLayerState === 'AttackLeft' && windBottom.authoredLayerState === 'AttackBottom', 'Direction changes did not switch to the matching authored Attack* clips');
+  assert([windRight, windLeft, windBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional telegraphs rotated the blade away from the authored HandR grip');
 
   const topWind = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
   assert(topWind.authoredAttackClip === 'AttackTop' && topWind.authoredLayerState === 'AttackTop', 'Top telegraph did not run the authored AttackTop clip');
@@ -144,6 +150,8 @@ try {
   assert(strike.characterClip === 'Strike', 'Skinned rig did not expose the Strike compatibility phase');
   assert(strike.authoredAttackClip === 'AttackTop' && strike.authoredLayerState === 'AttackTop', 'Telegraph -> strike did not stay on the continuous AttackTop authored track');
   assert(strike.readTrailEnabled, 'Skinned sword trail did not persist through the strike path');
+  assert(strike.bladeGripLocked && strike.bladeOrientationDeltaDeg < 0.25, 'Top strike rotated the katana away from the authored HandR grip');
+  assert(strike.bladeDepthAssist >= 0 && strike.bladeDepthAssist <= 1.10, 'Grip-locked whole-body depth assist exceeded its bounded budget');
   assert(Math.abs(strike.swordZ - wind.swordZ) > 12, 'Enemy sword transform did not move from telegraph into strike');
   assert(Math.abs(strike.enemyZ - wind.enemyZ) > 0.08, 'Enemy body transform did not commit into the strike');
   assert(strikeEarly.bladeTipZ > topWind.bladeTipZ + 0.25 && strike.bladeTipZ > strikeEarly.bladeTipZ + 0.45, 'Top strike blade tip did not advance continuously toward the player');
@@ -155,6 +163,7 @@ try {
   const strikeLeft = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
   const strikeBottom = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
   assert(strikeRight.bladeCrossedPlane && strikeLeft.bladeCrossedPlane && strikeBottom.bladeCrossedPlane, 'One or more directional strikes failed to cross the player-facing parry plane');
+  assert([strikeRight, strikeLeft, strikeBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional strikes rotated the blade away from the authored HandR grip');
   assert(strikeRight.bladeTipX < windRight.bladeTipX - 0.20, 'Right strike did not travel inward/across from its wind-up side');
   assert(strikeLeft.bladeTipX > windLeft.bladeTipX + 0.20, 'Left strike did not travel inward/across from its wind-up side');
   assert(strikeBottom.bladeTipY > windBottom.bladeTipY + 0.35, 'Bottom strike did not rise through its player-facing cut path');
@@ -167,6 +176,7 @@ try {
   assert(parryPose.phase === 'recovery', 'Parry did not enter recovery');
   assert(parryPose.interruptedRecovery, 'Parry interruption did not reach the renderer motion contract');
   assert(parryPose.characterClip === 'Parry', 'Interrupted recovery did not select the skeletal Parry reaction clip');
+  assert(!parryPose.bladeGripLocked, 'Interrupted recovery incorrectly remained on the normal authored grip-lock path');
   assert(parryPose.playerAction === 1, 'Player parry action did not reach the PlayCanvas view');
   assert(Math.abs(parryPose.playerSwordZ + 34) > 12, 'Player katana did not visibly move for the parry');
 
@@ -177,18 +187,21 @@ try {
   assert(counterPose.playerAction === 3, 'Counter action did not reach the PlayCanvas view');
   assert(Math.abs(counterPose.playerSwordZ - parryPose.playerSwordZ) > 24, 'Player katana did not progress from parry into counter slash');
 
-  // Browser-level regression for Run 55: normal authored attacks must keep one Attack*
-  // state across telegraph -> strike -> recovery. Generic compatibility phase labels may
-  // change, but they must never become animation transitions while the authored track is active.
+  // Normal authored attacks must keep one Attack* state across telegraph -> strike ->
+  // recovery. Generic compatibility phase labels may change, but they must never become
+  // animation transitions while the authored track is active.
   attackTransitions.length = 0;
   const continuityBase = engine.snapshot(3000);
   const continuityMeta = { attackDirectionIndex: DIRECTION_INDEX[Direction.TOP], playerAction: 0, playerDirectionIndex: 0, hitAge: 999, shake: 0 };
   view.draw({ ...continuityBase, phase: 'telegraph', phaseProgress: 0.62 }, 3100, continuityMeta);
   assert(animLayer.activeState === 'AttackTop', 'Authored continuity test did not enter AttackTop');
+  assert(view.impl.bladeTrajectoryState.gripLocked === true && view.impl.bladeTrajectoryState.orientationDeltaDeg < 0.25, 'Continuity telegraph did not keep Sword locked to the authored HandR orientation');
   view.draw({ ...continuityBase, phase: 'strike', phaseProgress: 0.42 }, 3200, continuityMeta);
   assert(animLayer.activeState === 'AttackTop', 'Generic Strike state interrupted AttackTop at the phase boundary');
+  assert(view.impl.bladeTrajectoryState.gripLocked === true && view.impl.bladeTrajectoryState.orientationDeltaDeg < 0.25, 'Continuity strike did not keep Sword locked to the authored HandR orientation');
   view.draw({ ...continuityBase, phase: 'recovery', phaseProgress: 0.35 }, 3300, continuityMeta);
   assert(animLayer.activeState === 'AttackTop', 'Generic Recovery state interrupted AttackTop at the phase boundary');
+  assert(view.impl.bladeTrajectoryState.gripLocked === true && view.impl.bladeTrajectoryState.orientationDeltaDeg < 0.25, 'Continuity recovery did not keep Sword locked to the authored HandR orientation');
   assert(!attackTransitions.some((clip) => clip === 'Windup' || clip === 'Strike' || clip === 'Recovery'), `Generic attack transition leaked into authored track: ${attackTransitions.join(',')}`);
 
   const directionSwitchStart = attackTransitions.length;
@@ -206,7 +219,7 @@ try {
   root.dataset.rendererCharacterPipeline = 'skinned-gltf-v1';
   root.dataset.rendererCharacterClips = 'Windup,Strike,Parry';
   root.dataset.rendererDirectionalRead = 'top-right-bottom-left';
-  root.dataset.rendererBladeTrajectory = 'worldspace-v2';
+  root.dataset.rendererBladeTrajectory = 'grip-locked-authored-v3';
   root.dataset.rendererStageIdentity = identities.join(',');
   root.dataset.rendererAuthoredAttacks = 'continuous-four-direction-v1';
   root.dataset.rendererAuthoredTransitions = attackTransitions.join(',');

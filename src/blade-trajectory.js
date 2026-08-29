@@ -1,14 +1,15 @@
 import * as pc from 'playcanvas';
 
-const installed = Symbol.for('blade-reversal.blade-trajectory-v2');
+const installed = Symbol.for('blade-reversal.blade-trajectory-v3');
 const BLADE_LENGTH = 1.78;
 const PARRY_PLANE_Z = 2.25;
 const MAX_TRAIL_SEGMENTS = 6;
 const STRIKE_CONTACT = 0.62;
+const GRIP_DEPTH_ASSIST_MAX = 1.10;
 
-// World-space blade axes, not unreachable absolute tip positions. Positive Z points
-// toward the first-person camera. Each cut begins from a readable guard, commits
-// through the player-facing plane, then exits on the opposite side.
+// Fallback world-space blade axes. The authored Attack* clips own the Sword bone during
+// normal telegraph/strike/recovery; these axes remain for primitive/base-animation and
+// interrupted-recovery fallback paths only.
 const PATHS = Object.freeze([
   Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
   Object.freeze({ wind: [0.73, 0.67, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
@@ -49,6 +50,29 @@ function sampledBladeDirection(sword) {
   const direction = new pc.Vec3(0, 1, 0);
   sword.getRotation().transformVector(direction, direction);
   return direction.normalize();
+}
+
+function angleBetween(a, b) {
+  const from = a.clone().normalize();
+  const to = b.clone().normalize();
+  const dot = Math.max(-1, Math.min(1, from.dot(to)));
+  return Math.acos(dot) * 180 / Math.PI;
+}
+
+function authoredGripLockActive(view, phase) {
+  return view.authoredAttackClipsReady === true
+    && ['telegraph', 'strike', 'recovery'].includes(phase)
+    && /^Attack(Top|Right|Bottom|Left)$/.test(view.authoredAttackState?.clip || '');
+}
+
+function authoredDepthAssist(phase, progress, rawTipZ) {
+  if (phase !== 'strike') return 0;
+  const p = clamp01(progress);
+  const commitment = p <= STRIKE_CONTACT
+    ? cutEase(p / STRIKE_CONTACT)
+    : 1 - 0.62 * smooth((p - STRIKE_CONTACT) / (1 - STRIKE_CONTACT));
+  const shortfall = Math.max(0, PARRY_PLANE_Z + 0.08 - rawTipZ);
+  return Math.min(GRIP_DEPTH_ASSIST_MAX, shortfall * commitment);
 }
 
 function trailEntity(view, index) {
@@ -133,6 +157,9 @@ export function installBladeTrajectoryView(view) {
     tipZ: 0,
     crossedPlane: false,
     trailSegments: 0,
+    gripLocked: false,
+    orientationDeltaDeg: 0,
+    depthAssist: 0,
   };
 
   let current = { phase: 'ready', progress: 0, directionIndex: 0, baseDirection: null };
@@ -148,7 +175,7 @@ export function installBladeTrajectoryView(view) {
     if (!view.skinnedSword || !view.skinnedModel) return false;
     view.bladeWorldTrail = Array.from({ length: MAX_TRAIL_SEGMENTS }, (_, index) => trailEntity(view, index));
     view.bladeTrajectoryState.ready = true;
-    document.documentElement.dataset.bladeTrajectory = 'worldspace-v2';
+    document.documentElement.dataset.bladeTrajectory = 'worldspace-v3-grip-lock';
     return true;
   }).catch(() => false);
 
@@ -163,9 +190,11 @@ export function installBladeTrajectoryView(view) {
     const progress = clamp01(current.progress);
     const directionIndex = Math.max(0, Math.min(3, current.directionIndex | 0));
     const active = ['telegraph', 'strike', 'recovery', 'recovery-interrupted'].includes(phase);
+    const gripLocked = authoredGripLockActive(view, phase);
 
     const modelPos = model.getLocalPosition();
-    model.setLocalPosition(modelPos.x, modelPos.y, active ? depthFor(phase, progress) : 0);
+    const baseDepth = active ? depthFor(phase, progress) : 0;
+    model.setLocalPosition(modelPos.x, modelPos.y, baseDepth);
 
     if (!active) {
       hideTrail(view);
@@ -175,14 +204,22 @@ export function installBladeTrajectoryView(view) {
       recoveryDirection = null;
       lastPhase = phase;
       lastDirection = directionIndex;
-      view.bladeTrajectoryState = { ...view.bladeTrajectoryState, phase, directionIndex, crossedPlane: false, trailSegments: 0 };
+      view.bladeTrajectoryState = {
+        ...view.bladeTrajectoryState,
+        phase,
+        directionIndex,
+        crossedPlane: false,
+        trailSegments: 0,
+        gripLocked: false,
+        orientationDeltaDeg: 0,
+        depthAssist: 0,
+      };
       return;
     }
 
-    // `baseDirection` is sampled immediately after skeletal animation in draw(),
-    // before this presentation layer overrides the Sword's world orientation.
-    // Keeping that sample prevents the prerender pass from feeding our own
-    // trajectory back into telegraph/recovery blending.
+    // Sampled immediately after skeletal animation in draw(), before this adapter does
+    // any fallback world-space orientation. In authored mode this Sword/HandR rotation is
+    // now authoritative so the katana cannot visually detach from the animated grip.
     const baseDirection = current.baseDirection?.clone() || sampledBladeDirection(sword);
 
     if (phase !== lastPhase || directionIndex !== lastDirection) {
@@ -195,13 +232,28 @@ export function installBladeTrajectoryView(view) {
       }
     }
 
-    const bladeDirection = pathDirection(PATHS[directionIndex], phase, progress, baseDirection, recoveryDirection);
-    sword.setRotation(quatFromUp(bladeDirection));
+    let bladeDirection = baseDirection.clone().normalize();
+    let depthAssist = 0;
+
+    if (gripLocked) {
+      // Preserve authored Sword rotation. If the authored cut needs a little more camera-
+      // depth to reach the established parry plane, move the complete skinned model as one
+      // rigid body instead of rotating Sword away from HandR. This keeps animation authority
+      // in the clip while retaining the proven player-facing contact contract.
+      const rawHilt = sword.getPosition().clone();
+      const rawTipZ = rawHilt.z + bladeDirection.z * BLADE_LENGTH;
+      depthAssist = authoredDepthAssist(phase, progress, rawTipZ);
+      if (depthAssist > 0) model.setLocalPosition(modelPos.x, modelPos.y, baseDepth + depthAssist);
+    } else {
+      bladeDirection = pathDirection(PATHS[directionIndex], phase, progress, baseDirection, recoveryDirection);
+      sword.setRotation(quatFromUp(bladeDirection));
+    }
 
     const hilt = sword.getPosition().clone();
-    const actualTip = hilt.clone().add(bladeDirection.clone().mulScalar(BLADE_LENGTH));
+    const finalDirection = sampledBladeDirection(sword);
+    const actualTip = hilt.clone().add(finalDirection.clone().mulScalar(BLADE_LENGTH));
     lastTip = actualTip.clone();
-    lastBladeDirection = bladeDirection.clone();
+    lastBladeDirection = finalDirection.clone();
 
     if (phase === 'strike') {
       const key = `${directionIndex}:${progress.toFixed(4)}`;
@@ -218,6 +270,7 @@ export function installBladeTrajectoryView(view) {
     }
 
     const trailSegments = (view.bladeWorldTrail || []).filter((segment) => segment.enabled).length;
+    const orientationDeltaDeg = angleBetween(baseDirection, finalDirection);
     view.bladeTrajectoryState = {
       ready: true,
       phase,
@@ -227,7 +280,11 @@ export function installBladeTrajectoryView(view) {
       tipZ: actualTip.z,
       crossedPlane: phase === 'strike' && actualTip.z >= PARRY_PLANE_Z,
       trailSegments,
+      gripLocked,
+      orientationDeltaDeg,
+      depthAssist,
     };
+    document.documentElement.dataset.bladeGripLock = gripLocked ? 'authored-handr' : 'fallback-path';
     lastPhase = phase;
     lastDirection = directionIndex;
   };
