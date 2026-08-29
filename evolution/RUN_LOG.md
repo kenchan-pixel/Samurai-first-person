@@ -94,3 +94,30 @@ This file intentionally keeps autonomous-evolution history concise. Full impleme
 - No Run 52-style direct Chest/arm/HandR per-frame override or normal world-space Sword rotation is reintroduced.
 - Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input, persistence and network/privacy authority remain unchanged.
 - The accepted lateral threshold is not weakened. Exact-head Node/browser CI and Vercel Preview must both be terminal green before feature work resumes.
+
+## Run 060 — Evaluate the authored pose before same-draw blade sampling
+
+**Date:** 2026-08-29  
+**Action type:** BLOCKER_FIX  
+**Goal:** repair the persistent Run 057–059 lateral-read P1 at the actual PlayCanvas animation-evaluation seam instead of changing authored geometry or weakening acceptance thresholds.
+
+### Preflight / blocker evidence
+
+- Incoming exact HEAD: `284714f14987d7b11d17bcf3ae908faa4be571db`.
+- GitHub Actions CI #93: `npm test` passed 65/65, but `npm run test:browser` failed with `rightX=+1.765`, `leftX=+0.459` against the retained right `> +0.700` / left `< -0.700` real PlayCanvas contract.
+- Exact-head GitHub `Vercel` status was success; PR #1 remained Draft/open/unmerged and the latest automated review kept the issue at P1.
+- Inspection of the pinned PlayCanvas `2.21.4` source identified the propagation gap: on a playing layer, setting `activeStateCurrentTime` updates controller/clip time but does not evaluate the pose until the animation-system update. The blade-trajectory adapter samples Sword/HandR immediately after `draw()`, so synchronous right→left contract draws could observe the previous evaluated skeleton even though `activeState` already reported `AttackLeft`.
+
+### Delivered repair
+
+- Added same-draw authored pose synchronization using the PlayCanvas layer's public `playing` and `activeStateCurrentTime` path: temporarily pause only the animation layer, scrub to the authoritative normalized attack time so PlayCanvas evaluates it at zero delta, then restore the previous playing state.
+- This keeps the authored `AnimTrack` as the sole normal body/arms/HandR/Sword pose authority and makes the already-existing blade trajectory sample the newly evaluated pose rather than stale previous-direction transforms.
+- The zero-delta scrub advances neither combat time nor animation time; initial authored-entry blending, normal telegraph→strike→recovery continuity, direct authored feint switches and interrupted `Parry` recovery semantics remain unchanged.
+- Added a lightweight `authoredAttackPoseSync` runtime diagnostic; the existing fail-closed real PlayCanvas right/left blade-tip gate remains unchanged and is the acceptance proof.
+
+### Regression boundary
+
+- No Run 52-style runtime joint manipulation and no normal world-space Sword rotation is reintroduced.
+- The fixed Sword→HandR grip, authored guard geometry, player-facing strike paths and ±0.700 lateral thresholds are unchanged.
+- Combat timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, input, persistence and network/privacy authority are unchanged.
+- The extra evaluation is a zero-delta update of one 19-joint animation layer during the existing renderer draw; post-commit browser CI must confirm both correctness and the broader PlayCanvas contract before feature work resumes.

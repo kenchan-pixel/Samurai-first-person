@@ -26,6 +26,27 @@ export function authoredAttackTransitionSeconds(phase, previousClip, nextClip) {
   return phase === 'telegraph' ? 0.055 : 0.025;
 }
 
+function scrubAuthoredPoseNow(layer, progress) {
+  if (!layer || !Number.isFinite(layer.activeStateDuration)) return false;
+  const duration = Math.max(0, layer.activeStateDuration);
+  const time = Math.max(0, Math.min(duration, clamp01(progress) * duration));
+
+  // PlayCanvas 2.21.4 applies activeStateCurrentTime immediately only when the
+  // layer is paused; a playing layer otherwise waits for the next animation-system
+  // update. Blade trajectory samples Sword/HandR immediately after draw(), so pause
+  // only this animation layer for the scrub, let the public time setter evaluate at
+  // zero delta, then restore the previous playing state. This advances no game or
+  // animation time and keeps all pose authority inside the authored AnimTrack.
+  const wasPlaying = layer.playing;
+  if (wasPlaying) layer.playing = false;
+  try {
+    layer.activeStateCurrentTime = time;
+  } finally {
+    if (wasPlaying) layer.playing = true;
+  }
+  return true;
+}
+
 function loadAttackPack(view, baseCharacterReady) {
   return Promise.resolve(baseCharacterReady).then((ready) => new Promise((resolve) => {
     if (!ready || !view.skinnedModel?.anim) {
@@ -68,7 +89,7 @@ export function installAuthoredEnemyAttacks(view) {
   view.authoredAttackClipsReady = false;
   view.authoredAttackClipNames = [];
   view.authoredAttackActiveClip = null;
-  view.authoredAttackState = { ready: false, clip: 'base-animation-fallback', phase: 'ready', progress: 0, directionIndex: 0 };
+  view.authoredAttackState = { ready: false, clip: 'base-animation-fallback', phase: 'ready', progress: 0, directionIndex: 0, poseSynchronized: false };
   document.documentElement.dataset.authoredAttackPack = 'loading';
   view.authoredAttackReady = loadAttackPack(view, baseCharacterReady);
   // The authored pack is part of the production skinned-character contract. Existing
@@ -102,6 +123,7 @@ export function installAuthoredEnemyAttacks(view) {
         phase,
         progress: clamp01(state?.phaseProgress),
         directionIndex: direction,
+        poseSynchronized: false,
       };
       return;
     }
@@ -122,16 +144,16 @@ export function installAuthoredEnemyAttacks(view) {
       layer.transition(clip, blend, progress);
       view.authoredAttackActiveClip = clip;
     }
-    if (layer.activeState === clip && Number.isFinite(layer.activeStateDuration)) {
-      layer.activeStateCurrentTime = Math.max(0, Math.min(layer.activeStateDuration, progress * layer.activeStateDuration));
-    }
+
+    const poseSynchronized = layer.activeState === clip && scrubAuthoredPoseNow(layer, progress);
 
     // Preserve the compatibility label used by the existing renderer contract while
     // exposing the real authored clip independently for diagnostics/review.
     view.characterClip = genericClip;
-    view.authoredAttackState = { ready: true, clip, phase, progress, directionIndex: direction };
+    view.authoredAttackState = { ready: true, clip, phase, progress, directionIndex: direction, poseSynchronized };
     document.documentElement.dataset.authoredAttackClip = clip;
     document.documentElement.dataset.authoredAttackPhase = phase;
+    document.documentElement.dataset.authoredAttackPoseSync = poseSynchronized ? 'same-draw-v1' : 'deferred';
   };
 
   return view;

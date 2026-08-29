@@ -3,9 +3,9 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 59,
+  "run_number": 60,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Changed authored telegraph direction switches from crossfaded Attack* transitions to immediate authored-to-authored commits, so a new displayed/feint direction no longer retains the previous-side sword pose while preserving the fixed Sword-to-HandR grip and initial attack-entry blend",
+  "last_action": "Synchronized each authored Attack* pose inside the same draw before blade-tip sampling by zero-delta scrubbing the PlayCanvas animation layer through its public paused activeStateCurrentTime path, eliminating stale previous-direction Sword/HandR transforms without runtime joint or Sword overrides",
   "last_commit": "3a842b809f204c14bb66dd971e9c742db064ec81",
   "active_blocker": null,
   "ci_status": "pending_self_verification",
@@ -18,7 +18,7 @@
   "vercel_team_slug": "kenchan-pixels-projects",
   "deployment_status_source": "GitHub Vercel commit status",
   "next_candidates": [
-    "Continue autonomous Preview/runtime inspection of all four authored attacks, refining only concrete remaining body/weapon/trail defects without per-frame joint overrides",
+    "If exact-head browser verification is green, continue autonomous Preview/runtime inspection of all four authored attacks and refine only concrete remaining body/weapon/trail defects",
     "Add the optional Easy-mode shrinking rhythm/timing ring only after the exact-head authored Normal-mode attack contract remains green",
     "Use direct Ronin/Shogun practice plus local run analysis for bounded difficulty/readability refinement before changing combat balance"
   ]
