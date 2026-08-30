@@ -139,3 +139,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No `CombatEngine`, tap/swipe, parry/Perfect, STEP, posture, boss, score, persistence, network/privacy or asset-generation behaviour changed.
 - HandR/Sword authored grip, player-facing Guard, player-screen RIGHT/LEFT semantics and bounded whole-model depth assist remain authoritative.
 - Local repository checkout was unavailable because this runtime could not resolve `github.com`; syntax of the new module was checked separately, and post-commit exact-head CI + GitHub Vercel status remain the required acceptance evidence. If either is red, the next run is `BLOCKER_FIX`.
+
+## Run 069 — Live reduced-motion afterimage repair
+
+**Date:** 2026-08-31  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `42ada958c082324b0fd9f057556266f34eb334d8`.
+- Exact-head CI #103 was terminal green (`npm test` + full PlayCanvas/browser gate), but GitHub's exact-head `Vercel` status remained `failure` at the build-rate-limit target. The direct Vercel connector returned `403 Forbidden` when asked to enumerate project deployments, so the repository-defined GitHub commit status fallback remained authoritative.
+- Draft PR #1 remained open/Draft/unmerged; `main` was untouched and inline review threads were empty.
+- The exact-head All Repos review had one applicable P2: the actual-Sword afterimage adapter sampled `prefers-reduced-motion` only once at install time, so a live OS/browser preference change could leave travelling ghosts enabled until reload. This is an accessibility/runtime correctness defect and therefore blocks feature work.
+
+### Delivered repair
+
+- Retained a MediaQueryList for `prefers-reduced-motion` and subscribed to its live `change` event. Entering reduced motion immediately clears every pooled afterimage and historical Sword sample without waiting for another draw; leaving reduced motion starts from fresh real-Sword history rather than replaying stale poses.
+- Chained PlayCanvas application teardown to remove the media-query listener and clear pooled state, preventing a future renderer remount from retaining the old accessibility listener.
+- Strengthened the existing `renderer-motion` browser contract in-place: after it has accumulated multiple real-Sword historical poses, its test-only MediaQueryList source emits reduced-motion on/off changes after installation and fails closed unless ghosts clear immediately and full-motion eligibility restores. No second gameplay clock or parallel combat harness was introduced.
+- The implementation commit also gives Vercel Git integration a fresh exact-head deployment attempt after the prior transient rate-limit window; deployment acceptance remains the GitHub `Vercel` commit status if direct enumeration stays unavailable.
+
+### Regression boundary
+
+- No CombatEngine, attack animation, Sword/HandR pose, player-screen RIGHT/LEFT semantics, timing, damage, parry/Perfect, STEP, posture, boss, input, score, persistence, asset or network/privacy behaviour changed.
+- The afterimage pool remains four ghosts / five samples and still reads only the real skinned Sword transform; Reduced Motion now enforces the already documented baseline dynamically as well as at startup.
+- Post-commit exact-head CI and GitHub `Vercel` status must both be terminal green before any new feature work resumes.

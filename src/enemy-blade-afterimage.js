@@ -1,10 +1,11 @@
 import * as pc from 'playcanvas';
 
-const installed = Symbol.for('blade-reversal.enemy-blade-afterimage-v1');
+const installed = Symbol.for('blade-reversal.enemy-blade-afterimage-v2');
 const BLADE_LENGTH = 1.78;
 const GHOST_COUNT = 4;
 const SAMPLE_COUNT = GHOST_COUNT + 1;
 const SAMPLE_STEP = 0.055;
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 const GHOST_OPACITY = Object.freeze([0.18, 0.13, 0.09, 0.055]);
 const GHOST_THICKNESS = Object.freeze([0.072, 0.062, 0.053, 0.045]);
 
@@ -36,13 +37,43 @@ function setQuat(target, source) {
   target.set(source.x, source.y, source.z, source.w);
 }
 
+function createMotionPreferenceSource(smokeContract) {
+  const nativeQuery = globalThis.matchMedia?.(REDUCED_MOTION_QUERY) || null;
+  if (!smokeContract) return { mediaQuery: nativeQuery, setForSmoke: null };
+
+  // The renderer-motion browser contract needs to prove a preference change *after*
+  // installation, not merely startup under --force-prefers-reduced-motion. Keep this
+  // test-only MediaQueryList source browser-native in shape while leaving production
+  // bound to the real OS/browser MediaQueryList above.
+  let matches = Boolean(nativeQuery?.matches);
+  const listeners = new Set();
+  const mediaQuery = {
+    media: REDUCED_MOTION_QUERY,
+    get matches() { return matches; },
+    onchange: null,
+    addEventListener(type, listener) { if (type === 'change' && listener) listeners.add(listener); },
+    removeEventListener(type, listener) { if (type === 'change') listeners.delete(listener); },
+    addListener(listener) { if (listener) listeners.add(listener); },
+    removeListener(listener) { listeners.delete(listener); },
+  };
+  const setForSmoke = (next) => {
+    matches = Boolean(next);
+    const event = { matches, media: REDUCED_MOTION_QUERY };
+    for (const listener of [...listeners]) listener.call(mediaQuery, event);
+    if (typeof mediaQuery.onchange === 'function') mediaQuery.onchange.call(mediaQuery, event);
+  };
+  return { mediaQuery, setForSmoke };
+}
+
 export function installEnemyBladeAfterimage(view) {
   if (!view || view[installed]) return view;
   Object.defineProperty(view, installed, { value: true });
 
-  const reducedMotion = Boolean(globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
   const smokeContract = typeof location !== 'undefined'
     && new URLSearchParams(location.search).get('browser-smoke') === 'renderer-motion';
+  const motionPreference = createMotionPreferenceSource(smokeContract);
+  const motionQuery = motionPreference.mediaQuery;
+  let reducedMotion = Boolean(motionQuery?.matches);
   const ghosts = Array.from({ length: GHOST_COUNT }, (_, index) => makeGhost(view, index));
   const samples = Array.from({ length: SAMPLE_COUNT }, () => ({
     center: new pc.Vec3(),
@@ -60,6 +91,8 @@ export function installEnemyBladeAfterimage(view) {
   let strikeSampleCount = 0;
   let lastPhase = 'ready';
   let lastDirection = -1;
+  let motionListenerRemoved = false;
+  let smokeLiveMotionChecked = !smokeContract;
 
   const hideGhosts = () => {
     for (const ghost of ghosts) ghost.enabled = false;
@@ -72,6 +105,48 @@ export function installEnemyBladeAfterimage(view) {
     strikeSampleCount = 0;
     hideGhosts();
   };
+
+  const publishMotionState = (phase = lastPhase) => {
+    view.enemyBladeAfterimageState = {
+      ready: Boolean(view.skinnedSword),
+      activeGhosts: 0,
+      phase,
+      reducedMotion,
+    };
+    document.documentElement.dataset.enemyBladeAfterimageMotion = reducedMotion ? 'reduced' : 'full';
+  };
+
+  const applyMotionPreference = (next, phase = lastPhase) => {
+    reducedMotion = Boolean(next);
+    // Clear on both edges. Entering reduced motion must remove travelling ghosts
+    // immediately; leaving it must start from fresh real-Sword samples, never replay
+    // stale history collected while the accessibility preference was active.
+    clearSamples();
+    publishMotionState(phase);
+  };
+
+  const onMotionPreferenceChange = (event) => applyMotionPreference(event?.matches);
+  if (motionQuery?.addEventListener) motionQuery.addEventListener('change', onMotionPreferenceChange);
+  else motionQuery?.addListener?.(onMotionPreferenceChange);
+
+  const removeMotionListener = () => {
+    if (motionListenerRemoved) return;
+    motionListenerRemoved = true;
+    if (motionQuery?.removeEventListener) motionQuery.removeEventListener('change', onMotionPreferenceChange);
+    else motionQuery?.removeListener?.(onMotionPreferenceChange);
+  };
+
+  // The game normally owns one PlayCanvas Application for the page lifetime, but the
+  // browser acceptance destroys it explicitly. Chain teardown so a future remount does
+  // not retain an OS media-query listener from the old view.
+  const originalDestroy = view.app?.destroy;
+  if (typeof originalDestroy === 'function') {
+    view.app.destroy = function destroyWithAfterimageCleanup(...args) {
+      removeMotionListener();
+      clearSamples();
+      return originalDestroy.apply(this, args);
+    };
+  }
 
   const recordSample = (sword, progress) => {
     const swordRotation = sword.getRotation();
@@ -139,8 +214,9 @@ export function installEnemyBladeAfterimage(view) {
     phase: 'ready',
     reducedMotion,
   };
-  document.documentElement.dataset.enemyBladeAfterimage = 'actual-sword-full-blade-v1';
+  document.documentElement.dataset.enemyBladeAfterimage = 'actual-sword-full-blade-v2';
   document.documentElement.dataset.enemyBladeAfterimageMotion = reducedMotion ? 'reduced' : 'full';
+  if (smokeContract) document.documentElement.dataset.enemyBladeAfterimageLiveMotion = 'pending';
 
   const originalDraw = view.draw.bind(view);
   view.draw = (snapshot, now, meta = {}) => {
@@ -169,6 +245,19 @@ export function installEnemyBladeAfterimage(view) {
       // not masquerade as a gameplay trail failure.
       if (smokeContract && strikeSampleCount >= 3 && progress >= 0.45 && activeGhosts < 2) {
         throw new Error(`Actual-sword afterimage contract produced only ${activeGhosts} historical blade poses at strike progress ${progress.toFixed(3)}`);
+      }
+      if (smokeContract && !smokeLiveMotionChecked && strikeSampleCount >= 3 && progress >= 0.45 && activeGhosts >= 2) {
+        smokeLiveMotionChecked = true;
+        if (!motionPreference.setForSmoke) throw new Error('Reduced-motion live-change smoke source was unavailable');
+        motionPreference.setForSmoke(true);
+        if (!reducedMotion || ghosts.some((ghost) => ghost.enabled) || view.enemyBladeAfterimageState.activeGhosts !== 0) {
+          throw new Error('Reduced-motion change did not immediately clear active enemy blade afterimages');
+        }
+        motionPreference.setForSmoke(false);
+        if (reducedMotion || view.enemyBladeAfterimageState.reducedMotion) {
+          throw new Error('Enemy blade afterimages did not restore full-motion eligibility after reduced-motion was disabled');
+        }
+        document.documentElement.dataset.enemyBladeAfterimageLiveMotion = 'pass';
       }
     } else if (phase === 'recovery' && lastPhase === 'strike' && progress < 0.18) {
       const activeGhosts = renderGhosts(2);
