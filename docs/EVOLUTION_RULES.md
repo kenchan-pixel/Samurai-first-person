@@ -21,11 +21,25 @@ Human supervision means owner feedback can redirect or override the system when 
 
 Before any new feature selection, resolve the exact current `autonomous-evolution` HEAD.
 
-- Required CI and Vercel Preview for that exact SHA must both be terminal green.
+- Required CI and Vercel Preview for that exact SHA must both be terminal green before FEATURE work.
 - Missing, queued, or in-progress verification means `HOLD`; make no commit and start no feature work.
 - Failed CI or Preview means `BLOCKER_FIX`.
 - Never treat an older SHA's successful verification as evidence for the current HEAD.
 - Missing human/device testing is not a HOLD condition.
+
+### External deployment-provider failure recovery
+
+An explicitly external provider-capacity failure remains a feature blocker, but it must not permanently deadlock the branch.
+
+Classify a failed Vercel status as external only when exact-head CI is terminal green and the Vercel status/target identifies deployment rate limiting, provider capacity, quota, or equivalent account-side throttling rather than source build/runtime failure. If browser/runtime/review evidence contradicts that classification, treat the game/source defect as authoritative.
+
+- During the provider's stated retry/cooldown window: `HOLD`, no commit.
+- After the window expires: first use a same-SHA/provider-native redeploy when an authenticated tool safely supports it.
+- If direct redeploy/enumeration is unavailable and the old external failure status remains stale, one meaningful `BLOCKER_FIX` commit may repair/re-arm the delivery protocol and naturally trigger a fresh Preview. It must include the relevant SOT/state/run-log repair, contain no unrelated feature work, and must not be an empty/log-only retry commit.
+- The fresh commit immediately returns to the ordinary exact-head fence. FEATURE work is still prohibited until its CI and Preview are terminal green.
+- A fresh source build/runtime failure is not an external-capacity exception and must be repaired normally.
+
+This is a delivery-loop recovery rule, not a relaxation of Preview acceptance.
 
 ## Review blocker semantics
 
@@ -39,7 +53,7 @@ Review findings are machine-operational gates, not dependent on one literal keyw
 
 ## Priority order at the start of every run
 
-1. Enforce the exact-head verification fence.
+1. Enforce the exact-head verification fence, including the bounded external-provider recovery rule when applicable.
 2. Repair applicable unresolved review blockers/P0/P1 and blocking P2 findings.
 3. Repair material regressions against `CURRENT_BASELINE.md` or `REGRESSION_CHECKLIST.md`.
 4. Only when the above are clear: one new high-value visible improvement.
@@ -66,6 +80,8 @@ Non-qualifying examples:
 - tests without product behaviour;
 - placeholders or disabled controls;
 - splitting one obvious slice into tiny hourly changes to inflate run count.
+
+A SOT/documentation change is qualifying only when it directly repairs a material automation or delivery blocker, such as an exact-head verification deadlock. Routine editorial cleanup is not an implementation run.
 
 ## Selection process
 
@@ -94,6 +110,7 @@ When feature work is allowed:
 - Production deploy occurs only from `main` after Ken merges.
 - Preview deployment is allowed before reviewer clearance because reviewers need the preview to find visual/mobile blockers.
 - The next feature run must not start until the previous exact HEAD's Preview is terminal green.
+- External Vercel rate-limit/capacity failures use the bounded recovery protocol above; they never authorize feature work on an unverified head.
 
 ## Verification
 
@@ -126,6 +143,6 @@ For each implementation commit append one concise top-level PR comment:
 
 ## Stop / hold conditions
 
-Do not force a low-value change. Missing/queued/in-progress exact-head verification is `HOLD` and must produce no commit. If no safe qualifying improvement is available, or the next move requires a material product/architecture/cost/privacy/licensing decision that could redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.
+Do not force a low-value change. Missing/queued/in-progress exact-head verification is `HOLD` and must produce no commit. A failed exact-head verification is `BLOCKER_FIX`; an explicitly external Vercel rate-limit/capacity failure may use the bounded recovery protocol above after its cooldown expires. If no safe qualifying improvement is available, or the next move requires a material product/architecture/cost/privacy/licensing decision that could redirect the game, leave the repo unchanged and report a Decision Gate in the Draft PR instead.
 
 Do not create a HOLD or Decision Gate solely because a human/device test has not happened yet.

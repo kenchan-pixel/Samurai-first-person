@@ -24,6 +24,26 @@ Before selecting any new feature, resolve the exact current `autonomous-evolutio
 
 Do not infer success from an older SHA. Lack of human/device testing is not part of this HOLD fence.
 
+### External deployment-provider recovery
+
+A provider-capacity failure is different from a source/build/runtime regression, but it still blocks **FEATURE** work until a fresh exact-head Preview is green.
+
+Treat a Vercel failure as an **external deployment blocker** only when all of the following are true:
+
+- exact-head CI is terminal green;
+- the Vercel status/target explicitly identifies provider capacity, deployment-rate-limit, quota, or equivalent account-side throttling rather than a source build/runtime error;
+- there is no contradictory browser/runtime/review evidence that the game itself is broken.
+
+Recovery rules:
+
+- While the provider's stated retry/cooldown window is still active, `HOLD`; create no commit.
+- After that window has elapsed, first try a same-SHA/provider-native redeploy when an authenticated tool safely supports it.
+- If direct redeploy/enumeration is unavailable and the old failure status remains stale, **do not deadlock indefinitely**. One meaningful `BLOCKER_FIX` commit may repair/re-arm the delivery protocol and naturally trigger a fresh Preview. It must update the relevant SOT/state/run log in the same commit, must not contain unrelated feature work, and must never be an empty/log-only retry commit.
+- The new commit then returns to the normal exact-head fence: its CI and Preview must both become terminal green before FEATURE work resumes.
+- If the fresh deployment fails for an actual source build/runtime reason, inspect that failure and repair the source; do not classify it as external capacity.
+
+This exception exists only to recover the delivery loop from a stale external-provider failure. It does not weaken the exact-head Preview requirement for feature work.
+
 ## Review gate
 
 Inspect all PR review submissions, top-level comments, and inline threads, including findings posted against earlier HEADs.
@@ -38,7 +58,7 @@ Inspect all PR review submissions, top-level comments, and inline threads, inclu
 
 Apply this order strictly:
 
-1. Enforce the exact-head verification fence. Missing/queued/in-progress means `HOLD`; failed means `BLOCKER_FIX`.
+1. Enforce the exact-head verification fence. Missing/queued/in-progress means `HOLD`; failed means `BLOCKER_FIX`, including the bounded external-provider recovery rule above when applicable.
 2. Else repair any applicable unresolved review blocker/P0/P1, or blocking P2.
 3. Else repair any material baseline regression.
 4. Else propose at least 3 materially different player-visible improvements, score them for impact / goal alignment / novelty / confidence / safety, and implement the strongest bounded vertical slice.
@@ -49,7 +69,7 @@ Never add a new feature while a blocker, unverified/failed exact HEAD, broken pr
 
 A qualifying implementation must be substantial enough that a player can clearly see or feel the difference. Do not spend a run on pure refactoring, documentation, tests alone, tiny CSS/text changes, placeholder UI, trivial balance changes, or artificially split micro-work.
 
-A material blocker/regression repair counts as the run's action when it restores the safety or correctness of the autonomous delivery loop, repository baseline, deployment, or playable game.
+A material blocker/regression repair counts as the run's action when it restores the safety or correctness of the autonomous delivery loop, repository baseline, deployment, or playable game. A documentation/SOT change qualifies only when it directly repairs such a material delivery blocker; routine editorial cleanup does not.
 
 ## Outcome-first engineering discretion
 
