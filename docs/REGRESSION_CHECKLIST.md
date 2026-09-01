@@ -35,7 +35,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Shogun remains 12 HP / Phase I posture 6; any accepted player damage crossing 6 HP triggers Blood Moon exactly once, resets pressure, creates the existing breathing gap and switches to Phase II posture 7/pressure set; restart returns to Phase I.
 - [ ] 練浪人 starts real Stage 2 and ends there; 練將軍 starts real Stage 4 Phase I, keeps Blood Moon rules and ends there; retry/campaign handoff remain correct.
 - [ ] 連戰試煉 starts exactly 8 stages, preserves HP/score across waves, uses bounded pressure rematches only at Stages 4–7, reaches the real Crimson Shogun/Blood Moon at Stage 8, keeps retry inside challenge and restores the normal four-duel roster on campaign handoff.
-- [ ] Challenge 氣勢 is challenge-only: one hitless clear shows 1/2 momentum, any `player-hit` breaks the chain, two consecutive hitless clears reset momentum and trigger exactly one 不屈 reward—+1 HP when damaged or +300 challenge score at full HP. Campaign/practice HP, score and timing remain unchanged.
+- [ ] Challenge 氣勢 is challenge-only: one hitless clear shows 1/2 momentum, any real `player-hit` emitted through the composed CombatEngine path breaks the chain, two consecutive hitless clears reset momentum and trigger exactly one 不屈 reward—+1 HP when damaged or +300 challenge score at full HP. Campaign/practice HP, score and timing remain unchanged.
 
 ## Direction / animation / presentation
 
@@ -64,7 +64,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 
 ## Delivery gates
 
-- [ ] `npm test` passes, including challenge roster/best/lifecycle plus challenge momentum hit/heal/full-health-score/campaign-isolation regressions.
+- [ ] `npm test` passes, including challenge roster/best/lifecycle plus a composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild regression, heal/full-health-score and campaign-isolation regressions.
 - [ ] `npm run test:browser` passes.
 - [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, practice/challenge selector layout, 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
@@ -72,5 +72,5 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
 - [ ] Mastery browser harness clicks the real 連戰試煉 control, proves composed 8-stage activation, visible pointer-safe 氣勢 UI, first clean-wave stack, a real two-clean-wave +1 HP 不屈 reward, terminal 不屈 summary and 8-card analysis, keeps challenge best isolated from campaign best, exercises 再戰連陣 / 開始完整主線, and keeps terminal content plus both controls inside 320×568.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
-- [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation.
+- [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation when their represented product/engineering state changes.
 - [ ] Draft PR remains open/Draft/unmerged and contains one concise run comment with Before/After/verification/regression/risk/Preview.

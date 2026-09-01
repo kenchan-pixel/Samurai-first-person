@@ -124,3 +124,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice enemy roster, attack timing, parry/Perfect/STEP windows, direction mapping, reach, damage, posture, Blood Moon threshold, renderer animation/geometry, local campaign mastery formula, account/network/privacy or asset behaviour changed.
 - Momentum state is run-local only. It adds no persistence key, listener loop, timer, remote call or second combat clock; the only gameplay mutations are the documented challenge wave-clear +1 HP / +300 score rewards.
 - New JS and the modified browser module were syntax-checked locally. Exact-head repository CI and Vercel Preview after this single implementation commit remain the acceptance evidence before the next feature run.
+
+## Run 078 — Real player-hit momentum regression hardening
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `909720ca177d972460e2fc739f2910a6fb965ce5`.
+- Exact-head CI #115 was terminal green and GitHub's exact-head `Vercel` commit status was `success`. Direct Vercel deployment enumeration returned 403, so the GitHub `Vercel` commit status remained the authoritative deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
+- The latest exact-head All Repos review found one blocking P2: the documented rule that any real `player-hit` breaks challenge momentum was only covered by a pure `hitThisWave: true` resolver input. The installed/composed adapter never had to observe an actual CombatEngine-emitted `player-hit`, so the event hook could regress while CI stayed green.
+
+### Repair
+
+- Strengthened the existing challenge-momentum Node regression instead of adding another test harness. It now uses the installed challenge + momentum adapters on a real `CombatEngine`, clears one clean wave, advances into the next real stage, lets the next incoming strike resolve naturally into an actual `player-hit`, and verifies HP falls through the production engine event path.
+- The same regression then proves the damaged wave cannot trigger 不屈, the following clean wave rebuilds only the first 1/2 momentum mark, and only the next consecutive clean wave triggers the expected +1 HP rally. Campaign mode remains isolated and cannot emit challenge rally rewards.
+- Updated the regression checklist so the composed real-CombatEngine `player-hit` → chain break → clean-wave rebuild sequence is a durable `npm test` delivery gate.
+
+### Regression boundary
+
+- No production gameplay code changed. Challenge reward values, combat timing, damage, direction mapping, STEP/parry/Perfect rules, boss behavior, renderer, persistence, privacy/network boundaries and campaign/practice behavior are unchanged.
+- This tests/SOT-only change qualifies as a blocker repair because it closes a current-head P2 against an explicit cumulative gameplay contract and restores the delivery gate's ability to catch a broken event-composition seam.
+- Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
