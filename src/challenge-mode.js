@@ -124,6 +124,13 @@ function writeBest(result, storage = undefined) {
   }
 }
 
+export function persistChallengeResult(result, storage = undefined) {
+  const previousBest = readBest(storage);
+  const better = isBetterChallengeResult(result, previousBest);
+  if (better) writeBest(result, storage);
+  return better ? result : previousBest;
+}
+
 function formatScore(value) {
   return Math.max(0, Math.round(Number(value) || 0)).toString().padStart(6, '0');
 }
@@ -242,9 +249,7 @@ function renderChallengeResult(state, detail = {}) {
     wavesCleared: Math.min(CHALLENGE_STAGE_COUNT, Math.max(0, state.wavesCleared)),
     score: Math.max(0, Math.round(Number(detail.score) || 0)),
   };
-  const previousBest = readBest();
-  if (isBetterChallengeResult(result, previousBest)) writeBest(result);
-  const best = isBetterChallengeResult(result, previousBest) ? result : previousBest;
+  const best = persistChallengeResult(result);
 
   const progress = ui.result.querySelector('[data-challenge-progress]');
   const bestNode = ui.result.querySelector('[data-challenge-best]');
@@ -330,10 +335,10 @@ export function installChallengeMode(Engine = CombatEngine) {
           challengeStage: state.stage,
           wavesCleared: state.wavesCleared,
         };
-        const terminal = { won, score: event.detail?.score };
+        const terminalEvent = event;
         queueMicrotask(() => {
           renderModeUi(state, true);
-          renderChallengeResult(state, terminal);
+          renderChallengeResult(state, { won, score: terminalEvent.detail?.score });
         });
       }
     }

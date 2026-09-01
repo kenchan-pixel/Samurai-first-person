@@ -148,3 +148,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No production gameplay code changed. Challenge reward values, combat timing, damage, direction mapping, STEP/parry/Perfect rules, boss behavior, renderer, persistence, privacy/network boundaries and campaign/practice behavior are unchanged.
 - This tests/SOT-only change qualifies as a blocker repair because it closes a current-head P2 against an explicit cumulative gameplay contract and restores the delivery gate's ability to catch a broken event-composition seam.
 - Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
+
+## Run 079 — Final-wave challenge score authority
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `941a97373c80ed7a15cdc15cde1c6b39559c89bd`.
+- Exact-head CI #116 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Direct Vercel deployment enumeration still returned 403, so GitHub's `Vercel` status remained the authoritative deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
+- The latest exact-head Second Hourly review found one blocking P2: when final `enemy-defeated` and `victory` are drained together, a full-health final-wave 不屈 can add +300 to the engine after challenge terminalization has already copied the older score, causing victory/result/challenge-best data to omit the legitimate reward.
+
+### Repair
+
+- Made challenge momentum rewrite terminal `score` from the post-reward authoritative `CombatEngine.score` after processing the final `enemy-defeated` in the same drain batch.
+- Changed challenge terminal rendering to retain the terminal event reference until its microtask runs, so result rendering and the separate local challenge best consume the score corrected by the outer momentum adapter instead of an earlier primitive copy.
+- Extracted the existing best-result write path as `persistChallengeResult()` for focused deterministic verification without adding a second persistence implementation.
+- Added a composed eight-stage regression that reaches the final full-health 2/2 rally, proves the +300 appears in engine score and `victory.detail.score`, then persists the exact same score through the real challenge-best ranking/write helper.
+- Updated the regression checklist so same-batch final rally/victory score authority is a cumulative delivery gate.
+
+### Regression boundary
+
+- No challenge reward amount, campaign/practice scoring, combat timing/damage/input, boss behavior, renderer, account/network/privacy or storage key changed.
+- The fix only reconciles an already-earned challenge reward across the existing terminal event/result/best surfaces; it does not create a new scoring rule or persistence surface.
+- Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.

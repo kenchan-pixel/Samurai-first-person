@@ -281,6 +281,7 @@ export function installChallengeMomentum(Engine = CombatEngine) {
       } else if (event.type === 'victory' || event.type === 'defeat') {
         event.detail = {
           ...(event.detail || {}),
+          score: Math.max(0, Math.round(Number(this.score) || 0)),
           challengeCleanWaves: state.cleanWaves,
           challengeRallies: state.rallies,
         };
