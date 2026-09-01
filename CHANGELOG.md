@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.34.0-evolution — 師範弱點再練
+
+- Turned the existing campaign result analysis into an actionable **師範建議 · 弱點再練** bridge. The focused Stage 2/3/4 result can now launch the already-authoritative Ronin/Oni/Shogun practice route in one tap; a Stage 1 focus restarts the full campaign from the real Ashigaru opening rather than inventing a practice-only Stage 1 copy.
+- Recommended practice keeps the existing isolated mastery/best behavior. After one recommended duel the compact coaching row confirms completion and offers **再練一次**, while the established practice campaign-handoff control remains available.
+- Added deterministic focus→route coverage plus a focused real 320×568 browser lifecycle proving a weak Stage 2 campaign result recommends Ronin, launches the real practice adapter, preserves campaign best, completes, retries the same opponent and keeps the new ≥44 px action inside the result viewport.
+
 ## 0.33.0-evolution — Direct Blood Moon Phase II practice
 
 - Added **練血月** beside the existing direct dojo controls. It starts the real Crimson Shogun Phase II definition directly at the existing 6 HP Blood Moon threshold, posture 7 and unchanged Phase II timing/attack set; it deliberately does not award the normal +300 phase-transition score because the transition itself is skipped.

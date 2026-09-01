@@ -403,3 +403,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/challenge boss HP threshold, Phase II attack/timing values, normal +300 transition reward, parry/Perfect/STEP rules, direction mapping, renderer animation/geometry, mastery formula, challenge reward/tactic/PB split, persistence, account/network/privacy or asset behavior changed.
 - `src/blood-moon-practice.js` is a bounded outer adapter over the existing boss + practice lifecycle; `src/boss-encounter.js` remains the sole Phase II definition authority. The only direct-practice mutation is starting the existing Phase II definition at its existing threshold without transition reward.
 - Direct Vercel enumeration remains unavailable; post-commit exact-head repository CI plus GitHub's `Vercel` commit status are required before the next feature run.
+
+## Run 089 — Campaign weak-stage training bridge
+
+**Date:** 2026-09-02  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `8359c1a8676a193e90f9dbebe84e34c43b05987c`.
+- Exact-head GitHub Actions was terminal green (`test` success; Vercel Preview Comments success with zero unresolved items) and GitHub's exact-head `Vercel` commit status was `success`, targeting deployment `7J1jU7DBbyMGMe7qysCQKc5xAM1p`. Direct Vercel project enumeration returned an empty project list, so the GitHub commit status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, inline review threads/comments were empty, and the latest submitted review on the immediately preceding verified head reported no actionable P0–P2 finding. No current-head blocker/regression evidence was found.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): **師範弱點再練** result→practice bridge 5/5/4/5/5 = 24; further direct-practice evidence hardening without a current escaped defect 4/5/3/5/5 = 22; authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. The training bridge won because it turns existing local analysis into an immediate player action without changing combat balance, storage or network authority.
+
+### Delivered slice
+
+- Added `src/training-recommendation.js` as a result-only bridge over the existing run-analysis focus label and practice requests. A normal campaign focus on Stage 2/3/4 renders **師範建議 · 弱點再練** with one tap into the real Ronin/Oni/Shogun practice route; Stage 1 uses a clean campaign restart from Ashigaru rather than introducing a duplicate practice enemy.
+- Recommended practice runs remain the existing isolated practice lifecycle. After one recommended duel, the compact result row confirms **師範專項 · 完成一輪** and offers **再練一次** while the established practice **開始完整主線** handoff remains available.
+- The bridge is absent from challenge/今日陣 and from manually entered practice unless that practice was launched by the recommendation. It does not rewrite run-analysis metrics, mastery score, enemy definitions, timing, input or storage.
+- Added deterministic focus→route Node coverage plus a focused 320×568 browser lifecycle that completes a real four-stage campaign with Stage 2 intentionally weakest, requires the Ronin recommendation and ≥44 px in-bounds action, launches the real Stage 2 practice through the restart lifecycle, proves campaign best isolation, then verifies recommended-practice completion and same-opponent retry.
+- Updated Current Baseline to `0.34.0-evolution`, backlog, changelog, state and this run log in the same candidate tree.
+
+### Regression boundary
+
+- No campaign/practice/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold/reward, challenge momentum/tactics/rival, renderer animation/geometry, mastery formula, run-analysis metric, persistence key, account/network/privacy or asset behavior changed.
+- The only new production observer watches the existing result-analysis focus and run-mode markers; it performs no per-frame polling, timer or remote work and owns no combat authority.
+- New JS/test/runner files were syntax-checked locally. Repository checkout/network access remained unavailable from this runtime, so exact-head repository CI plus GitHub's `Vercel` commit status after this single implementation commit remain the required acceptance evidence before another feature run.
