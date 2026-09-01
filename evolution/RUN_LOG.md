@@ -216,3 +216,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No gameplay, renderer, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, asset, network/privacy or production-main behaviour changed.
 - This repair tightens the delivery loop only; it does not relax the terminal-green exact-head requirement or authorize feature work on a failed Preview.
 - Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before feature work resumes.
+
+## Run 072 — Reconcile architecture SOT with the approved renderer stack
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `85fa50fec4ce9a5b539bfbee07383589edd56c00`.
+- Exact-head CI #106 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success` at deployment `mNXLKbG7wsvCrpDPqsqHbMH8JVkk`. Draft PR #1 remained open/Draft/unmerged; `main` was untouched and inline review threads were empty.
+- The latest exact-head Second Hourly review raised one actionable P2: `docs/ARCHITECTURE.md` still described the pre-migration custom-WebGL app and said a game-engine migration required a future Decision Gate, contradicting the approved PlayCanvas + Vite production stack and current renderer seam.
+- Because repository-local engineering SOT directs future autonomous integration work, this contradiction is treated as a material agent/delivery correctness blocker rather than allowing feature work against a false architecture map.
+
+### Delivered repair
+
+- Rewrote `docs/ARCHITECTURE.md` around the actual `index.html` → deterministic `CombatEngine` / browser orchestrator → `src/renderer.js` seam, with `PlayCanvasView` as the primary renderer and `legacy-renderer.js` as compatibility WebGL2 fallback.
+- Documented the current bounded domain/presentation adapter pattern, Vite/Vercel build path, combat-authority boundary, screen-space direction ownership, local preference/privacy rules and local generated-asset path.
+- Explicitly records that the PlayCanvas + Vite + local glTF/GLB direction is already approved by `docs/3D_PIPELINE_DECISION_GATE.md`; a new Decision Gate is reserved for a materially different stack, cost/privacy/licensing risk or removal of cumulative behaviour.
+- Extended the existing semantic repo smoke so future architecture drift fails only on durable stack/authority invariants rather than sentence wording.
+
+### Regression boundary
+
+- No gameplay, renderer implementation, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, assets, network/privacy or production-main behaviour changed.
+- The new smoke checks documentation against the already-running renderer architecture; it does not change or weaken the existing real PlayCanvas/browser acceptance gates.
+- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before FEATURE work resumes.

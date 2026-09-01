@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 71,
+  "run_number": 72,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Bounded external deployment-provider recovery to one durable incident receipt so a repeated rate-limit failure on the re-arm HEAD cannot generate an unbounded chain of SOT-only retry commits",
-  "last_commit": "1a2ddce4f610d911a519a3808412d2b4c6232bf6",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview after incident-bounded recovery-policy repair",
+  "last_action": "Reconciled stale architecture SOT with the approved PlayCanvas/Vite primary renderer, deterministic combat authority and legacy WebGL2 fallback, with a semantic smoke guard against future renderer-architecture drift",
+  "last_commit": "85fa50fec4ce9a5b539bfbee07383589edd56c00",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview after architecture-SOT correctness repair",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/3jPHtzwpzwXbWsean16q9VutK6Mf",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/mNXLKbG7wsvCrpDPqsqHbMH8JVkk",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -33,8 +33,8 @@
     }
   },
   "next_candidates": [
+    "Add a persistent left-handed STEP control layout that mirrors the frequent lower-corner footwork cluster without changing screen-space parry/swipe direction semantics or the accepted top-right Pause contract",
     "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
-    "Add a left-handed mobile control layout only if it can preserve current parry-region semantics and quiet HUD",
     "Evaluate a bounded endless/seeded challenge vertical slice only if the campaign/practice/readability baseline remains terminal green"
   ]
 }

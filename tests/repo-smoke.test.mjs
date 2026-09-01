@@ -11,6 +11,7 @@ const files = {
   motion: new URL('../src/animation-motion.js', import.meta.url),
   core: new URL('../src/game-core.js', import.meta.url),
   baseline: new URL('../docs/CURRENT_BASELINE.md', import.meta.url),
+  architecture: new URL('../docs/ARCHITECTURE.md', import.meta.url),
   rules: new URL('../docs/EVOLUTION_RULES.md', import.meta.url),
 };
 
@@ -102,4 +103,26 @@ test('evolution source of truth is present', async () => {
   ], 'presentation');
   assert.match(rules, /substantial visible vertical slice/i);
   assert.match(rules, /Never merge the pull request/i);
+});
+
+test('architecture SOT matches the approved PlayCanvas/Vite renderer seam', async () => {
+  const architecture = await readFile(files.architecture, 'utf8');
+
+  assertTerms(architecture, [
+    /PlayCanvas/i,
+    /Vite/i,
+    /primary/i,
+    /src\/renderer\.js/i,
+    /src\/playcanvas-view\.ts/i,
+    /WebGL2/i,
+    /fallback|compatibility/i,
+    /src\/game-core\.js/i,
+    /deterministic/i,
+    /3D_PIPELINE_DECISION_GATE\.md/i,
+  ], 'architecture');
+  assert.doesNotMatch(
+    architecture,
+    /(?:framework|game-engine|engine) migration requires a Decision Gate/i,
+    'architecture must not describe the already-approved PlayCanvas migration as a future gate',
+  );
 });
