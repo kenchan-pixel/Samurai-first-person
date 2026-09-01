@@ -198,3 +198,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No challenge reward amount, mastery formula, campaign/practice scoring, combat timing/damage/input, boss behavior, renderer, storage key, account/network/privacy or asset behavior changed.
 - The repair changes only terminal observation ordering so already-earned score cannot be overwritten by an earlier inner-observer snapshot.
 - Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
+
+## Run 081 — 今日陣 deterministic daily challenge
+
+**Date:** 2026-09-01  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `23b68be583439b5deaebde40bc173260820592c4`.
+- Exact-head CI #118 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Direct Vercel project enumeration returned an empty project list for the known team, so GitHub's exact-head `Vercel` commit status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty. The latest exact-head All Repos review reported no actionable P0/P1/P2 finding and explicitly confirmed the Run 080 terminal-score repair.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): deterministic 今日陣 4/5/5/5/5 = 24; bounded post-wave tactical choice 5/5/5/3/3 = 21; further authored-cut visual refinement without a concrete defect 4/5/3/3/4 = 19. 今日陣 won because it adds replayable player-visible variation using only the already-stable challenge definitions and no new backend/persistence authority.
+
+### Delivered slice
+
+- Added explicit **今日陣** beside practice and 連戰試煉. It derives one player-local `YYYY-MM-DD` key at run start and reuses that key for retry, so the same date reproduces the same formation without an account or network request.
+- Stages 1–3 remain the untouched Ashigaru/Ronin/Oni challenge opening and Stage 8 remains the real Crimson Shogun/Blood Moon. Stages 4–6 deterministically permute only the existing three pressure rematches; Stage 7 remains Ronin Master. Each pressure variant may cyclically rotate its existing attack array so its opening rhythm changes, but no attack object/value is rewritten.
+- Added a compact pointer-transparent **今日陣 MM/DD · 今日刀序已鎖定** intro banner that clears at the first telegraph, plus 今日陣 pressure-stage titles and terminal date identity. The shared start selector becomes four columns without adding row height.
+- 今日陣 composes inside the existing challenge adapter, therefore reuses the same eight-stage lifecycle, 氣勢/不屈, mastery/run analysis, retry/campaign handoff and existing local challenge best. It adds no persistence key, timer, analytics, remote identifier or second combat engine/clock.
+- Added deterministic Node coverage for same-date roster/order, unchanged pressure-rule values using order-insensitive attack fingerprints, daily→standard challenge→campaign restoration and real Shogun final-stage authority. Existing production 320×568 start-layout smoke remains cumulative because it measures every `.practice-button` in the shared selector row.
+
+### Regression boundary
+
+- No campaign/practice definitions, standard challenge pressure values, attack timing/damage/reach/heavy flags, parry/Perfect/STEP windows, direction mapping, boss thresholds, challenge rewards/scoring, renderer animation/geometry, storage key, account/network/privacy or asset provenance behavior changed.
+- The new outer daily roster remains mutable so the existing boss adapter can safely replace the final Shogun definition during Blood Moon; individual daily pressure definitions stay immutable.
+- New JS/tests were syntax-checked before commit. Exact-head repository CI and GitHub Vercel Preview after this single implementation commit remain the required acceptance evidence before another feature run.

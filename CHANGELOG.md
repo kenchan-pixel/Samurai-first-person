@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.29.0-evolution — 今日陣 deterministic daily challenge
+
+- Added start-screen **今日陣**, a local calendar-keyed variant of the existing eight-duel challenge. The same local date reproduces the same pressure roster/order without accounts, network sync or a new persistence key.
+- Stages 1–3 and Stage 8 Crimson Shogun remain unchanged; Stages 4–6 deterministically permute the existing pressure rematches, Stage 7 stays Ronin Master, and pressure attack arrays only rotate their opening order. HP/posture/gap/recovery/Perfect/telegraph/strike/damage values remain unchanged.
+- 今日陣 reuses challenge 氣勢/不屈 and the same local challenge best, adds a compact dated intro/banner plus pressure-stage titles, and keeps the four-entry start selector inside the existing 320×568 layout contract.
+
 ## 0.28.0-evolution — Challenge momentum / 不屈
 
 - Added challenge-only **氣勢**: each hitless wave fills one of two marks, taking a hit breaks the chain, and two consecutive clean clears trigger **不屈**.

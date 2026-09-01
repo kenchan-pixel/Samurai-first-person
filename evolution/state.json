@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 80,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Deferred mastery terminal report scoring until composed outer challenge rewards settle so a final-wave full-health 不屈 +300 remains authoritative in the player-visible result score as well as engine, victory and challenge-best data",
-  "last_commit": "9041b89f7d9586031e860fa542495d15fff923be",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the mastery terminal-score ordering repair",
+  "run_number": 81,
+  "last_action_type": "FEATURE",
+  "last_action": "Added local date-keyed 今日陣 as a deterministic eight-duel challenge variant that permutes existing pressure rematches and rotates only their opening attack order while preserving all combat rule values",
+  "last_commit": "23b68be583439b5deaebde40bc173260820592c4",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the 今日陣 implementation",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/7hUrX9zMDbrrTt48wDHN1UfUpkp9",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/ASbgM2BQcm1ZvftpNTQdk8RhU3vV",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -33,8 +33,8 @@
     }
   },
   "next_candidates": [
-    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
-    "Evaluate a deterministic local date/seed challenge variant only if the base eight-duel plus 氣勢 loop remains readable and stable; no accounts or network",
-    "Use repeatable challenge/practice evidence to refine one bounded pressure or momentum reward value only if a concrete wall or flat spot appears; keep campaign balance independent"
+    "Self-inspect normal challenge versus 今日陣 pressure/readability evidence and refine only if a concrete difficulty or presentation defect appears",
+    "Evaluate one bounded post-wave tactical choice only if it stays one-hand friendly, deterministic and independent from campaign balance",
+    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability"
   ]
 }

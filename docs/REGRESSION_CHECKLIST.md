@@ -5,13 +5,13 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 ## Startup / layout / input
 
 - [ ] App loads without JS errors; Start remains usable inside 320×568 and safe areas.
-- [ ] Guided Duel, 刀路清晰, 節拍提示, 練浪人 / 練將軍 and 連戰試煉 remain reachable without pushing 拔刀 off-screen; the shared selector row stays in bounds with all three entries.
+- [ ] Guided Duel, 刀路清晰, 節拍提示, 練浪人 / 練將軍, 連戰試煉 and 今日陣 remain reachable without pushing 拔刀 off-screen; the shared selector row stays in bounds with all four entries.
 - [ ] STEP/range/feedback follow the selected lower safe corner: right remains default, left-hand mode mirrors only the footwork cluster to the lower-left, and both layouts stay fully inside the 320×568 safe area without obstructing centre/bottom/opposite parry regions.
 - [ ] Pause remains a bounded 44×44 top-right HUD control; its own hit is isolated and immediately adjacent top/right canvas taps still map correctly.
 - [ ] Portrait top parry extends to 42% height; left/right/bottom retain 28%; nearest edge wins overlaps; centre stays neutral; landscape stays symmetric 28%.
 - [ ] Top/right/bottom/left taps and swipes map correctly; one gesture cannot trigger both; mouse fallback works.
 - [ ] STEP captures/rejects dragged pointers correctly and leaves later canvas pointer state clear.
-- [ ] 刀路清晰 / 節拍提示 / impact overlays remain pointer-transparent.
+- [ ] 刀路清晰 / 節拍提示 / impact / challenge / 今日陣 overlays remain pointer-transparent.
 
 ## Pause / guide / accessibility
 
@@ -35,6 +35,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Shogun remains 12 HP / Phase I posture 6; any accepted player damage crossing 6 HP triggers Blood Moon exactly once, resets pressure, creates the existing breathing gap and switches to Phase II posture 7/pressure set; restart returns to Phase I.
 - [ ] 練浪人 starts real Stage 2 and ends there; 練將軍 starts real Stage 4 Phase I, keeps Blood Moon rules and ends there; retry/campaign handoff remain correct.
 - [ ] 連戰試煉 starts exactly 8 stages, preserves HP/score across waves, uses bounded pressure rematches only at Stages 4–7, reaches the real Crimson Shogun/Blood Moon at Stage 8, keeps retry inside challenge and restores the normal four-duel roster on campaign handoff.
+- [ ] 今日陣 is challenge-only and deterministic for the same local `YYYY-MM-DD`: Stages 1–3 and Stage 8 remain unchanged, Stages 4–6 are a permutation of the existing three pressure rematches, Stage 7 stays Ronin Master, and only attack opening order rotates. HP/posture/gap/recovery/Perfect/telegraph/strike/damage/heavy values remain identical to each source pressure definition; standard challenge/campaign/practice restore unchanged.
 - [ ] Challenge 氣勢 is challenge-only: one hitless clear shows 1/2 momentum, any real `player-hit` emitted through the composed CombatEngine path breaks the chain, two consecutive hitless clears reset momentum and trigger exactly one 不屈 reward—+1 HP when damaged or +300 challenge score at full HP. If a full-health final-wave rally and victory are drained together, the post-rally score is authoritative in engine state, victory/result data and challenge-best persistence. Campaign/practice HP, score and timing remain unchanged.
 
 ## Direction / animation / presentation
@@ -50,6 +51,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Four baseline stage identities and Shogun Phase I/Blood Moon signature presentation remain distinct without changing hit/timing/reach/damage; challenge rematches reuse existing identities cleanly.
 - [ ] Live fight remains quiet: no persistent READ/PARRY/footer/block-zone/arena clutter; detailed instructions stay behind 玩法.
 - [ ] Challenge 氣勢 badge appears only during challenge, stays inside the 320×568 viewport, remains pointer-transparent, does not cover the blade-read centre, hides at terminal/campaign handoff, and the terminal challenge strip reports total 不屈 triggers.
+- [ ] 今日陣 shows only a compact pointer-transparent dated intro banner before the first telegraph and pressure-stage title identity; the intro banner clears before live blade reading and the terminal strip identifies the date-keyed run without adding persistent combat clutter.
 
 ## Mastery / privacy / performance
 
@@ -58,15 +60,16 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Practice results stay distinctly labelled and never read/overwrite campaign personal best; worse campaign runs do not overwrite better best.
 - [ ] Challenge results are distinctly labelled, store only separate local waves/score best, and never read/overwrite campaign personal best; retry and campaign handoff preserve this isolation.
 - [ ] Challenge 氣勢/不屈 state is run-local only; no new persistence key, account, identifier or remote record is introduced.
+- [ ] 今日陣 adds no persistence key, account, remote identifier or network request. It intentionally reuses the existing local challenge best and challenge momentum; its date key is run-local only.
 - [ ] No login, analytics, tracking, advertising, paid API, remote identifier or new gameplay backend is introduced without approval.
 - [ ] Timing remains elapsed-time based; no unbounded entity/listener/particle/timer/audio-node/animation-loop growth is introduced.
 - [ ] Generated base character stays lightweight and attack pack remains animation-only/local/reproducible.
 
 ## Delivery gates
 
-- [ ] `npm test` passes, including challenge roster/best/lifecycle, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, and final-wave full-health +300 terminal-score-authority regressions.
+- [ ] `npm test` passes, including challenge roster/best/lifecycle, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, and final-wave full-health +300 terminal-score-authority regressions.
 - [ ] `npm run test:browser` passes.
-- [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, practice/challenge selector layout, 刀路清晰 and 節拍提示.
+- [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, all four practice/challenge selector entries including 今日陣 inside the shared 320×568 start layout, 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
 - [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, actual-Sword multi-pose afterimage history, telegraph→strike→parry→counter and all directional player-facing cuts.
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
