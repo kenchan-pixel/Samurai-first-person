@@ -14,8 +14,10 @@ function stateFor(engine) {
     state = {
       active: false,
       pending: false,
+      resumePending: false,
       checkpoint: 0,
-      resumeAt: Infinity,
+      remainingMs: 0,
+      lastNow: 0,
       choicesMade: 0,
       lastChoice: null,
     };
@@ -205,10 +207,15 @@ function renderChoice(engine, state) {
 }
 
 function openCheckpoint(engine, state, stage) {
-  if (state.pending || !CHALLENGE_TACTIC_CHECKPOINTS.includes(stage)) return;
+  if (state.pending || state.resumePending || !CHALLENGE_TACTIC_CHECKPOINTS.includes(stage)) return;
+  const phaseStartedAt = Number.isFinite(engine.phaseStartedAt) ? engine.phaseStartedAt : 0;
+  const observedNow = Math.max(phaseStartedAt, Number.isFinite(state.lastNow) ? state.lastNow : phaseStartedAt);
   state.pending = true;
+  state.resumePending = false;
   state.checkpoint = stage;
-  state.resumeAt = Number.isFinite(engine.phaseEndsAt) ? engine.phaseEndsAt : engine.phaseStartedAt;
+  state.remainingMs = Number.isFinite(engine.phaseEndsAt)
+    ? Math.max(0, engine.phaseEndsAt - observedNow)
+    : 0;
   engine.phaseEndsAt = Infinity;
   pendingEngine = engine;
   renderChoice(engine, state);
@@ -228,9 +235,9 @@ export function chooseChallengeTactic(engine, choice) {
   engine.playerHp = resolved.playerHp;
   engine.score = resolved.score;
   state.pending = false;
+  state.resumePending = true;
   state.choicesMade += 1;
   state.lastChoice = resolved.choice;
-  engine.phaseEndsAt = state.resumeAt;
   if (pendingEngine === engine) pendingEngine = null;
   renderHidden(state);
 
@@ -260,6 +267,7 @@ export function chooseChallengeTactic(engine, choice) {
 export function installChallengeTactics(Engine = CombatEngine) {
   if (!Engine?.prototype || Engine.prototype[installed]) return;
   const originalStart = Engine.prototype.start;
+  const originalUpdate = Engine.prototype.update;
   const originalDrainEvents = Engine.prototype.drainEvents;
   Object.defineProperty(Engine.prototype, installed, { value: true });
 
@@ -268,8 +276,10 @@ export function installChallengeTactics(Engine = CombatEngine) {
     const state = stateFor(this);
     state.active = Boolean(this[CHALLENGE_ACTIVE]);
     state.pending = false;
+    state.resumePending = false;
     state.checkpoint = 0;
-    state.resumeAt = Infinity;
+    state.remainingMs = 0;
+    state.lastNow = Number.isFinite(now) ? now : 0;
     state.choicesMade = 0;
     state.lastChoice = null;
     if (pendingEngine === this) pendingEngine = null;
@@ -281,15 +291,30 @@ export function installChallengeTactics(Engine = CombatEngine) {
     return result;
   };
 
+  Engine.prototype.update = function challengeTacticsUpdate(now) {
+    const state = stateFor(this);
+    if (state.resumePending && Number.isFinite(now)) {
+      const remainingMs = Math.max(0, Number(state.remainingMs) || 0);
+      this.phaseStartedAt = now;
+      this.phaseEndsAt = now + remainingMs;
+      state.resumePending = false;
+      state.remainingMs = 0;
+    }
+    if (Number.isFinite(now)) state.lastNow = now;
+    return originalUpdate.call(this, now);
+  };
+
   Engine.prototype.drainEvents = function challengeTacticsDrainEvents() {
     const events = originalDrainEvents.call(this);
     const state = stateFor(this);
     const active = Boolean(this[CHALLENGE_ACTIVE]);
 
     if (!active) {
-      if (state.active || state.pending) {
+      if (state.active || state.pending || state.resumePending) {
         state.active = false;
         state.pending = false;
+        state.resumePending = false;
+        state.remainingMs = 0;
         if (pendingEngine === this) pendingEngine = null;
         renderHidden(state);
       }
@@ -303,6 +328,8 @@ export function installChallengeTactics(Engine = CombatEngine) {
         openCheckpoint(this, state, stage);
       } else if (event.type === 'victory' || event.type === 'defeat') {
         state.pending = false;
+        state.resumePending = false;
+        state.remainingMs = 0;
         if (pendingEngine === this) pendingEngine = null;
         renderHidden(state);
         event.detail = {

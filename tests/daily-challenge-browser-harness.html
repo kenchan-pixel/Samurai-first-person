@@ -129,6 +129,16 @@
         tacticUiOk = tacticUiOk && parked;
         if (!parked) throw new Error(`stage ${stage} tactical choice did not safely park the between-wave transition`);
 
+        uiNow += 5000;
+        uiCombat.update(uiNow);
+        const waitedSafely =
+          uiCombat.enemyIndex === stage - 1 &&
+          uiCombat.phase === 'stage-clear' &&
+          uiCombat.phaseEndsAt === Infinity &&
+          root.dataset.challengeTacticPending === 'true';
+        tacticUiOk = tacticUiOk && waitedSafely;
+        if (!waitedSafely) throw new Error(`stage ${stage} decision wait advanced combat before a choice`);
+
         const beforeHp = uiCombat.playerHp;
         const beforeScore = uiCombat.score;
         const button = panel.querySelector(`[data-challenge-tactic="${tacticChoice}"]`);
@@ -152,14 +162,27 @@
             uiCombat.playerHp === Math.min(uiCombat.playerMaxHp, beforeHp + 1) &&
             uiCombat.score === beforeScore;
         }
+
+        uiNow += 5000;
+        uiCombat.update(uiNow);
+        const rebased =
+          uiCombat.enemyIndex === stage - 1 &&
+          uiCombat.phase === 'stage-clear' &&
+          Number.isFinite(uiCombat.phaseEndsAt) &&
+          uiCombat.phaseEndsAt > uiNow;
+        tacticUiOk = tacticUiOk && rebased;
+        if (!rebased) throw new Error(`stage ${stage} did not rebase its remaining transition time after the choice`);
+
+        uiNow = uiCombat.phaseEndsAt;
+        uiCombat.update(uiNow);
       } else {
         const quiet = root.dataset.challengeTacticPending !== 'true' && (!panel || panel.hidden === true);
         tacticUiOk = tacticUiOk && quiet;
         if (!quiet) throw new Error(`stage ${stage} unexpectedly opened a tactical choice`);
+        uiNow += 20;
+        uiCombat.update(uiNow);
       }
 
-      uiNow += 20;
-      uiCombat.update(uiNow);
       const advanceEvents = uiCombat.drainEvents();
       await flush();
       return [...defeatedEvents, ...advanceEvents];

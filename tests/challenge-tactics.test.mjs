@@ -49,7 +49,7 @@ test('血誓 trades exactly one HP for bounded challenge score and never consume
   });
 });
 
-test('installed tactic adapter parks only challenge checkpoints and restores campaign untouched', () => {
+test('installed tactic adapter freezes decision time and restores campaign untouched', () => {
   installChallengeMode(CombatEngine);
   installChallengeMomentum(CombatEngine);
   installChallengeTactics(CombatEngine);
@@ -62,28 +62,47 @@ test('installed tactic adapter parks only challenge checkpoints and restores cam
   engine.enemyHp = 0;
   engine.phase = 'stage-clear';
   engine.phaseStartedAt = 100;
-  engine.phaseEndsAt = 200;
+  engine.phaseEndsAt = 1550;
   engine.events.push({ type: 'enemy-defeated', detail: { enemyId: engine.enemy.id, stage: 2 } });
   engine.drainEvents();
   assert.equal(engine.phaseEndsAt, Infinity, 'wave 2 should wait for a tactical decision');
+
+  engine.update(5100);
+  assert.equal(engine.phase, 'stage-clear', 'waiting five seconds at the dialog must not advance combat');
+  assert.equal(engine.phaseEndsAt, Infinity, 'the stage remains parked while the choice is open');
 
   const beforeScore = engine.score;
   const bloodVow = chooseChallengeTactic(engine, 'blood-vow');
   assert.equal(bloodVow.accepted, true);
   assert.equal(engine.playerHp, engine.playerMaxHp - 1);
   assert.equal(engine.score, beforeScore + CHALLENGE_TACTIC_SCORE_BONUS);
-  assert.equal(engine.phaseEndsAt, 200, 'selection restores the original stage-clear transition');
+  assert.equal(engine.phaseEndsAt, Infinity, 'selection waits for the next authoritative engine clock tick');
+
+  engine.update(9000);
+  assert.equal(engine.phase, 'stage-clear', 'decision time must be excluded when the stage-clear clock resumes');
+  assert.equal(engine.phaseStartedAt, 9000);
+  assert.equal(engine.phaseEndsAt, 10450, 'the full remaining 1450ms stage-clear delay is rebased after the wait');
+
+  engine.update(10449);
+  assert.equal(engine.phase, 'stage-clear');
+  engine.update(10450);
+  assert.equal(engine.phase, 'stage-intro');
+  assert.equal(engine.enemyIndex, 2);
+  assert.equal(engine.phaseStartedAt, 10450);
+  assert.equal(engine.phaseEndsAt, 12000, 'the next opponent still receives the full 1550ms intro');
+  engine.update(11999);
+  assert.equal(engine.phase, 'stage-intro', 'the next telegraph cannot be fast-forwarded by decision time');
 
   requestChallenge(false);
-  engine.start(1000);
+  engine.start(13000);
   engine.drainEvents();
   engine.enemyIndex = 1;
   engine.phase = 'stage-clear';
-  engine.phaseStartedAt = 1100;
-  engine.phaseEndsAt = 1200;
+  engine.phaseStartedAt = 13100;
+  engine.phaseEndsAt = 13200;
   engine.events.push({ type: 'enemy-defeated', detail: { enemyId: engine.enemy.id, stage: 2 } });
   engine.drainEvents();
-  assert.equal(engine.phaseEndsAt, 1200, 'campaign stage clear must not be parked');
+  assert.equal(engine.phaseEndsAt, 13200, 'campaign stage clear must not be parked');
   assert.equal(chooseChallengeTactic(engine, 'recover').accepted, false);
 });
 

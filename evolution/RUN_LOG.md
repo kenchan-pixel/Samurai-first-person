@@ -275,3 +275,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice roster or balance, challenge enemy timing/HP/posture definitions, attack damage/reach, parry/Perfect/STEP windows, direction mapping, Blood Moon threshold, renderer animation/geometry, storage key, account/network/privacy, analytics, paid API or asset provenance behavior changed.
 - The feature adds no inventory, economy, perk tree, persistence key, timer, remote request or second combat engine/clock. The only new gameplay mutations are the documented challenge-only +1 HP or -1 HP/+350 score between-wave choice.
 - Local repository checkout was unavailable, but the new JS/test/runner and browser module script were syntax-checked before commit. Exact-head repository CI and GitHub Vercel Preview after this single implementation commit remain the required acceptance evidence before the next feature run.
+
+## Run 084 — Tactical-choice pause timing repair
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `4b59042e6259cbdca9bb29b59f66d3c20cd55b91`.
+- Exact-head CI #121 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`; direct Vercel deployment enumeration returned 403, so the GitHub commit status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, Vercel Preview feedback reported zero unresolved threads, and inline GitHub review threads were empty.
+- The latest exact-head All Repos review found one blocking P1: the tactical-choice adapter parked `stage-clear` with `Infinity` but restored the old absolute deadline after a choice, so a player who spent longer reading the dialog could make the next engine update catch up through stage intro/telegraph and attack too early.
+
+### Repair
+
+- Replaced the stale absolute-deadline restore with a frozen **remaining stage-clear duration**. Opening a Waves 2/4/6 choice records only the remaining transition time and parks progression.
+- Selecting 整息/血誓 applies the same documented HP/score effect immediately but leaves combat parked until the next authoritative `CombatEngine.update(now)`. That first post-choice engine tick rebases the remaining transition onto the real combat clock before normal update processing, so time spent deciding — including delayed/background frames — cannot fast-forward the next duel.
+- Strengthened the installed-adapter regression: it waits five seconds with the choice open, selects 血誓, delays the first post-choice engine tick again, then proves the full 1450 ms stage-clear remainder and full 1550 ms next-stage intro still occur before any telegraph can begin. Campaign stage-clear remains unparked and tactics remain unavailable outside challenge.
+
+### Regression boundary
+
+- No challenge choice values, enemy timing definitions, damage/reach, parry/Perfect/STEP rules, Blood Moon thresholds, direction mapping, renderer, persistence, account/network/privacy or campaign/practice behavior changed.
+- The tactic adapter now wraps `CombatEngine.update` only to obtain the authoritative combat-clock timestamp for one pending resume; it introduces no second clock, timer, polling loop or remote dependency.
+- Local source/test syntax checks passed. Exact-head repository CI and GitHub Vercel Preview after this single commit remain required before feature work resumes.
