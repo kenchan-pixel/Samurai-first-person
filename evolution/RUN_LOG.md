@@ -249,3 +249,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice/challenge enemy value, attack timing/damage/reach, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold, challenge reward/scoring, renderer, storage, account/network/privacy or asset behavior changed.
 - The new browser companion exists only because a concrete current-head daily lifecycle gap escaped the existing harness; it does not create a second gameplay implementation or clock.
 - New runner and harness modules passed local syntax checks. Repository checkout/network access was unavailable in the runtime, so exact-head CI plus the GitHub Vercel status after this single commit remain the required acceptance evidence before feature work resumes.
+
+## Run 083 — Challenge post-wave tactical choice
+
+**Date:** 2026-09-01  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `49f26f2af3f7249bf39c7ab27e3267baad4a302a`.
+- Exact-head CI #120 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review comments were empty.
+- The latest exact-head review reported no actionable P0/P1/P2 finding and explicitly confirmed the Run 082 今日陣 browser-lifecycle P2 was closed, so the delivery gate was clear for feature work.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): bounded post-wave tactical choice 5/5/5/4/4 = 23; challenge/今日陣 pressure tuning without a concrete defect 4/5/3/3/4 = 19; further authored-cut visual refinement without pixel-level Preview inspection 5/5/3/2/3 = 18. The tactical choice won because it adds meaningful player agency inside the already-stable local challenge seam without expanding the core combat rules or backend surface.
+
+### Delivered slice
+
+- Added `src/challenge-tactics.js` outside the existing challenge → daily → momentum adapters. Only after Waves 2, 4 and 6, `enemy-defeated` parks the current `stage-clear` transition until one one-tap choice is made; the original transition deadline is then restored so the same deterministic CombatEngine progression resumes.
+- **整息** restores up to 1 HP with no score change. **血誓** trades exactly 1 HP for +350 challenge score and is disabled at 1 HP, so it can never directly defeat the player. These effects are challenge-only and compose after any same-wave 氣勢/不屈 reward.
+- Added a centered phone-safe tactical card with current wave/HP/score and two ≥44 px choices. It owns pointer input only while the between-wave gate is open, hides before the next stage, resets on retry/campaign handoff, and changes the challenge start copy to **八關 · 聚氣＋抉擇**.
+- Added deterministic resolver/installed-adapter Node coverage for checkpoint bounds, exact heal/risk values, last-HP safety, restored stage-clear timing and campaign isolation. Extended the existing focused 320×568 今日陣 browser companion instead of creating another harness: it now proves all three checkpoints park before advancement, renders both choices in bounds, exercises 血誓/整息 effects, completes the same eight-stage daily run, resets tactics on retry and keeps campaign clean.
+- Updated Current Baseline, backlog, changelog, state and this run log in the same candidate implementation tree.
+
+### Regression boundary
+
+- No campaign/practice roster or balance, challenge enemy timing/HP/posture definitions, attack damage/reach, parry/Perfect/STEP windows, direction mapping, Blood Moon threshold, renderer animation/geometry, storage key, account/network/privacy, analytics, paid API or asset provenance behavior changed.
+- The feature adds no inventory, economy, perk tree, persistence key, timer, remote request or second combat engine/clock. The only new gameplay mutations are the documented challenge-only +1 HP or -1 HP/+350 score between-wave choice.
+- Local repository checkout was unavailable, but the new JS/test/runner and browser module script were syntax-checked before commit. Exact-head repository CI and GitHub Vercel Preview after this single implementation commit remain the required acceptance evidence before the next feature run.

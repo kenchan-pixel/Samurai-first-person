@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.30.0-evolution — Challenge post-wave tactical choice
+
+- Added three challenge-only **戰前抉擇** checkpoints after Waves 2/4/6. The stage-clear transition waits for one phone-friendly tap, then resumes the same CombatEngine progression path.
+- **整息** restores up to 1 HP. **血誓** trades exactly 1 HP for +350 challenge score and is disabled at the last HP, creating a bounded risk/recovery decision that composes with existing 氣勢/不屈 without changing enemy timing, damage or campaign balance.
+- Added deterministic resolver/adapter coverage plus true 320×568 今日陣 browser verification for in-bounds ≥44 px choices, exact HP/score effects, all three checkpoints, retry reset and campaign isolation. No persistence, account, network or inventory/economy surface was added.
+
 ## 0.29.0-evolution — 今日陣 deterministic daily challenge
 
 - Added start-screen **今日陣**, a local calendar-keyed variant of the existing eight-duel challenge. The same local date reproduces the same pressure roster/order without accounts, network sync or a new persistence key.
@@ -117,6 +123,3 @@
 
 ## 0.2.1 / 0.2.0-evolution — Animation/readability correctness
 - Added phase-driven combat animation/trails and hardened renderer correctness with executable WebGL2 smoke.
-
-## 0.1.0 — Initial playable baseline
-- Mobile-first first-person WebGL dojo, directional parry/swipe combat, three enemies, progression, HUD/audio, tests, CI and evolution SOT.

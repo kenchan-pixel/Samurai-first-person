@@ -52,15 +52,19 @@ try {
     ['data-daily-challenge-browser-integration="pass"', 'daily challenge lifecycle did not complete'],
     ['data-daily-challenge-entry="true"', 'real 今日陣 entry/date/banner activation failed'],
     ['data-daily-challenge-banner-lifecycle="true"', '今日陣 banner did not clear at first telegraph'],
+    ['data-challenge-tactic-browser="true"', 'post-wave tactical choice did not safely park/render at 320×568'],
+    ['data-challenge-tactic-risk-reward="true"', '整息/血誓 reward trade did not match the challenge rule'],
+    ['data-challenge-tactic-three-choices="true"', 'challenge did not complete exactly the three Stage 2/4/6 tactical checkpoints'],
     ['data-daily-challenge-terminal="true"', '今日陣 terminal date summary failed'],
     ['data-daily-challenge-retry="true"', '今日陣 retry did not preserve date key'],
     ['data-daily-challenge-same-formation="true"', '今日陣 retry changed the daily formation'],
     ['data-daily-challenge-campaign-handoff="true"', '今日陣 state leaked into full campaign'],
+    ['data-challenge-tactic-campaign-isolation="true"', 'challenge tactical state leaked into campaign'],
   ];
   for (const [marker, message] of required) {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 6000)}`);
   }
-  console.log(`daily challenge browser smoke passed with ${browser}: real 今日陣 entry → banner cleanup → 8-stage terminal → same-date retry → campaign handoff`);
+  console.log(`daily challenge browser smoke passed with ${browser}: real 今日陣 entry → 3 tactical checkpoints → 8-stage terminal → same-date retry → campaign handoff`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

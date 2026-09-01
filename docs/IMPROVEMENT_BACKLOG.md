@@ -23,12 +23,14 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 077: added challenge-only **氣勢 / 不屈** depth: hitless-wave momentum, chain break on damage, +1 HP recovery when hurt or +300 challenge score at full health, compact live feedback and terminal rally count.
 - Runs 078–080: hardened real player-hit momentum break and final-wave +300 score authority through engine, terminal event, visible mastery result and challenge-best persistence.
 - Run 081: added local **今日陣**, a player-local date-keyed challenge variant that deterministically permutes only existing pressure rematches and rotates their opening attack order while preserving all combat-rule values and the same challenge momentum/best surfaces.
+- Run 082: added a true 320×568 browser lifecycle for 今日陣 covering real entry/banner cleanup, eight-stage terminal identity, same-date retry and campaign handoff.
+- Run 083: added challenge-only **戰前抉擇** after Waves 2/4/6: one-tap 整息 (+1 HP) versus 血誓 (-1 HP, +350 score), with last-HP safety, parked stage transition and real 320×568 今日陣 integration coverage.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
 1. **Guard + four cuts self-inspection** — inspect exact Preview/runtime evidence at normal speed. Confirm the initial blade line visibly points at the player, all four authored cuts stay coherent through body/arms/Sword, RIGHT/LEFT read as screen-space travel, and full-blade afterimages remain subordinate to the real blade. Refine only concrete defects; never return to per-frame Chest/arm/HandR overrides.
 2. **Ronin/Shogun repeated practice evidence** — use real Stage 2/4 practice plus local stage analysis to separate reading, missed counters, STEP misuse, raw timing pressure and Blood Moon pressure before changing campaign balance.
-3. **Challenge / 今日陣 pressure + momentum evidence** — compare the standard eight-duel ladder and same-date 今日陣 to observe whether pressure ordering plus the hitless-wave recovery loop create meaningful endurance decisions without flattening difficulty. Tune challenge-only timing/HP/posture/reward values only from repeatable evidence; do not change campaign balance merely to make challenge harder.
+3. **Challenge / 今日陣 pressure + momentum + tactics evidence** — compare the standard eight-duel ladder and same-date 今日陣 to observe whether pressure ordering, hitless-wave recovery and the three post-wave risk/recovery choices create meaningful endurance decisions without flattening difficulty. Tune challenge-only HP/score reward values only from repeatable evidence; do not change campaign balance merely to make challenge harder.
 4. **Perfect Parry / Perfect STEP clarity** — keep their rewards visibly distinct: Perfect Parry builds posture; Perfect STEP does not and requires spacing to escape reach.
 5. **Timing-assist coexistence** — keep optional/default-off, subordinate to the real blade, correct through Ronin feints, pointer-transparent and DOM-idle when off.
 6. **First-person grip readability** — ensure hands/forearms improve embodiment without covering enemy blade reads or making directional parry/counter motion noisy.
@@ -37,7 +39,7 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 
 ## High-value candidates after core acceptance
 
-- Post-wave tactical choice: consider one bounded between-wave choice only if it can stay one-hand friendly, deterministic, local-only and clearly separate from campaign balance; avoid creating an inventory/economy system.
+- Tactical-choice refinement only if runtime evidence shows the current 2/4/6 cadence, +1 HP safe option or -1 HP/+350 score risk option is trivial, confusing or dominant; do not expand it into inventory/economy/perks without a separate product need.
 - Evidence-based difficulty refinement: tune one bounded Ronin/Shogun rhythm/window/phase pressure only if repeatable practice/runtime evidence shows a wall.
 - Accessibility: broader motion controls only where they solve a concrete accessibility gap. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
 - Further Shogun motion/phase refinement only from concrete readability/performance evidence.

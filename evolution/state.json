@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 82,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Closed the current-head 今日陣 browser-lifecycle P2 with a true 320x568 real-control gate covering dated entry/banner cleanup, eight-stage terminal identity, same-date retry formation and clean campaign handoff",
-  "last_commit": "414392de5c06cc575b2416feb1bea88201c2a682",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the 今日陣 browser-lifecycle blocker fix",
+  "run_number": 83,
+  "last_action_type": "FEATURE",
+  "last_action": "Added challenge-only Waves 2/4/6 post-wave tactical choices: 整息 restores up to 1 HP, while 血誓 trades 1 HP for +350 score with last-HP safety and a parked one-tap stage transition",
+  "last_commit": "49f26f2af3f7249bf39c7ab27e3267baad4a302a",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the post-wave tactical-choice feature",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/U1YiNMZBpDqyB6qy4WwExzt5Qcdc",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/HWoidBtykSy94wmKHdJN48XZgUfT",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -33,8 +33,8 @@
     }
   },
   "next_candidates": [
-    "Self-inspect normal challenge versus 今日陣 pressure/readability evidence and refine only if a concrete difficulty or presentation defect appears",
-    "Evaluate one bounded post-wave tactical choice only if it stays one-hand friendly, deterministic and independent from campaign balance",
-    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability"
+    "Self-inspect challenge and 今日陣 tactical-choice evidence; tune only if the 2/4/6 cadence or HP-score trade proves trivial, confusing or dominant",
+    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
+    "Use repeated Ronin/Shogun practice evidence to refine one bounded difficulty/readability issue only if a concrete wall appears"
   ]
 }
