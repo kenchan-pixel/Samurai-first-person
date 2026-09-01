@@ -17,29 +17,31 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Runs 066–067: restored exact-head SOT verification after wording drift, then replaced the brittle sentence-literal smoke with section-scoped semantic invariants so harmless editorial rewrites cannot consume another blocker run.
 - Run 068: added four pooled full-blade afterimages sampled from the actual authored Sword transform, strengthening cut/follow-through readability without steering the weapon or changing combat.
 - Runs 069–072: live reduced-motion afterimage correctness, bounded Vercel rate-limit recovery, durable one-shot incident receipts and renderer-architecture SOT reconciliation.
-- Run 073: added a persistent right/left STEP-side preference that mirrors only the lower-corner footwork cluster while keeping all screen-space parry/swipe directions and top-right Pause unchanged.
+- Runs 073–074: added persistent right/left STEP-side preference, then repaired left safe-area geometry and added real 320×568 production coverage.
+- Run 075: added local **連戰試煉**, an eight-duel endurance ladder with pressure rematches, real Stage 8 Blood Moon boss, separate local challenge best and clean retry/campaign handoff.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
 1. **Guard + four cuts self-inspection** — inspect exact Preview/runtime evidence at normal speed. Confirm the initial blade line visibly points at the player, all four authored cuts stay coherent through body/arms/Sword, RIGHT/LEFT read as screen-space travel, and full-blade afterimages remain subordinate to the real blade. Refine only concrete defects; never return to per-frame Chest/arm/HandR overrides.
-2. **Ronin/Shogun repeated practice evidence** — use real Stage 2/4 practice plus local stage analysis to separate reading, missed counters, STEP misuse, raw timing pressure and Blood Moon pressure before changing balance.
-3. **Perfect Parry / Perfect STEP clarity** — keep their rewards visibly distinct: Perfect Parry builds posture; Perfect STEP does not and requires spacing to escape reach.
-4. **Timing-assist coexistence** — keep optional/default-off, subordinate to the real blade, correct through Ronin feints, pointer-transparent and DOM-idle when off.
-5. **First-person grip readability** — ensure hands/forearms improve embodiment without covering enemy blade reads or making directional parry/counter motion noisy.
-6. **STEP + blade-read + Pause layout** — maintain quiet HUD, top-right bounded Pause, reachable adjacent top/right parries, persistent right/left STEP-side preference and optional rails/ring without overlap.
-7. **Performance evidence** — tune shadows/material/pixel ratio only from concrete browser/runtime evidence; physical-phone heat/frame evidence remains valuable but not mandatory.
+2. **Ronin/Shogun repeated practice evidence** — use real Stage 2/4 practice plus local stage analysis to separate reading, missed counters, STEP misuse, raw timing pressure and Blood Moon pressure before changing campaign balance.
+3. **Challenge pressure evidence** — use the new local eight-duel challenge to observe whether pressure rematches feel meaningfully harder without becoming unreadable. Tune challenge-only timing/HP/posture from repeatable evidence; do not change campaign balance merely to make challenge harder.
+4. **Perfect Parry / Perfect STEP clarity** — keep their rewards visibly distinct: Perfect Parry builds posture; Perfect STEP does not and requires spacing to escape reach.
+5. **Timing-assist coexistence** — keep optional/default-off, subordinate to the real blade, correct through Ronin feints, pointer-transparent and DOM-idle when off.
+6. **First-person grip readability** — ensure hands/forearms improve embodiment without covering enemy blade reads or making directional parry/counter motion noisy.
+7. **STEP + blade-read + Pause layout** — maintain quiet HUD, top-right bounded Pause, reachable adjacent top/right parries, persistent right/left STEP-side preference and optional rails/ring without overlap.
+8. **Performance evidence** — tune shadows/material/pixel ratio only from concrete browser/runtime evidence; physical-phone heat/frame evidence remains valuable but not mandatory.
 
 ## High-value candidates after core acceptance
 
 - Evidence-based difficulty refinement: tune one bounded Ronin/Shogun rhythm/window/phase pressure only if repeatable practice/runtime evidence shows a wall.
-- Accessibility: broader motion controls only where they solve a concrete accessibility gap; the persistent left-handed STEP layout is now delivered. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
-- Challenge mode: bounded endless/seeded pressure with mastery-aware scoring and clean restart.
+- Challenge depth: only after the eight-duel baseline is proven, consider a deterministic daily/seeded variant or mastery-aware challenge modifiers without accounts/network requirements.
+- Accessibility: broader motion controls only where they solve a concrete accessibility gap. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
 - Further Shogun motion/phase refinement only from concrete readability/performance evidence.
 - Deeper first-person weapon fidelity only if current two-hand silhouette stays readable and performant.
 
 ## Data / telemetry Decision Gate
 
-Remote gameplay collection remains unapproved. Current practice, mastery and run-analysis are local-only. Before any backend implementation, define minimum anonymous schema, explicit raw-input/device-ID exclusions, retention/deletion, backend/secrets, player notice/consent/opt-out, test-session handling and the dashboard/AI output that justifies collection. Until approved, send no gameplay records remotely.
+Remote gameplay collection remains unapproved. Current practice, challenge, mastery and run-analysis are local-only. Before any backend implementation, define minimum anonymous schema, explicit raw-input/device-ID exclusions, retention/deletion, backend/secrets, player notice/consent/opt-out, test-session handling and the dashboard/AI output that justifies collection. Until approved, send no gameplay records remotely.
 
 ## Technical opportunities
 

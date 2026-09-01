@@ -25,13 +25,11 @@
         </div>
         <div id="combo" class="hud__minor">連擊 0</div>
       </section>
-
       <section class="hud__stage">
         <div id="stage-label" class="hud__eyebrow">STAGE 1 / 4</div>
         <strong id="enemy-name">Ashigaru Scout</strong>
         <span id="arena-name">Gate of Reeds</span>
       </section>
-
       <section class="hud__enemy">
         <div class="health-row health-row--enemy">
           <span>敵</span>
@@ -45,19 +43,16 @@
       <strong id="prompt-title">READ THE BLADE</strong>
       <span id="prompt-subtitle">觀察敵人起手方向</span>
     </section>
-
     <div id="direction-indicator" class="direction-indicator" aria-hidden="true">
       <span class="direction-indicator__arrow">↑</span>
       <span id="direction-name">上段</span>
     </div>
-
     <div class="zones" aria-hidden="true">
       <div class="zone zone--top" data-direction="top"><span>上段格擋</span></div>
       <div class="zone zone--right" data-direction="right"><span>右格擋</span></div>
       <div class="zone zone--bottom" data-direction="bottom"><span>下段格擋</span></div>
       <div class="zone zone--left" data-direction="left"><span>左格擋</span></div>
     </div>
-
     <footer class="footer-hud">
       <div id="phase-label" class="phase-label">待命</div>
       <div id="gesture-hint" class="gesture-hint">點擊四邊格擋 · 掃屏斬擊</div>
@@ -88,10 +83,7 @@
         <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
       </div>
     </section>
-
-    <div id="unsupported" class="unsupported" hidden>
-      此瀏覽器未能啟動 WebGL。請改用較新版本 Safari、Chrome、Edge 或 Firefox。
-    </div>
+    <div id="unsupported" class="unsupported" hidden>此瀏覽器未能啟動 WebGL。請改用較新版本 Safari、Chrome、Edge 或 Firefox。</div>
   </main>
 
   <script type="module" src="./src/mastery-overlay.js"></script>
@@ -103,6 +95,7 @@
   <script type="module" src="./src/perfect-riposte.js"></script>
   <script type="module" src="./src/perfect-step.js"></script>
   <script type="module" src="./src/practice-mode.js"></script>
+  <script type="module" src="./src/challenge-mode.js"></script>
   <script type="module" src="./src/readability-mode.js"></script>
   <script type="module" src="./src/timing-assist.js"></script>
   <script type="module" src="./src/combat-ux-runtime-observer.js"></script>

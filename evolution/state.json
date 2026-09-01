@@ -3,11 +3,11 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 74,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the left-hand STEP safe-area regression by removing inherited centering transforms and strengthened the real 320×568 production Combat UX gate to verify persistence, footwork geometry, fixed swipe semantics and top-right Pause/parry routing",
-  "last_commit": "dde399e396f72ed1eea342ab52ba2abec34de492",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview after left-hand STEP safe-area regression repair",
+  "run_number": 75,
+  "last_action_type": "FEATURE",
+  "last_action": "Added a bounded local eight-duel challenge trial with pressure rematches, real Crimson Shogun/Blood Moon finale, separate local challenge best and clean retry/campaign handoff",
+  "last_commit": "45627fbfa86dd3050ce192dac9d49ccd7b80559c",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the eight-duel challenge slice",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -34,7 +34,7 @@
   },
   "next_candidates": [
     "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
-    "Evaluate a bounded endless/seeded challenge vertical slice only if the campaign/practice/readability baseline remains terminal green",
+    "Use repeatable challenge/practice evidence to refine one bounded pressure value only if a concrete wall or flat spot appears; keep campaign balance independent",
     "Evaluate broader motion/accessibility controls only from a concrete usability gap; do not mirror combat direction semantics or duplicate existing readability/timing overlays"
   ]
 }

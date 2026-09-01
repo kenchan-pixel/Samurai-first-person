@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.26.0-evolution**
+Version: **0.27.0-evolution**
 
 This is the cumulative approved baseline on `autonomous-evolution`. `main` remains Ken-approved production until Draft PR #1 is manually merged. Future work may replace implementations but must not silently remove user-facing behaviour.
 
@@ -8,15 +8,16 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 
 - Mobile-first portrait start screen → four sequential duels → victory/defeat → restart without page reload. Ashigaru, Wandering Ronin and Oni Guard lead into Stage 4 Crimson Shogun.
 - Optional direct **練浪人 / 練將軍** practice launches the real Stage 2 / Stage 4 definitions, ends after the selected duel, supports immediate retry or return to the full campaign, and never writes campaign personal best.
+- Optional local **連戰試煉** launches a bounded eight-duel endurance ladder. Stages 1–3 reuse the baseline Ashigaru/Ronin/Oni definitions, Stages 4–7 are pressure rematches with higher HP/posture and tighter existing attack timings, and Stage 8 is the real Crimson Shogun with the existing Blood Moon transition. Player HP and score carry across all eight duels; retry stays in challenge and **開始完整主線** restores the normal four-duel campaign.
 - Touch, stylus and mouse remain supported. Four defensive directions and four-direction swipe counters are unchanged.
 - Portrait parry regions are intentionally asymmetric for thumb reach: central top extends to 42% height; left/right/bottom retain 28% edge depth; nearest edge wins overlaps; centre remains neutral. Landscape keeps symmetric 28% mapping.
 - A 44×44 Pause button stays in the top-right HUD safe area and owns only its own hit rectangle. Adjacent top/right canvas taps remain parry targets. Pause freezes game time, combat phase and animation; 玩法 returns to still-paused state; resume has no wall-clock catch-up.
-- The start screen now exposes a persistent **STEP：右手側 / STEP：左手側** preference. Right remains the default; left mirrors only the lower-corner STEP button, distance chip and STEP feedback. Screen-space parry/swipe directions and the accepted top-right Pause contract never mirror.
+- The start screen exposes a persistent **STEP：右手側 / STEP：左手側** preference. Right remains the default; left mirrors only the lower-corner STEP button, distance chip and STEP feedback. Screen-space parry/swipe directions and the accepted top-right Pause contract never mirror.
 
 ## Direction semantics and enemy blade baseline
 
 - Gameplay directions are player-screen semantics. **RIGHT means the incoming enemy cut travels toward screen-right; LEFT travels toward screen-left.** Because the opponent faces the player, the renderer mirrors only the enemy horizontal presentation index (1↔3). Player tap/swipe direction and first-person parry/counter presentation remain direct and unchanged.
-- The opponent now uses an authored `Guard` in ready / stage-intro / gap. Its actual Sword world axis points strongly toward the player/camera before an attack starts; the Sword remains directly parented to HandR.
+- The opponent uses an authored `Guard` in ready / stage-intro / gap. Its actual Sword world axis points strongly toward the player/camera before an attack starts; the Sword remains directly parented to HandR.
 - The local animation-only `samurai-attacks-v1.glb` contains `Guard`, `AttackTop`, `AttackRight`, `AttackBottom`, `AttackLeft` on the shared 19-joint rig. Every directional attack starts from and returns to the same player-facing Guard.
 - Pack-local `AttackRight/AttackLeft` names are historical opponent-rig labels; `src/enemy-screen-space-direction.js` is the sole horizontal semantic seam. No combat-rule direction values are rewritten.
 - Normal telegraph → strike → recovery stays continuously on one authored `Attack*`; feints switch directly between authored directional tracks; interrupted recovery deliberately uses the base `Parry` clip.
@@ -48,7 +49,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 
 ## Crimson Shogun
 
-- Stage 4 Crimson Shogun has 12 HP and Phase I posture 6. Any accepted player-damage source that leaves it at 6 HP or less triggers Blood Moon Phase II exactly once before another counter can resolve.
+- Stage 4 campaign / Stage 8 challenge Crimson Shogun has 12 HP and Phase I posture 6. Any accepted player-damage source that leaves it at 6 HP or less triggers Blood Moon Phase II exactly once before another counter can resolve.
 - Phase II resets posture/attack cursor, creates the existing 1100 ms breathing gap, uses posture 7, tighter perfect timing and a changed pressure set. Restart restores Phase I.
 - Signature presentation remains presentation-only: deliberate Phase I heavy preparation; Blood Moon becomes lower, more forward and more directional with stronger crimson weapon/read-trail emphasis. Boss atmosphere remains bounded, pointer-transparent and reduced-motion aware.
 
@@ -58,6 +59,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - Automatic Perfect Parry / Perfect STEP riposte damage contributes to `damageDealt`; `counters` remains manual swipe counters only.
 - In-memory run analysis records per-stage parry accuracy, counter openings/manual counters, STEP use, hits/damage and clear state, with manual counter damage separated from auto-ripostes so coaching remains truthful.
 - Result cards give one stage-focused tip; practice results are explicitly labelled and excluded from campaign best. Better campaign victories may replace local best; worse runs and practice do not.
+- Challenge uses the same local mastery/run-analysis stream but stores a separate local challenge best, ranked first by waves cleared and then score. Challenge never reads or overwrites the campaign personal best.
 - Storage failure is non-fatal. There is no login, network sync, remote gameplay analytics, advertising or remote identifier. Remote telemetry still requires a separate privacy Decision Gate.
 
 ## Presentation and renderer
@@ -65,9 +67,9 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - PlayCanvas standalone + Vite remains the primary renderer/build path; the older WebGL2 renderer remains compatibility fallback.
 - Visible opponents use the original locally generated `samurai-v1.glb`: ~315 KiB, ~1,972 triangles, 19-joint skin, no texture payload, base clips `Idle/Windup/Strike/Recovery/Parry`.
 - The animation-only Guard + four-direction pack is ~26 KiB and contains no mesh/texture/downloaded motion. It reuses the same skeleton and fixed Sword→HandR relationship.
-- Stage-specific skinned silhouettes distinguish all four enemies without changing reach/hitboxes/timing. Enemy full-body framing remains readable in portrait.
+- Stage-specific skinned silhouettes distinguish all four baseline enemies without changing reach/hitboxes/timing. Challenge pressure rematches reuse these existing stage identities rather than introducing new downloaded assets.
 - The bounded world-space blade trail follows actual blade-tip history; all directional strikes advance toward/cross the player-facing parry plane and follow through before recovery.
-- Authored strikes now also use four pooled **full-blade afterimages** sampled from the actual Sword world transform. They never steer the weapon or change combat state, retain only bounded historical poses, briefly carry into natural recovery, clear immediately outside that path, and are disabled under reduced-motion.
+- Authored strikes use four pooled **full-blade afterimages** sampled from the actual Sword world transform. They never steer the weapon or change combat state, retain only bounded historical poses, briefly carry into natural recovery, clear immediately outside that path, and are disabled under reduced-motion.
 - The first-person player katana retains a bounded two-hand grip (forearms, hands, wrist guards, habaki, pommel) and direction-aware parry/counter motion without changing input or combat authority.
 - Successful parry feedback combines audio/haptic/camera/impact; Perfect Parry is stronger. Impact effects and accessibility overlays remain pointer-transparent and bounded; reduced-motion suppresses travelling effects while retaining readable state cues.
 
@@ -75,7 +77,8 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 
 - Gameplay/animation timing is elapsed-time based. PlayCanvas adaptively caps pixel ratio from rolling frame time before timing/responsiveness is sacrificed.
 - Skinned model, attack pack, stage identity, trails, full-blade afterimages, first-person grip and UI overlays reuse bounded entities/nodes; no unbounded gameplay-loop allocation, timer or network work is allowed.
-- `src/game-core.js` remains deterministic combat authority. Boss, mastery, onboarding, footwork, Perfect Parry, Perfect STEP, practice, run-analysis, accessibility and renderer systems remain bounded adapters.
+- `src/game-core.js` remains deterministic combat authority. Boss, mastery, onboarding, footwork, Perfect Parry, Perfect STEP, practice, challenge, run-analysis, accessibility and renderer systems remain bounded adapters.
+- `src/challenge-mode.js` owns only explicit challenge-run roster selection, local challenge result persistence and challenge UI. It may replace the engine roster only for a requested challenge run; normal campaign/practice definitions and combat direction/timing/damage authority remain untouched.
 - `src/control-handedness.js` owns only the local STEP-side preference and footwork-cluster presentation. It may not rewrite tap/swipe/parry direction, combat timing, reach, damage or Pause placement.
 - `src/main.js` owns gameplay/input/HUD orchestration. `src/renderer.js` composes PlayCanvas primary/fallback plus authored attacks, stage identity, blade trajectory, actual-Sword strike afterimages, mobile readability, player weapon fidelity and the enemy screen-space direction adapter.
 - `src/authored-enemy-attacks.js` owns Guard/Attack* binding and continuous normalized authored sampling. `src/enemy-screen-space-direction.js` mirrors only opponent horizontal presentation. `src/blade-trajectory.js` samples the actual Sword/HandR pose and may apply only bounded whole-model depth assist in authored mode.

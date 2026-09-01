@@ -9,6 +9,7 @@ const files = {
   playcanvas: new URL('../src/playcanvas-view.ts', import.meta.url),
   legacyRenderer: new URL('../src/legacy-renderer.js', import.meta.url),
   motion: new URL('../src/animation-motion.js', import.meta.url),
+  challenge: new URL('../src/challenge-mode.js', import.meta.url),
   core: new URL('../src/game-core.js', import.meta.url),
   baseline: new URL('../docs/CURRENT_BASELINE.md', import.meta.url),
   architecture: new URL('../docs/ARCHITECTURE.md', import.meta.url),
@@ -25,14 +26,13 @@ function markdownSection(markdown, heading) {
 }
 
 function assertTerms(text, terms, label) {
-  for (const term of terms) {
-    assert.match(text, term, `${label} missing semantic invariant ${term}`);
-  }
+  for (const term of terms) assert.match(text, term, `${label} missing semantic invariant ${term}`);
 }
 
 test('entry document references local source files', async () => {
   const html = await readFile(files.html, 'utf8');
   assert.match(html, /src="\.\/src\/main\.js"/);
+  assert.match(html, /src="\.\/src\/challenge-mode\.js"/);
   assert.match(html, /href="\.\/src\/styles\.css"/);
   assert.match(html, /id="game-canvas"/);
   assert.match(html, /id="start-button"/);
@@ -40,23 +40,13 @@ test('entry document references local source files', async () => {
 
 test('runtime contains PlayCanvas primary rendering, WebGL2 fallback, four-beat motion, pointer controls, audio, and combat integration', async () => {
   const [main, renderer, playcanvas, legacyRenderer, motion] = await Promise.all([
-    readFile(files.main, 'utf8'),
-    readFile(files.renderer, 'utf8'),
-    readFile(files.playcanvas, 'utf8'),
-    readFile(files.legacyRenderer, 'utf8'),
-    readFile(files.motion, 'utf8'),
+    readFile(files.main, 'utf8'), readFile(files.renderer, 'utf8'), readFile(files.playcanvas, 'utf8'), readFile(files.legacyRenderer, 'utf8'), readFile(files.motion, 'utf8'),
   ]);
-
-  // Primary/fallback renderer seam: PlayCanvas is production-facing, while the
-  // previously accepted WebGL2 path remains available during migration.
   assert.match(renderer, /new PlayCanvasView\(canvas\)/);
   assert.match(renderer, /new LegacyWebGLView\(canvas\)/);
   assert.match(renderer, /rendererBackend = 'playcanvas'/);
   assert.match(renderer, /visualIdentity = 'playcanvas-samurai-v1'/);
   assert.match(legacyRenderer, /getContext\('webgl2'/);
-
-  // The production 3D renderer must still be driven by the renderer-neutral
-  // elapsed-time motion pipeline and retain the mobile adaptive-quality path.
   assert.match(playcanvas, /from 'playcanvas'/);
   assert.match(playcanvas, /new pc\.Application\(canvas/);
   assert.match(playcanvas, /enemyMotionFrame\(s\.phase/);
@@ -65,7 +55,6 @@ test('runtime contains PlayCanvas primary rendering, WebGL2 fallback, four-beat 
   assert.match(playcanvas, /animationPipeline = 'playcanvas-four-beat-v1'/);
   assert.match(playcanvas, /renderProfile = 'playcanvas-adaptive-60-v1'/);
   assert.match(playcanvas, /graphicsDevice\.maxPixelRatio/);
-
   assert.match(motion, /enemyMotionFrame/);
   assert.match(motion, /smoothMotionFrame/);
   assert.match(motion, /adaptiveRenderScale/);
@@ -76,53 +65,30 @@ test('runtime contains PlayCanvas primary rendering, WebGL2 fallback, four-beat 
   assert.match(main, /new CombatEngine/);
 });
 
+test('challenge mode is a bounded local adapter and does not replace combat authority', async () => {
+  const challenge = await readFile(files.challenge, 'utf8');
+  assert.match(challenge, /CHALLENGE_STAGE_COUNT = 8/);
+  assert.match(challenge, /createChallengeEnemies/);
+  assert.match(challenge, /CHALLENGE_STORAGE_KEY/);
+  assert.match(challenge, /requestPractice\(null\)/);
+  assert.match(challenge, /this\.enemies = createChallengeEnemies\(\)/);
+  assert.doesNotMatch(challenge, /attemptParry\s*=|attemptAttack\s*=|directionFromSwipe/);
+});
+
 test('evolution source of truth is present', async () => {
-  const [baseline, rules] = await Promise.all([
-    readFile(files.baseline, 'utf8'),
-    readFile(files.rules, 'utf8'),
-  ]);
+  const [baseline, rules] = await Promise.all([readFile(files.baseline, 'utf8'), readFile(files.rules, 'utf8')]);
   const playableFlow = markdownSection(baseline, 'Playable flow and controls');
   const presentation = markdownSection(baseline, 'Presentation and renderer');
-
   assert.match(baseline, /Four defensive directions/);
-  assertTerms(playableFlow, [
-    /four sequential duels/i,
-    /Ashigaru/i,
-    /Wandering Ronin/i,
-    /Oni Guard/i,
-    /Crimson Shogun/i,
-  ], 'playable flow');
+  assertTerms(playableFlow, [/four sequential duels/i, /Ashigaru/i, /Wandering Ronin/i, /Oni Guard/i, /Crimson Shogun/i, /連戰試煉/, /eight-duel/i], 'playable flow');
   assert.match(baseline, /Windup.*Strike.*Recovery.*Parry/is);
-  assertTerms(presentation, [
-    /PlayCanvas/i,
-    /primary/i,
-    /renderer/i,
-    /Vite/i,
-    /WebGL2/i,
-    /fallback|compatibility/i,
-  ], 'presentation');
+  assertTerms(presentation, [/PlayCanvas/i, /primary/i, /renderer/i, /Vite/i, /WebGL2/i, /fallback|compatibility/i], 'presentation');
   assert.match(rules, /substantial visible vertical slice/i);
   assert.match(rules, /Never merge the pull request/i);
 });
 
 test('architecture SOT matches the approved PlayCanvas/Vite renderer seam', async () => {
   const architecture = await readFile(files.architecture, 'utf8');
-
-  assertTerms(architecture, [
-    /PlayCanvas/i,
-    /Vite/i,
-    /primary/i,
-    /src\/renderer\.js/i,
-    /src\/playcanvas-view\.ts/i,
-    /WebGL2/i,
-    /fallback|compatibility/i,
-    /src\/game-core\.js/i,
-    /deterministic/i,
-    /3D_PIPELINE_DECISION_GATE\.md/i,
-  ], 'architecture');
-  assert.doesNotMatch(
-    architecture,
-    /(?:framework|game-engine|engine) migration requires a Decision Gate/i,
-    'architecture must not describe the already-approved PlayCanvas migration as a future gate',
-  );
+  assertTerms(architecture, [/PlayCanvas/i, /Vite/i, /primary/i, /src\/renderer\.js/i, /src\/playcanvas-view\.ts/i, /WebGL2/i, /fallback|compatibility/i, /src\/game-core\.js/i, /deterministic/i, /3D_PIPELINE_DECISION_GATE\.md/i], 'architecture');
+  assert.doesNotMatch(architecture, /(?:framework|game-engine|engine) migration requires a Decision Gate/i, 'architecture must not describe the already-approved PlayCanvas migration as a future gate');
 });

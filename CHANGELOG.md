@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.27.0-evolution — Eight-duel challenge trial
+
+- Added local **連戰試煉**, an eight-duel endurance ladder: the baseline trio opens the run, four bounded pressure rematches tighten existing HP/posture/timing values, and the real Crimson Shogun/Blood Moon closes Stage 8.
+- Player HP and score carry through the full challenge; terminal results expose clean **再戰連陣** / **開始完整主線** handoff without mutating the normal four-duel campaign roster.
+- Challenge mastery/run analysis stays local and writes only a separate waves-cleared/score best; campaign personal-best storage, combat timing, damage, input, renderer and privacy boundaries remain unchanged.
+
 ## 0.26.0-evolution — Persistent STEP handedness
 
 - Added a start-screen **STEP：右手側 / STEP：左手側** preference that persists locally and defaults safely to the existing right-side layout.

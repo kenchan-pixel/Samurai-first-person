@@ -9,6 +9,7 @@ import {
 } from './mastery.js';
 
 const BEST_KEY = 'blade-reversal-mastery-v1';
+const CHALLENGE_ACTIVE = Symbol.for('blade-reversal.challenge-active-v1');
 const sessions = new WeakMap();
 const patched = Symbol.for('blade-reversal.mastery-observer');
 
@@ -42,19 +43,23 @@ function practiceLabel(enemyId) {
   return 'RONIN PRACTICE';
 }
 
-function renderReport(report, { practice = false, practiceEnemyId = null } = {}) {
+function renderReport(report, { practice = false, practiceEnemyId = null, challenge = false } = {}) {
   const eyebrow = document.querySelector('#result-eyebrow');
   const title = document.querySelector('#result-title');
   const summary = document.querySelector('#result-summary');
   const score = document.querySelector('#result-score');
   if (!eyebrow || !title || !summary || !score) return;
 
-  const previousBest = practice ? null : readBest();
-  const newBest = !practice && report.won && isBetterMastery(report, previousBest);
+  const isolated = practice || challenge;
+  const previousBest = isolated ? null : readBest();
+  const newBest = !isolated && report.won && isBetterMastery(report, previousBest);
   if (newBest) writeBest(report);
   const best = newBest ? report : previousBest;
 
-  if (practice) {
+  if (challenge) {
+    eyebrow.textContent = `連戰試煉 · MASTERY ${report.masteryPoints}`;
+    title.textContent = report.won ? `${report.grade} 級 · 八關制霸` : `${report.grade} 級 · 連戰終止`;
+  } else if (practice) {
     eyebrow.textContent = `${practiceLabel(practiceEnemyId)} · MASTERY ${report.masteryPoints}`;
     title.textContent = report.won ? `${report.grade} 級 · 修行完成` : '修行敗北';
   } else {
@@ -63,13 +68,15 @@ function renderReport(report, { practice = false, practiceEnemyId = null } = {})
   }
 
   const accuracy = Math.round(report.accuracy * 100);
-  const bestText = practice
-    ? ' · 不計個人最佳'
-    : best
-      ? newBest
-        ? ' · 新紀錄'
-        : ` · BEST ${best.grade} ${formatScore(best.score)}`
-      : '';
+  const bestText = challenge
+    ? ' · 連戰紀錄獨立計算'
+    : practice
+      ? ' · 不計個人最佳'
+      : best
+        ? newBest
+          ? ' · 新紀錄'
+          : ` · BEST ${best.grade} ${formatScore(best.score)}`
+        : '';
 
   summary.textContent =
     `格擋 ${accuracy}% · 完美 ${report.perfectParries}/${report.parries} · ` +
@@ -96,7 +103,8 @@ if (!CombatEngine.prototype[patched]) {
     for (const event of events) {
       observeMasteryEvent(session, event);
       if (event.type === 'victory' || event.type === 'defeat') {
-        const practice = Boolean(event.detail?.practice);
+        const challenge = Boolean(this[CHALLENGE_ACTIVE]);
+        const practice = !challenge && Boolean(event.detail?.practice);
         const report = finishMastery(session, {
           now: performance.now(),
           score: event.detail?.score,
@@ -105,6 +113,7 @@ if (!CombatEngine.prototype[patched]) {
         queueMicrotask(() => renderReport(report, {
           practice,
           practiceEnemyId: event.detail?.practiceEnemyId ?? null,
+          challenge,
         }));
       }
     }

@@ -25,270 +25,51 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Run 053 restored the pre-052 usable enemy-animation baseline.
 - Run 054 removed the mistaken mandatory-human-test HOLD; autonomous self-verification is primary, later device evidence remains authoritative when it exposes a real defect.
 
-## Runs 055–061 — Authored four-direction attack pipeline
+## Runs 055–064 — Authored attacks and timing assist
 
 - Run 055 added original animation-only AttackTop/Right/Bottom/Left on the shared rig.
-- Run 056 fixed a floating-point false failure and generic phase transitions interrupting one continuous Attack*.
-- Run 057 made authored HandR/Sword hierarchy authoritative; browser gate exposed weak side separation.
-- Run 058 strengthened mirrored side-guard targets without weakening grip/trajectory thresholds.
-- Run 059 removed Attack*→Attack* telegraph crossfade; failure persisted, proving transition blending was not root cause.
-- Run 060 fixed same-draw PlayCanvas pose evaluation; right/left side separation passed and a deeper top-strike depth issue surfaced.
-- Run 061 added bounded whole-model forward-reach floor while preserving authored HandR/Sword orientation; exact-head CI/Vercel returned green.
-
-## Runs 062–064 — Timing assist and verification hardening
-
-- Run 062 FEATURE: added optional default-off 節拍提示 driven by authoritative telegraph and existing Perfect timing.
-- Run 063 BLOCKER_FIX: made the default-off assist runtime-idle; Node passed but its new browser mutation regression suspended on a top-level RAF promise under the existing dump-dom runner.
-- Run 064 BLOCKER_FIX: repaired that browser harness with synchronous layout readiness and focused timing-assist mutation observation. Exact-head CI #98 and Vercel were green. The owner LEFT/RIGHT + initial katana P1 remained explicitly open.
-
-## Run 065 — Player-facing guard and screen-space slash semantics
-
-**Date:** 2026-08-29  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `1364a052ca673f3eaaaa92bd1a178f8064737ac1`.
-- Exact-head CI #98 was terminal green and GitHub `Vercel` status was success. Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
-- The remaining owner P1 was still applicable: opponent LEFT/RIGHT looked reversed from the player perspective and the initial/neutral katana did not point its blade toward the player. Repository state explicitly prohibited feature work until both were repaired with deterministic geometry evidence.
-
-### Delivered repair
-
-- Added authored `Guard` to the local animation-only pack. Ready/stage-intro/gap use it and every Attack* starts/ends on the identical Guard target. The actual world blade axis targets `[0, 0.10, 0.995]` normalized, strongly toward the player/camera.
-- Sword remains a direct child of HandR with one fixed local grip. Guard is authored by solving HandR inside the generated animation track; no normal runtime Sword rotation or Run-52-style Chest/arm/HandR override is introduced.
-- Defined gameplay RIGHT/LEFT as **player-screen cut travel**. RIGHT starts on screen-left and cuts toward screen-right; LEFT starts screen-right and cuts toward screen-left. A presentation-only renderer adapter mirrors only enemy horizontal `attackDirectionIndex` 1↔3; player tap/swipe/parry/counter direction and CombatEngine values stay unchanged.
-- Extended the production PlayCanvas contract to sample the actual ready Sword world axis and fail closed unless Guard faces the player. The same gate proves RIGHT/LEFT screen travel, grip lock, player-facing plane crossing and continuous authored attack state.
-- Added focused generator/mapping tests and updated cumulative baseline, regression checklist, asset provenance, backlog, changelog and persistent state in the same implementation commit.
-
-### Regression boundary
-
-- No timing, damage, parry/Perfect windows, STEP, posture, boss phase, score, persistence or network/privacy rule changes.
-- No downloaded asset/motion, analytics or backend.
-- Normal telegraph→strike→recovery remains one authored Attack*; interrupted recovery remains Parry; bounded whole-model depth assist remains the only authored-mode reach correction.
-- Post-commit exact-head Node/browser CI and GitHub Vercel status must both be terminal green before feature work resumes.
-
-## Run 066 — Restore exact-head SOT verification path
-
-**Date:** 2026-08-30  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `9de5fcf96139924a67d45e3cd0c6109f5b4a247e`.
-- GitHub `Vercel` status was success, but exact-head CI #99 failed at `npm test`: 68/69 passed and `npm run test:browser` was skipped.
-- The current Second Hourly review therefore remained a blocking P1: Run 65's player-facing Guard and player-screen RIGHT/LEFT repair had not reached the real PlayCanvas acceptance gate.
-- Failure cause was deterministic SOT drift only: `tests/repo-smoke.test.mjs` still protects the cumulative four-duel and PlayCanvas renderer wording contract, while the compacted Current Baseline had removed those exact durable phrases.
-
-### Delivered repair
-
-- Restored the explicit cumulative sentence `Three baseline enemies are followed by the Crimson Shogun boss` while retaining the clearer four-sequential-duel description.
-- Restored the durable `PlayCanvas Engine standalone ... primary production-facing renderer` wording without changing the approved PlayCanvas + Vite + WebGL2-fallback architecture.
-- Did not weaken, remove or bypass `repo-smoke`; the intent is to let the unchanged Node gate complete so the existing real PlayCanvas Guard-axis / RIGHT-LEFT screen-travel browser contract can execute on this exact HEAD.
-
-### Regression boundary
-
-- No gameplay, renderer, animation, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, input, network/privacy or asset behaviour changed.
-- This repair is complete only if the post-commit exact-head Node + browser workflow is green and GitHub `Vercel` status is terminal success; otherwise the next run remains BLOCKER_FIX.
-
-## Run 067 — Make SOT smoke semantic instead of sentence-literal
-
-**Date:** 2026-08-30  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `4ad06968b28e96eb06e93bfc606ad342db766ddd`.
-- Exact-head CI #100 was terminal green: `npm test` and `npm run test:browser` both passed. GitHub `Vercel` commit status was `success`; Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
-- The Run 65 owner P1 is demonstrably cleared on this HEAD by the fail-closed real PlayCanvas Guard-axis and player-screen RIGHT/LEFT travel gates.
-- The current All Repos review raised an actionable P2: `repo-smoke` was coupled to exact editorial sentences, and Run 66 had duplicated baseline prose solely to satisfy that literal contract. Because this defect can deterministically turn harmless SOT edits into red CI and consume future evolution runs, it is treated as a delivery-loop blocker repair before feature work.
-
-### Delivered repair
-
-- Reworked `tests/repo-smoke.test.mjs` to extract the relevant Current Baseline sections and assert independent semantic invariants instead of exact sentences.
-- The playable-flow guard now requires four sequential duels plus Ashigaru, Wandering Ronin, Oni Guard and Crimson Shogun within the playable-flow section.
-- The renderer guard now requires PlayCanvas, primary renderer authority, Vite, WebGL2 and fallback/compatibility semantics within the presentation section.
-- Removed the duplicate four-duel sentence and restored concise renderer wording. The real runtime/browser gates — including Guard axis, screen-space RIGHT/LEFT travel, grip lock, directional plane crossing, mobile Combat UX and timing-assist lifecycle — are unchanged.
-
-### Regression boundary
-
-- No gameplay, renderer, animation, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, input, asset or network/privacy behaviour changed.
-- The smoke remains fail-closed on the protected product/architecture semantics while allowing editorial prose changes that preserve those invariants.
-- Post-commit exact-head Node/browser CI and GitHub Vercel status must both be terminal green before feature work resumes.
-
-## Run 068 — Actual-Sword full-blade strike afterimages
-
-**Date:** 2026-08-30  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `46bd3bcb4e785a7ee6fd9a7b5a963de3cb4d060d`.
-- Exact-head CI #101 was terminal green with Node + real PlayCanvas/browser gates; GitHub `Vercel` status was success. Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
-- The latest Second Hourly review on this exact SHA reported **no new actionable P0/P1/P2 finding**. Earlier owner blade-direction/Guard P1s are covered by the current fail-closed production renderer contract.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): actual-Sword full-blade afterimages 5/5/4/4/5 = 23; left-handed layout 4/4/5/4/4 = 21; seeded/endless challenge 5/4/5/2/2 = 18. Afterimages won because they strengthen directional physicality and the current sword-motion acceptance with bounded renderer-only risk.
-
-### Delivered slice
-
-- Added a PlayCanvas `enemy-blade-afterimage` adapter with four pooled additive full-blade ghosts sampled only from the real `skinnedSword` world position/rotation. It never rotates Sword, overrides HandR/arms, or changes the authored animation.
-- Uses a fixed five-pose preallocated history. Samples are collected only during strike; the nearest two ghosts may carry briefly into normal recovery, then clear. Reduced-motion disables travelling blade ghosts entirely.
-- The existing `renderer-motion` browser path now fails closed if a progressed strike cannot retain at least two historical actual-Sword poses, while the existing Guard, grip-lock, parry-plane and RIGHT/LEFT travel assertions remain untouched.
-- Integrated the adapter after actual blade trajectory sampling and before player-weapon presentation; combat/input/timing/damage authority is unchanged.
-
-### Regression boundary
-
-- No `CombatEngine`, tap/swipe, parry/Perfect, STEP, posture, boss, score, persistence, network/privacy or asset-generation behaviour changed.
-- HandR/Sword authored grip, player-facing Guard, player-screen RIGHT/LEFT semantics and bounded whole-model depth assist remain authoritative.
-- Local repository checkout was unavailable because this runtime could not resolve `github.com`; syntax of the new module was checked separately, and post-commit exact-head CI + GitHub Vercel status remain the required acceptance evidence. If either is red, the next run is `BLOCKER_FIX`.
-
-## Run 069 — Live reduced-motion afterimage repair
-
-**Date:** 2026-08-31  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `42ada958c082324b0fd9f057556266f34eb334d8`.
-- Exact-head CI #103 was terminal green (`npm test` + full PlayCanvas/browser gate), but GitHub's exact-head `Vercel` status remained `failure` at the build-rate-limit target. The direct Vercel connector returned `403 Forbidden` when asked to enumerate project deployments, so the repository-defined GitHub commit status fallback remained authoritative.
-- Draft PR #1 remained open/Draft/unmerged; `main` was untouched and inline review threads were empty.
-- The exact-head All Repos review had one applicable P2: the actual-Sword afterimage adapter sampled `prefers-reduced-motion` only once at install time, so a live OS/browser preference change could leave travelling ghosts enabled until reload. This is an accessibility/runtime correctness defect and therefore blocks feature work.
-
-### Delivered repair
-
-- Retained a MediaQueryList for `prefers-reduced-motion` and subscribed to its live `change` event. Entering reduced motion immediately clears every pooled afterimage and historical Sword sample without waiting for another draw; leaving reduced motion starts from fresh real-Sword history rather than replaying stale poses.
-- Chained PlayCanvas application teardown to remove the media-query listener and clear pooled state, preventing a future renderer remount from retaining the old accessibility listener.
-- Strengthened the existing `renderer-motion` browser contract in-place: after it has accumulated multiple real-Sword historical poses, its test-only MediaQueryList source emits reduced-motion on/off changes after installation and fails closed unless ghosts clear immediately and full-motion eligibility restores. No second gameplay clock or parallel combat harness was introduced.
-- The implementation commit also gives Vercel Git integration a fresh exact-head deployment attempt after the prior transient rate-limit window; deployment acceptance remains the GitHub `Vercel` commit status if direct enumeration stays unavailable.
-
-### Regression boundary
-
-- No CombatEngine, attack animation, Sword/HandR pose, player-screen RIGHT/LEFT semantics, timing, damage, parry/Perfect, STEP, posture, boss, input, score, persistence, asset or network/privacy behaviour changed.
-- The afterimage pool remains four ghosts / five samples and still reads only the real skinned Sword transform; Reduced Motion now enforces the already documented baseline dynamically as well as at startup.
-- Post-commit exact-head CI and GitHub `Vercel` status must both be terminal green before any new feature work resumes.
-
-## Run 070 — Recover external Vercel rate-limit deadlock
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `173c149522f60a0fa300655993571ff9deaf131e`.
-- Exact-head CI #104 remained terminal green (`npm test` + `npm run test:browser`). The latest exact-head Second Hourly review reported no actionable P0–P2 code/product finding, and inline review threads were empty.
-- The only red gate was GitHub's exact-head `Vercel` status targeting `build-rate-limit`. The direct Vercel connector still returned `403 Forbidden` for project deployment enumeration and could not safely perform a same-SHA redeploy.
-- The provider's prior `retry in 24 hours` window had elapsed, but the old failure status remained attached to the unchanged SHA. Under the previous protocol this created a permanent loop: failed Preview prohibited feature commits, no empty commit was allowed, and same-SHA ref updates did not create a new Vercel deployment.
-
-### Delivered repair
-
-- Added explicit external deployment-provider recovery semantics to the canonical Scheduled Task prompt and Evolution Rules.
-- External Vercel rate-limit/capacity failures remain FEATURE blockers and never count as Preview success, but after the provider cooldown expires the agent must first attempt provider-native same-SHA redeploy when safely available.
-- If direct redeploy is unavailable and the failure is stale, one meaningful `BLOCKER_FIX` commit may repair/re-arm the delivery protocol and naturally trigger a fresh Preview. Empty/log-only retry commits and unrelated feature work remain prohibited.
-- The new exact HEAD must still return to the normal fence: CI and Preview both terminal green before any FEATURE work resumes. Real source build/runtime failures continue to require source repair.
-- Persistent state records this run as verifying, with the previous exact HEAD retained as the last known commit and the fresh CI/Preview result left for post-commit verification.
-
-### Regression boundary
-
-- No gameplay, renderer, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, asset, network/privacy or production-main behaviour changed.
-- This is a material delivery-loop blocker repair, not a feature and not a relaxation of Preview acceptance.
-- The commit intentionally serves as the one bounded re-arm event after the expired external provider cooldown; its own exact-head CI/Vercel result now determines whether feature work may resume.
-
-## Run 071 — Persist one-shot external-provider recovery incidents
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `1a2ddce4f610d911a519a3808412d2b4c6232bf6`.
-- Exact-head CI #105 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success` at deployment `3jPHtzwpzwXbWsean16q9VutK6Mf`. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
-- The current Second Hourly review raised one actionable P2: Run 70 said only one re-arm commit was allowed, but no durable incident receipt recorded whether that one attempt had already been consumed. A repeated rate-limit on the re-arm HEAD could therefore start another SOT-only re-arm cycle.
-- Because this is a boundedness/correctness defect in the deployment safety loop, it is handled before any player-visible feature work.
-
-### Delivered repair
-
-- Added a durable `external_deployment_recovery.last_incident` receipt to evolution state with provider/failure identity, blocked HEAD, status target, first-seen/cooldown timestamps, `rearm_attempted`, re-arm HEAD and resolution.
-- Defined the same incident as one continuous provider/failure lineage without an intervening terminal-green exact-head Preview. A new SHA created by the re-arm is explicitly not a new incident.
-- If `rearm_attempted` is already true and the re-arm HEAD fails for that same incident, the loop must `HOLD` with no further SOT/state/log retry commit until same-SHA/provider-native recovery or materially new provider evidence exists.
-- Added a focused Node regression contract that fails if either canonical protocol loses the durable receipt/one-shot/HOLD semantics or if state stops exposing the required incident fields.
-- Backfilled the recovered Run 69/70 Vercel incident: first failure `2026-08-30T20:30:16Z`, cooldown expiry `2026-08-31T20:30:16Z`, re-arm HEAD `1a2ddce4...`, resolved by exact-head Vercel success at `2026-09-01T01:23:55Z`.
-
-### Regression boundary
-
-- No gameplay, renderer, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, asset, network/privacy or production-main behaviour changed.
-- This repair tightens the delivery loop only; it does not relax the terminal-green exact-head requirement or authorize feature work on a failed Preview.
-- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before feature work resumes.
-
-## Run 072 — Reconcile architecture SOT with the approved renderer stack
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `85fa50fec4ce9a5b539bfbee07383589edd56c00`.
-- Exact-head CI #106 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success` at deployment `mNXLKbG7wsvCrpDPqsqHbMH8JVkk`. Draft PR #1 remained open/Draft/unmerged; `main` was untouched and inline review threads were empty.
-- The latest exact-head Second Hourly review raised one actionable P2: `docs/ARCHITECTURE.md` still described the pre-migration custom-WebGL app and said a game-engine migration required a future Decision Gate, contradicting the approved PlayCanvas + Vite production stack and current renderer seam.
-- Because repository-local engineering SOT directs future autonomous integration work, this contradiction is treated as a material agent/delivery correctness blocker rather than allowing feature work against a false architecture map.
-
-### Delivered repair
-
-- Rewrote `docs/ARCHITECTURE.md` around the actual `index.html` → deterministic `CombatEngine` / browser orchestrator → `src/renderer.js` seam, with `PlayCanvasView` as the primary renderer and `legacy-renderer.js` as compatibility WebGL2 fallback.
-- Documented the current bounded domain/presentation adapter pattern, Vite/Vercel build path, combat-authority boundary, screen-space direction ownership, local preference/privacy rules and local generated-asset path.
-- Explicitly records that the PlayCanvas + Vite + local glTF/GLB direction is already approved by `docs/3D_PIPELINE_DECISION_GATE.md`; a new Decision Gate is reserved for a materially different stack, cost/privacy/licensing risk or removal of cumulative behaviour.
-- Extended the existing semantic repo smoke so future architecture drift fails only on durable stack/authority invariants rather than sentence wording.
-
-### Regression boundary
-
-- No gameplay, renderer implementation, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, assets, network/privacy or production-main behaviour changed.
-- The new smoke checks documentation against the already-running renderer architecture; it does not change or weaken the existing real PlayCanvas/browser acceptance gates.
-- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before FEATURE work resumes.
-
-## Run 073 — Persistent STEP-side handedness
+- Run 056 repaired floating-point verification and generic phase transitions interrupting one continuous Attack*.
+- Runs 057–061 made HandR/Sword hierarchy authoritative, repaired lateral reads and same-draw pose evaluation, and added bounded whole-model forward commitment while keeping the fixed grip.
+- Run 062 added optional default-off 節拍提示 driven by authoritative telegraph/Perfect timing.
+- Runs 063–064 made the disabled timing assist truly DOM-idle and repaired its deterministic browser harness without weakening the off/on/off mutation contract.
+
+## Runs 065–069 — Player-facing blade semantics and actual-Sword afterimages
+
+- Run 065 repaired the remaining owner animation P1 with an authored player-facing `Guard`, explicit player-screen RIGHT/LEFT cut travel and enemy-only horizontal mirroring.
+- Runs 066–067 restored exact-head SOT verification after wording drift, then replaced brittle sentence-literal smoke with section-scoped semantic invariants.
+- Run 068 added four pooled full-blade afterimages sampled only from the actual authored Sword transform, strengthening cut/follow-through readability without steering the weapon or changing combat.
+- Run 069 made those afterimages respond immediately to live reduced-motion changes, clear stale history and remove the media-query listener on renderer teardown.
+
+## Runs 070–074 — Delivery-loop recovery, architecture SOT and handedness
+
+- Run 070 repaired a Vercel rate-limit deadlock by defining bounded external-provider recovery while keeping failed Preview as a feature blocker.
+- Run 071 made that recovery one-shot per durable provider incident, preventing repeated bookkeeping commits if the same external limit recurs.
+- Run 072 reconciled `docs/ARCHITECTURE.md` with the approved PlayCanvas + Vite primary renderer, deterministic CombatEngine authority and WebGL2 fallback.
+- Run 073 added a persistent local STEP right/left-side preference that mirrors only the lower-corner footwork cluster.
+- Run 074 repaired inherited centering transforms that clipped left-hand STEP UI and strengthened the real 320×568 production gate to prove left-side safe-area geometry, fixed swipe semantics and top-right Pause/parry routing.
+
+## Run 075 — Eight-duel challenge trial
 
 **Date:** 2026-09-01  
 **Action type:** FEATURE
 
 ### Preflight
 
-- Incoming exact HEAD: `86c6d53546d4f19ebdaf2e46cd445a62c3de7212`.
-- Exact-head CI #107 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success`. Direct Vercel project lookup still returned 404, so the canonical GitHub commit status fallback remained authoritative.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, review threads were empty, and the latest exact-head review reported no actionable P0/P1/P2 finding.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): persistent left-handed STEP layout 4/4/5/5/5 = 23; normal-speed Guard/four-cut visual refinement 5/5/3/2/3 = 18 without pixel-level Preview tooling; bounded endless/seeded challenge 5/4/5/3/3 = 20. Handedness won as the strongest complete mobile accessibility slice with bounded input risk.
+- Incoming exact HEAD: `45627fbfa86dd3050ce192dac9d49ccd7b80559c`.
+- Exact-head CI #109 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
+- The latest exact-head All Repos review reported no actionable P0/P1/P2 finding; inline review threads were empty and the cumulative baseline had no material regression blocker.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): eight-duel challenge 5/5/5/4/4 = 23; broader accessibility/motion control without a concrete gap 4/4/4/3/4 = 19; further normal-speed sword visual refinement without pixel-level Preview inspection 5/5/3/2/3 = 18. The bounded challenge won as the strongest complete player-visible slice.
 
 ### Delivered slice
 
-- Added `src/control-handedness.js` as a narrow presentation adapter with a default-right, local-only persistent preference exposed on the start screen as **STEP：右手側 / STEP：左手側**.
-- Left-hand mode mirrors only the lower-corner STEP button, distance chip and STEP feedback to the lower-left safe area. It does not touch CombatEngine direction values, parry hit regions, swipe direction, STEP timing/reach/damage, or the accepted top-right Pause contract.
-- The preference fails safely to right when storage is missing/blocked and remains usable for the current page. The start-screen toggle stays inside the viewport using safe-area positioning and does not consume gameplay pointer regions because the start modal is the only place it is interactive.
-- Added focused Node coverage for normalization/mirroring, production script ordering and source-level ownership boundaries; the existing full browser suite remains the acceptance gate for production startup, campaign/practice, footwork, Pause and renderer behaviour.
-- Updated cumulative baseline, backlog and persistent state/run log in the same feature commit.
+- Added local **連戰試煉** as an explicit start-screen mode. It swaps in exactly eight duels only for the requested run: the unchanged baseline Ashigaru/Ronin/Oni open the ladder, Stages 4–7 reuse those existing definitions as pressure rematches with bounded HP/posture/timing changes, and Stage 8 uses the real Crimson Shogun Phase I definition so the existing Blood Moon authority remains intact.
+- Player HP, score, deterministic combat rules, STEP/parry/counter semantics and renderer authority carry through the same CombatEngine progression path; no parallel combat clock or second engine was introduced.
+- Challenge terminal UI exposes progress/best, **再戰連陣** and **開始完整主線**. Restart remains in challenge; campaign handoff restores the original roster before the existing boss adapter rebuilds the normal four-duel campaign.
+- Mastery/run analysis still observes the same event stream but challenge results are visibly labelled and excluded from the campaign personal best. A separate local challenge best ranks waves cleared first, then win/score; storage failure remains non-fatal.
+- Added focused challenge regressions for the bounded eight-stage roster, pressure-vs-baseline invariants, best-result ordering, terminal challenge tagging and roster restoration. The shared selector-row layout now makes the existing production 320×568 start-screen gate cumulative across practice plus challenge.
 
 ### Regression boundary
 
-- No enemy animation, renderer geometry, tap/swipe/parry semantics, combat timing, damage, Perfect windows, posture, boss phase, score, mastery/run-analysis, remote data, asset or deployment behaviour changed.
-- Right-hand remains the default/current baseline; only the footwork cluster is mirrored. All directional words remain player-screen semantics regardless of preferred STEP side.
-- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before another feature run.
-
-## Run 074 — Repair left-hand STEP safe-area geometry
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `dde399e396f72ed1eea342ab52ba2abec34de492`.
-- Exact-head CI #108 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success` at deployment `58dqjQgyHNhXutPSYmfstTBc9irr`. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
-- The latest exact-head Second Hourly review found one blocking P1: left-hand STEP/range/feedback inherited `translateX(-50%)` from the centred footwork baseline, so the new left safe-area anchors clipped the cluster off-screen at 320×568. The same review raised a P2 because the Regression Checklist still said lower-right only and CI had no executable left-mode geometry check.
-
-### Delivered repair
-
-- Left-hand STEP now removes the inherited X-centering transform; its active state scales without reintroducing translation. Range removes X translation, while feedback retains only its intended Y entrance/visibility transition.
-- Strengthened the existing real production `combat-ux` browser contract instead of adding a parallel harness: it selects left mode, proves the local preference was persisted, starts a real duel at 320×568, waits for live STEP/range, measures STEP/range/feedback against resolved safe-left/safe-right boundaries, and also checks the active STEP transform remains in bounds.
-- The same left-mode production flow re-proves direct four-direction swipe mapping, real top/right parry routing and the accepted top-right Pause placement/hit isolation/freeze lifecycle.
-- Updated the Regression Checklist from the stale lower-right-only wording to the approved right-default/left-mirrored contract and made the executable left-mode geometry gate explicit.
-- Kept focused source tests that fail if left mode loses the transform overrides or if the handedness adapter starts owning combat direction logic.
-
-### Regression boundary
-
-- No CombatEngine timing, reach, damage, parry/Perfect, STEP rules, posture, boss phase, score, mastery/run-analysis, renderer animation/geometry, assets or network/privacy behaviour changed.
-- Player-screen tap/swipe directions remain fixed; only the footwork cluster presentation is mirrored. Pause remains top-right in both handedness modes.
-- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before FEATURE work resumes.
+- No campaign/practice enemy definition, input direction, parry/Perfect/STEP window, damage, boss threshold, mastery scoring formula, renderer animation/geometry, remote data, account, analytics, paid API or asset provenance behaviour changed.
+- The challenge is local-only and opt-in; normal **拔刀**, 練浪人 and 練將軍 remain the accepted baseline paths.
+- Local checkout could not reach GitHub from this runtime, so new modules were syntax-checked and focused pure logic was reviewed locally; post-commit exact-head Node/browser CI plus GitHub Vercel status remain the required acceptance evidence before another feature run.
