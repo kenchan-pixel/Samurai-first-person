@@ -11,7 +11,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Portrait top parry extends to 42% height; left/right/bottom retain 28%; nearest edge wins overlaps; centre stays neutral; landscape stays symmetric 28%.
 - [ ] Top/right/bottom/left taps and swipes map correctly; one gesture cannot trigger both; mouse fallback works.
 - [ ] STEP captures/rejects dragged pointers correctly and leaves later canvas pointer state clear.
-- [ ] 刀路清晰 / 節拍提示 / impact / challenge / 今日陣 overlays remain pointer-transparent.
+- [ ] 刀路清晰 / 節拍提示 / impact / challenge 氣勢 / 宿敵步速 / 今日陣 overlays remain pointer-transparent.
 
 ## Pause / guide / accessibility
 
@@ -20,7 +20,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] 刀路清晰 follows displayed/final feint direction, strengthens at strike, clears after resolution, suppresses duplicate centre cue and stays static under reduced motion.
 - [ ] 節拍提示 uses authoritative telegraph progress, displayed/final direction and existing Perfect boundary; it never changes combat rules or creates a second clock.
 - [ ] With 節拍提示 off, engine updates cause zero timing-assist DOM mutations after setup; toggle-off clears once and later updates remain idle.
-- [ ] Blocked localStorage is non-fatal for all local preferences/best-run state, including challenge best.
+- [ ] Blocked localStorage is non-fatal for all local preferences/best-run state, including challenge best and optional PB splits.
 
 ## Combat / STEP / progression
 
@@ -37,6 +37,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] 連戰試煉 starts exactly 8 stages, preserves HP/score across waves, uses bounded pressure rematches only at Stages 4–7, reaches the real Crimson Shogun/Blood Moon at Stage 8, keeps retry inside challenge and restores the normal four-duel roster on campaign handoff.
 - [ ] 今日陣 is challenge-only and deterministic for the same local `YYYY-MM-DD`: Stages 1–3 and Stage 8 remain unchanged, Stages 4–6 are a permutation of the existing three pressure rematches, Stage 7 stays Ronin Master, and only attack opening order rotates. HP/posture/gap/recovery/Perfect/telegraph/strike/damage/heavy values remain identical to each source pressure definition; standard challenge/campaign/practice restore unchanged.
 - [ ] Challenge 氣勢 is challenge-only: one hitless clear shows 1/2 momentum, any real `player-hit` emitted through the composed CombatEngine path breaks the chain, two consecutive hitless clears reset momentum and trigger exactly one 不屈 reward—+1 HP when damaged or +300 challenge score at full HP. If a full-health final-wave rally and victory are drained together, the post-rally score is authoritative in engine state, victory/result data and challenge-best persistence. Campaign/practice HP, score and timing remain unchanged.
+- [ ] Challenge 宿敵步速 is observation-only: it reads the authoritative cumulative challenge score after same-wave rewards/choices, never adds or removes score/HP, never pauses/advances the combat clock, and cannot change challenge ranking, enemy definitions, input, STEP/parry or campaign/practice state.
 
 ## Direction / animation / presentation
 
@@ -51,23 +52,24 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Four baseline stage identities and Shogun Phase I/Blood Moon signature presentation remain distinct without changing hit/timing/reach/damage. Challenge/今日陣 rematches resolve presentation from the current enemy id—not the 8-wave ordinal—so Waves 4–8 reuse Ashigaru → Ronin → Oni → Ronin → Shogun authored silhouettes/palettes while CombatEngine keeps its real progression index.
 - [ ] Live fight remains quiet: no persistent READ/PARRY/footer/block-zone/arena clutter; detailed instructions stay behind 玩法.
 - [ ] Challenge 氣勢 badge appears only during challenge, stays inside the 320×568 viewport, remains pointer-transparent, does not cover the blade-read centre, hides at terminal/campaign handoff, and the terminal challenge strip reports total 不屈 triggers.
-- [ ] 今日陣 shows only a compact pointer-transparent dated intro banner before the first telegraph and pressure-stage title identity; the intro banner clears before live blade reading and the terminal strip identifies the date-keyed run without adding persistent combat clutter.
+- [ ] Challenge 宿敵步速 badge appears only during challenge/今日陣, stays inside the 320×568 viewport below the top-right HUD, remains pointer-transparent, displays a signed PB delta only when the stored best has a valid split for that wave, and hides at terminal/campaign handoff.
+- [ ] 今日陣 shows only a compact pointer-transparent dated intro banner before the first telegraph and pressure-stage title identity; the intro banner clears before live blade reading and the terminal strip identifies the date-keyed run without adding non-challenge combat clutter.
 
 ## Mastery / privacy / performance
 
 - [ ] Mastery/result analysis does not alter combat. Campaign victory shows 0–100 + S/A/B/C/D; defeat remains D with stats.
 - [ ] Automatic riposte damage contributes to total damage but never inflates manual counter count/damage coaching.
 - [ ] Practice results stay distinctly labelled and never read/overwrite campaign personal best; worse campaign runs do not overwrite better best.
-- [ ] Challenge results are distinctly labelled, store only separate local waves/score best, and never read/overwrite campaign personal best; retry and campaign handoff preserve this isolation.
-- [ ] Challenge 氣勢/不屈 state is run-local only; no new persistence key, account, identifier or remote record is introduced.
-- [ ] 今日陣 adds no persistence key, account, remote identifier or network request. It intentionally reuses the existing local challenge best and challenge momentum; its date key is run-local only.
+- [ ] Challenge results are distinctly labelled, store only the separate local best record ranked by waves/score, and never read/overwrite campaign personal best. The same record may optionally contain monotonic per-wave cumulative score splits; legacy records without splits remain valid, malformed split arrays are ignored, and retry/campaign handoff preserve isolation.
+- [ ] Challenge 氣勢/不屈, 戰前抉擇 and 宿敵步速 introduce no new persistence key, account, identifier or remote record. Only a better challenge result may write optional PB splits into the existing challenge-best key.
+- [ ] 今日陣 adds no persistence key, account, remote identifier or network request. It intentionally reuses the existing local challenge best, challenge momentum/tactics and PB split comparison; its date key is run-local only.
 - [ ] No login, analytics, tracking, advertising, paid API, remote identifier or new gameplay backend is introduced without approval.
 - [ ] Timing remains elapsed-time based; no unbounded entity/listener/particle/timer/audio-node/animation-loop growth is introduced.
 - [ ] Generated base character stays lightweight and attack pack remains animation-only/local/reproducible.
 
 ## Delivery gates
 
-- [ ] `npm test` passes, including challenge roster/best/lifecycle, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, and final-wave full-health +300 terminal-score-authority regressions.
+- [ ] `npm test` passes, including challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, and final-wave full-health +300 terminal-score-authority regressions.
 - [ ] `npm run test:browser` passes.
 - [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, all four practice/challenge selector entries including 今日陣 inside the shared 320×568 start layout, 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
@@ -75,6 +77,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Focused 320×568 challenge visual-identity browser gate renders the real pressure roster and requires Waves 4–8 to expose `ashigaru-jingasa → ronin-travel-wrap → oni-heavy-guard → ronin-travel-wrap → crimson-shogun-banner`, while proving the renderer restores the original 8-wave progression index after every draw.
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
 - [ ] Mastery browser harness clicks the real 連戰試煉 control, proves composed 8-stage activation, visible pointer-safe 氣勢 UI, first clean-wave stack, a real two-clean-wave +1 HP 不屈 reward, terminal 不屈 summary and 8-card analysis, keeps challenge best isolated from campaign best, exercises 再戰連陣 / 開始完整主線, and keeps terminal content plus both controls inside 320×568.
+- [ ] Focused 320×568 challenge-rival browser gate starts from an existing eight-wave split PB, proves a visible behind split then an ahead split after the same-wave 不屈 score reward, persists eight authoritative monotonic splits after a better victory, reloads them on retry, and clears the badge on campaign handoff.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
 - [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation when their represented product/engineering state changes.
 - [ ] Draft PR remains open/Draft/unmerged and contains one concise run comment with Before/After/verification/regression/risk/Preview.

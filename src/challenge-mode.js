@@ -101,11 +101,38 @@ export function isBetterChallengeResult(next, previous) {
   return Math.max(0, Number(next.score) || 0) > Math.max(0, Number(previous.score) || 0);
 }
 
-function readBest(storage = undefined) {
+export function normaliseChallengeWaveScores(value, wavesCleared = CHALLENGE_STAGE_COUNT) {
+  if (!Array.isArray(value)) return null;
+  const cleared = Math.max(0, Math.min(CHALLENGE_STAGE_COUNT, Math.floor(Number(wavesCleared) || 0)));
+  const count = Math.min(cleared, value.length);
+  if (count <= 0) return null;
+
+  const scores = [];
+  let previous = 0;
+  for (let index = 0; index < count; index += 1) {
+    const numeric = Number(value[index]);
+    if (!Number.isFinite(numeric) || numeric < 0) return null;
+    const score = Math.max(0, Math.round(numeric));
+    if (index > 0 && score < previous) return null;
+    scores.push(score);
+    previous = score;
+  }
+  return scores;
+}
+
+export function readChallengeBest(storage = undefined) {
   try {
     const target = storage ?? globalThis.localStorage;
     const value = JSON.parse(target?.getItem?.(CHALLENGE_STORAGE_KEY) || 'null');
-    return value && Number.isFinite(value.score) && Number.isFinite(value.wavesCleared) ? value : null;
+    if (!value || !Number.isFinite(value.score) || !Number.isFinite(value.wavesCleared)) return null;
+    const best = {
+      won: Boolean(value.won),
+      wavesCleared: Math.max(0, Math.min(CHALLENGE_STAGE_COUNT, Math.floor(Number(value.wavesCleared) || 0))),
+      score: Math.max(0, Math.round(Number(value.score) || 0)),
+    };
+    const waveScores = normaliseChallengeWaveScores(value.waveScores, best.wavesCleared);
+    if (waveScores) best.waveScores = waveScores;
+    return best;
   } catch {
     return null;
   }
@@ -114,18 +141,22 @@ function readBest(storage = undefined) {
 function writeBest(result, storage = undefined) {
   try {
     const target = storage ?? globalThis.localStorage;
-    target?.setItem?.(CHALLENGE_STORAGE_KEY, JSON.stringify({
+    const wavesCleared = Math.max(0, Math.min(CHALLENGE_STAGE_COUNT, Math.floor(Number(result.wavesCleared) || 0)));
+    const best = {
       won: Boolean(result.won),
-      wavesCleared: Math.max(0, Number(result.wavesCleared) || 0),
+      wavesCleared,
       score: Math.max(0, Math.round(Number(result.score) || 0)),
-    }));
+    };
+    const waveScores = normaliseChallengeWaveScores(result.waveScores, wavesCleared);
+    if (waveScores) best.waveScores = waveScores;
+    target?.setItem?.(CHALLENGE_STORAGE_KEY, JSON.stringify(best));
   } catch {
     // Challenge remains fully playable if local storage is unavailable.
   }
 }
 
 export function persistChallengeResult(result, storage = undefined) {
-  const previousBest = readBest(storage);
+  const previousBest = readChallengeBest(storage);
   const better = isBetterChallengeResult(result, previousBest);
   if (better) writeBest(result, storage);
   return better ? result : previousBest;
@@ -244,11 +275,14 @@ function renderChallengeResult(state, detail = {}) {
   const ui = ensureUi();
   if (!ui) return;
 
+  const wavesCleared = Math.min(CHALLENGE_STAGE_COUNT, Math.max(0, state.wavesCleared));
   const result = {
     won: Boolean(detail.won),
-    wavesCleared: Math.min(CHALLENGE_STAGE_COUNT, Math.max(0, state.wavesCleared)),
+    wavesCleared,
     score: Math.max(0, Math.round(Number(detail.score) || 0)),
   };
+  const waveScores = normaliseChallengeWaveScores(detail.waveScores, wavesCleared);
+  if (waveScores) result.waveScores = waveScores;
   const best = persistChallengeResult(result);
 
   const progress = ui.result.querySelector('[data-challenge-progress]');
@@ -338,7 +372,11 @@ export function installChallengeMode(Engine = CombatEngine) {
         const terminalEvent = event;
         queueMicrotask(() => {
           renderModeUi(state, true);
-          renderChallengeResult(state, { won, score: terminalEvent.detail?.score });
+          renderChallengeResult(state, {
+            won,
+            score: terminalEvent.detail?.score,
+            waveScores: terminalEvent.detail?.challengeWaveScores,
+          });
         });
       }
     }

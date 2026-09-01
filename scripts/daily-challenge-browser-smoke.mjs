@@ -80,7 +80,27 @@ try {
     if (!identityDom.includes(marker)) throw new Error(`${message}. DOM:\n${identityDom.slice(0, 6000)}`);
   }
 
-  console.log(`daily challenge browser smoke passed with ${browser}: 今日陣 lifecycle + tactical checkpoints + challenge rematch visual identity projection`);
+  const rivalDom = await dumpDomWithDeviceMetrics(browser, '/tests/challenge-rival-browser-harness.html', {
+    budget: 7000,
+    width: 320,
+    height: 568,
+    doneExpression: `document.documentElement.dataset.challengeRivalBrowserIntegration === 'pass' || document.documentElement.dataset.challengeRivalBrowserIntegration === 'fail'`,
+  });
+  const rivalRequired = [
+    ['data-challenge-rival-browser-integration="pass"', 'challenge rival lifecycle did not complete'],
+    ['data-challenge-rival-entry="true"', 'challenge rival PB badge was not visible, pointer-safe and in-bounds'],
+    ['data-challenge-rival-behind="true"', 'challenge rival did not show a behind-PB wave split'],
+    ['data-challenge-rival-ahead="true"', 'challenge rival did not show an ahead-PB split using authoritative same-wave score'],
+    ['data-challenge-rival-stored="true"', 'winning challenge did not persist eight authoritative PB splits in the existing challenge key'],
+    ['data-challenge-rival-terminal="true"', 'challenge rival badge did not clear at terminal'],
+    ['data-challenge-rival-retry="true"', 'challenge retry did not reload the just-earned split PB'],
+    ['data-challenge-rival-campaign-isolation="true"', 'challenge rival state leaked into campaign'],
+  ];
+  for (const [marker, message] of rivalRequired) {
+    if (!rivalDom.includes(marker)) throw new Error(`${message}. DOM:\n${rivalDom.slice(0, 6000)}`);
+  }
+
+  console.log(`daily challenge browser smoke passed with ${browser}: 今日陣 lifecycle + tactical checkpoints + rematch identity + challenge rival PB splits`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

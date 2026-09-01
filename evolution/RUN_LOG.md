@@ -324,3 +324,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, challenge reward/tactic, Blood Moon threshold, progression index, run analysis, persistence, account/network/privacy or asset behavior changed.
 - The repair is presentation-only and applies through the shared renderer façade, so PlayCanvas and the legacy WebGL2 fallback receive the same identity projection without a second gameplay authority.
 - Local syntax checks passed for the modified renderer and browser runner. Repository checkout/network access remained unavailable, so exact-head repository CI and GitHub Vercel status after this single commit remain the required acceptance evidence.
+
+## Run 086 — Challenge rival PB splits
+
+**Date:** 2026-09-02  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `94cd89c4dafe32c5fc7a627874b23a79bbec5088`.
+- Exact-head CI #124 (`33529473184`) was terminal green and the exact-head GitHub `Vercel` commit status was `success`; direct Vercel deployment enumeration remained unavailable, so the GitHub commit status stayed the deployment signal. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
+- Inline PR review comments were empty. The latest exact-head review reported no actionable P0/P1/P2 finding and explicitly cleared the Run 085 visual-identity repair; only a non-blocking Current Baseline version drift remained.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): challenge **宿敵步速** PB splits 5/5/5/4/5 = 24; broader Oni/phase practice expansion 4/4/3/5/4 = 20; further authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. 宿敵步速 won because it creates an immediate replay/scoring reason using the existing stable local challenge seam without changing combat balance or adding network/account authority.
+
+### Delivered slice
+
+- Added `src/challenge-rival.js` as an outer challenge-only observer. At challenge/今日陣 start it reads the existing local challenge best; after each cleared wave it shows a compact pointer-transparent **宿敵** badge with the current cumulative score and, when a valid PB split exists, the signed same-wave lead/deficit.
+- Extended the existing `blade-reversal-challenge-v1` best schema with optional monotonic `waveScores`. Legacy `{won,wavesCleared,score}` records stay valid; malformed/descending split arrays are ignored; only a better challenge result can replace the best and carry new splits. No new storage key, account, cloud sync or remote request was introduced.
+- The rival adapter observes authoritative post-wave score after composed challenge rewards. A later `challenge-tactic` event may refresh the just-cleared checkpoint split after 整息/血誓, but the adapter never mutates score, HP, timing or progression. Terminal challenge data receives the validated split array before the existing challenge-result microtask persists the best.
+- Added deterministic Node coverage for signed PB deltas, legacy-best compatibility, valid split round-trip and malformed split rejection. Added a focused real 320×568 browser gate under the existing daily challenge runner that starts from a stored split PB, proves a behind first-wave split and an ahead second-wave split including same-wave 不屈 score, persists eight authoritative splits after a better victory, reloads them on retry and clears the badge on campaign handoff.
+- Updated Current Baseline to `0.31.0-evolution`, the cumulative regression checklist, changelog, backlog, state and this run log in the same candidate tree.
+
+### Regression boundary
+
+- No campaign/practice/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, momentum/tactical reward value, Blood Moon threshold, progression, renderer animation/geometry, mastery formula, challenge-best ranking, storage key, account/network/privacy or asset behavior changed.
+- The only persistence expansion is an optional validated field inside the already-approved local challenge-best record. Storage failure remains non-fatal and legacy installs require no migration.
+- Repository checkout remained unavailable in this runtime, so exact-head repository CI plus GitHub Vercel status after this single implementation commit remain the required acceptance evidence before another feature run.

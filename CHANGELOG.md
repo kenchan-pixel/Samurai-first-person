@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.31.0-evolution — Challenge rival PB splits
+
+- Added challenge-only **宿敵步速**: each cleared wave can compare the current authoritative cumulative score with the same-wave split from the stored challenge best, showing a compact signed lead/deficit without changing score, HP, combat timing or progression.
+- Extended the existing `blade-reversal-challenge-v1` best record with optional validated monotonic `waveScores`; legacy `{won,wavesCleared,score}` records remain valid, malformed split arrays are ignored, and no new storage key/account/network surface was added. 今日陣 intentionally shares the same challenge PB/splits.
+- Added deterministic split/PB compatibility coverage plus a focused real 320×568 browser gate proving behind/ahead feedback, same-wave 不屈 score authority, eight-split persistence after a better victory, retry reload and campaign isolation.
+
 ## 0.30.1-evolution — Challenge rematch visual identity repair
 
 - Repaired an escaped renderer regression in 連戰試煉 / 今日陣: pressure rematches no longer inherit the Shogun look merely because their 8-wave progression index is 4–7.
