@@ -33,6 +33,7 @@
 
   <script type="module">
     import '../src/mastery-overlay.js';
+    import '../src/challenge-momentum.js';
     import {
       CHALLENGE_STAGE_COUNT,
       CHALLENGE_STORAGE_KEY,
@@ -241,7 +242,8 @@
       const challengeButton = document.querySelector('#challenge-button');
       const challengeCampaignButton = document.querySelector('#challenge-campaign-button');
       const challengeResult = document.querySelector('#challenge-result');
-      if (!challengeButton || !challengeCampaignButton || !challengeResult || !startButton || !restartButton) {
+      const momentumPanel = document.querySelector('#challenge-momentum');
+      if (!challengeButton || !challengeCampaignButton || !challengeResult || !momentumPanel || !startButton || !restartButton) {
         throw new Error('Challenge player-facing controls were not installed');
       }
 
@@ -249,17 +251,52 @@
       challengeButton.click();
       expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Challenge entry click');
 
+      const momentumRect = momentumPanel.getBoundingClientRect();
+      const momentumLayoutOk =
+        momentumPanel.hidden === false &&
+        root.dataset.challengeMomentum === '0' &&
+        momentumPanel.textContent.includes('氣勢') &&
+        getComputedStyle(momentumPanel).pointerEvents === 'none' &&
+        momentumRect.left >= -0.5 &&
+        momentumRect.right <= window.innerWidth + 0.5 &&
+        momentumRect.top >= -0.5 &&
+        momentumRect.bottom <= window.innerHeight + 0.5;
+      root.dataset.challengeMomentumLayout = String(momentumLayoutOk);
+
       const entryOk =
         uiCombat.enemies.length === CHALLENGE_STAGE_COUNT &&
         root.dataset.challengeActive === 'true' &&
         root.dataset.runMode === 'challenge' &&
-        root.dataset.challengeStageCount === String(CHALLENGE_STAGE_COUNT);
+        root.dataset.challengeStageCount === String(CHALLENGE_STAGE_COUNT) &&
+        momentumLayoutOk;
       root.dataset.challengeEntry = String(entryOk);
       if (!entryOk) throw new Error('challenge entry did not activate the composed eight-stage runtime');
 
       let finalEvents = [];
+      let healRallyOk = false;
       for (let stage = 1; stage <= CHALLENGE_STAGE_COUNT; stage += 1) {
+        if (stage === 2) uiCombat.playerHp = uiCombat.playerMaxHp - 1;
         const events = await forceChallengeStageClear(stage);
+
+        if (stage === 1) {
+          root.dataset.challengeMomentumFirstClean = String(
+            root.dataset.challengeMomentum === '1' &&
+            momentumPanel.textContent.includes('再一關'),
+          );
+        }
+        if (stage === 2) {
+          const rally = events.find((event) => event.type === 'challenge-rally');
+          healRallyOk =
+            rally?.detail?.reward === 'heal' &&
+            rally?.detail?.amount === 1 &&
+            rally?.detail?.cleanWaves === 2 &&
+            rally?.detail?.rallies === 1 &&
+            uiCombat.playerHp === uiCombat.playerMaxHp &&
+            root.dataset.challengeMomentum === '0' &&
+            momentumPanel.textContent.includes('回復 1 生命');
+          root.dataset.challengeMomentumHeal = String(healRallyOk);
+        }
+
         if (stage < CHALLENGE_STAGE_COUNT) {
           const next = events.find((event) => event.type === 'stage-start');
           if (next?.detail?.stage !== stage + 1 || uiCombat.enemyIndex !== stage) {
@@ -276,19 +313,25 @@
       const analysisCards = [...(analysis?.querySelectorAll('.result-analysis__stage') || [])];
       const challengeSummary = document.querySelector('#result-summary')?.textContent || '';
       const challengeEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
+      const momentumSummary = document.querySelector('[data-challenge-progress]')?.textContent || '';
       const terminalOk =
         Boolean(victory?.detail?.challenge) &&
         victory?.detail?.wavesCleared === CHALLENGE_STAGE_COUNT &&
+        victory?.detail?.challengeCleanWaves === CHALLENGE_STAGE_COUNT &&
+        victory?.detail?.challengeRallies === CHALLENGE_STAGE_COUNT / 2 &&
         root.dataset.challengeResult === 'victory' &&
         restartButton.textContent === '再戰連陣' &&
         challengeCampaignButton.hidden === false &&
         challengeResult.hidden === false &&
+        momentumPanel.hidden === true &&
         challengeEyebrow.includes('連戰試煉') &&
         challengeSummary.includes('連戰紀錄獨立計算') &&
+        momentumSummary.includes(`不屈×${CHALLENGE_STAGE_COUNT / 2}`) &&
         analysisCards.length === CHALLENGE_STAGE_COUNT;
       root.dataset.challengeTerminal = String(terminalOk);
+      root.dataset.challengeMomentumSummaryOk = String(momentumSummary.includes('不屈×'));
       root.dataset.challengeAnalysisStages = String(analysisCards.length);
-      if (!terminalOk) throw new Error('challenge terminal UI or eight-stage analysis did not render');
+      if (!terminalOk) throw new Error('challenge terminal UI, momentum summary or eight-stage analysis did not render');
 
       const bestIsolation =
         localStorage.getItem(BEST_KEY) === firstBest &&
@@ -323,6 +366,8 @@
       const retryStarted =
         uiCombat.enemies.length === CHALLENGE_STAGE_COUNT &&
         root.dataset.runMode === 'challenge' &&
+        root.dataset.challengeMomentum === '0' &&
+        momentumPanel.hidden === false &&
         challengeResult.hidden === true &&
         challengeCampaignButton.hidden === true;
 
@@ -335,6 +380,7 @@
       const retryTerminal =
         retryTerminalEvents.some((event) => event.type === 'defeat' && event.detail?.challenge) &&
         challengeCampaignButton.hidden === false &&
+        momentumPanel.hidden === true &&
         restartButton.textContent === '再戰連陣';
 
       challengeCampaignButton.click();
@@ -343,16 +389,24 @@
         uiCombat.enemies.length === ENEMIES.length + 1 &&
         root.dataset.challengeActive === 'false' &&
         root.dataset.runMode === 'campaign' &&
+        root.dataset.challengeMomentum === '0' &&
+        momentumPanel.hidden === true &&
         challengeResult.hidden === true &&
         challengeCampaignButton.hidden === true &&
         localStorage.getItem(BEST_KEY) === firstBest;
 
       const controlsOk = retryStarted && retryTerminal && campaignStarted;
+      const momentumOk =
+        momentumLayoutOk &&
+        root.dataset.challengeMomentumFirstClean === 'true' &&
+        healRallyOk &&
+        root.dataset.challengeMomentumSummaryOk === 'true';
       root.dataset.challengeControls = String(controlsOk);
+      root.dataset.challengeMomentumIntegration = String(momentumOk);
       root.dataset.challengeBrowserIntegration =
-        entryOk && terminalOk && bestIsolation && terminalFits && controlsOk ? 'pass' : 'fail';
+        entryOk && terminalOk && bestIsolation && terminalFits && controlsOk && momentumOk ? 'pass' : 'fail';
       if (root.dataset.challengeBrowserIntegration !== 'pass') {
-        throw new Error('challenge retry/campaign handoff control flow failed');
+        throw new Error('challenge momentum/retry/campaign handoff control flow failed');
       }
     }
 
@@ -419,6 +473,9 @@
         root.dataset.shogunPracticeIntegration === 'true' &&
         root.dataset.shogunPracticeControls === 'true' &&
         root.dataset.challengeBrowserIntegration === 'pass' &&
+        root.dataset.challengeMomentumIntegration === 'true' &&
+        root.dataset.challengeMomentumLayout === 'true' &&
+        root.dataset.challengeMomentumHeal === 'true' &&
         root.dataset.challengeEntry === 'true' &&
         root.dataset.challengeTerminal === 'true' &&
         root.dataset.challengeBestIsolation === 'true' &&

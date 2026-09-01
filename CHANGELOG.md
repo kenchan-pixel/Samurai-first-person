@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.28.0-evolution — Challenge momentum / 不屈
+
+- Added challenge-only **氣勢**: each hitless wave fills one of two marks, taking a hit breaks the chain, and two consecutive clean clears trigger **不屈**.
+- 不屈 restores 1 HP when the player is damaged; at full HP it awards +300 challenge score instead. The reward then resets momentum, keeping the eight-duel run deterministic without changing campaign/practice combat timing, damage, direction or boss rules.
+- Added a compact pointer-transparent live badge, clearer challenge-entry copy, terminal 不屈 count, deterministic Node coverage and real 320×568 browser verification for the clean-wave stack, +1 HP rally, retry and campaign handoff.
+
 ## 0.27.0-evolution — Eight-duel challenge trial
 
 - Added local **連戰試煉**, an eight-duel endurance ladder: the baseline trio opens the run, four bounded pressure rematches tighten existing HP/posture/timing values, and the real Crimson Shogun/Blood Moon closes Stage 8.

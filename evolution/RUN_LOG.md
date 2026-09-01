@@ -98,3 +98,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice roster, parry/swipe/STEP direction, combat timing, reach, damage, boss threshold, mastery scoring formula, renderer animation/geometry, remote data, account, analytics, paid API or asset provenance behaviour changed.
 - Challenge storage remains local-only and isolated from the campaign personal best.
 - Local syntax checks passed for the changed module and browser harness; exact-head repository CI and Vercel Preview after this commit remain the acceptance evidence before feature work resumes.
+
+## Run 077 — Challenge momentum / 不屈
+
+**Date:** 2026-09-01  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `b9da687ddaf5ac58bb56f8c71e2dc9257b36becd`.
+- Exact-head CI #112 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`; the Preview was Ready at the persistent challenge branch URL.
+- Draft PR #1 remained open/Draft/unmerged, inline review threads were empty and `main` was untouched. The latest exact-head All Repos review reported no actionable P0/P1/P2 finding and explicitly cleared the prior challenge-browser acceptance P2.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): challenge 氣勢/不屈 5/5/4/5/5 = 24; deterministic date/seed challenge variant 4/5/5/3/4 = 21; post-wave tactical choice 5/5/5/3/3 = 21. 氣勢/不屈 won because it adds visible endurance/replay decisions while staying inside the existing deterministic challenge adapter and current browser acceptance surface.
+
+### Delivered slice
+
+- Added `src/challenge-momentum.js` as a challenge-only adapter layered after the existing challenge roster/result adapter. Each hitless wave fills one of two **氣勢** marks; any real `player-hit` immediately breaks the chain.
+- Two consecutive hitless clears trigger **不屈** and reset momentum. If the player is damaged it restores exactly 1 HP; at full HP the same trigger awards +300 challenge score, so clean play always earns a visible benefit without changing campaign scoring.
+- Added a compact pointer-transparent live badge under the top HUD, changed the challenge entry subtitle to **八關 · 無傷聚氣**, and appends total 不屈 triggers to the terminal challenge progress strip. The badge is hidden outside challenge and at terminal.
+- Added deterministic Node coverage for hit/reset/heal/full-health score/campaign isolation. Extended the existing real 320×568 mastery browser path to prove the visible badge stays in bounds/pointer-safe, one clean clear shows 1/2 momentum, the second clean clear restores 1 HP, all eight waves remain completable, terminal 不屈 count renders, retry resets momentum and campaign handoff hides the adapter.
+- Updated Current Baseline, regression checklist, backlog and changelog to make the challenge-only ownership and cumulative acceptance contract explicit.
+
+### Regression boundary
+
+- No campaign/practice enemy roster, attack timing, parry/Perfect/STEP windows, direction mapping, reach, damage, posture, Blood Moon threshold, renderer animation/geometry, local campaign mastery formula, account/network/privacy or asset behaviour changed.
+- Momentum state is run-local only. It adds no persistence key, listener loop, timer, remote call or second combat clock; the only gameplay mutations are the documented challenge wave-clear +1 HP / +300 score rewards.
+- New JS and the modified browser module were syntax-checked locally. Exact-head repository CI and Vercel Preview after this single implementation commit remain the acceptance evidence before the next feature run.
