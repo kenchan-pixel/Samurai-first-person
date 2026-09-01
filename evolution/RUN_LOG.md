@@ -224,3 +224,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice definitions, standard challenge pressure values, attack timing/damage/reach/heavy flags, parry/Perfect/STEP windows, direction mapping, boss thresholds, challenge rewards/scoring, renderer animation/geometry, storage key, account/network/privacy or asset provenance behavior changed.
 - The new outer daily roster remains mutable so the existing boss adapter can safely replace the final Shogun definition during Blood Moon; individual daily pressure definitions stay immutable.
 - New JS/tests were syntax-checked before commit. Exact-head repository CI and GitHub Vercel Preview after this single implementation commit remain the required acceptance evidence before another feature run.
+
+## Run 082 — 今日陣 browser lifecycle acceptance
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `414392de5c06cc575b2416feb1bea88201c2a682`.
+- Exact-head CI #119 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. The direct Vercel connector again enumerated an empty project list for the known team, so GitHub's exact-head `Vercel` status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
+- The latest exact-head All Repos review found one blocking P2: 今日陣 had deterministic Node coverage and start-layout coverage, but CI never clicked the real 今日陣 control or proved its dated banner, eight-stage terminal identity, same-date retry, and clean campaign handoff through a browser lifecycle.
+
+### Repair
+
+- Added one focused true-`320×568` 今日陣 browser companion gate under the existing `npm run test:browser` delivery command. It uses the production challenge → daily → momentum adapters, clicks the real **今日陣** button and requires an eight-stage dated challenge plus pointer-safe in-viewport intro banner.
+- The gate sends the first telegraph through the real composed `drainEvents()` wrapper and proves the banner clears, then drives the existing deterministic eight stage-clear transitions to terminal victory and requires the terminal event/progress strip to carry the same `YYYY-MM-DD` identity.
+- **再戰連陣** must retain the same date key and an exact roster/attack-order signature. A terminal retry then exercises **開始完整主線** and proves daily/challenge state is cleared and the normal four-stage campaign is restored at Ashigaru Stage 1.
+- Kept the existing broad mastery/challenge browser smoke unchanged and chained this narrowly scoped escaped-regression check after it; no production gameplay module was modified.
+
+### Regression boundary
+
+- No campaign/practice/challenge enemy value, attack timing/damage/reach, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold, challenge reward/scoring, renderer, storage, account/network/privacy or asset behavior changed.
+- The new browser companion exists only because a concrete current-head daily lifecycle gap escaped the existing harness; it does not create a second gameplay implementation or clock.
+- New runner and harness modules passed local syntax checks. Repository checkout/network access was unavailable in the runtime, so exact-head CI plus the GitHub Vercel status after this single commit remain the required acceptance evidence before feature work resumes.

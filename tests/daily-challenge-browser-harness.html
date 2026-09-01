@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Daily challenge browser integration harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <div class="crest" aria-hidden="true">刃</div>
+        <h1>Blade Reversal</h1>
+        <div id="practice-row" class="practice-row"></div>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+      </div>
+    </section>
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">勝利</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import {
+      CHALLENGE_STAGE_COUNT,
+      requestChallenge,
+    } from '../src/challenge-mode.js';
+    import {
+      DAILY_CHALLENGE_ACTIVE,
+      requestDailyChallenge,
+    } from '../src/daily-challenge.js';
+    import '../src/challenge-momentum.js';
+    import { CombatEngine, ENEMIES } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const startButton = document.querySelector('#start-button');
+    const restartButton = document.querySelector('#restart-button');
+    const uiCombat = new CombatEngine({ enemies: [...ENEMIES, BOSS_PHASE_ONE] });
+    let uiNow = 1000;
+
+    startButton.addEventListener('click', () => {
+      uiNow += 1000;
+      uiCombat.start(uiNow);
+    });
+
+    restartButton.addEventListener('click', () => {
+      uiNow += 1000;
+      uiCombat.reset(uiNow);
+      uiCombat.start(uiNow);
+    });
+
+    async function flush() {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    function shortDate(key) {
+      return `${key.slice(5, 7)}/${key.slice(8, 10)}`;
+    }
+
+    function rosterSignature() {
+      return JSON.stringify(uiCombat.enemies.map((enemy) => ({
+        id: enemy.id,
+        title: enemy.title,
+        attacks: (enemy.attacks || []).map((attack) => attack.direction),
+      })));
+    }
+
+    function drainExpectedStage(stage, label) {
+      const events = uiCombat.drainEvents();
+      const start = events.find((event) => event.type === 'stage-start');
+      if (start?.detail?.stage !== stage || uiCombat.enemyIndex !== stage - 1) {
+        throw new Error(`${label}: expected stage ${stage}`);
+      }
+      return { events, start };
+    }
+
+    async function forceStageClear(stage) {
+      if (uiCombat.enemyIndex !== stage - 1) throw new Error(`expected stage ${stage}, got ${uiCombat.enemyIndex + 1}`);
+      const enemyId = uiCombat.enemy?.id;
+      if (!enemyId) throw new Error(`stage ${stage} has no enemy`);
+      uiCombat.enemyHp = 0;
+      uiCombat.phase = 'stage-clear';
+      uiCombat.phaseStartedAt = uiNow + 10;
+      uiCombat.phaseEndsAt = uiNow + 20;
+      uiCombat.events.push({ type: 'enemy-defeated', detail: { enemyId, stage } });
+      uiNow += 20;
+      uiCombat.update(uiNow);
+      const events = uiCombat.drainEvents();
+      await flush();
+      return events;
+    }
+
+    async function forceDefeat() {
+      uiCombat.phase = 'defeat';
+      uiCombat.phaseStartedAt = uiNow + 1;
+      uiCombat.phaseEndsAt = Infinity;
+      uiCombat.events.push({ type: 'defeat', detail: { score: uiCombat.score } });
+      const events = uiCombat.drainEvents();
+      await flush();
+      return events;
+    }
+
+    try {
+      const dailyButton = document.querySelector('#daily-challenge-button');
+      const campaignButton = document.querySelector('#challenge-campaign-button');
+      const banner = document.querySelector('#daily-challenge-banner');
+      const challengeResult = document.querySelector('#challenge-result');
+      if (!dailyButton || !campaignButton || !banner || !challengeResult) {
+        throw new Error('daily/challenge player-facing controls were not installed');
+      }
+
+      dailyButton.click();
+      const entry = drainExpectedStage(1, 'daily entry');
+      const key = root.dataset.dailyChallengeKey || '';
+      const formation = rosterSignature();
+      const bannerRect = banner.getBoundingClientRect();
+      const entryOk =
+        /^\d{4}-\d{2}-\d{2}$/.test(key) &&
+        uiCombat.enemies.length === CHALLENGE_STAGE_COUNT &&
+        uiCombat[DAILY_CHALLENGE_ACTIVE] === true &&
+        root.dataset.challengeActive === 'true' &&
+        root.dataset.dailyChallengeActive === 'true' &&
+        entry.start.detail?.dailyChallenge === true &&
+        entry.start.detail?.dailyChallengeKey === key &&
+        banner.hidden === false &&
+        banner.textContent.includes(`今日陣 ${shortDate(key)}`) &&
+        getComputedStyle(banner).pointerEvents === 'none' &&
+        bannerRect.left >= -0.5 &&
+        bannerRect.right <= innerWidth + 0.5 &&
+        bannerRect.top >= -0.5 &&
+        bannerRect.bottom <= innerHeight + 0.5;
+      root.dataset.dailyChallengeEntry = String(entryOk);
+      if (!entryOk) throw new Error('real 今日陣 button did not activate the dated eight-stage runtime');
+
+      uiCombat.events.push({ type: 'telegraph', detail: { stage: 1, direction: 'top' } });
+      const telegraphEvents = uiCombat.drainEvents();
+      const bannerLifecycle =
+        telegraphEvents.some((event) => event.type === 'telegraph') &&
+        banner.hidden === true;
+      root.dataset.dailyChallengeBannerLifecycle = String(bannerLifecycle);
+      if (!bannerLifecycle) throw new Error('今日陣 banner did not clear at the first telegraph');
+
+      let finalEvents = [];
+      let stageTagsOk = true;
+      for (let stage = 1; stage <= CHALLENGE_STAGE_COUNT; stage += 1) {
+        const events = await forceStageClear(stage);
+        if (stage < CHALLENGE_STAGE_COUNT) {
+          const next = events.find((event) => event.type === 'stage-start');
+          stageTagsOk = stageTagsOk &&
+            next?.detail?.stage === stage + 1 &&
+            next?.detail?.dailyChallenge === true &&
+            next?.detail?.dailyChallengeKey === key;
+        } else {
+          finalEvents = events;
+        }
+      }
+
+      const victory = finalEvents.find((event) => event.type === 'victory');
+      const progress = document.querySelector('[data-challenge-progress]');
+      const terminalOk =
+        stageTagsOk &&
+        victory?.detail?.challenge === true &&
+        victory?.detail?.dailyChallenge === true &&
+        victory?.detail?.dailyChallengeKey === key &&
+        challengeResult.hidden === false &&
+        campaignButton.hidden === false &&
+        restartButton.textContent === '再戰連陣' &&
+        Boolean(progress?.textContent.includes(`今日陣 ${shortDate(key)}`)) &&
+        root.dataset.dailyChallengeActive === 'false' &&
+        !root.dataset.dailyChallengeKey;
+      root.dataset.dailyChallengeTerminal = String(terminalOk);
+      if (!terminalOk) throw new Error('今日陣 terminal date identity or challenge result flow failed');
+
+      restartButton.click();
+      const retry = drainExpectedStage(1, 'daily retry');
+      const retryKey = root.dataset.dailyChallengeKey || '';
+      const retryFormation = rosterSignature();
+      const retryOk =
+        retryKey === key &&
+        retryFormation === formation &&
+        uiCombat[DAILY_CHALLENGE_ACTIVE] === true &&
+        root.dataset.dailyChallengeActive === 'true' &&
+        retry.start.detail?.dailyChallenge === true &&
+        retry.start.detail?.dailyChallengeKey === key &&
+        banner.hidden === false;
+      root.dataset.dailyChallengeRetry = String(retryOk);
+      root.dataset.dailyChallengeSameFormation = String(retryFormation === formation);
+      if (!retryOk) throw new Error('今日陣 retry did not preserve the same date key and formation');
+
+      const defeatEvents = await forceDefeat();
+      const defeat = defeatEvents.find((event) => event.type === 'defeat');
+      if (defeat?.detail?.dailyChallenge !== true || campaignButton.hidden) {
+        throw new Error('daily retry did not expose the terminal campaign handoff');
+      }
+
+      campaignButton.click();
+      const campaign = drainExpectedStage(1, 'daily campaign handoff');
+      const campaignOk =
+        uiCombat.enemies.length === ENEMIES.length + 1 &&
+        uiCombat[DAILY_CHALLENGE_ACTIVE] === false &&
+        root.dataset.challengeActive === 'false' &&
+        root.dataset.dailyChallengeActive === 'false' &&
+        !root.dataset.dailyChallengeKey &&
+        root.dataset.nextChallengeVariant === 'standard' &&
+        uiCombat.enemy?.id === 'ashigaru-scout' &&
+        campaign.start.detail?.dailyChallenge !== true &&
+        campaignButton.hidden === true &&
+        challengeResult.hidden === true &&
+        banner.hidden === true;
+      root.dataset.dailyChallengeCampaignHandoff = String(campaignOk);
+      if (!campaignOk) throw new Error('今日陣 leaked into the restored four-stage campaign');
+
+      root.dataset.dailyChallengeBrowserIntegration =
+        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk ? 'pass' : 'fail';
+    } catch (error) {
+      requestDailyChallenge(false);
+      requestChallenge(false);
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.dailyChallengeBrowserIntegration = 'fail';
+    }
+  </script>
+</body>
+</html>
