@@ -1,6 +1,6 @@
 # Evolution Run Log
 
-This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Preview links remain in Git history and Draft PR #1.
+This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Preview links remain in Git history and Draft PR #1. Historical long-form entries through Run 089 were compacted on Run 091; no product rule was removed from `docs/CURRENT_BASELINE.md` or `docs/REGRESSION_CHECKLIST.md`.
 
 ## Runs 000–020 — Core systems and renderer evolution
 
@@ -33,399 +33,66 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Run 062 added optional default-off 節拍提示 driven by authoritative telegraph/Perfect timing.
 - Runs 063–064 made the disabled timing assist truly DOM-idle and repaired its deterministic browser harness without weakening the off/on/off mutation contract.
 
-## Runs 065–069 — Player-facing blade semantics and actual-Sword afterimages
-
-- Run 065 repaired the remaining owner animation P1 with an authored player-facing `Guard`, explicit player-screen RIGHT/LEFT cut travel and enemy-only horizontal mirroring.
-- Runs 066–067 restored exact-head SOT verification after wording drift, then replaced brittle sentence-literal smoke with section-scoped semantic invariants.
-- Run 068 added four pooled full-blade afterimages sampled only from the actual authored Sword transform, strengthening cut/follow-through readability without steering the weapon or changing combat.
-- Run 069 made those afterimages respond immediately to live reduced-motion changes, clear stale history and remove the media-query listener on renderer teardown.
-
-## Runs 070–074 — Delivery-loop recovery, architecture SOT and handedness
-
-- Run 070 repaired a Vercel rate-limit deadlock by defining bounded external-provider recovery while keeping failed Preview as a feature blocker.
-- Run 071 made that recovery one-shot per durable provider incident, preventing repeated bookkeeping commits if the same external limit recurs.
-- Run 072 reconciled `docs/ARCHITECTURE.md` with the approved PlayCanvas + Vite primary renderer, deterministic CombatEngine authority and WebGL2 fallback.
-- Run 073 added a persistent local STEP right/left-side preference that mirrors only the lower-corner footwork cluster.
-- Run 074 repaired inherited centering transforms that clipped left-hand STEP UI and strengthened the real 320×568 production gate to prove left-side safe-area geometry, fixed swipe semantics and top-right Pause/parry routing.
-
-## Run 075 — Eight-duel challenge trial
-
-**Date:** 2026-09-01  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `45627fbfa86dd3050ce192dac9d49ccd7b80559c`.
-- Exact-head CI #109 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
-- The latest exact-head All Repos review reported no actionable P0/P1/P2 finding; inline review threads were empty and the cumulative baseline had no material regression blocker.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): eight-duel challenge 5/5/5/4/4 = 23; broader accessibility/motion control without a concrete gap 4/4/4/3/4 = 19; further normal-speed sword visual refinement without pixel-level Preview inspection 5/5/3/2/3 = 18. The bounded challenge won as the strongest complete player-visible slice.
-
-### Delivered slice
-
-- Added local **連戰試煉** as an explicit start-screen mode. It swaps in exactly eight duels only for the requested run: the unchanged baseline Ashigaru/Ronin/Oni open the ladder, Stages 4–7 reuse those existing definitions as pressure rematches with bounded HP/posture/timing changes, and Stage 8 uses the real Crimson Shogun Phase I definition so the existing Blood Moon authority remains intact.
-- Player HP, score, deterministic combat rules, STEP/parry/counter semantics and renderer authority carry through the same CombatEngine progression path; no parallel combat clock or second engine was introduced.
-- Challenge terminal UI exposes progress/best, **再戰連陣** and **開始完整主線**. Restart remains in challenge; campaign handoff restores the original roster before the existing boss adapter rebuilds the normal four-duel campaign.
-- Mastery/run analysis still observes the same event stream but challenge results are visibly labelled and excluded from the campaign personal best. A separate local challenge best ranks waves cleared first, then win/score; storage failure remains non-fatal.
-- Added focused challenge regressions for the bounded eight-stage roster, pressure-vs-baseline invariants, best-result ordering, terminal challenge tagging and roster restoration. The shared selector-row layout now makes the existing production 320×568 start-screen gate cumulative across practice plus challenge.
-
-### Regression boundary
-
-- No campaign/practice enemy definition, input direction, parry/Perfect/STEP window, damage, boss threshold, mastery scoring formula, renderer animation/geometry, remote data, account, analytics, paid API or asset provenance behaviour changed.
-- The challenge is local-only and opt-in; normal **拔刀**, 練浪人 and 練將軍 remain the accepted baseline paths.
-- Local checkout could not reach GitHub from this runtime, so new modules were syntax-checked and focused pure logic was reviewed locally; post-commit exact-head Node/browser CI plus GitHub Vercel status remain the required acceptance evidence before another feature run.
-
-## Run 076 — Challenge browser acceptance hardening
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `8a3ad09e7322e7d59a44880ad570bfd66f4b360c`.
-- Exact-head CI #110 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success`. Direct Vercel deployment enumeration returned 403, so the GitHub `Vercel` commit status remained the authoritative deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, inline review threads were empty, and `main` was untouched.
-- The latest exact-head All Repos review found one blocking P2: Run 075 did not exercise the real challenge entry/retry/campaign-handoff/result UI through a production browser path, leaving the eight-stage lifecycle, independent best storage and 320×568 terminal layout able to regress while CI stayed green.
-
-### Repair
-
-- Extended the existing mastery browser harness instead of creating a parallel suite. It now clicks the real **連戰試煉** control, proves the composed CombatEngine activates exactly eight stages, drives all eight stage-clear transitions to a real challenge victory, verifies eight run-analysis cards and separate challenge-best persistence without changing campaign best, then exercises **再戰連陣** and **開始完整主線** back to the normal four-stage campaign.
-- Added explicit 320×568 bounds checks for the challenge result block, all eight analysis cards, retry control and campaign-handoff control.
-- Tightened only the challenge result density on short phone viewports so the complete eight-stage analysis and both terminal actions remain inside the accepted portrait viewport. Combat timing, input, scoring and campaign/practice presentation are untouched.
-- Updated the regression checklist so the real challenge control/terminal browser path is a cumulative delivery gate.
-
-### Regression boundary
-
-- No campaign/practice roster, parry/swipe/STEP direction, combat timing, reach, damage, boss threshold, mastery scoring formula, renderer animation/geometry, remote data, account, analytics, paid API or asset provenance behaviour changed.
-- Challenge storage remains local-only and isolated from the campaign personal best.
-- Local syntax checks passed for the changed module and browser harness; exact-head repository CI and Vercel Preview after this commit remain the acceptance evidence before feature work resumes.
-
-## Run 077 — Challenge momentum / 不屈
-
-**Date:** 2026-09-01  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `b9da687ddaf5ac58bb56f8c71e2dc9257b36becd`.
-- Exact-head CI #112 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`; the Preview was Ready at the persistent challenge branch URL.
-- Draft PR #1 remained open/Draft/unmerged, inline review threads were empty and `main` was untouched. The latest exact-head All Repos review reported no actionable P0/P1/P2 finding and explicitly cleared the prior challenge-browser acceptance P2.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): challenge 氣勢/不屈 5/5/4/5/5 = 24; deterministic date/seed challenge variant 4/5/5/3/4 = 21; post-wave tactical choice 5/5/5/3/3 = 21. 氣勢/不屈 won because it adds visible endurance/replay decisions while staying inside the existing deterministic challenge adapter and current browser acceptance surface.
-
-### Delivered slice
-
-- Added `src/challenge-momentum.js` as a challenge-only adapter layered after the existing challenge roster/result adapter. Each hitless wave fills one of two **氣勢** marks; any real `player-hit` immediately breaks the chain.
-- Two consecutive hitless clears trigger **不屈** and reset momentum. If the player is damaged it restores exactly 1 HP; at full HP the same trigger awards +300 challenge score, so clean play always earns a visible benefit without changing campaign scoring.
-- Added a compact pointer-transparent live badge under the top HUD, changed the challenge entry subtitle to **八關 · 無傷聚氣**, and appends total 不屈 triggers to the terminal challenge progress strip. The badge is hidden outside challenge and at terminal.
-- Added deterministic Node coverage for hit/reset/heal/full-health score/campaign isolation. Extended the existing real 320×568 mastery browser path to prove the visible badge stays in bounds/pointer-safe, one clean clear shows 1/2 momentum, the second clean clear restores 1 HP, all eight waves remain completable, terminal 不屈 count renders, retry resets momentum and campaign handoff hides the adapter.
-- Updated Current Baseline, regression checklist, backlog and changelog to make the challenge-only ownership and cumulative acceptance contract explicit.
-
-### Regression boundary
-
-- No campaign/practice enemy roster, attack timing, parry/Perfect/STEP windows, direction mapping, reach, damage, posture, Blood Moon threshold, renderer animation/geometry, local campaign mastery formula, account/network/privacy or asset behaviour changed.
-- Momentum state is run-local only. It adds no persistence key, listener loop, timer, remote call or second combat clock; the only gameplay mutations are the documented challenge wave-clear +1 HP / +300 score rewards.
-- New JS and the modified browser module were syntax-checked locally. Exact-head repository CI and Vercel Preview after this single implementation commit remain the acceptance evidence before the next feature run.
-
-## Run 078 — Real player-hit momentum regression hardening
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `909720ca177d972460e2fc739f2910a6fb965ce5`.
-- Exact-head CI #115 was terminal green and GitHub's exact-head `Vercel` commit status was `success`. Direct Vercel deployment enumeration returned 403, so the GitHub `Vercel` commit status remained the authoritative deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
-- The latest exact-head All Repos review found one blocking P2: the documented rule that any real `player-hit` breaks challenge momentum was only covered by a pure `hitThisWave: true` resolver input. The installed/composed adapter never had to observe an actual CombatEngine-emitted `player-hit`, so the event hook could regress while CI stayed green.
-
-### Repair
-
-- Strengthened the existing challenge-momentum Node regression instead of adding another test harness. It now uses the installed challenge + momentum adapters on a real `CombatEngine`, clears one clean wave, advances into the next real stage, lets the next incoming strike resolve naturally into an actual `player-hit`, and verifies HP falls through the production engine event path.
-- The same regression then proves the damaged wave cannot trigger 不屈, the following clean wave rebuilds only the first 1/2 momentum mark, and only the next consecutive clean wave triggers the expected +1 HP rally. Campaign mode remains isolated and cannot emit challenge rally rewards.
-- Updated the regression checklist so the composed real-CombatEngine `player-hit` → chain break → clean-wave rebuild sequence is a durable `npm test` delivery gate.
-
-### Regression boundary
-
-- No production gameplay code changed. Challenge reward values, combat timing, damage, direction mapping, STEP/parry/Perfect rules, boss behavior, renderer, persistence, privacy/network boundaries and campaign/practice behavior are unchanged.
-- This tests/SOT-only change qualifies as a blocker repair because it closes a current-head P2 against an explicit cumulative gameplay contract and restores the delivery gate's ability to catch a broken event-composition seam.
-- Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
-
-## Run 079 — Final-wave challenge score authority
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `941a97373c80ed7a15cdc15cde1c6b39559c89bd`.
-- Exact-head CI #116 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Direct Vercel deployment enumeration still returned 403, so GitHub's `Vercel` status remained the authoritative deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
-- The latest exact-head Second Hourly review found one blocking P2: when final `enemy-defeated` and `victory` are drained together, a full-health final-wave 不屈 can add +300 to the engine after challenge terminalization has already copied the older score, causing victory/result/challenge-best data to omit the legitimate reward.
-
-### Repair
-
-- Made challenge momentum rewrite terminal `score` from the post-reward authoritative `CombatEngine.score` after processing the final `enemy-defeated` in the same drain batch.
-- Changed challenge terminal rendering to retain the terminal event reference until its microtask runs, so result rendering and the separate local challenge best consume the score corrected by the outer momentum adapter instead of an earlier primitive copy.
-- Extracted the existing best-result write path as `persistChallengeResult()` for focused deterministic verification without adding a second persistence implementation.
-- Added a composed eight-stage regression that reaches the final full-health 2/2 rally, proves the +300 appears in engine score and `victory.detail.score`, then persists the exact same score through the real challenge-best ranking/write helper.
-- Updated the regression checklist so same-batch final rally/victory score authority is a cumulative delivery gate.
-
-### Regression boundary
-
-- No challenge reward amount, campaign/practice scoring, combat timing/damage/input, boss behavior, renderer, account/network/privacy or storage key changed.
-- The fix only reconciles an already-earned challenge reward across the existing terminal event/result/best surfaces; it does not create a new scoring rule or persistence surface.
-- Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
-
-## Run 080 — Player-visible final challenge score authority
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `9041b89f7d9586031e860fa542495d15fff923be`.
-- Exact-head CI #117 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. The direct Vercel connector still enumerated no project for the known team, so GitHub's `Vercel` commit status remained the authoritative deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
-- The latest exact-head Second Hourly review found one blocking P2: Run 079 corrected engine/victory/challenge-best score authority, but the inner mastery observer still froze the pre-rally primitive score before the outer challenge-momentum wrapper applied the final +300, then its microtask could overwrite the generic visible result score with that stale value.
-
-### Repair
-
-- Kept mastery event observation synchronous, but deferred terminal `finishMastery()` report construction into the existing render microtask and retained the terminal event reference. The report now reads `terminalEvent.detail.score` only after the composed outer challenge wrappers have finished mutating the authoritative terminal event.
-- Strengthened the existing true-320×568 challenge browser lifecycle. Its Stage 8 already completes a full-health 2/2 rally; the gate now requires the final `challenge-rally` to be +300 and proves one identical authoritative score across `CombatEngine.score`, returned `victory.detail.score`, player-visible `#result-score` and stored challenge best.
-- The existing eight-stage entry, analysis, retry/campaign handoff, momentum, best-isolation and short-phone layout gates remain cumulative.
-
-### Regression boundary
-
-- No challenge reward amount, mastery formula, campaign/practice scoring, combat timing/damage/input, boss behavior, renderer, storage key, account/network/privacy or asset behavior changed.
-- The repair changes only terminal observation ordering so already-earned score cannot be overwritten by an earlier inner-observer snapshot.
-- Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
-
-## Run 081 — 今日陣 deterministic daily challenge
-
-**Date:** 2026-09-01  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `23b68be583439b5deaebde40bc173260820592c4`.
-- Exact-head CI #118 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Direct Vercel project enumeration returned an empty project list for the known team, so GitHub's exact-head `Vercel` commit status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty. The latest exact-head All Repos review reported no actionable P0/P1/P2 finding and explicitly confirmed the Run 080 terminal-score repair.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): deterministic 今日陣 4/5/5/5/5 = 24; bounded post-wave tactical choice 5/5/5/3/3 = 21; further authored-cut visual refinement without a concrete defect 4/5/3/3/4 = 19. 今日陣 won because it adds replayable player-visible variation using only the already-stable challenge definitions and no new backend/persistence authority.
-
-### Delivered slice
-
-- Added explicit **今日陣** beside practice and 連戰試煉. It derives one player-local `YYYY-MM-DD` key at run start and reuses that key for retry, so the same date reproduces the same formation without an account or network request.
-- Stages 1–3 remain the untouched Ashigaru/Ronin/Oni challenge opening and Stage 8 remains the real Crimson Shogun/Blood Moon. Stages 4–6 deterministically permute only the existing three pressure rematches; Stage 7 remains Ronin Master. Each pressure variant may cyclically rotate its existing attack array so its opening rhythm changes, but no attack object/value is rewritten.
-- Added a compact pointer-transparent **今日陣 MM/DD · 今日刀序已鎖定** intro banner that clears at the first telegraph, plus 今日陣 pressure-stage titles and terminal date identity. The shared start selector becomes four columns without adding row height.
-- 今日陣 composes inside the existing challenge adapter, therefore reuses the same eight-stage lifecycle, 氣勢/不屈, mastery/run analysis, retry/campaign handoff and existing local challenge best. It adds no persistence key, timer, analytics, remote identifier or second combat engine/clock.
-- Added deterministic Node coverage for same-date roster/order, unchanged pressure-rule values using order-insensitive attack fingerprints, daily→standard challenge→campaign restoration and real Shogun final-stage authority. Existing production 320×568 start-layout smoke remains cumulative because it measures every `.practice-button` in the shared selector row.
-
-### Regression boundary
-
-- No campaign/practice definitions, standard challenge pressure values, attack timing/damage/reach/heavy flags, parry/Perfect/STEP windows, direction mapping, boss thresholds, challenge rewards/scoring, renderer animation/geometry, storage key, account/network/privacy or asset provenance behavior changed.
-- The new outer daily roster remains mutable so the existing boss adapter can safely replace the final Shogun definition during Blood Moon; individual daily pressure definitions stay immutable.
-- New JS/tests were syntax-checked before commit. Exact-head repository CI and GitHub Vercel Preview after this single implementation commit remain the required acceptance evidence before another feature run.
-
-## Run 082 — 今日陣 browser lifecycle acceptance
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `414392de5c06cc575b2416feb1bea88201c2a682`.
-- Exact-head CI #119 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. The direct Vercel connector again enumerated an empty project list for the known team, so GitHub's exact-head `Vercel` status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
-- The latest exact-head All Repos review found one blocking P2: 今日陣 had deterministic Node coverage and start-layout coverage, but CI never clicked the real 今日陣 control or proved its dated banner, eight-stage terminal identity, same-date retry, and clean campaign handoff through a browser lifecycle.
-
-### Repair
-
-- Added one focused true-`320×568` 今日陣 browser companion gate under the existing `npm run test:browser` delivery command. It uses the production challenge → daily → momentum adapters, clicks the real **今日陣** button and requires an eight-stage dated challenge plus pointer-safe in-viewport intro banner.
-- The gate sends the first telegraph through the real composed `drainEvents()` wrapper and proves the banner clears, then drives the existing deterministic eight stage-clear transitions to terminal victory and requires the terminal event/progress strip to carry the same `YYYY-MM-DD` identity.
-- **再戰連陣** must retain the same date key and an exact roster/attack-order signature. A terminal retry then exercises **開始完整主線** and proves daily/challenge state is cleared and the normal four-stage campaign is restored at Ashigaru Stage 1.
-- Kept the existing broad mastery/challenge browser smoke unchanged and chained this narrowly scoped escaped-regression check after it; no production gameplay module was modified.
-
-### Regression boundary
-
-- No campaign/practice/challenge enemy value, attack timing/damage/reach, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold, challenge reward/scoring, renderer, storage, account/network/privacy or asset behavior changed.
-- The new browser companion exists only because a concrete current-head daily lifecycle gap escaped the existing harness; it does not create a second gameplay implementation or clock.
-- New runner and harness modules passed local syntax checks. Repository checkout/network access was unavailable in the runtime, so exact-head CI plus the GitHub Vercel status after this single commit remain the required acceptance evidence before feature work resumes.
-
-## Run 083 — Challenge post-wave tactical choice
-
-**Date:** 2026-09-01  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `49f26f2af3f7249bf39c7ab27e3267baad4a302a`.
-- Exact-head CI #120 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review comments were empty.
-- The latest exact-head review reported no actionable P0/P1/P2 finding and explicitly confirmed the Run 082 今日陣 browser-lifecycle P2 was closed, so the delivery gate was clear for feature work.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): bounded post-wave tactical choice 5/5/5/4/4 = 23; challenge/今日陣 pressure tuning without a concrete defect 4/5/3/3/4 = 19; further authored-cut visual refinement without pixel-level Preview inspection 5/5/3/2/3 = 18. The tactical choice won because it adds meaningful player agency inside the already-stable local challenge seam without expanding the core combat rules or backend surface.
-
-### Delivered slice
-
-- Added `src/challenge-tactics.js` outside the existing challenge → daily → momentum adapters. Only after Waves 2, 4 and 6, `enemy-defeated` parks the current `stage-clear` transition until one one-tap choice is made; the original transition deadline is then restored so the same deterministic CombatEngine progression resumes.
-- **整息** restores up to 1 HP with no score change. **血誓** trades exactly 1 HP for +350 challenge score and is disabled at 1 HP, so it can never directly defeat the player. These effects are challenge-only and compose after any same-wave 氣勢/不屈 reward.
-- Added a centered phone-safe tactical card with current wave/HP/score and two ≥44 px choices. It owns pointer input only while the between-wave gate is open, hides before the next stage, resets on retry/campaign handoff, and changes the challenge start copy to **八關 · 聚氣＋抉擇**.
-- Added deterministic resolver/installed-adapter Node coverage for checkpoint bounds, exact heal/risk values, last-HP safety, restored stage-clear timing and campaign isolation. Extended the existing focused 320×568 今日陣 browser companion instead of creating another harness: it now proves all three checkpoints park before advancement, renders both choices in bounds, exercises 血誓/整息 effects, completes the same eight-stage daily run, resets tactics on retry and keeps campaign clean.
-- Updated Current Baseline, backlog, changelog, state and this run log in the same candidate implementation tree.
-
-### Regression boundary
-
-- No campaign/practice roster or balance, challenge enemy timing/HP/posture definitions, attack damage/reach, parry/Perfect/STEP windows, direction mapping, Blood Moon threshold, renderer animation/geometry, storage key, account/network/privacy, analytics, paid API or asset provenance behavior changed.
-- The feature adds no inventory, economy, perk tree, persistence key, timer, remote request or second combat engine/clock. The only new gameplay mutations are the documented challenge-only +1 HP or -1 HP/+350 score between-wave choice.
-- Local repository checkout was unavailable, but the new JS/test/runner and browser module script were syntax-checked before commit. Exact-head repository CI and GitHub Vercel Preview after this single implementation commit remain the required acceptance evidence before the next feature run.
-
-## Run 084 — Tactical-choice pause timing repair
-
-**Date:** 2026-09-01  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `4b59042e6259cbdca9bb29b59f66d3c20cd55b91`.
-- Exact-head CI #121 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`; direct Vercel deployment enumeration returned 403, so the GitHub commit status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, Vercel Preview feedback reported zero unresolved items, and inline GitHub review threads were empty.
-- The latest exact-head All Repos review found one blocking P1: the tactical-choice adapter parked `stage-clear` with `Infinity` but restored the old absolute deadline after a choice, so a player who spent longer reading the dialog could make the next engine update catch up through stage intro/telegraph and attack too early.
-
-### Repair
-
-- Replaced the stale absolute-deadline restore with a frozen **remaining stage-clear duration**. Opening a Waves 2/4/6 choice records only the remaining transition time and parks progression.
-- Selecting 整息/血誓 applies the same documented HP/score effect immediately but leaves combat parked until the next authoritative `CombatEngine.update(now)`. That first post-choice engine tick rebases the remaining transition onto the real combat clock before normal update processing, so time spent deciding — including delayed/background frames — cannot fast-forward the next duel.
-- Strengthened the installed-adapter regression: it waits five seconds with the choice open, selects 血誓, delays the first post-choice engine tick again, then proves the full 1450 ms stage-clear remainder and full 1550 ms next-stage intro still occur before any telegraph can begin. Campaign stage-clear remains unparked and tactics remain unavailable outside challenge.
-
-### Regression boundary
-
-- No challenge choice values, enemy timing definitions, damage/reach, parry/Perfect/STEP rules, Blood Moon thresholds, direction mapping, renderer, persistence, account/network/privacy or campaign/practice behavior changed.
-- The tactic adapter now wraps `CombatEngine.update` only to obtain the authoritative combat-clock timestamp for one pending resume; it introduces no second clock, timer, polling loop or remote dependency.
-- Local source/test syntax checks passed. Exact-head repository CI and GitHub Vercel Preview after this single commit remain required before feature work resumes.
-
-## Run 085 — Challenge rematch visual identity repair
-
-**Date:** 2026-09-01  
-**Action type:** REGRESSION_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `13f25a0bac62f28cc3ae3ad6a6d5c8cbbb8d8439`.
-- Exact-head GitHub Actions run `33527777000` was terminal green and the exact-head GitHub `Vercel` commit status was `success`; Vercel Preview feedback reported zero unresolved items. Draft PR #1 remained open/Draft/unmerged, inline review threads were empty and `main` remained untouched.
-- The prior P1 against `4b59042e6259cbdca9bb29b59f66d3c20cd55b91` was substantively closed by Run 084: the installed tactic adapter now freezes remaining transition time and rebases it on the first authoritative post-choice CombatEngine clock tick.
-- Preflight source inspection found a separate material baseline regression that existing CI did not cover: both primary PlayCanvas presentation and the WebGL2 fallback consumed raw `enemyIndex` as a four-stage visual index. In the eight-wave challenge this made every Wave 4–8 progression index clamp into the Shogun visual style, despite the documented pressure roster being Ashigaru → Ronin → Oni → Ronin → Shogun.
-
-### Repair
-
-- Moved the correction to the shared renderer façade instead of changing combat or duplicating mapping in both backends. Presentation now resolves the four authored visual stages from the current `enemy.id`: `ashigaru-scout`, `wandering-ronin`, `oni-guard`, `crimson-shogun`.
-- Only the synchronous renderer call sees that projected visual index; a `finally` restore returns the snapshot to its original eight-wave progression index before control leaves `View.draw()`. CombatEngine state, challenge wave counting, run analysis, tactics, momentum and boss authority therefore remain unchanged.
-- Added a focused 320×568 PlayCanvas browser regression under the existing daily browser runner. It renders the real challenge pressure roster at Waves 4–8 and requires `ashigaru-jingasa → ronin-travel-wrap → oni-heavy-guard → ronin-travel-wrap → crimson-shogun-banner`, then proves every snapshot still contains its original progression index after rendering.
-- Updated the cumulative regression checklist, changelog, backlog, state and this run log in the same candidate tree. No Current Baseline wording changed because this commit restores its already-documented “challenge rematches reuse existing identities cleanly” contract rather than introducing a new product rule.
-
-### Regression boundary
-
-- No enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, challenge reward/tactic, Blood Moon threshold, progression index, run analysis, persistence, account/network/privacy or asset behavior changed.
-- The repair is presentation-only and applies through the shared renderer façade, so PlayCanvas and the legacy WebGL2 fallback receive the same identity projection without a second gameplay authority.
-- Local syntax checks passed for the modified renderer and browser runner. Repository checkout/network access remained unavailable, so exact-head repository CI and GitHub Vercel status after this single commit remain the required acceptance evidence.
-
-## Run 086 — Challenge rival PB splits
+## Runs 065–074 — Blade semantics, afterimages, delivery recovery and handedness
+
+- Run 065 repaired the remaining owner animation P1 with authored player-facing Guard and player-screen RIGHT/LEFT cut travel.
+- Runs 066–067 restored exact-head SOT verification and replaced brittle sentence-literal smoke with semantic invariants.
+- Runs 068–069 added bounded actual-Sword afterimages and live reduced-motion cleanup.
+- Runs 070–071 defined bounded one-shot Vercel external-provider recovery without allowing failed Preview to pass the feature gate.
+- Run 072 reconciled architecture SOT with PlayCanvas + Vite primary, deterministic CombatEngine authority and WebGL2 fallback.
+- Runs 073–074 added persistent STEP handedness, fixed left-side clipping and strengthened the real 320×568 production input gate.
+
+## Runs 075–089 — Challenge, dojo and training evolution
+
+- Run 075 — **FEATURE:** added the local eight-duel 連戰試煉 while preserving the normal four-duel campaign.
+- Run 076 — **BLOCKER_FIX:** added real challenge entry/retry/campaign-handoff/result browser acceptance.
+- Run 077 — **FEATURE:** added challenge-only 氣勢/不屈, rewarding two clean waves with +1 HP or +300 score at full HP.
+- Run 078 — **BLOCKER_FIX:** proved a real CombatEngine `player-hit` breaks momentum and clean waves rebuild it correctly.
+- Run 079 — **BLOCKER_FIX:** made final-wave full-health 不屈 score authoritative across engine, victory and challenge-best persistence.
+- Run 080 — **BLOCKER_FIX:** aligned the player-visible challenge result score with that same final authoritative score.
+- Run 081 — **FEATURE:** added 今日陣, a deterministic same-local-date eight-wave roster/opening-order variant without new balance values.
+- Run 082 — **BLOCKER_FIX:** added a real 320×568 今日陣 entry/banner/eight-wave/retry/campaign-handoff lifecycle gate.
+- Run 083 — **FEATURE:** added challenge-only Waves 2/4/6 戰前抉擇: 整息 +1 HP or 血誓 -1 HP/+350 score with last-HP safety.
+- Run 084 — **BLOCKER_FIX:** froze remaining stage-clear time during tactical choice so reading time cannot fast-forward the next duel.
+- Run 085 — **REGRESSION_FIX:** restored correct challenge rematch visual identity from enemy id instead of clamped eight-wave ordinal.
+- Run 086 — **FEATURE:** added challenge/今日陣 宿敵步速 using optional validated per-wave splits inside the existing local challenge-best record.
+- Run 087 — **FEATURE:** added direct Oni Stage 3 practice with real Oni definition, retry and clean campaign handoff.
+- Run 088 — **FEATURE:** added 練血月 direct Crimson Shogun Phase II practice at the existing 6 HP threshold, with no normal +300 transition reward.
+- Run 089 — **FEATURE:** added 師範弱點再練, routing campaign Stage 2/3/4 analysis directly into the existing practice lifecycle while keeping campaign best isolated.
+
+## Run 090 — Production practice gate attempt rejected
 
 **Date:** 2026-09-02  
-**Action type:** FEATURE
+**Action type:** ABORTED / BLOCKER_CONFIRMED
 
-### Preflight
+- Incoming exact HEAD `5dc6c77e1d3e7da57f5e1e2140d5365408a1b1a1` was CI/Vercel green, but the latest exact-head review identified two P2 production-orchestration gaps: weak-stage training did not traverse real `main.js` restart orchestration, and 練血月 had no real-control browser lifecycle.
+- Candidate `2e7f9c7d7f25731cbf42ffeafa0bec391d162e7d` added the true 320×568 production-document gate. It proved the complete 師範弱點再練 → Ronin terminal → 再練一次 → campaign handoff path, then failed after real Pause → Home when the actual 練血月 control did not enter Blood Moon mode.
+- CI #131 therefore rejected the candidate and the branch was restored to verified `5dc6c77e`; no Run 090 implementation commit remained on `autonomous-evolution`.
+- The failure converted the Blood Moon item from a coverage gap into a material production-control integration blocker that had to precede unrelated feature work.
 
-- Incoming exact HEAD: `94cd89c4dafe32c5fc7a627874b23a79bbec5088`.
-- Exact-head CI #124 (`33529473184`) was terminal green and the exact-head GitHub `Vercel` commit status was `success`; direct Vercel deployment enumeration remained unavailable, so the GitHub commit status stayed the deployment signal. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
-- Inline PR review comments were empty. The latest exact-head review reported no actionable P0/P1/P2 finding and explicitly cleared the Run 085 visual-identity repair; only a non-blocking Current Baseline version drift remained.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): challenge **宿敵步速** PB splits 5/5/5/4/5 = 24; broader Oni/phase practice expansion 4/4/3/5/4 = 20; further authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. 宿敵步速 won because it creates an immediate replay/scoring reason using the existing stable local challenge seam without changing combat balance or adding network/account authority.
-
-### Delivered slice
-
-- Added `src/challenge-rival.js` as an outer challenge-only observer. At challenge/今日陣 start it reads the existing local challenge best; after each cleared wave it shows a compact pointer-transparent **宿敵** badge with the current cumulative score and, when a valid PB split exists, the signed same-wave lead/deficit.
-- Extended the existing `blade-reversal-challenge-v1` best schema with optional monotonic `waveScores`. Legacy `{won,wavesCleared,score}` records stay valid; malformed/descending split arrays are ignored; only a better challenge result can replace the best and carry new splits. No new storage key, account, cloud sync or remote request was introduced.
-- The rival adapter observes authoritative post-wave score after composed challenge rewards. A later `challenge-tactic` event may refresh the just-cleared checkpoint split after 整息/血誓, but the adapter never mutates score, HP, timing or progression. Terminal challenge data receives the validated split array before the existing challenge-result microtask persists the best.
-- Added deterministic Node coverage for signed PB deltas, legacy-best compatibility, valid split round-trip and malformed split rejection. Added a focused real 320×568 browser gate under the existing daily challenge runner that starts from a stored split PB, proves a behind first-wave split and an ahead second-wave split including same-wave 不屈 score, persists eight authoritative splits after a better victory, reloads them on retry and clears the badge on campaign handoff.
-- Updated Current Baseline to `0.31.0-evolution`, the cumulative regression checklist, changelog, backlog, state and this run log in the same candidate tree.
-
-### Regression boundary
-
-- No campaign/practice/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, momentum/tactical reward value, Blood Moon threshold, progression, renderer animation/geometry, mastery formula, challenge-best ranking, storage key, account/network/privacy or asset behavior changed.
-- The only persistence expansion is an optional validated field inside the already-approved local challenge-best record. Storage failure remains non-fatal and legacy installs require no migration.
-- Repository checkout remained unavailable in this runtime, so exact-head repository CI plus GitHub Vercel status after this single implementation commit remain the required acceptance evidence before another feature run.
-
-## Run 087 — Direct Oni practice
+## Run 091 — Blood Moon production-control repair
 
 **Date:** 2026-09-02  
-**Action type:** FEATURE
+**Action type:** BLOCKER_FIX
 
 ### Preflight
 
-- Incoming exact HEAD: `09618db159bac93a2f7ba5f330e375bd0ccbdea4`.
-- Exact-head CI #125 (`33533771296`) was terminal green and the exact-head GitHub `Vercel` commit status was `success`. Direct Vercel deployment enumeration returned 403, so GitHub's exact-head `Vercel` status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, inline review comments/threads were empty, and no submitted review targeted the incoming head. The latest prior exact-head review reported no actionable P0/P1/P2 finding.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): direct **Oni practice** 4/5/3/5/5 = 22; direct Blood Moon Phase II practice 5/5/4/3/3 = 20; further authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. Oni practice won because it completes the pre-boss practice ladder using the unchanged authoritative Stage 3 definition, moves evolution away from repeated challenge-meta work, and has a strong deterministic/browser verification path with minimal balance risk.
+- Incoming exact HEAD: `5dc6c77e1d3e7da57f5e1e2140d5365408a1b1a1`.
+- Latest exact-head GitHub Actions CI #132 was terminal green and GitHub's exact-head `Vercel` commit status was `success`; direct Vercel deployment enumeration is not required because the canonical fallback is the GitHub `Vercel` commit status.
+- Draft PR #1 remained open/Draft/unmerged, `main` remained at `b6d42422cec9c35b7f1ccf07d50c8f2ff3e6ce40`, and inline review threads were empty.
+- The latest exact-head review retained the two P2 orchestration findings, while the rejected Run 090 production gate supplied concrete evidence that the actual 練血月 control chain could fail even though direct Blood Moon request-API tests stayed green. This run therefore remained blocker-first; no feature candidates were eligible.
 
-### Delivered slice
+### Repair
 
-- Added **練鬼** between 練浪人 and 練將軍. It launches the unchanged real `oni-guard` Stage 3 definition (8 HP, posture 5, existing heavy attacks), starts through the same practice adapter and terminates after that duel instead of advancing to Shogun.
-- Practice result identity now distinguishes `ONI PRACTICE`; Stage 3 run analysis renders 鬼武者, the terminal action becomes **再戰鬼武者**, and **開始完整主線** restores the normal campaign at Ashigaru Stage 1. Practice remains excluded from campaign personal best.
-- Expanded the production selector to five single-row entries at the existing mobile target and wired 練鬼 to clear any pending 今日陣 request before launch. No enemy value, attack definition, combat clock, storage key or network surface was added.
-- Added deterministic Stage 3 activation/terminal regressions using object identity to prove practice consumes the unchanged real Oni definition. Extended the existing mastery browser harness to click 練鬼 through entry → terminal result → same-opponent retry → campaign handoff, while its aggregate `masteryIntegration` gate keeps Ronin/Shogun/challenge behavior cumulative.
-- Updated Current Baseline to `0.32.0-evolution`, regression checklist, backlog, changelog, state and this run log in the same candidate tree.
-
-### Regression boundary
-
-- No campaign/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, Blood Moon threshold, challenge reward/tactic/PB split, renderer animation/geometry, mastery formula, persistence, account/network/privacy or asset behavior changed.
-- The selector expansion only changes practice/daily presentation density; the existing production 320×568 layout gate now measures all five entries. Direct practice continues to share one adapter and one campaign roster rather than introducing a duplicate Oni combat implementation.
-- Repository checkout remained unavailable from this runtime. Post-commit exact-head Node/browser CI plus GitHub Vercel status remain required before another feature run.
-
-## Run 088 — Direct Blood Moon Phase II practice
-
-**Date:** 2026-09-02  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `3efd35f6cdd9a73d9d7e44c517d58a5f54625e5f`.
-- Exact-head CI #126 (`33535951602`) was terminal green and the exact-head GitHub `Vercel` commit status was `success`. Direct Vercel deployment enumeration returned 403, so GitHub's exact-head `Vercel` status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty. The latest exact-head submitted review reported **no actionable P0–P2 finding** and specifically accepted the direct Oni-practice lifecycle and five-entry 320×568 start layout.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): direct **Blood Moon Phase II practice** 5/5/4/4/4 = 22; practice-result weak-point cue 4/4/4/4/4 = 20; further authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. Blood Moon practice won because it exposes the highest-pressure boss phase directly while reusing the already-authoritative boss/practice adapters and avoiding a balance copy.
-
-### Delivered slice
-
-- Added **練血月** beside the existing dojo controls. It proxies the established Shogun-practice entry, then switches that same Stage 4 run to the real `BOSS_PHASE_TWO` definition at the existing 6 HP threshold, posture 7, Blood Moon attack set/timings and Phase II atmosphere.
-- Direct Phase II practice intentionally skips the normal Phase I→II transition and therefore does **not** award the normal +300 transition score. Boss phase state is marked Phase II immediately, so the threshold cannot fire a second time during the practice run.
-- The route remains isolated practice: terminal events carry `blood-moon-practice`, mastery renders `BLOOD MOON PRACTICE`, retry becomes **再戰血月**, and **開始完整主線** clears the direct-phase request and returns to the normal Ashigaru campaign. No new best/storage/network/account surface was added.
-- Expanded the shared start selector to six entries using a compact 3×2 phone layout. The Blood Moon adapter upgrades the existing `data-practice-start-layout` marker so the established production 320×568 browser smoke measures all six controls rather than only the earlier direct-practice buttons.
-- Added deterministic Node coverage for direct real Phase II object identity, 6 HP/posture 7/timing authority, zero transition score and terminal practice identity. Extended the existing boss browser harness to prove direct Blood Moon practice activates the same real Phase II runtime/atmosphere while preserving the normal Phase I→II/restart/victory path.
-- Updated Current Baseline to `0.33.0-evolution`, regression checklist, backlog, changelog, state and this run log in the same candidate tree.
+- The first candidate correctly removed the fragile nested **練血月 → synthetic 練將軍 → synthetic Start** proxy, but its new production gate still failed. CI diagnostics showed `nextBloodMoon=blood-moon` while `nextRun=campaign`, proving the Blood Moon request survived but the shared practice request was reset before `engine.start`.
+- Root cause: `installDuelPractice()` is legitimately re-entered by later adapters, and `installUi()` had been attaching a fresh `#start-button` practice-reset listener on every re-entry. One listener consumed the intentional practice-launch arm; the duplicate listener then immediately reset the request to campaign.
+- `practice-mode.js` now makes that Start reset binding idempotent with one DOM binding marker and exports `armPracticeLaunch(enemyId)` as the single intentional Start handoff. Existing 練浪人/練鬼/練將軍 controls use that same arming path.
+- `blood-moon-practice.js` now requests the real Shogun practice mode, explicitly arms that practice launch, preserves the Blood Moon request through exactly that Start event, and clicks the real production Start control directly. Ordinary Start/practice/challenge/campaign selections still clear stale Blood Moon requests.
+- Blood Moon activation publishes non-visible receipts from the authoritative engine state (`phase=2`, `enemyHp=6`, `startScore=0`) so the browser gate can prove the real control reached the real Phase II definition without the normal transition reward; these receipts clear when Blood Moon mode is inactive and have no combat authority.
+- Added the true 320×568 production-document gate to `npm run test:browser`. It proves generated Stage 2 recommendation → real Ronin restart → terminal/retry/campaign handoff, then real Pause → Home → 練血月 → direct Phase II 6 HP / 0 transition score → terminal **再戰血月** → repeat direct Phase II → clean Stage 1 campaign handoff.
 
 ### Regression boundary
 
-- No campaign/challenge boss HP threshold, Phase II attack/timing values, normal +300 transition reward, parry/Perfect/STEP rules, direction mapping, renderer animation/geometry, mastery formula, challenge reward/tactic/PB split, persistence, account/network/privacy or asset behavior changed.
-- `src/blood-moon-practice.js` is a bounded outer adapter over the existing boss + practice lifecycle; `src/boss-encounter.js` remains the sole Phase II definition authority. The only direct-practice mutation is starting the existing Phase II definition at its existing threshold without transition reward.
-- Direct Vercel enumeration remains unavailable; post-commit exact-head repository CI plus GitHub's `Vercel` commit status are required before the next feature run.
-
-## Run 089 — Campaign weak-stage training bridge
-
-**Date:** 2026-09-02  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `8359c1a8676a193e90f9dbebe84e34c43b05987c`.
-- Exact-head GitHub Actions was terminal green (`test` success; Vercel Preview Comments success with zero unresolved items) and GitHub's exact-head `Vercel` commit status was `success`, targeting deployment `7J1jU7DBbyMGMe7qysCQKc5xAM1p`. Direct Vercel project enumeration returned an empty project list, so the GitHub commit status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, inline review threads/comments were empty, and the latest submitted review on the immediately preceding verified head reported no actionable P0–P2 finding. No current-head blocker/regression evidence was found.
-- Candidate score (impact / goal alignment / novelty / confidence / safety): **師範弱點再練** result→practice bridge 5/5/4/5/5 = 24; further direct-practice evidence hardening without a current escaped defect 4/5/3/5/5 = 22; authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. The training bridge won because it turns existing local analysis into an immediate player action without changing combat balance, storage or network authority.
-
-### Delivered slice
-
-- Added `src/training-recommendation.js` as a result-only bridge over the existing run-analysis focus label and practice requests. A normal campaign focus on Stage 2/3/4 renders **師範建議 · 弱點再練** with one tap into the real Ronin/Oni/Shogun practice route; Stage 1 uses a clean campaign restart from Ashigaru rather than introducing a duplicate practice enemy.
-- Recommended practice runs remain the existing isolated practice lifecycle. After one recommended duel, the compact result row confirms **師範專項 · 完成一輪** and offers **再練一次** while the established practice **開始完整主線** handoff remains available.
-- The bridge is absent from challenge/今日陣 and from manually entered practice unless that practice was launched by the recommendation. It does not rewrite run-analysis metrics, mastery score, enemy definitions, timing, input or storage.
-- Added deterministic focus→route Node coverage plus a focused 320×568 browser lifecycle that completes a real four-stage campaign with Stage 2 intentionally weakest, requires the Ronin recommendation and ≥44 px in-bounds action, launches the real Stage 2 practice through the restart lifecycle, proves campaign best isolation, then verifies recommended-practice completion and same-opponent retry.
-- Updated Current Baseline to `0.34.0-evolution`, backlog, changelog, state and this run log in the same candidate tree.
-
-### Regression boundary
-
-- No campaign/practice/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold/reward, challenge momentum/tactics/rival, renderer animation/geometry, mastery formula, run-analysis metric, persistence key, account/network/privacy or asset behavior changed.
-- The only new production observer watches the existing result-analysis focus and run-mode markers; it performs no per-frame polling, timer or remote work and owns no combat authority.
-- New JS/test/runner files were syntax-checked locally. Repository checkout/network access remained unavailable from this runtime, so exact-head repository CI plus GitHub's `Vercel` commit status after this single implementation commit remain the required acceptance evidence before another feature run.
+- No campaign/practice/challenge enemy definition, HP/posture/timing/damage, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold or normal +300 reward, challenge momentum/tactics/rival, mastery/run-analysis formula, renderer animation/geometry, persistence key, account/network/privacy or asset authority changed.
+- `src/boss-encounter.js` remains the sole Phase II definition authority; this repair only makes the already-approved direct-practice production control reliably reach it.
+- Local repository checkout could not resolve GitHub from this runtime, so exact-head GitHub Actions (`npm test` + `npm run test:browser`) and the exact-head GitHub `Vercel` commit status are the mandatory acceptance evidence for the final replacement commit.

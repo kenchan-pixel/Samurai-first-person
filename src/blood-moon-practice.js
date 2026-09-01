@@ -4,25 +4,42 @@ import {
   activateBossPhaseTwoPractice,
   installBossEncounter,
 } from './boss-encounter.js';
-import { installDuelPractice, requestShogunPractice } from './practice-mode.js';
+import {
+  armPracticeLaunch,
+  installDuelPractice,
+  requestShogunPractice,
+} from './practice-mode.js';
 
 export const BLOOD_MOON_PRACTICE_MODE = 'blood-moon-practice';
 
 const installed = Symbol.for('blade-reversal.blood-moon-practice-v1');
 const states = new WeakMap();
 let bloodMoonSelected = false;
-let proxyShogunClick = false;
+let bloodMoonLaunchArmed = false;
 
 function renderMode(active, terminal = false) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
   root.dataset.bloodMoonPracticeActive = String(Boolean(active));
-  if (!active) return;
+  if (!active) {
+    delete root.dataset.bloodMoonPracticePhase;
+    delete root.dataset.bloodMoonPracticeEnemyHp;
+    delete root.dataset.bloodMoonPracticeStartScore;
+    return;
+  }
   root.dataset.runMode = BLOOD_MOON_PRACTICE_MODE;
   if (terminal) {
     const restart = document.querySelector('#restart-button');
     if (restart) restart.textContent = '再戰血月';
   }
+}
+
+function publishStartReceipt(engine) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  root.dataset.bloodMoonPracticePhase = '2';
+  root.dataset.bloodMoonPracticeEnemyHp = String(engine.enemyHp);
+  root.dataset.bloodMoonPracticeStartScore = String(engine.score);
 }
 
 function annotatePendingEvents(engine) {
@@ -107,7 +124,11 @@ function installUi() {
   row.setAttribute('aria-label', '指定決鬥、血月、連戰及今日陣');
 
   const clearBloodMoon = () => {
-    if (!proxyShogunClick) bloodMoonSelected = false;
+    if (bloodMoonLaunchArmed) {
+      bloodMoonLaunchArmed = false;
+      return;
+    }
+    requestBloodMoonPractice(false);
   };
   for (const selector of [
     '#start-button',
@@ -134,9 +155,9 @@ function installUi() {
     button.dataset.bloodMoonBound = 'true';
     button.addEventListener('click', () => {
       requestBloodMoonPractice(true);
-      proxyShogunClick = true;
-      shogun.click();
-      proxyShogunClick = false;
+      armPracticeLaunch(BOSS_ID);
+      bloodMoonLaunchArmed = true;
+      start.click();
     });
   }
 
@@ -170,6 +191,7 @@ export function activateBloodMoonPractice(engine, now = 0) {
   states.set(engine, { active: true, stage: 4 });
   annotatePendingEvents(engine);
   renderMode(true, false);
+  publishStartReceipt(engine);
   return {
     accepted: true,
     enemyId: BOSS_ID,

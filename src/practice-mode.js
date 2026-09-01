@@ -43,6 +43,12 @@ export function requestPractice(enemyId = null) {
   return requestedMode;
 }
 
+export function armPracticeLaunch(enemyId) {
+  const mode = requestPractice(enemyId);
+  practiceLaunchArmed = mode !== 'campaign';
+  return mode;
+}
+
 export function requestRoninPractice(enabled = true) {
   return requestPractice(enabled ? RONIN_PRACTICE_ID : null);
 }
@@ -214,8 +220,7 @@ function installUi() {
     startButton.after(row);
 
     const launchPractice = (enemyId) => {
-      requestPractice(enemyId);
-      practiceLaunchArmed = true;
+      armPracticeLaunch(enemyId);
       startButton.click();
     };
     row.querySelector('#practice-ronin-button')?.addEventListener('click', () => launchPractice(RONIN_PRACTICE_ID));
@@ -223,13 +228,16 @@ function installUi() {
     row.querySelector('#practice-shogun-button')?.addEventListener('click', () => launchPractice(SHOGUN_PRACTICE_ID));
   }
 
-  startButton?.addEventListener('click', () => {
-    if (practiceLaunchArmed) {
-      practiceLaunchArmed = false;
-      return;
-    }
-    requestPractice(null);
-  });
+  if (startButton && startButton.dataset.practiceResetBound !== 'true') {
+    startButton.dataset.practiceResetBound = 'true';
+    startButton.addEventListener('click', () => {
+      if (practiceLaunchArmed) {
+        practiceLaunchArmed = false;
+        return;
+      }
+      requestPractice(null);
+    });
+  }
 
   if (resultContent && !document.querySelector('#ronin-practice-campaign')) {
     const button = document.createElement('button');
