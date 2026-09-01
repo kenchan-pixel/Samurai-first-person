@@ -41,6 +41,7 @@
     } from '../src/challenge-mode.js';
     import {
       requestRoninPractice,
+      requestOniPractice,
       requestShogunPractice,
     } from '../src/practice-mode.js';
     import { CombatEngine, Direction, ENEMIES } from '../src/game-core.js';
@@ -175,6 +176,45 @@
 
       root.dataset.roninPracticeControls = String(firstTerminalUi && retryStarted && campaignStarted);
       root.dataset.roninPracticeIntegration = String(resultOk && root.dataset.roninPracticeControls === 'true');
+    }
+
+    async function completeOniPracticeViaControls(firstBest) {
+      const practiceButton = document.querySelector('#practice-oni-button');
+      const campaignButton = document.querySelector('#ronin-practice-campaign');
+      if (!practiceButton || !campaignButton || !startButton || !restartButton) {
+        throw new Error('Oni practice player-facing controls were not installed');
+      }
+
+      practiceButton.click();
+      expectUiStage({ practice: true, stage: 3, enemyId: 'oni-guard' }, 'Oni practice entry click');
+      await finishUiPractice({ enemyId: 'oni-guard', stage: 3 });
+
+      const practiceAnalysisText = document.querySelector('#result-analysis')?.textContent || '';
+      const practiceSummary = document.querySelector('#result-summary')?.textContent || '';
+      const practiceEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
+      const firstTerminalUi =
+        restartButton.textContent.includes('再戰鬼武者') &&
+        campaignButton.hidden === false &&
+        root.dataset.runMode === 'oni-practice';
+
+      restartButton.click();
+      expectUiStage({ practice: true, stage: 3, enemyId: 'oni-guard' }, 'Oni practice retry click');
+      const retryStarted = root.dataset.runMode === 'oni-practice' && campaignButton.hidden === true;
+      await finishUiPractice({ enemyId: 'oni-guard', stage: 3 });
+
+      campaignButton.click();
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Oni campaign action click');
+      const campaignStarted = root.dataset.runMode === 'campaign' && restartButton.textContent === '重新挑戰';
+
+      const resultOk =
+        localStorage.getItem(BEST_KEY) === firstBest &&
+        practiceEyebrow.includes('ONI PRACTICE') &&
+        practiceSummary.includes('不計個人最佳') &&
+        practiceAnalysisText.includes('第3關') &&
+        practiceAnalysisText.includes('鬼武者');
+
+      root.dataset.oniPracticeControls = String(firstTerminalUi && retryStarted && campaignStarted);
+      root.dataset.oniPracticeIntegration = String(resultOk && root.dataset.oniPracticeControls === 'true');
     }
 
     async function completeShogunPracticeViaControls(firstBest) {
@@ -450,6 +490,7 @@
       root.dataset.runAnalysis = String(analysisReady);
 
       await completeRoninPracticeViaControls(firstBest);
+      await completeOniPracticeViaControls(firstBest);
       await completeShogunPracticeViaControls(firstBest);
       await completeChallengeViaControls(firstBest);
 
@@ -485,6 +526,8 @@
         root.dataset.runAnalysis === 'true' &&
         root.dataset.roninPracticeIntegration === 'true' &&
         root.dataset.roninPracticeControls === 'true' &&
+        root.dataset.oniPracticeIntegration === 'true' &&
+        root.dataset.oniPracticeControls === 'true' &&
         root.dataset.shogunPracticeIntegration === 'true' &&
         root.dataset.shogunPracticeControls === 'true' &&
         root.dataset.challengeBrowserIntegration === 'pass' &&
@@ -505,6 +548,7 @@
     } catch (error) {
       requestChallenge(false);
       requestRoninPractice(false);
+      requestOniPractice(false);
       requestShogunPractice(false);
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);

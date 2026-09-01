@@ -285,7 +285,7 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Incoming exact HEAD: `4b59042e6259cbdca9bb29b59f66d3c20cd55b91`.
 - Exact-head CI #121 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`; direct Vercel deployment enumeration returned 403, so the GitHub commit status remained the deployment signal.
-- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, Vercel Preview feedback reported zero unresolved threads, and inline GitHub review threads were empty.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, Vercel Preview feedback reported zero unresolved items, and inline GitHub review threads were empty.
 - The latest exact-head All Repos review found one blocking P1: the tactical-choice adapter parked `stage-clear` with `Infinity` but restored the old absolute deadline after a choice, so a player who spent longer reading the dialog could make the next engine update catch up through stage intro/telegraph and attack too early.
 
 ### Repair
@@ -350,3 +350,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, momentum/tactical reward value, Blood Moon threshold, progression, renderer animation/geometry, mastery formula, challenge-best ranking, storage key, account/network/privacy or asset behavior changed.
 - The only persistence expansion is an optional validated field inside the already-approved local challenge-best record. Storage failure remains non-fatal and legacy installs require no migration.
 - Repository checkout remained unavailable in this runtime, so exact-head repository CI plus GitHub Vercel status after this single implementation commit remain the required acceptance evidence before another feature run.
+
+## Run 087 — Direct Oni practice
+
+**Date:** 2026-09-02  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `09618db159bac93a2f7ba5f330e375bd0ccbdea4`.
+- Exact-head CI #125 (`33533771296`) was terminal green and the exact-head GitHub `Vercel` commit status was `success`. Direct Vercel deployment enumeration returned 403, so GitHub's exact-head `Vercel` status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, inline review comments/threads were empty, and no submitted review targeted the incoming head. The latest prior exact-head review reported no actionable P0/P1/P2 finding.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): direct **Oni practice** 4/5/3/5/5 = 22; direct Blood Moon Phase II practice 5/5/4/3/3 = 20; further authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. Oni practice won because it completes the pre-boss practice ladder using the unchanged authoritative Stage 3 definition, moves evolution away from repeated challenge-meta work, and has a strong deterministic/browser verification path with minimal balance risk.
+
+### Delivered slice
+
+- Added **練鬼** between 練浪人 and 練將軍. It launches the unchanged real `oni-guard` Stage 3 definition (8 HP, posture 5, existing heavy attacks), starts through the same practice adapter and terminates after that duel instead of advancing to Shogun.
+- Practice result identity now distinguishes `ONI PRACTICE`; Stage 3 run analysis renders 鬼武者, the terminal action becomes **再戰鬼武者**, and **開始完整主線** restores the normal campaign at Ashigaru Stage 1. Practice remains excluded from campaign personal best.
+- Expanded the production selector to five single-row entries at the existing mobile target and wired 練鬼 to clear any pending 今日陣 request before launch. No enemy value, attack definition, combat clock, storage key or network surface was added.
+- Added deterministic Stage 3 activation/terminal regressions using object identity to prove practice consumes the unchanged real Oni definition. Extended the existing mastery browser harness to click 練鬼 through entry → terminal result → same-opponent retry → campaign handoff, while its aggregate `masteryIntegration` gate keeps Ronin/Shogun/challenge behavior cumulative.
+- Updated Current Baseline to `0.32.0-evolution`, regression checklist, backlog, changelog, state and this run log in the same candidate tree.
+
+### Regression boundary
+
+- No campaign/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, Blood Moon threshold, challenge reward/tactic/PB split, renderer animation/geometry, mastery formula, persistence, account/network/privacy or asset behavior changed.
+- The selector expansion only changes practice/daily presentation density; the existing production 320×568 layout gate now measures all five entries. Direct practice continues to share one adapter and one campaign roster rather than introducing a duplicate Oni combat implementation.
+- Repository checkout remained unavailable from this runtime. Post-commit exact-head Node/browser CI plus GitHub Vercel status remain required before another feature run.

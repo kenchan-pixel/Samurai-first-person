@@ -107,14 +107,14 @@ function ensureStyles() {
   const style = document.createElement('style');
   style.dataset.dailyChallenge = 'true';
   style.textContent = `
-    .practice-row{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}
-    .practice-row .practice-button{padding-inline:4px!important}
-    .practice-row .practice-button span,.practice-row .practice-button small{font-size:7px!important;white-space:nowrap}
+    .practice-row{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important}
+    .practice-row .practice-button{padding-inline:3px!important}
+    .practice-row .practice-button span,.practice-row .practice-button small{font-size:6.6px!important;white-space:nowrap}
     .practice-button--daily{border-color:rgba(126,202,180,.38)!important;background:rgba(29,86,73,.2)!important;color:#ccefe4!important}
     .practice-button--daily strong{display:block;font-size:9px;letter-spacing:.08em;white-space:nowrap}
     .daily-challenge-banner{position:absolute;z-index:7;top:calc(var(--safe-top) + 66px);left:50%;width:max-content;max-width:72vw;padding:5px 9px;transform:translateX(-50%);border:1px solid rgba(126,202,180,.26);border-radius:999px;background:rgba(14,42,36,.7);box-shadow:0 6px 18px rgba(0,0,0,.22);color:#d8f6ee;font-size:8px;font-weight:800;letter-spacing:.05em;pointer-events:none;backdrop-filter:blur(5px)}
     .daily-challenge-banner[hidden]{display:none}
-    @media(max-width:360px){.practice-row .practice-button{font-size:9px!important}.practice-button--daily strong{font-size:8.75px}.daily-challenge-banner{top:calc(var(--safe-top) + 64px);font-size:7.5px;padding:4px 8px}}
+    @media(max-width:360px){.practice-row .practice-button{font-size:8.5px!important}.practice-button--daily strong{font-size:8.5px}.daily-challenge-banner{top:calc(var(--safe-top) + 64px);font-size:7.5px;padding:4px 8px}}
   `;
   document.head.append(style);
 }
@@ -177,7 +177,7 @@ function markStartLayout() {
     const content = document.querySelector('#start-screen .modal__content');
     const row = document.querySelector('#practice-row');
     const buttons = [...(row?.querySelectorAll('.practice-button') || [])];
-    if (!content || !row || buttons.length < 4) return;
+    if (!content || !row || buttons.length < 5) return;
     const fits = [content, row, ...buttons].every((node) => {
       const rect = node.getBoundingClientRect();
       return rect.left >= -0.5 && rect.right <= innerWidth + 0.5 && rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
@@ -292,6 +292,7 @@ function installDailyUi() {
   }
 
   document.querySelector('#practice-ronin-button')?.addEventListener('click', () => requestDailyChallenge(false), { capture: true });
+  document.querySelector('#practice-oni-button')?.addEventListener('click', () => requestDailyChallenge(false), { capture: true });
   document.querySelector('#practice-shogun-button')?.addEventListener('click', () => requestDailyChallenge(false), { capture: true });
 
   document.documentElement.dataset.dailyChallengeReady = 'true';

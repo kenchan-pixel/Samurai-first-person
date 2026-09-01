@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.32.0-evolution — Direct Oni practice
+
+- Added **練鬼** to complete direct practice for the three pre-boss campaign opponents. It launches the unchanged real Stage 3 Oni Guard (8 HP / posture 5 / existing heavy attacks), ends after that duel, and reuses the established practice retry / full-campaign handoff without a practice-only combat copy.
+- Oni practice results now render a distinct `ONI PRACTICE` identity, Stage 3 / 鬼武者 analysis, and remain isolated from campaign personal best just like Ronin/Shogun practice.
+- Expanded the production start selector to five single-row entries at the accepted 320×568 target and extended deterministic + browser integration coverage through 練鬼 entry → terminal → same-opponent retry → Stage 1 campaign handoff.
+
 ## 0.31.0-evolution — Challenge rival PB splits
 
 - Added challenge-only **宿敵步速**: each cleared wave can compare the current authoritative cumulative score with the same-wave split from the stored challenge best, showing a compact signed lead/deficit without changing score, HP, combat timing or progression.

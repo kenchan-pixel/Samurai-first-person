@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 86,
+  "run_number": 87,
   "last_action_type": "FEATURE",
-  "last_action": "Added challenge-only 宿敵步速 using optional per-wave cumulative score splits inside the existing local challenge best",
-  "last_commit": "94cd89c4dafe32c5fc7a627874b23a79bbec5088",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the challenge rival PB-split implementation",
+  "last_action": "Completed the direct-practice dojo with unchanged real Stage 3 Oni Guard practice, opponent-specific results, retry/campaign handoff and five-entry mobile selector coverage",
+  "last_commit": "09618db159bac93a2f7ba5f330e375bd0ccbdea4",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the direct Oni practice implementation",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/ExyaBmx2GWrzfCm8tjyyJHaRYf7Z",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/CEiLvAZqoPnuB3UWJLodMcPSQR3o",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -33,8 +33,8 @@
     }
   },
   "next_candidates": [
-    "Self-inspect exact Preview challenge and 今日陣 repeated runs to confirm 宿敵步速 is readable, useful and subordinate to blade reads before tuning its placement/copy",
-    "Self-inspect challenge and 今日陣 tactical-choice evidence; tune only if the 2/4/6 cadence or HP-score trade proves trivial, confusing or dominant",
-    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability"
+    "Use Ronin/Oni/Shogun direct practice plus local stage analysis to self-inspect whether any one duel has a repeatable readability or timing wall before changing balance",
+    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
+    "Self-inspect challenge and 今日陣 repeated runs; tune 宿敵步速 or the 2/4/6 tactical trade only if repeatable evidence shows confusion, triviality or dominance"
   ]
 }

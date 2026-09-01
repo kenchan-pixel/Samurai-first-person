@@ -5,7 +5,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 ## Startup / layout / input
 
 - [ ] App loads without JS errors; Start remains usable inside 320×568 and safe areas.
-- [ ] Guided Duel, 刀路清晰, 節拍提示, 練浪人 / 練將軍, 連戰試煉 and 今日陣 remain reachable without pushing 拔刀 off-screen; the shared selector row stays in bounds with all four entries.
+- [ ] Guided Duel, 刀路清晰, 節拍提示, 練浪人 / 練鬼 / 練將軍, 連戰試煉 and 今日陣 remain reachable without pushing 拔刀 off-screen; the shared selector row stays in bounds with all five entries.
 - [ ] STEP/range/feedback follow the selected lower safe corner: right remains default, left-hand mode mirrors only the footwork cluster to the lower-left, and both layouts stay fully inside the 320×568 safe area without obstructing centre/bottom/opposite parry regions.
 - [ ] Pause remains a bounded 44×44 top-right HUD control; its own hit is isolated and immediately adjacent top/right canvas taps still map correctly.
 - [ ] Portrait top parry extends to 42% height; left/right/bottom retain 28%; nearest edge wins overlaps; centre stays neutral; landscape stays symmetric 28%.
@@ -32,8 +32,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Stage start/restart begins mid distance. Normal STEP works only in bounded early strike and only evades if reach is escaped. Heavy/long attacks still track at far distance.
 - [ ] Perfect STEP remains narrower, deals exactly 1 auto-riposte damage, adds no posture and normally leaves one manual counter. Blood Moon/defeat closes that opening immediately.
 - [ ] Ashigaru → Ronin → Oni → Crimson Shogun campaign progression remains intact; stage transition/restart resets combat state and distance.
-- [ ] Shogun remains 12 HP / Phase I posture 6; any accepted player damage crossing 6 HP triggers Blood Moon exactly once, resets pressure, creates the existing breathing gap and switches to Phase II posture 7/pressure set; restart returns to Phase I.
-- [ ] 練浪人 starts real Stage 2 and ends there; 練將軍 starts real Stage 4 Phase I, keeps Blood Moon rules and ends there; retry/campaign handoff remain correct.
+- [ ] 練浪人 starts the unchanged real Stage 2 and ends there; 練鬼 starts the unchanged real Stage 3 Oni Guard (8 HP / posture 5 / existing heavy attacks) and ends there; 練將軍 starts real Stage 4 Phase I, keeps Blood Moon rules and ends there. All three practice routes keep retry/campaign handoff correct and never write campaign personal best.
 - [ ] 連戰試煉 starts exactly 8 stages, preserves HP/score across waves, uses bounded pressure rematches only at Stages 4–7, reaches the real Crimson Shogun/Blood Moon at Stage 8, keeps retry inside challenge and restores the normal four-duel roster on campaign handoff.
 - [ ] 今日陣 is challenge-only and deterministic for the same local `YYYY-MM-DD`: Stages 1–3 and Stage 8 remain unchanged, Stages 4–6 are a permutation of the existing three pressure rematches, Stage 7 stays Ronin Master, and only attack opening order rotates. HP/posture/gap/recovery/Perfect/telegraph/strike/damage/heavy values remain identical to each source pressure definition; standard challenge/campaign/practice restore unchanged.
 - [ ] Challenge 氣勢 is challenge-only: one hitless clear shows 1/2 momentum, any real `player-hit` emitted through the composed CombatEngine path breaks the chain, two consecutive hitless clears reset momentum and trigger exactly one 不屈 reward—+1 HP when damaged or +300 challenge score at full HP. If a full-health final-wave rally and victory are drained together, the post-rally score is authoritative in engine state, victory/result data and challenge-best persistence. Campaign/practice HP, score and timing remain unchanged.
@@ -59,7 +58,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 
 - [ ] Mastery/result analysis does not alter combat. Campaign victory shows 0–100 + S/A/B/C/D; defeat remains D with stats.
 - [ ] Automatic riposte damage contributes to total damage but never inflates manual counter count/damage coaching.
-- [ ] Practice results stay distinctly labelled and never read/overwrite campaign personal best; worse campaign runs do not overwrite better best.
+- [ ] Practice results stay distinctly labelled by opponent (RONIN / ONI / SHOGUN PRACTICE) and never read/overwrite campaign personal best; worse campaign runs do not overwrite better best.
 - [ ] Challenge results are distinctly labelled, store only the separate local best record ranked by waves/score, and never read/overwrite campaign personal best. The same record may optionally contain monotonic per-wave cumulative score splits; legacy records without splits remain valid, malformed split arrays are ignored, and retry/campaign handoff preserve isolation.
 - [ ] Challenge 氣勢/不屈, 戰前抉擇 and 宿敵步速 introduce no new persistence key, account, identifier or remote record. Only a better challenge result may write optional PB splits into the existing challenge-best key.
 - [ ] 今日陣 adds no persistence key, account, remote identifier or network request. It intentionally reuses the existing local challenge best, challenge momentum/tactics and PB split comparison; its date key is run-local only.
@@ -69,13 +68,14 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 
 ## Delivery gates
 
-- [ ] `npm test` passes, including challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, and final-wave full-health +300 terminal-score-authority regressions.
+- [ ] `npm test` passes, including direct Stage 2/3/4 practice activation/terminal isolation, challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, and final-wave full-health +300 terminal-score-authority regressions.
 - [ ] `npm run test:browser` passes.
-- [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, all four practice/challenge selector entries including 今日陣 inside the shared 320×568 start layout, 刀路清晰 and 節拍提示.
+- [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, all five practice/challenge selector entries including 練鬼 and 今日陣 inside the shared 320×568 start layout, 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
 - [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, actual-Sword multi-pose afterimage history, telegraph→strike→parry→counter and all directional player-facing cuts.
 - [ ] Focused 320×568 challenge visual-identity browser gate renders the real pressure roster and requires Waves 4–8 to expose `ashigaru-jingasa → ronin-travel-wrap → oni-heavy-guard → ronin-travel-wrap → crimson-shogun-banner`, while proving the renderer restores the original 8-wave progression index after every draw.
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
+- [ ] Mastery browser harness clicks 練浪人 / 練鬼 / 練將軍 and proves each real practice stage terminates after the selected duel, renders the correct opponent label/stage analysis, keeps campaign best isolated, supports same-practice retry and returns cleanly to Stage 1 campaign.
 - [ ] Mastery browser harness clicks the real 連戰試煉 control, proves composed 8-stage activation, visible pointer-safe 氣勢 UI, first clean-wave stack, a real two-clean-wave +1 HP 不屈 reward, terminal 不屈 summary and 8-card analysis, keeps challenge best isolated from campaign best, exercises 再戰連陣 / 開始完整主線, and keeps terminal content plus both controls inside 320×568.
 - [ ] Focused 320×568 challenge-rival browser gate starts from an existing eight-wave split PB, proves a visible behind split then an ahead split after the same-wave 不屈 score reward, persists eight authoritative monotonic splits after a better victory, reloads them on retry, and clears the badge on campaign handoff.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.

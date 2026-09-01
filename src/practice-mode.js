@@ -1,6 +1,7 @@
 import { CombatEngine } from './game-core.js';
 
 export const RONIN_PRACTICE_ID = 'wandering-ronin';
+export const ONI_PRACTICE_ID = 'oni-guard';
 export const SHOGUN_PRACTICE_ID = 'crimson-shogun';
 
 const installed = Symbol.for('blade-reversal.duel-practice-v2');
@@ -10,18 +11,22 @@ let practiceLaunchArmed = false;
 
 function modeForEnemy(enemyId) {
   if (enemyId === RONIN_PRACTICE_ID) return 'ronin-practice';
+  if (enemyId === ONI_PRACTICE_ID) return 'oni-practice';
   if (enemyId === SHOGUN_PRACTICE_ID) return 'shogun-practice';
   return 'campaign';
 }
 
 function enemyForMode(mode) {
   if (mode === 'ronin-practice') return RONIN_PRACTICE_ID;
+  if (mode === 'oni-practice') return ONI_PRACTICE_ID;
   if (mode === 'shogun-practice') return SHOGUN_PRACTICE_ID;
   return null;
 }
 
 function retryLabel(enemyId) {
-  return enemyId === SHOGUN_PRACTICE_ID ? '再戰將軍' : '再練浪人';
+  if (enemyId === SHOGUN_PRACTICE_ID) return '再戰將軍';
+  if (enemyId === ONI_PRACTICE_ID) return '再戰鬼武者';
+  return '再練浪人';
 }
 
 function practiceState(engine) {
@@ -40,6 +45,10 @@ export function requestPractice(enemyId = null) {
 
 export function requestRoninPractice(enabled = true) {
   return requestPractice(enabled ? RONIN_PRACTICE_ID : null);
+}
+
+export function requestOniPractice(enabled = true) {
+  return requestPractice(enabled ? ONI_PRACTICE_ID : null);
 }
 
 export function requestShogunPractice(enabled = true) {
@@ -80,6 +89,10 @@ export function activatePractice(engine, enemyId, now = 0) {
 
 export function activateRoninPractice(engine, now = 0) {
   return activatePractice(engine, RONIN_PRACTICE_ID, now);
+}
+
+export function activateOniPractice(engine, now = 0) {
+  return activatePractice(engine, ONI_PRACTICE_ID, now);
 }
 
 export function activateShogunPractice(engine, now = 0) {
@@ -140,7 +153,7 @@ function installStyles() {
   const style = document.createElement('style');
   style.dataset.duelPractice = 'true';
   style.textContent = `
-    .practice-row{width:min(100%,300px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px auto 0}
+    .practice-row{width:min(100%,300px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px auto 0}
     .practice-button,.ronin-practice-campaign{min-height:38px;padding:7px 8px;border:1px solid rgba(126,174,255,.28);border-radius:11px;background:rgba(88,116,169,.09);color:#dce8ff;font-size:10px;font-weight:800;letter-spacing:.035em;cursor:pointer}
     .practice-button span{display:block;margin-top:2px;color:rgba(229,235,245,.54);font-size:7.8px;font-weight:650;letter-spacing:0}
     .practice-button:active,.ronin-practice-campaign:active{transform:translateY(1px)}
@@ -167,9 +180,10 @@ function markStartLayout() {
     const content = document.querySelector('#start-screen .modal__content');
     const row = document.querySelector('#practice-row');
     const ronin = document.querySelector('#practice-ronin-button');
+    const oni = document.querySelector('#practice-oni-button');
     const shogun = document.querySelector('#practice-shogun-button');
-    if (!content || !row || !ronin || !shogun) return;
-    const rects = [content, row, ronin, shogun].map((node) => node.getBoundingClientRect());
+    if (!content || !row || !ronin || !oni || !shogun) return;
+    const rects = [content, row, ronin, oni, shogun].map((node) => node.getBoundingClientRect());
     const fits = rects.every(
       (rect) =>
         rect.left >= 0 &&
@@ -195,6 +209,7 @@ function installUi() {
     row.setAttribute('aria-label', '指定決鬥練習');
     row.innerHTML =
       '<button id="practice-ronin-button" class="practice-button" type="button">練浪人<span>第二關 · 假動作</span></button>' +
+      '<button id="practice-oni-button" class="practice-button" type="button">練鬼<span>第三關 · 重擊</span></button>' +
       '<button id="practice-shogun-button" class="practice-button" type="button">練將軍<span>第四關 · BLOOD MOON</span></button>';
     startButton.after(row);
 
@@ -204,6 +219,7 @@ function installUi() {
       startButton.click();
     };
     row.querySelector('#practice-ronin-button')?.addEventListener('click', () => launchPractice(RONIN_PRACTICE_ID));
+    row.querySelector('#practice-oni-button')?.addEventListener('click', () => launchPractice(ONI_PRACTICE_ID));
     row.querySelector('#practice-shogun-button')?.addEventListener('click', () => launchPractice(SHOGUN_PRACTICE_ID));
   }
 
@@ -231,6 +247,7 @@ function installUi() {
 
   const practiceUiReady =
     Boolean(document.querySelector('#practice-ronin-button')) &&
+    Boolean(document.querySelector('#practice-oni-button')) &&
     Boolean(document.querySelector('#practice-shogun-button'));
   document.documentElement.dataset.practiceModeUi = String(practiceUiReady);
   markStartLayout();

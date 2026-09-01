@@ -40,6 +40,7 @@ function formatScore(value) {
 
 function practiceLabel(enemyId) {
   if (enemyId === 'crimson-shogun') return 'SHOGUN PRACTICE';
+  if (enemyId === 'oni-guard') return 'ONI PRACTICE';
   return 'RONIN PRACTICE';
 }
 
