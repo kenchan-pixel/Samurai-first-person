@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 93,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Separated Blood Moon UI-selection cleanup from normal practice launch authority so real 練浪人 / 練鬼 / 練將軍 start controls cannot be reset to campaign during their nested production Start handoff, and added true 320×568 production coverage for all three entries",
-  "last_commit": "82d136149ec1480d9c7ac7ee95edc03b5aeea01d",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the normal-dojo launch isolation repair",
+  "run_number": 94,
+  "last_action_type": "FEATURE",
+  "last_action": "Added presentation-only heavy-attack weight for authored Oni/Shogun heavy strikes: a continuous crouched load, stronger forward body drive, enlarged real-blade read trail and bounded camera pressure while preserving normal attacks and all CombatEngine timing/damage/input rules",
+  "last_commit": "835d6899a991920586c862e71d000fa7c0f0e5c7",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the heavy-attack weight slice",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/f3tZ7EroJk2jsEb51bPeCjn7isqm",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/DBCGdZYbGf7FNPsMS1LF4Yij9Ykp",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -33,8 +33,8 @@
     }
   },
   "next_candidates": [
-    "Use the new 四向防守 result evidence together with 師範弱點再練 and direct Ronin/Oni/Shogun/Blood Moon practice to identify repeatable direction-specific walls before changing duel balance",
-    "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability",
+    "Self-inspect Oni and Shogun heavy attacks on the exact Preview at normal speed; refine the new load/drive/trail pressure only if the authored blade becomes obscured or the body commitment reads weakly",
+    "Use 四向防守 together with direct Ronin/Oni/Shogun/Blood Moon practice to identify repeatable direction-specific walls before changing duel balance",
     "Self-inspect challenge and 今日陣 repeated runs; tune 宿敵步速 or the 2/4/6 tactical trade only if repeatable evidence shows confusion, triviality or dominance"
   ]
 }

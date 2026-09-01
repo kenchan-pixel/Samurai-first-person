@@ -144,3 +144,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No enemy definition, HP/posture/timing/damage, parry/Perfect/STEP rule, direction mapping, boss phase threshold/reward, mastery/run-analysis formula, challenge/今日陣 rule, renderer animation/geometry, storage key, network/account/privacy or asset authority changed.
 - The repair narrows UI orchestration ownership only; `practice-mode.js` still owns normal direct-practice selection and `boss-encounter.js` still owns Blood Moon Phase II.
 - Exact-head GitHub Actions and exact-head Vercel remain mandatory post-commit acceptance gates. The run is not complete until this implementation SHA has both terminal green and one concise Draft-PR receipt.
+
+## Run 094 — Heavy attack weight pass
+
+**Date:** 2026-09-02  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `835d6899a991920586c862e71d000fa7c0f0e5c7`.
+- Exact-head GitHub Actions CI #137 and GitHub's exact-head `Vercel` commit status were terminal green before feature selection. Draft PR #1 remained open/Draft/unmerged, `main` remained untouched, inline review comments were empty, and the latest exact-head review reported no actionable P0/P1/P2 finding.
+- Run 093 closed the normal-practice launch P1 in the real 320×568 production flow, so feature work was eligible.
+- Candidate scoring: **heavy-attack body/blade weight pass 23/25** (impact 5, goal alignment 5, novelty 4, confidence 4, safety 5); direction-specific dojo drill layer 21/25; challenge/today pressure tuning 19/25. The heavy pass wins because current combat already marks real `heavy` attacks, but the primary renderer did not materially distinguish their body commitment from normal cuts beyond combat timing.
+
+### Implementation
+
+- Added a bounded presentation adapter driven only by the existing authoritative `attack.heavy` flag. Heavy telegraphs now settle into a deeper loaded stance; the strike keeps phase-boundary continuity, drives the whole opponent root farther forward, carries that weight into recovery, enlarges the existing real-blade read trail and adds a small camera-pressure response.
+- The adapter acts after the existing authored/mobile motion pass but before blade-trajectory sampling, so HandR/Sword authority and the actual world-space blade path remain intact. It does not write Chest/arm/HandR joints or invent a second blade path.
+- Normal attacks are byte-for-behaviour presentation-neutral through the adapter. Added deterministic Node coverage for inactive normal attacks, telegraph→strike→recovery continuity, full-body load/drive, blade-read emphasis and bounded camera response. Existing real PlayCanvas/browser gates remain mandatory for exact-head acceptance.
+
+### Regression boundary
+
+- No enemy definition, HP/posture/timing/damage, score, input mapping, parry/Perfect/STEP rule, boss threshold/reward, challenge/今日陣 rule, mastery/run-analysis formula, persistence key, network/account/privacy or asset authority changed.
+- The legacy WebGL2 fallback remains unchanged and retains the accepted baseline; the new weight slice targets the canonical PlayCanvas primary renderer only.
+- Exact-head GitHub Actions (`npm test` + full `npm run test:browser`) and GitHub `Vercel` commit status must both become terminal green before this run is accepted. Post-commit status is authoritative in the Draft-PR run receipt.

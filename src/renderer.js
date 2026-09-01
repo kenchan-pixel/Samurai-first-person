@@ -3,6 +3,7 @@ import { installAuthoredEnemyAttacks } from './authored-enemy-attacks.js';
 import { installEnemyScreenSpaceDirection } from './enemy-screen-space-direction.js';
 import { installStageIdentity } from './stage-identity.js';
 import { installMobileCombatReadabilityView } from './mobile-combat-readability.js';
+import { installHeavyAttackWeight } from './heavy-attack-weight.js';
 import { installBladeTrajectoryView } from './blade-trajectory.js';
 import { installEnemyBladeAfterimage } from './enemy-blade-afterimage.js';
 import { installMobileControlReadability } from './mobile-control-readability.js';
@@ -31,8 +32,10 @@ export class View {
         installPlayerWeaponFidelity(
           installEnemyBladeAfterimage(
             installBladeTrajectoryView(
-              installMobileCombatReadabilityView(
-                installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+              installHeavyAttackWeight(
+                installMobileCombatReadabilityView(
+                  installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+                ),
               ),
             ),
           ),
