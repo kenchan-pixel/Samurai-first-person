@@ -73,3 +73,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice enemy definition, input direction, parry/Perfect/STEP window, damage, boss threshold, mastery scoring formula, renderer animation/geometry, remote data, account, analytics, paid API or asset provenance behaviour changed.
 - The challenge is local-only and opt-in; normal **拔刀**, 練浪人 and 練將軍 remain the accepted baseline paths.
 - Local checkout could not reach GitHub from this runtime, so new modules were syntax-checked and focused pure logic was reviewed locally; post-commit exact-head Node/browser CI plus GitHub Vercel status remain the required acceptance evidence before another feature run.
+
+## Run 076 — Challenge browser acceptance hardening
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `8a3ad09e7322e7d59a44880ad570bfd66f4b360c`.
+- Exact-head CI #110 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success`. Direct Vercel deployment enumeration returned 403, so the GitHub `Vercel` commit status remained the authoritative deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, inline review threads were empty, and `main` was untouched.
+- The latest exact-head All Repos review found one blocking P2: Run 075 did not exercise the real challenge entry/retry/campaign-handoff/result UI through a production browser path, leaving the eight-stage lifecycle, independent best storage and 320×568 terminal layout able to regress while CI stayed green.
+
+### Repair
+
+- Extended the existing mastery browser harness instead of creating a parallel suite. It now clicks the real **連戰試煉** control, proves the composed CombatEngine activates exactly eight stages, drives all eight stage-clear transitions to a real challenge victory, verifies eight run-analysis cards and separate challenge-best persistence without changing campaign best, then exercises **再戰連陣** and **開始完整主線** back to the normal four-stage campaign.
+- Added explicit 320×568 bounds checks for the challenge result block, all eight analysis cards, retry control and campaign-handoff control.
+- Tightened only the challenge result density on short phone viewports so the complete eight-stage analysis and both terminal actions remain inside the accepted portrait viewport. Combat timing, input, scoring and campaign/practice presentation are untouched.
+- Updated the regression checklist so the real challenge control/terminal browser path is a cumulative delivery gate.
+
+### Regression boundary
+
+- No campaign/practice roster, parry/swipe/STEP direction, combat timing, reach, damage, boss threshold, mastery scoring formula, renderer animation/geometry, remote data, account, analytics, paid API or asset provenance behaviour changed.
+- Challenge storage remains local-only and isolated from the campaign personal best.
+- Local syntax checks passed for the changed module and browser harness; exact-head repository CI and Vercel Preview after this commit remain the acceptance evidence before feature work resumes.

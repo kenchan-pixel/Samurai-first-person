@@ -188,8 +188,17 @@ try {
   if (!combatUxDom.includes('data-combat-ux-restart="true"')) throw new Error('Pause restart did not re-enter Stage 1 through the normal restart path');
   if (!combatUxDom.includes('data-combat-ux-home="true"')) throw new Error('Pause home did not return to the start screen cleanly');
 
-  const masteryDom = await dumpDom(browser, '/tests/mastery-browser-harness.html', { budget: 3200 });
+  const masteryDom = await dumpDomWithDeviceMetrics(browser, '/tests/mastery-browser-harness.html', {
+    budget: 4200,
+    width: 320,
+    height: 568,
+  });
   if (!masteryDom.includes('data-mastery-integration="pass"')) throw new Error(`Mastery event-stream integration failed. DOM:\n${masteryDom.slice(0, 5000)}`);
+  if (!masteryDom.includes('data-challenge-browser-integration="pass"')) throw new Error('Challenge browser control/terminal flow did not complete');
+  if (!masteryDom.includes('data-challenge-entry="true"') || !masteryDom.includes('data-challenge-terminal="true"')) throw new Error('Challenge browser harness did not prove real entry through terminal victory');
+  if (!masteryDom.includes('data-challenge-best-isolation="true"')) throw new Error('Challenge browser harness did not preserve independent campaign/challenge best storage');
+  if (!masteryDom.includes('data-challenge-controls="true"')) throw new Error('Challenge retry/campaign handoff controls failed');
+  if (!masteryDom.includes('data-challenge-terminal-layout="pass"') || !masteryDom.includes('data-challenge-analysis-stages="8"')) throw new Error('Challenge eight-stage terminal content escaped the true 320x568 viewport');
   if (!masteryDom.includes('data-ronin-practice-integration="true"')) throw new Error('Ronin practice did not stop after Stage 2, render Stage 2 analysis, or preserve the campaign personal best');
   if (!masteryDom.includes('data-ronin-practice-controls="true"')) throw new Error('Ronin practice player controls did not complete practice entry → retry → campaign handoff');
   if (!masteryDom.includes('data-shogun-practice-integration="true"')) throw new Error('Shogun practice did not stop after Stage 4, render Stage 4 analysis, or preserve the campaign personal best');
@@ -249,7 +258,7 @@ try {
   if (!reducedImpactDom.includes('data-impact-reduced-fallback="true"')) throw new Error('Reduced-motion Impact FX did not preserve ring feedback while suppressing sparks/slash travel');
   if (!reducedImpactDom.includes('data-impact-bounded="true"')) throw new Error('Reduced-motion impact burst did not clean up after its bounded lifetime');
 
-  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + combat-ux + mastery/Ronin+Shogun-practice-controls + boss + onboarding + footwork + blade-read accessibility + timing assist + impact/default+reduced integration`);
+  console.log(`browser smoke passed with ${browser}: PlayCanvas renderer/motion + combat-ux + mastery/Ronin+Shogun-practice-controls + challenge-controls + boss + onboarding + footwork + blade-read accessibility + timing assist + impact/default+reduced integration`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }

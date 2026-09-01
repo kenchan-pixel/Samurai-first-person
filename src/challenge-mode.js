@@ -153,6 +153,23 @@ function ensureStyles() {
     html[data-run-mode="challenge"] .modal__content--result .result-score{margin-top:6px}
     html[data-run-mode="challenge"] .modal__content--result .primary-button{margin-top:7px}
     @media(max-width:360px){.practice-button{padding-inline:4px!important}.practice-button strong{font-size:9.25px!important}.practice-button small{font-size:8px!important}.challenge-result{padding:6px 8px}}
+    @media(max-width:360px) and (max-height:620px){
+      html[data-run-mode="challenge"] .modal__content--result h2{margin-top:5px;font-size:28px;line-height:1}
+      html[data-run-mode="challenge"] .modal__content--result>#result-summary{margin-top:4px;font-size:9.5px;line-height:1.2}
+      html[data-run-mode="challenge"] .modal__content--result .result-score{margin-top:4px}
+      html[data-run-mode="challenge"] .modal__content--result .result-score strong{font-size:20px}
+      html[data-run-mode="challenge"] .result-analysis{margin-top:4px;padding:5px}
+      html[data-run-mode="challenge"] .result-analysis__head strong{font-size:9.5px}
+      html[data-run-mode="challenge"] .result-analysis__grid{gap:3px;margin-top:4px}
+      html[data-run-mode="challenge"] .result-analysis__stage{padding:3px 4px}
+      html[data-run-mode="challenge"] .result-analysis__stage strong{font-size:9px}
+      html[data-run-mode="challenge"] .result-analysis__stage span{font-size:8px;line-height:1.1}
+      html[data-run-mode="challenge"] .result-analysis__tip{margin-top:4px!important;font-size:9px!important;line-height:1.15!important}
+      html[data-run-mode="challenge"] .challenge-result{margin-top:4px;padding:4px 7px}
+      html[data-run-mode="challenge"] .challenge-result strong{font-size:9.5px}
+      html[data-run-mode="challenge"] .challenge-result span{font-size:9px}
+      html[data-run-mode="challenge"] .modal__content--result .primary-button{min-height:36px;margin-top:4px!important;font-size:11px}
+    }
   `;
   document.head.append(style);
 }

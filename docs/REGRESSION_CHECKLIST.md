@@ -67,6 +67,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
 - [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, actual-Sword multi-pose afterimage history, telegraph→strike→parry→counter and all directional player-facing cuts.
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
+- [ ] Mastery browser harness clicks the real 連戰試煉 control, proves composed 8-stage activation and terminal 8-card analysis, keeps challenge best isolated from campaign best, exercises 再戰連陣 / 開始完整主線, and keeps terminal content plus both controls inside 320×568.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
 - [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation.
 - [ ] Draft PR remains open/Draft/unmerged and contains one concise run comment with Before/After/verification/regression/risk/Preview.

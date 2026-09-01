@@ -34,6 +34,11 @@
   <script type="module">
     import '../src/mastery-overlay.js';
     import {
+      CHALLENGE_STAGE_COUNT,
+      CHALLENGE_STORAGE_KEY,
+      requestChallenge,
+    } from '../src/challenge-mode.js';
+    import {
       requestRoninPractice,
       requestShogunPractice,
     } from '../src/practice-mode.js';
@@ -64,6 +69,7 @@
     }
 
     async function completeVictory({ missFirst = false, lateParry = false } = {}) {
+      requestChallenge(false);
       requestRoninPractice(false);
       const combat = new CombatEngine({ enemies: [enemy] });
       combat.start(0);
@@ -209,8 +215,150 @@
       root.dataset.shogunPracticeIntegration = String(resultOk && root.dataset.shogunPracticeControls === 'true');
     }
 
+    async function forceChallengeStageClear(expectedStage) {
+      if (uiCombat.enemyIndex !== expectedStage - 1) {
+        throw new Error(`challenge expected stage ${expectedStage}, got ${uiCombat.enemyIndex + 1}`);
+      }
+      const enemyId = uiCombat.enemy?.id;
+      if (!enemyId) throw new Error(`challenge stage ${expectedStage} had no enemy`);
+
+      uiCombat.enemyHp = 0;
+      uiCombat.phase = 'stage-clear';
+      uiCombat.phaseStartedAt = uiNow + 10;
+      uiCombat.phaseEndsAt = uiNow + 20;
+      uiCombat.events.push({
+        type: 'enemy-defeated',
+        detail: { enemyId, stage: expectedStage },
+      });
+      uiNow += 20;
+      uiCombat.update(uiNow);
+      const events = uiCombat.drainEvents();
+      await flush();
+      return events;
+    }
+
+    async function completeChallengeViaControls(firstBest) {
+      const challengeButton = document.querySelector('#challenge-button');
+      const challengeCampaignButton = document.querySelector('#challenge-campaign-button');
+      const challengeResult = document.querySelector('#challenge-result');
+      if (!challengeButton || !challengeCampaignButton || !challengeResult || !startButton || !restartButton) {
+        throw new Error('Challenge player-facing controls were not installed');
+      }
+
+      localStorage.removeItem(CHALLENGE_STORAGE_KEY);
+      challengeButton.click();
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Challenge entry click');
+
+      const entryOk =
+        uiCombat.enemies.length === CHALLENGE_STAGE_COUNT &&
+        root.dataset.challengeActive === 'true' &&
+        root.dataset.runMode === 'challenge' &&
+        root.dataset.challengeStageCount === String(CHALLENGE_STAGE_COUNT);
+      root.dataset.challengeEntry = String(entryOk);
+      if (!entryOk) throw new Error('challenge entry did not activate the composed eight-stage runtime');
+
+      let finalEvents = [];
+      for (let stage = 1; stage <= CHALLENGE_STAGE_COUNT; stage += 1) {
+        const events = await forceChallengeStageClear(stage);
+        if (stage < CHALLENGE_STAGE_COUNT) {
+          const next = events.find((event) => event.type === 'stage-start');
+          if (next?.detail?.stage !== stage + 1 || uiCombat.enemyIndex !== stage) {
+            throw new Error(`challenge did not advance from stage ${stage} to ${stage + 1}`);
+          }
+        } else {
+          finalEvents = events;
+        }
+      }
+
+      const victory = finalEvents.find((event) => event.type === 'victory');
+      const challengeBest = JSON.parse(localStorage.getItem(CHALLENGE_STORAGE_KEY) || 'null');
+      const analysis = document.querySelector('#result-analysis');
+      const analysisCards = [...(analysis?.querySelectorAll('.result-analysis__stage') || [])];
+      const challengeSummary = document.querySelector('#result-summary')?.textContent || '';
+      const challengeEyebrow = document.querySelector('#result-eyebrow')?.textContent || '';
+      const terminalOk =
+        Boolean(victory?.detail?.challenge) &&
+        victory?.detail?.wavesCleared === CHALLENGE_STAGE_COUNT &&
+        root.dataset.challengeResult === 'victory' &&
+        restartButton.textContent === '再戰連陣' &&
+        challengeCampaignButton.hidden === false &&
+        challengeResult.hidden === false &&
+        challengeEyebrow.includes('連戰試煉') &&
+        challengeSummary.includes('連戰紀錄獨立計算') &&
+        analysisCards.length === CHALLENGE_STAGE_COUNT;
+      root.dataset.challengeTerminal = String(terminalOk);
+      root.dataset.challengeAnalysisStages = String(analysisCards.length);
+      if (!terminalOk) throw new Error('challenge terminal UI or eight-stage analysis did not render');
+
+      const bestIsolation =
+        localStorage.getItem(BEST_KEY) === firstBest &&
+        challengeBest?.won === true &&
+        challengeBest?.wavesCleared === CHALLENGE_STAGE_COUNT &&
+        Number.isFinite(challengeBest?.score);
+      root.dataset.challengeBestIsolation = String(bestIsolation);
+      if (!bestIsolation) throw new Error('challenge best was not isolated from campaign mastery best');
+
+      const layoutNodes = [
+        document.querySelector('#result-content'),
+        analysis,
+        challengeResult,
+        restartButton,
+        challengeCampaignButton,
+        ...analysisCards,
+      ].filter(Boolean);
+      const terminalFits = layoutNodes.every((node) => {
+        const rect = node.getBoundingClientRect();
+        return (
+          rect.left >= -0.5 &&
+          rect.right <= window.innerWidth + 0.5 &&
+          rect.top >= -0.5 &&
+          rect.bottom <= window.innerHeight + 0.5
+        );
+      });
+      root.dataset.challengeTerminalLayout = terminalFits ? 'pass' : 'fail';
+      if (!terminalFits) throw new Error('challenge terminal content overflowed the 320x568 viewport');
+
+      restartButton.click();
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Challenge retry click');
+      const retryStarted =
+        uiCombat.enemies.length === CHALLENGE_STAGE_COUNT &&
+        root.dataset.runMode === 'challenge' &&
+        challengeResult.hidden === true &&
+        challengeCampaignButton.hidden === true;
+
+      uiCombat.phase = 'defeat';
+      uiCombat.phaseStartedAt = uiNow + 1;
+      uiCombat.phaseEndsAt = Infinity;
+      uiCombat.events.push({ type: 'defeat', detail: { score: uiCombat.score } });
+      const retryTerminalEvents = uiCombat.drainEvents();
+      await flush();
+      const retryTerminal =
+        retryTerminalEvents.some((event) => event.type === 'defeat' && event.detail?.challenge) &&
+        challengeCampaignButton.hidden === false &&
+        restartButton.textContent === '再戰連陣';
+
+      challengeCampaignButton.click();
+      expectUiStage({ practice: false, stage: 1, enemyId: 'ashigaru-scout' }, 'Challenge campaign handoff click');
+      const campaignStarted =
+        uiCombat.enemies.length === ENEMIES.length + 1 &&
+        root.dataset.challengeActive === 'false' &&
+        root.dataset.runMode === 'campaign' &&
+        challengeResult.hidden === true &&
+        challengeCampaignButton.hidden === true &&
+        localStorage.getItem(BEST_KEY) === firstBest;
+
+      const controlsOk = retryStarted && retryTerminal && campaignStarted;
+      root.dataset.challengeControls = String(controlsOk);
+      root.dataset.challengeBrowserIntegration =
+        entryOk && terminalOk && bestIsolation && terminalFits && controlsOk ? 'pass' : 'fail';
+      if (root.dataset.challengeBrowserIntegration !== 'pass') {
+        throw new Error('challenge retry/campaign handoff control flow failed');
+      }
+    }
+
     try {
       localStorage.removeItem(BEST_KEY);
+      localStorage.removeItem(CHALLENGE_STORAGE_KEY);
       await completeVictory();
 
       const firstBest = localStorage.getItem(BEST_KEY);
@@ -234,6 +382,7 @@
 
       await completeRoninPracticeViaControls(firstBest);
       await completeShogunPracticeViaControls(firstBest);
+      await completeChallengeViaControls(firstBest);
 
       await completeVictory({ missFirst: true, lateParry: true });
       root.dataset.masteryBestPreserved = String(localStorage.getItem(BEST_KEY) === firstBest);
@@ -269,11 +418,19 @@
         root.dataset.roninPracticeControls === 'true' &&
         root.dataset.shogunPracticeIntegration === 'true' &&
         root.dataset.shogunPracticeControls === 'true' &&
+        root.dataset.challengeBrowserIntegration === 'pass' &&
+        root.dataset.challengeEntry === 'true' &&
+        root.dataset.challengeTerminal === 'true' &&
+        root.dataset.challengeBestIsolation === 'true' &&
+        root.dataset.challengeControls === 'true' &&
+        root.dataset.challengeTerminalLayout === 'pass' &&
+        root.dataset.challengeAnalysisStages === String(CHALLENGE_STAGE_COUNT) &&
         root.dataset.masteryBestPreserved === 'true' &&
         root.dataset.masteryStorageFallback === 'true' &&
         root.dataset.resultLayout === 'pass';
       root.dataset.masteryIntegration = passed ? 'pass' : 'fail';
     } catch (error) {
+      requestChallenge(false);
       requestRoninPractice(false);
       requestShogunPractice(false);
       errorNode.hidden = false;
