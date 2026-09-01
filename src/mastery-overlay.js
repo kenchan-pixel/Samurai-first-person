@@ -103,18 +103,23 @@ if (!CombatEngine.prototype[patched]) {
     for (const event of events) {
       observeMasteryEvent(session, event);
       if (event.type === 'victory' || event.type === 'defeat') {
+        const terminalEvent = event;
+        const won = event.type === 'victory';
         const challenge = Boolean(this[CHALLENGE_ACTIVE]);
         const practice = !challenge && Boolean(event.detail?.practice);
-        const report = finishMastery(session, {
-          now: performance.now(),
-          score: event.detail?.score,
-          won: event.type === 'victory',
+        const practiceEnemyId = event.detail?.practiceEnemyId ?? null;
+        queueMicrotask(() => {
+          const report = finishMastery(session, {
+            now: performance.now(),
+            score: terminalEvent.detail?.score,
+            won,
+          });
+          renderReport(report, {
+            practice,
+            practiceEnemyId,
+            challenge,
+          });
         });
-        queueMicrotask(() => renderReport(report, {
-          practice,
-          practiceEnemyId: event.detail?.practiceEnemyId ?? null,
-          challenge,
-        }));
       }
     }
 

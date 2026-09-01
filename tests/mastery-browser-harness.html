@@ -308,7 +308,22 @@
       }
 
       const victory = finalEvents.find((event) => event.type === 'victory');
+      const finalRally = finalEvents.find((event) => event.type === 'challenge-rally');
       const challengeBest = JSON.parse(localStorage.getItem(CHALLENGE_STORAGE_KEY) || 'null');
+      const visibleScore = Number(document.querySelector('#result-score')?.textContent || 0);
+      const authoritativeScore = Math.max(0, Math.round(Number(uiCombat.score) || 0));
+      const terminalScoreAuthority =
+        finalRally?.detail?.reward === 'score' &&
+        finalRally?.detail?.amount === 300 &&
+        finalRally?.detail?.score === authoritativeScore &&
+        victory?.detail?.score === authoritativeScore &&
+        challengeBest?.score === authoritativeScore &&
+        visibleScore === authoritativeScore;
+      root.dataset.challengeTerminalScoreAuthority = String(terminalScoreAuthority);
+      if (!terminalScoreAuthority) {
+        throw new Error('final challenge rally score was not authoritative across engine, victory, visible result and challenge best');
+      }
+
       const analysis = document.querySelector('#result-analysis');
       const analysisCards = [...(analysis?.querySelectorAll('.result-analysis__stage') || [])];
       const challengeSummary = document.querySelector('#result-summary')?.textContent || '';
@@ -404,7 +419,7 @@
       root.dataset.challengeControls = String(controlsOk);
       root.dataset.challengeMomentumIntegration = String(momentumOk);
       root.dataset.challengeBrowserIntegration =
-        entryOk && terminalOk && bestIsolation && terminalFits && controlsOk && momentumOk ? 'pass' : 'fail';
+        entryOk && terminalOk && terminalScoreAuthority && bestIsolation && terminalFits && controlsOk && momentumOk ? 'pass' : 'fail';
       if (root.dataset.challengeBrowserIntegration !== 'pass') {
         throw new Error('challenge momentum/retry/campaign handoff control flow failed');
       }
@@ -478,6 +493,7 @@
         root.dataset.challengeMomentumHeal === 'true' &&
         root.dataset.challengeEntry === 'true' &&
         root.dataset.challengeTerminal === 'true' &&
+        root.dataset.challengeTerminalScoreAuthority === 'true' &&
         root.dataset.challengeBestIsolation === 'true' &&
         root.dataset.challengeControls === 'true' &&
         root.dataset.challengeTerminalLayout === 'pass' &&

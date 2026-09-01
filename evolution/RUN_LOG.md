@@ -174,3 +174,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No challenge reward amount, campaign/practice scoring, combat timing/damage/input, boss behavior, renderer, account/network/privacy or storage key changed.
 - The fix only reconciles an already-earned challenge reward across the existing terminal event/result/best surfaces; it does not create a new scoring rule or persistence surface.
 - Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
+
+## Run 080 — Player-visible final challenge score authority
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `9041b89f7d9586031e860fa542495d15fff923be`.
+- Exact-head CI #117 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` commit status was `success`. The direct Vercel connector still enumerated no project for the known team, so GitHub's `Vercel` commit status remained the authoritative deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty.
+- The latest exact-head Second Hourly review found one blocking P2: Run 079 corrected engine/victory/challenge-best score authority, but the inner mastery observer still froze the pre-rally primitive score before the outer challenge-momentum wrapper applied the final +300, then its microtask could overwrite the generic visible result score with that stale value.
+
+### Repair
+
+- Kept mastery event observation synchronous, but deferred terminal `finishMastery()` report construction into the existing render microtask and retained the terminal event reference. The report now reads `terminalEvent.detail.score` only after the composed outer challenge wrappers have finished mutating the authoritative terminal event.
+- Strengthened the existing true-320×568 challenge browser lifecycle. Its Stage 8 already completes a full-health 2/2 rally; the gate now requires the final `challenge-rally` to be +300 and proves one identical authoritative score across `CombatEngine.score`, returned `victory.detail.score`, player-visible `#result-score` and stored challenge best.
+- The existing eight-stage entry, analysis, retry/campaign handoff, momentum, best-isolation and short-phone layout gates remain cumulative.
+
+### Regression boundary
+
+- No challenge reward amount, mastery formula, campaign/practice scoring, combat timing/damage/input, boss behavior, renderer, storage key, account/network/privacy or asset behavior changed.
+- The repair changes only terminal observation ordering so already-earned score cannot be overwritten by an earlier inner-observer snapshot.
+- Post-commit exact-head CI and Vercel Preview remain required before feature work can resume.
