@@ -38,13 +38,17 @@ function formatScore(value) {
   return Math.max(0, Math.round(Number(value) || 0)).toString().padStart(6, '0');
 }
 
-function practiceLabel(enemyId) {
+function practiceLabel(enemyId, practiceMode = null) {
+  if (practiceMode === 'blood-moon-practice') return 'BLOOD MOON PRACTICE';
   if (enemyId === 'crimson-shogun') return 'SHOGUN PRACTICE';
   if (enemyId === 'oni-guard') return 'ONI PRACTICE';
   return 'RONIN PRACTICE';
 }
 
-function renderReport(report, { practice = false, practiceEnemyId = null, challenge = false } = {}) {
+function renderReport(
+  report,
+  { practice = false, practiceEnemyId = null, practiceMode = null, challenge = false } = {},
+) {
   const eyebrow = document.querySelector('#result-eyebrow');
   const title = document.querySelector('#result-title');
   const summary = document.querySelector('#result-summary');
@@ -61,7 +65,7 @@ function renderReport(report, { practice = false, practiceEnemyId = null, challe
     eyebrow.textContent = `連戰試煉 · MASTERY ${report.masteryPoints}`;
     title.textContent = report.won ? `${report.grade} 級 · 八關制霸` : `${report.grade} 級 · 連戰終止`;
   } else if (practice) {
-    eyebrow.textContent = `${practiceLabel(practiceEnemyId)} · MASTERY ${report.masteryPoints}`;
+    eyebrow.textContent = `${practiceLabel(practiceEnemyId, practiceMode)} · MASTERY ${report.masteryPoints}`;
     title.textContent = report.won ? `${report.grade} 級 · 修行完成` : '修行敗北';
   } else {
     eyebrow.textContent = report.won ? `VICTORY · MASTERY ${report.masteryPoints}` : `DEFEAT · MASTERY ${report.masteryPoints}`;
@@ -109,6 +113,7 @@ if (!CombatEngine.prototype[patched]) {
         const challenge = Boolean(this[CHALLENGE_ACTIVE]);
         const practice = !challenge && Boolean(event.detail?.practice);
         const practiceEnemyId = event.detail?.practiceEnemyId ?? null;
+        const practiceMode = event.detail?.practiceMode ?? null;
         queueMicrotask(() => {
           const report = finishMastery(session, {
             now: performance.now(),
@@ -118,6 +123,7 @@ if (!CombatEngine.prototype[patched]) {
           renderReport(report, {
             practice,
             practiceEnemyId,
+            practiceMode,
             challenge,
           });
         });

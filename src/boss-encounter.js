@@ -44,6 +44,48 @@ export const BOSS_PHASE_TWO = Object.freeze({
 const installed = Symbol.for('blade-reversal.boss-encounter');
 const bossState = new WeakMap();
 
+function applyPhaseTwoDefinition(engine) {
+  const nextEnemies = [...engine.enemies];
+  nextEnemies[engine.enemyIndex] = BOSS_PHASE_TWO;
+  engine.enemies = nextEnemies;
+  engine.enemyPosture = 0;
+  engine.attackCursor = 0;
+  engine.currentAttack = null;
+}
+
+export function activateBossPhaseTwoPractice(engine, now = 0) {
+  if (
+    !engine ||
+    engine.enemy?.id !== BOSS_ID ||
+    !Number.isFinite(now) ||
+    !Array.isArray(engine.enemies)
+  ) {
+    return false;
+  }
+
+  bossState.set(engine, { phase: 2 });
+  applyPhaseTwoDefinition(engine);
+  engine.enemyHp = BOSS_PHASE_TWO_HP;
+  engine.playerPosture = 0;
+  engine.phase = 'stage-intro';
+  engine.phaseStartedAt = now;
+  engine.phaseEndsAt = now + 1550;
+  engine.events.push({
+    type: 'boss-phase',
+    detail: {
+      enemyId: BOSS_ID,
+      phase: 2,
+      title: 'BLOOD MOON',
+      enemyHp: engine.enemyHp,
+      maxEnemyHp: BOSS_PHASE_TWO.maxHp,
+      score: engine.score,
+      practice: true,
+      directPractice: true,
+    },
+  });
+  return true;
+}
+
 export function maybeAdvanceBossPhase(engine, now) {
   const state = engine ? bossState.get(engine) : null;
   const shouldShift =
@@ -56,12 +98,7 @@ export function maybeAdvanceBossPhase(engine, now) {
   if (!shouldShift) return false;
 
   state.phase = 2;
-  const nextEnemies = [...engine.enemies];
-  nextEnemies[engine.enemyIndex] = BOSS_PHASE_TWO;
-  engine.enemies = nextEnemies;
-  engine.enemyPosture = 0;
-  engine.attackCursor = 0;
-  engine.currentAttack = null;
+  applyPhaseTwoDefinition(engine);
   engine.phase = 'gap';
   engine.phaseStartedAt = now;
   engine.phaseEndsAt = now + 1100;

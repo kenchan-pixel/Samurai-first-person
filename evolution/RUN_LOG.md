@@ -376,3 +376,30 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/challenge enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, Blood Moon threshold, challenge reward/tactic/PB split, renderer animation/geometry, mastery formula, persistence, account/network/privacy or asset behavior changed.
 - The selector expansion only changes practice/daily presentation density; the existing production 320×568 layout gate now measures all five entries. Direct practice continues to share one adapter and one campaign roster rather than introducing a duplicate Oni combat implementation.
 - Repository checkout remained unavailable from this runtime. Post-commit exact-head Node/browser CI plus GitHub Vercel status remain required before another feature run.
+
+## Run 088 — Direct Blood Moon Phase II practice
+
+**Date:** 2026-09-02  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `3efd35f6cdd9a73d9d7e44c517d58a5f54625e5f`.
+- Exact-head CI #126 (`33535951602`) was terminal green and the exact-head GitHub `Vercel` commit status was `success`. Direct Vercel deployment enumeration returned 403, so GitHub's exact-head `Vercel` status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched and inline review threads were empty. The latest exact-head submitted review reported **no actionable P0–P2 finding** and specifically accepted the direct Oni-practice lifecycle and five-entry 320×568 start layout.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): direct **Blood Moon Phase II practice** 5/5/4/4/4 = 22; practice-result weak-point cue 4/4/4/4/4 = 20; further authored-cut visual refinement without a concrete Preview defect 5/5/3/2/3 = 18. Blood Moon practice won because it exposes the highest-pressure boss phase directly while reusing the already-authoritative boss/practice adapters and avoiding a balance copy.
+
+### Delivered slice
+
+- Added **練血月** beside the existing dojo controls. It proxies the established Shogun-practice entry, then switches that same Stage 4 run to the real `BOSS_PHASE_TWO` definition at the existing 6 HP threshold, posture 7, Blood Moon attack set/timings and Phase II atmosphere.
+- Direct Phase II practice intentionally skips the normal Phase I→II transition and therefore does **not** award the normal +300 transition score. Boss phase state is marked Phase II immediately, so the threshold cannot fire a second time during the practice run.
+- The route remains isolated practice: terminal events carry `blood-moon-practice`, mastery renders `BLOOD MOON PRACTICE`, retry becomes **再戰血月**, and **開始完整主線** clears the direct-phase request and returns to the normal Ashigaru campaign. No new best/storage/network/account surface was added.
+- Expanded the shared start selector to six entries using a compact 3×2 phone layout. The Blood Moon adapter upgrades the existing `data-practice-start-layout` marker so the established production 320×568 browser smoke measures all six controls rather than only the earlier direct-practice buttons.
+- Added deterministic Node coverage for direct real Phase II object identity, 6 HP/posture 7/timing authority, zero transition score and terminal practice identity. Extended the existing boss browser harness to prove direct Blood Moon practice activates the same real Phase II runtime/atmosphere while preserving the normal Phase I→II/restart/victory path.
+- Updated Current Baseline to `0.33.0-evolution`, regression checklist, backlog, changelog, state and this run log in the same candidate tree.
+
+### Regression boundary
+
+- No campaign/challenge boss HP threshold, Phase II attack/timing values, normal +300 transition reward, parry/Perfect/STEP rules, direction mapping, renderer animation/geometry, mastery formula, challenge reward/tactic/PB split, persistence, account/network/privacy or asset behavior changed.
+- `src/blood-moon-practice.js` is a bounded outer adapter over the existing boss + practice lifecycle; `src/boss-encounter.js` remains the sole Phase II definition authority. The only direct-practice mutation is starting the existing Phase II definition at its existing threshold without transition reward.
+- Direct Vercel enumeration remains unavailable; post-commit exact-head repository CI plus GitHub's `Vercel` commit status are required before the next feature run.

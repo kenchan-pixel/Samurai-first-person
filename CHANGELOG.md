@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.33.0-evolution — Direct Blood Moon Phase II practice
+
+- Added **練血月** beside the existing direct dojo controls. It starts the real Crimson Shogun Phase II definition directly at the existing 6 HP Blood Moon threshold, posture 7 and unchanged Phase II timing/attack set; it deliberately does not award the normal +300 phase-transition score because the transition itself is skipped.
+- Blood Moon practice remains inside the established Shogun practice lifecycle: it ends after Stage 4, uses a distinct `BLOOD MOON PRACTICE` result identity, supports **再戰血月** / **開始完整主線**, and never writes campaign personal best.
+- Expanded the start selector to six entries in a compact 3×2 phone layout. The existing 320×568 start-layout gate now measures all six entries, while deterministic Node coverage and the existing boss browser harness prove direct Phase II runtime/atmosphere activation without changing campaign/challenge boss authority.
+
 ## 0.32.0-evolution — Direct Oni practice
 
 - Added **練鬼** to complete direct practice for the three pre-boss campaign opponents. It launches the unchanged real Stage 3 Oni Guard (8 HP / posture 5 / existing heavy attacks), ends after that duel, and reuses the established practice retry / full-campaign handoff without a practice-only combat copy.

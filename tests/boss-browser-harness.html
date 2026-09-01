@@ -13,8 +13,17 @@
 
   <script type="module">
     import '../src/boss-overlay.js';
+    import '../src/blood-moon-practice.js';
     import { CombatEngine, Direction } from '../src/game-core.js';
-    import { BOSS_PHASE_ONE, BOSS_PHASE_TWO } from '../src/boss-encounter.js';
+    import {
+      BOSS_PHASE_ONE,
+      BOSS_PHASE_TWO,
+      BOSS_PHASE_TWO_HP,
+    } from '../src/boss-encounter.js';
+    import {
+      BLOOD_MOON_PRACTICE_MODE,
+      requestBloodMoonPractice,
+    } from '../src/blood-moon-practice.js';
 
     const root = document.documentElement;
     const app = document.querySelector('#app');
@@ -79,6 +88,26 @@
       root.dataset.bossRestart = String(restartPhaseOne);
       if (!restartPhaseOne) throw new Error('restart did not restore boss Phase I');
 
+      requestBloodMoonPractice(true);
+      const bloodMoonCombat = new CombatEngine();
+      bloodMoonCombat.start(5000);
+      const bloodMoonEvents = bloodMoonCombat.drainEvents();
+      const bloodMoonStage = bloodMoonEvents.find((event) => event.type === 'stage-start');
+      const bloodMoonPhase = bloodMoonEvents.find((event) => event.type === 'boss-phase');
+      const bloodMoonPracticeOk =
+        bloodMoonCombat.enemy === BOSS_PHASE_TWO &&
+        bloodMoonCombat.enemyHp === BOSS_PHASE_TWO_HP &&
+        bloodMoonCombat.enemyPostureMax === 7 &&
+        bloodMoonCombat.score === 0 &&
+        bloodMoonStage?.detail?.practiceMode === BLOOD_MOON_PRACTICE_MODE &&
+        bloodMoonPhase?.detail?.directPractice === true &&
+        bloodMoonPhase?.detail?.practiceMode === BLOOD_MOON_PRACTICE_MODE &&
+        app.dataset.bossActive === 'true' &&
+        app.dataset.bossPhase === '2';
+      root.dataset.bloodMoonPracticePhaseTwo = String(bloodMoonPracticeOk);
+      if (!bloodMoonPracticeOk) throw new Error('direct Blood Moon practice did not enter the real Phase II runtime/atmosphere');
+      requestBloodMoonPractice(false);
+
       const victoryCombat = new CombatEngine({ enemies: [BOSS_PHASE_ONE] });
       victoryCombat.start(0);
       victoryCombat.drainEvents();
@@ -102,6 +131,7 @@
         root.dataset.bossReducedMotion === 'true' &&
         root.dataset.bossBannerCleanup === 'true' &&
         root.dataset.bossRestart === 'true' &&
+        root.dataset.bloodMoonPracticePhaseTwo === 'true' &&
         root.dataset.bossVictory === 'true';
       root.dataset.bossIntegration = passed ? 'pass' : 'fail';
     } catch (error) {
