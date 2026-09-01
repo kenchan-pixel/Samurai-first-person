@@ -96,3 +96,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No campaign/practice/challenge enemy definition, HP/posture/timing/damage, parry/Perfect/STEP rule, direction mapping, Blood Moon threshold or normal +300 reward, challenge momentum/tactics/rival, mastery/run-analysis formula, renderer animation/geometry, persistence key, account/network/privacy or asset authority changed.
 - `src/boss-encounter.js` remains the sole Phase II definition authority; this repair only makes the already-approved direct-practice production control reliably reach it.
 - Local repository checkout could not resolve GitHub from this runtime, so exact-head GitHub Actions (`npm test` + `npm run test:browser`) and the exact-head GitHub `Vercel` commit status are the mandatory acceptance evidence for the final replacement commit.
+
+## Run 092 — Four-direction defense result analysis
+
+**Date:** 2026-09-02  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `2e637cdc4dd460a5f8bbf6b3c95762dcb7805aaf`.
+- Exact-head GitHub Actions CI #135 and GitHub's exact-head `Vercel` commit status were terminal green before feature selection; Draft PR #1 remained open/Draft/unmerged and inline review threads were empty.
+- Run 091 had closed the material production-practice blocker and its production-document gate was green. No applicable P0/P1/P2 correctness, runtime or deployment blocker remained.
+- Candidate scoring favoured **四向防守** result analysis (23/25) over separate dojo mastery persistence (20/25) or another duel/enemy slice (19/25): it directly strengthens the directional-read learning loop while keeping combat and persistence untouched.
+
+### Implementation
+
+- `src/run-analysis.js` now records the actual incoming `strike` direction for the focused stage. A successful parry or STEP counts as defended; `player-hit` records an unsuccessful defense. The result-only aggregator derives the observed defense rate for top/right/bottom/left and highlights the weakest direction.
+- Campaign and direct-practice results render a compact **四向防守** four-cell map under the existing local analysis. It adds no live-combat HUD, pointer ownership, storage or network surface. Eight-wave challenge/今日陣 terminals suppress the extra map to preserve their established phone result layout.
+- Added deterministic Node coverage for direction accounting and a focused 320×568 browser gate for the four-cell map, weakest-direction highlight and eight-stage omission. The existing 師範弱點再練 browser harness now includes a real directional weakness so the map and ≥44 px recommendation control must fit together at 320×568.
+
+### Regression boundary
+
+- No `game-core` combat rule, enemy definition, HP/posture/timing/damage, score, input mapping, Perfect/STEP rule, boss transition, challenge momentum/tactics/rival, persistence key, renderer animation/geometry, asset, account/network/privacy or telemetry authority changed.
+- Existing stage-focused coaching and practice routing remain authoritative; the new map only exposes evidence already present in the combat event stream.
+- Current Baseline advances to 0.35.0-evolution and the checklist/backlog/changelog/state are updated in this same implementation commit. Exact-head CI and Vercel remain mandatory post-commit acceptance gates.

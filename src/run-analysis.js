@@ -10,6 +10,42 @@ const ENEMY_LABELS = Object.freeze({
   'crimson-shogun': '赤將軍',
 });
 
+const DIRECTION_META = Object.freeze([
+  Object.freeze({ direction: 'top', symbol: '↑', label: '上方', shortLabel: '上' }),
+  Object.freeze({ direction: 'right', symbol: '→', label: '右方', shortLabel: '右' }),
+  Object.freeze({ direction: 'bottom', symbol: '↓', label: '下方', shortLabel: '下' }),
+  Object.freeze({ direction: 'left', symbol: '←', label: '左方', shortLabel: '左' }),
+]);
+
+function createDirectionReads() {
+  return Object.fromEntries(DIRECTION_META.map(({ direction }) => [
+    direction,
+    { faced: 0, defended: 0, parries: 0, evades: 0, hits: 0 },
+  ]));
+}
+
+function directionRead(stage, direction) {
+  return stage?.directionReads?.[direction] ?? null;
+}
+
+function recordIncomingDirection(stage, direction) {
+  const read = directionRead(stage, direction);
+  if (read) read.faced += 1;
+}
+
+function recordDefendedDirection(stage, direction, type) {
+  const read = directionRead(stage, direction);
+  if (!read) return;
+  read.defended += 1;
+  if (type === 'parry') read.parries += 1;
+  if (type === 'evade') read.evades += 1;
+}
+
+function recordHitDirection(stage, direction) {
+  const read = directionRead(stage, direction);
+  if (read) read.hits += 1;
+}
+
 function createStageRecord(detail = {}) {
   return {
     stage: Math.max(1, Number(detail.stage) || 1),
@@ -30,6 +66,7 @@ function createStageRecord(detail = {}) {
     hitsTaken: 0,
     damageTaken: 0,
     damageDealt: 0,
+    directionReads: createDirectionReads(),
     cleared: false,
   };
 }
@@ -97,11 +134,14 @@ export function observeRunAnalysisEvent(session, event) {
 
   if (event.type === 'telegraph') {
     closeCounterWindow(session, true);
+  } else if (event.type === 'strike') {
+    recordIncomingDirection(stage, detail.direction);
   } else if (event.type === 'parry-miss') {
     stage.parryAttempts += 1;
   } else if (event.type === 'parry' || event.type === 'perfect-parry') {
     stage.parryAttempts += 1;
     stage.parries += 1;
+    recordDefendedDirection(stage, detail.direction, 'parry');
     if (event.type === 'perfect-parry') stage.perfectParries += 1;
     openCounterWindow(session, stage);
   } else if (event.type === 'enemy-guard-break') {
@@ -109,6 +149,7 @@ export function observeRunAnalysisEvent(session, event) {
   } else if (event.type === 'backstep-evade') {
     stage.stepAttempts += 1;
     stage.stepSuccesses += 1;
+    recordDefendedDirection(stage, detail.direction, 'evade');
     openCounterWindow(session, stage);
   } else if (event.type === 'footwork-miss') {
     stage.stepAttempts += 1;
@@ -128,6 +169,7 @@ export function observeRunAnalysisEvent(session, event) {
   } else if (event.type === 'player-hit') {
     stage.hitsTaken += 1;
     stage.damageTaken += Math.max(0, Number(detail.damage) || 0);
+    recordHitDirection(stage, detail.direction);
   } else if (event.type === 'boss-phase') {
     discardCounterWindow(session);
   } else if (event.type === 'enemy-defeated') {
@@ -138,11 +180,25 @@ export function observeRunAnalysisEvent(session, event) {
   return session;
 }
 
+function finishDirectionReads(directionReads = {}) {
+  return Object.freeze(Object.fromEntries(DIRECTION_META.map(({ direction }) => {
+    const read = directionReads?.[direction] ?? {};
+    return [direction, Object.freeze({
+      faced: Math.max(0, Number(read.faced) || 0),
+      defended: Math.max(0, Number(read.defended) || 0),
+      parries: Math.max(0, Number(read.parries) || 0),
+      evades: Math.max(0, Number(read.evades) || 0),
+      hits: Math.max(0, Number(read.hits) || 0),
+    })];
+  })));
+}
+
 function finishStage(stage) {
   const accuracy = stage.parryAttempts > 0 ? stage.parries / stage.parryAttempts : 0;
   const stepRate = stage.stepAttempts > 0 ? stage.stepSuccesses / stage.stepAttempts : 0;
   return Object.freeze({
     ...stage,
+    directionReads: finishDirectionReads(stage.directionReads),
     accuracy,
     stepRate,
   });
@@ -170,6 +226,46 @@ function stageLabel(stage) {
   return `第${stage.stage}關 · ${enemy}`;
 }
 
+export function buildDirectionFocus(stage) {
+  if (!stage) return null;
+  const rows = DIRECTION_META.map((meta, index) => {
+    const read = stage.directionReads?.[meta.direction] ?? {};
+    const defended = Math.max(0, Number(read.defended) || 0);
+    const hits = Math.max(0, Number(read.hits) || 0);
+    const resolved = defended + hits;
+    const faced = Math.max(Math.max(0, Number(read.faced) || 0), resolved);
+    const accuracyPct = faced > 0 ? Math.round((defended / faced) * 100) : null;
+    return {
+      ...meta,
+      index,
+      faced,
+      defended,
+      parries: Math.max(0, Number(read.parries) || 0),
+      evades: Math.max(0, Number(read.evades) || 0),
+      hits,
+      accuracyPct,
+    };
+  });
+  const seen = rows.filter((row) => row.faced > 0);
+  if (!seen.length) return null;
+  const weakest = [...seen].sort((a, b) =>
+    (a.accuracyPct ?? 101) - (b.accuracyPct ?? 101) ||
+    b.hits - a.hits ||
+    b.faced - a.faced ||
+    a.index - b.index,
+  )[0];
+  const frozenRows = Object.freeze(rows.map(({ index, ...row }) => Object.freeze({
+    ...row,
+    weak: row.direction === weakest.direction,
+  })));
+  return Object.freeze({
+    weakDirection: weakest.direction,
+    weakLabel: weakest.label,
+    weakAccuracyPct: weakest.accuracyPct,
+    rows: frozenRows,
+  });
+}
+
 export function buildRunAdvice(report) {
   const stages = Array.isArray(report?.stages) ? report.stages : [];
   if (!stages.length) {
@@ -177,6 +273,7 @@ export function buildRunAdvice(report) {
       focusLabel: '今局',
       tip: '完成一場決鬥後會在呢度整理格擋、反擊、STEP 同受擊表現。',
       stageRows: Object.freeze([]),
+      directionFocus: null,
     });
   }
 
@@ -223,6 +320,7 @@ export function buildRunAdvice(report) {
     focusLabel: stageLabel(focus),
     tip,
     stageRows,
+    directionFocus: buildDirectionFocus(focus),
   });
 }
 
@@ -232,21 +330,30 @@ function installStyles() {
   style.dataset.runAnalysis = 'true';
   style.textContent = `
     .result-analysis{width:min(100%,330px);margin:12px auto 0;padding:10px;border:1px solid rgba(228,182,107,.2);border-radius:14px;background:rgba(7,8,11,.42);text-align:left}
-    .result-analysis[hidden]{display:none}
-    .result-analysis__head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-    .result-analysis__head span{font-size:10px;font-weight:850;letter-spacing:.12em;color:rgba(237,210,174,.66)}
-    .result-analysis__head strong{font-size:12px;color:#f2dfbd;text-align:right}
+    .result-analysis[hidden],.result-analysis__directions[hidden]{display:none}
+    .result-analysis__head,.result-analysis__directions-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+    .result-analysis__head span,.result-analysis__directions-head span{font-size:10px;font-weight:850;letter-spacing:.12em;color:rgba(237,210,174,.66)}
+    .result-analysis__head strong,.result-analysis__directions-head strong{font-size:12px;color:#f2dfbd;text-align:right}
     .result-analysis__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
     .result-analysis__stage{min-width:0;padding:7px 8px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025)}
     .result-analysis__stage strong,.result-analysis__stage span{display:block}
     .result-analysis__stage strong{font-size:11px;color:rgba(248,239,224,.9)}
     .result-analysis__stage span{margin-top:3px;font-size:10.5px;line-height:1.3;color:rgba(236,230,219,.66)}
+    .result-analysis__directions{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.07)}
+    .result-analysis__directions-head strong{font-size:10.5px;color:rgba(255,214,160,.9)}
+    .result-analysis__direction-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:6px}
+    .result-analysis__direction{min-width:0;padding:5px 3px;border:1px solid rgba(255,255,255,.07);border-radius:8px;background:rgba(255,255,255,.02);text-align:center}
+    .result-analysis__direction strong,.result-analysis__direction span{display:block}
+    .result-analysis__direction strong{font-size:10px;color:rgba(248,239,224,.86)}
+    .result-analysis__direction span{margin-top:2px;font-size:8.5px;color:rgba(236,230,219,.58)}
+    .result-analysis__direction.is-weak{border-color:rgba(255,132,105,.38);background:rgba(139,43,36,.12)}
+    .result-analysis__direction.is-weak strong{color:#ffd0bd}
     .result-analysis__tip{margin:8px 0 0!important;font-size:11.5px!important;line-height:1.4!important;color:rgba(245,227,196,.82)!important}
     .modal__content--result h2{font-size:clamp(34px,11vw,52px)}
     .modal__content--result>#result-summary{margin-top:10px;font-size:11px;line-height:1.4}
     .modal__content--result .result-score{margin-top:12px}
     .modal__content--result .primary-button{margin-top:14px}
-    @media(max-width:360px){.result-analysis{padding:9px}.result-analysis__head strong{font-size:11.5px}.result-analysis__stage{padding:6px 7px}}
+    @media(max-width:360px){.result-analysis{padding:9px}.result-analysis__head strong{font-size:11.5px}.result-analysis__stage{padding:6px 7px}.result-analysis__direction{padding:4px 2px}}
   `;
   document.head.append(style);
 }
@@ -261,7 +368,7 @@ function ensurePanel() {
     panel.className = 'result-analysis';
     panel.hidden = true;
     panel.setAttribute('aria-label', '今局戰鬥分析');
-    panel.innerHTML = '<div class="result-analysis__head"><span>今局分析</span><strong data-analysis-focus></strong></div><div class="result-analysis__grid" data-analysis-grid></div><p class="result-analysis__tip" data-analysis-tip></p>';
+    panel.innerHTML = '<div class="result-analysis__head"><span>今局分析</span><strong data-analysis-focus></strong></div><div class="result-analysis__grid" data-analysis-grid></div><div class="result-analysis__directions" data-analysis-directions hidden><div class="result-analysis__directions-head"><span>四向防守</span><strong data-analysis-direction-focus></strong></div><div class="result-analysis__direction-grid" data-analysis-direction-grid></div></div><p class="result-analysis__tip" data-analysis-tip></p>';
     summary.insertAdjacentElement('afterend', panel);
   }
   return panel;
@@ -275,6 +382,9 @@ function renderRunAnalysis(report) {
   const focus = panel.querySelector('[data-analysis-focus]');
   const grid = panel.querySelector('[data-analysis-grid]');
   const tip = panel.querySelector('[data-analysis-tip]');
+  const directions = panel.querySelector('[data-analysis-directions]');
+  const directionFocus = panel.querySelector('[data-analysis-direction-focus]');
+  const directionGrid = panel.querySelector('[data-analysis-direction-grid]');
   if (!focus || !grid || !tip) return;
 
   focus.textContent = advice.focusLabel;
@@ -291,6 +401,28 @@ function renderRunAnalysis(report) {
     card.append(title, line1, line2);
     grid.append(card);
   }
+
+  const showDirections = Boolean(advice.directionFocus && advice.stageRows.length <= 4 && directions && directionFocus && directionGrid);
+  if (directions) directions.hidden = !showDirections;
+  if (showDirections) {
+    directionFocus.textContent = `${advice.directionFocus.weakLabel} · ${advice.directionFocus.weakAccuracyPct}%`;
+    directionGrid.replaceChildren();
+    for (const row of advice.directionFocus.rows) {
+      const cell = document.createElement('div');
+      cell.className = `result-analysis__direction${row.weak ? ' is-weak' : ''}`;
+      const title = document.createElement('strong');
+      title.textContent = `${row.symbol} ${row.shortLabel}`;
+      const value = document.createElement('span');
+      value.textContent = row.faced > 0 ? `防 ${row.defended}/${row.faced}` : '—';
+      cell.append(title, value);
+      directionGrid.append(cell);
+    }
+    document.documentElement.dataset.runAnalysisWeakDirection = advice.directionFocus.weakDirection;
+  } else {
+    if (directionGrid) directionGrid.replaceChildren();
+    delete document.documentElement.dataset.runAnalysisWeakDirection;
+  }
+
   tip.textContent = advice.tip;
   panel.hidden = false;
   document.documentElement.dataset.runAnalysisRendered = 'true';

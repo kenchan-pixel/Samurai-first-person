@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.35.0-evolution — 四向防守 weakness map
+
+- Extended the existing in-memory run analysis with a compact **四向防守** result map for campaign and direct-practice runs. It counts the authoritative incoming `strike` direction, treats successful parry/STEP as defended and `player-hit` as failed defense, then highlights the lowest observed direction rate.
+- Kept the slice coaching-only: no combat timing, damage, score, persistence, input, renderer or network authority changed. Eight-wave challenge/今日陣 terminals deliberately omit the extra map so their established 320×568 result layout stays unchanged.
+- Added deterministic direction-accounting tests plus a focused 320×568 browser gate proving a left-side 50% weakness renders as four in-bounds direction cells and that an eight-stage terminal suppresses the map.
+
 ## 0.34.0-evolution — 師範弱點再練
 
 - Turned the existing campaign result analysis into an actionable **師範建議 · 弱點再練** bridge. The focused Stage 2/3/4 result can now launch the already-authoritative Ronin/Oni/Shogun practice route in one tap; a Stage 1 focus restarts the full campaign from the real Ashigaru opening rather than inventing a practice-only Stage 1 copy.

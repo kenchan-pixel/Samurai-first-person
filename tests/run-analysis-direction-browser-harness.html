@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Run analysis direction browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">勝利</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/mastery-overlay.js';
+    import { CombatEngine, Direction } from '../src/game-core.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const enemy = Object.freeze({
+      id: 'direction-smoke',
+      name: 'Direction Smoke',
+      title: 'Analysis Arena',
+      maxHp: 3,
+      postureMax: 4,
+      gapMs: 10,
+      recoveryMs: 20,
+      perfectWindowMs: 20,
+      attacks: Object.freeze([
+        Object.freeze({ direction: Direction.TOP, telegraphMs: 10, strikeMs: 100, damage: 1 }),
+      ]),
+    });
+
+    async function flush() {
+      await Promise.resolve();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    try {
+      const combat = new CombatEngine({ enemies: [enemy] });
+      combat.start(0);
+      combat.drainEvents();
+
+      combat.events.push(
+        { type: 'strike', detail: { direction: Direction.TOP } },
+        { type: 'parry', detail: { direction: Direction.TOP } },
+        { type: 'counter', detail: { direction: Direction.BOTTOM, damage: 1 } },
+        { type: 'strike', detail: { direction: Direction.LEFT } },
+        { type: 'player-hit', detail: { direction: Direction.LEFT, damage: 1 } },
+        { type: 'strike', detail: { direction: Direction.LEFT } },
+        { type: 'backstep-evade', detail: { direction: Direction.LEFT } },
+        { type: 'counter', detail: { direction: Direction.RIGHT, damage: 1 } },
+        { type: 'enemy-defeated', detail: { enemyId: enemy.id, stage: 1 } },
+        { type: 'victory', detail: { score: 900, playerHp: 4 } },
+      );
+      combat.drainEvents();
+      await flush();
+
+      const panel = document.querySelector('#result-analysis');
+      const directions = panel?.querySelector('[data-analysis-directions]');
+      const focus = panel?.querySelector('[data-analysis-direction-focus]');
+      const cells = [...(panel?.querySelectorAll('.result-analysis__direction') || [])];
+      const weak = panel?.querySelector('.result-analysis__direction.is-weak');
+      const rect = directions?.getBoundingClientRect();
+      const layoutOk = Boolean(rect) &&
+        rect.left >= -0.5 &&
+        rect.right <= window.innerWidth + 0.5 &&
+        rect.top >= -0.5 &&
+        rect.bottom <= window.innerHeight + 0.5;
+      const content = directions?.textContent || '';
+      const weakText = weak?.textContent || '';
+      const firstPass = Boolean(
+        panel && !panel.hidden &&
+        directions && !directions.hidden &&
+        cells.length === 4 &&
+        root.dataset.runAnalysisWeakDirection === Direction.LEFT &&
+        focus?.textContent.includes('左方') &&
+        focus?.textContent.includes('50%') &&
+        content.includes('↑ 上') &&
+        content.includes('→ 右') &&
+        content.includes('↓ 下') &&
+        content.includes('← 左') &&
+        weakText.includes('防 1/2') &&
+        layoutOk
+      );
+
+      root.dataset.runAnalysisDirectionLayout = layoutOk ? 'pass' : 'fail';
+      root.dataset.runAnalysisDirectionFocus = firstPass ? 'pass' : 'fail';
+      if (!firstPass) throw new Error(`direction analysis did not render expected four-way focus: ${panel?.textContent || 'missing panel'}`);
+
+      const longRun = new CombatEngine({ enemies: [enemy] });
+      longRun.start(1000);
+      longRun.drainEvents();
+      for (let stage = 1; stage <= 8; stage += 1) {
+        if (stage > 1) {
+          longRun.events.push({
+            type: 'stage-start',
+            detail: { stage, enemyId: `pressure-${stage}`, enemyName: `Pressure ${stage}` },
+          });
+        }
+        longRun.events.push(
+          { type: 'strike', detail: { direction: Direction.TOP } },
+          { type: 'parry', detail: { direction: Direction.TOP } },
+          { type: 'enemy-defeated', detail: { enemyId: `pressure-${stage}`, stage } },
+        );
+      }
+      longRun.events.push({ type: 'victory', detail: { score: 2000, playerHp: 5 } });
+      longRun.drainEvents();
+      await flush();
+
+      const challengeOmitted = directions.hidden === true && !root.dataset.runAnalysisWeakDirection;
+      root.dataset.runAnalysisDirectionChallengeOmitted = String(challengeOmitted);
+      root.dataset.runAnalysisDirectionBrowser = firstPass && challengeOmitted ? 'pass' : 'fail';
+      if (!challengeOmitted) throw new Error('eight-stage terminal should omit the four-way direction map');
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.runAnalysisDirectionBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

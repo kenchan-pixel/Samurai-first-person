@@ -30,7 +30,7 @@
     import '../src/mastery-overlay.js';
     import '../src/practice-mode.js';
     import '../src/training-recommendation.js';
-    import { CombatEngine, ENEMIES } from '../src/game-core.js';
+    import { CombatEngine, Direction, ENEMIES } from '../src/game-core.js';
     import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
 
     const BEST_KEY = 'blade-reversal-mastery-v1';
@@ -70,9 +70,10 @@
     async function forceStageClear(stage, { weaken = false } = {}) {
       if (combat.enemyIndex !== stage - 1) throw new Error(`expected stage ${stage}, got ${combat.enemyIndex + 1}`);
       if (weaken) {
-        combat.events.push({ type: 'player-hit', detail: { damage: 1, stage } });
-        combat.events.push({ type: 'player-hit', detail: { damage: 1, stage } });
-        combat.events.push({ type: 'player-hit', detail: { damage: 1, stage } });
+        for (let hit = 0; hit < 3; hit += 1) {
+          combat.events.push({ type: 'strike', detail: { direction: Direction.LEFT, stage } });
+          combat.events.push({ type: 'player-hit', detail: { direction: Direction.LEFT, damage: 1, stage } });
+        }
         drainWithTerminalUi();
       }
       const enemyId = combat.enemy.id;
@@ -108,6 +109,7 @@
       const panel = document.querySelector('#training-recommendation');
       const action = panel?.querySelector('[data-training-action]');
       const analysis = document.querySelector('#result-analysis');
+      const directions = analysis?.querySelector('[data-analysis-directions]');
       const recommendationOk =
         root.dataset.trainingRecommendationReady === 'true' &&
         root.dataset.trainingRecommendationState === 'recommended' &&
@@ -115,17 +117,19 @@
         panel?.hidden === false &&
         action?.textContent === '練浪人' &&
         panel.textContent.includes('第2關') &&
-        panel.textContent.includes('浪人');
+        panel.textContent.includes('浪人') &&
+        directions?.hidden === false &&
+        root.dataset.runAnalysisWeakDirection === Direction.LEFT;
       root.dataset.trainingRecommendationCampaign = String(recommendationOk);
-      if (!recommendationOk) throw new Error('campaign analysis did not recommend the weak Ronin stage');
+      if (!recommendationOk) throw new Error('campaign analysis did not recommend the weak Ronin stage with the direction map');
 
-      const layoutNodes = [document.querySelector('#result-content'), analysis, panel, action].filter(Boolean);
+      const layoutNodes = [document.querySelector('#result-content'), analysis, directions, panel, action].filter(Boolean);
       const layoutOk = layoutNodes.every((node) => {
         const rect = node.getBoundingClientRect();
         return rect.left >= -0.5 && rect.right <= innerWidth + 0.5 && rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
       }) && action.getBoundingClientRect().height >= 44;
       root.dataset.trainingRecommendationLayout = layoutOk ? 'pass' : 'fail';
-      if (!layoutOk) throw new Error('training recommendation overflowed 320x568 or lost its 44px action target');
+      if (!layoutOk) throw new Error('training recommendation plus direction map overflowed 320x568 or lost its 44px action target');
 
       const campaignBest = localStorage.getItem(BEST_KEY);
       action.click();
