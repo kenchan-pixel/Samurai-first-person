@@ -1,4 +1,6 @@
+import { Direction, directionFromSwipe } from './game-core.js';
 import { directionFromErgonomicTap, pauseRectIsTopRightHudSafe } from './combat-ux.js';
+import { CONTROL_HAND_STORAGE_KEY, ControlHand } from './control-handedness.js';
 
 const root = document.documentElement;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -42,6 +44,33 @@ function describeTarget(target) {
     ? `.${target.className.trim().replace(/\s+/g, '.')}`
     : '';
   return `${target.tagName || 'node'}${id}${classes}`.slice(0, 160);
+}
+
+function measureSafeHorizontalBounds() {
+  const app = document.querySelector('#app');
+  if (!app) return null;
+  const leftProbe = document.createElement('i');
+  const rightProbe = document.createElement('i');
+  leftProbe.style.cssText = 'position:absolute;left:var(--safe-left);top:0;width:0;height:0;pointer-events:none';
+  rightProbe.style.cssText = 'position:absolute;right:var(--safe-right);top:0;width:0;height:0;pointer-events:none';
+  app.append(leftProbe, rightProbe);
+  const left = leftProbe.getBoundingClientRect().left;
+  const right = rightProbe.getBoundingClientRect().right;
+  leftProbe.remove();
+  rightProbe.remove();
+  return { left, right };
+}
+
+function rectFitsSafeViewport(rect, safeBounds) {
+  if (!rect || !safeBounds) return false;
+  return (
+    rect.width > 0 &&
+    rect.height > 0 &&
+    rect.left >= safeBounds.left - 0.5 &&
+    rect.right <= safeBounds.right + 0.5 &&
+    rect.top >= -0.5 &&
+    rect.bottom <= window.innerHeight + 0.5
+  );
 }
 
 async function verifyProductionParry(canvas, rect, direction, x, y, pointerId, diagnosticKey) {
@@ -90,8 +119,13 @@ async function run() {
     root.dataset.startReady === 'true' &&
     root.dataset.startHandlerReady === 'true' &&
     root.dataset.combatUxReady === 'true' &&
+    root.dataset.controlHandedness === 'persistent-v1' &&
     document.querySelector('#pause-button') &&
-    document.querySelector('#combat-guide-sheet')
+    document.querySelector('#combat-guide-sheet') &&
+    document.querySelector('#control-hand-toggle') &&
+    document.querySelector('#footwork-step') &&
+    document.querySelector('#footwork-range') &&
+    document.querySelector('#footwork-feedback')
   );
   if (!ready) {
     root.dataset.combatUxBrowser = 'fail-ready';
@@ -108,11 +142,24 @@ async function run() {
   const pauseHome = document.querySelector('#pause-home-button');
   const guideSheet = document.querySelector('#combat-guide-sheet');
   const guideClose = guideSheet?.querySelector('.combat-guide__close');
+  const controlToggle = document.querySelector('#control-hand-toggle');
+  const footworkStep = document.querySelector('#footwork-step');
+  const footworkRange = document.querySelector('#footwork-range');
+  const footworkFeedback = document.querySelector('#footwork-feedback');
 
-  if (!canvas || !startButton || !pauseButton || !pauseScreen || !pauseResume || !pauseGuide || !pauseRestart || !pauseHome || !guideSheet || !guideClose) {
+  if (!canvas || !startButton || !pauseButton || !pauseScreen || !pauseResume || !pauseGuide || !pauseRestart || !pauseHome || !guideSheet || !guideClose || !controlToggle || !footworkStep || !footworkRange || !footworkFeedback) {
     root.dataset.combatUxBrowser = 'fail-controls';
     return;
   }
+
+  if (root.dataset.controlHand !== ControlHand.LEFT) controlToggle.click();
+  await sleep(30);
+  mark(
+    'combatUxHandednessPersistent',
+    root.dataset.controlHand === ControlHand.LEFT &&
+      controlToggle.getAttribute('aria-pressed') === 'true' &&
+      localStorage.getItem(CONTROL_HAND_STORAGE_KEY) === ControlHand.LEFT,
+  );
 
   canvas.setPointerCapture = () => {};
   const duelStarted = await startProductionDuel(startButton, pauseButton);
@@ -143,6 +190,37 @@ async function run() {
     root.dataset.combatUxBrowser = 'fail-viewport';
     return;
   }
+
+  const footworkVisible = await waitFor(() => !footworkStep.hidden && !footworkRange.hidden, 1800);
+  const safeBounds = measureSafeHorizontalBounds();
+  const stepRect = footworkStep.getBoundingClientRect();
+  const rangeRect = footworkRange.getBoundingClientRect();
+  const feedbackRect = footworkFeedback.getBoundingClientRect();
+  footworkStep.classList.add('is-active');
+  await sleep(20);
+  const activeStepRect = footworkStep.getBoundingClientRect();
+  footworkStep.classList.remove('is-active');
+  mark(
+    'combatUxHandednessLayout',
+    footworkVisible &&
+      root.dataset.controlHand === ControlHand.LEFT &&
+      rectFitsSafeViewport(stepRect, safeBounds) &&
+      rectFitsSafeViewport(activeStepRect, safeBounds) &&
+      rectFitsSafeViewport(rangeRect, safeBounds) &&
+      rectFitsSafeViewport(feedbackRect, safeBounds),
+  );
+  root.dataset.combatUxHandednessStepLeft = String(Math.round(stepRect.left));
+  root.dataset.combatUxHandednessRangeLeft = String(Math.round(rangeRect.left));
+  root.dataset.combatUxHandednessFeedbackLeft = String(Math.round(feedbackRect.left));
+
+  const swipeThreshold = Math.max(34, rect.width * 0.085);
+  mark(
+    'combatUxHandednessDirectionSafe',
+    directionFromSwipe(80, 0, swipeThreshold) === Direction.RIGHT &&
+      directionFromSwipe(-80, 0, swipeThreshold) === Direction.LEFT &&
+      directionFromSwipe(0, -80, swipeThreshold) === Direction.TOP &&
+      directionFromSwipe(0, 80, swipeThreshold) === Direction.BOTTOM,
+  );
 
   const topX = rect.left + rect.width * 0.5;
   const topY = rect.top + rect.height * 0.36;
@@ -230,6 +308,9 @@ async function run() {
     'combatUxBeginEntered',
     'combatUxBeginCompleted',
     'combatUxStartExecuted',
+    'combatUxHandednessPersistent',
+    'combatUxHandednessLayout',
+    'combatUxHandednessDirectionSafe',
     'combatUxTopParryPath',
     'combatUxRightParryPath',
     'combatUxPauseHudSafe',

@@ -267,3 +267,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No enemy animation, renderer geometry, tap/swipe/parry semantics, combat timing, damage, Perfect windows, posture, boss phase, score, mastery/run-analysis, remote data, asset or deployment behaviour changed.
 - Right-hand remains the default/current baseline; only the footwork cluster is mirrored. All directional words remain player-screen semantics regardless of preferred STEP side.
 - Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before another feature run.
+
+## Run 074 — Repair left-hand STEP safe-area geometry
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `dde399e396f72ed1eea342ab52ba2abec34de492`.
+- Exact-head CI #108 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success` at deployment `58dqjQgyHNhXutPSYmfstTBc9irr`. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
+- The latest exact-head Second Hourly review found one blocking P1: left-hand STEP/range/feedback inherited `translateX(-50%)` from the centred footwork baseline, so the new left safe-area anchors clipped the cluster off-screen at 320×568. The same review raised a P2 because the Regression Checklist still said lower-right only and CI had no executable left-mode geometry check.
+
+### Delivered repair
+
+- Left-hand STEP now removes the inherited X-centering transform; its active state scales without reintroducing translation. Range removes X translation, while feedback retains only its intended Y entrance/visibility transition.
+- Strengthened the existing real production `combat-ux` browser contract instead of adding a parallel harness: it selects left mode, proves the local preference was persisted, starts a real duel at 320×568, waits for live STEP/range, measures STEP/range/feedback against resolved safe-left/safe-right boundaries, and also checks the active STEP transform remains in bounds.
+- The same left-mode production flow re-proves direct four-direction swipe mapping, real top/right parry routing and the accepted top-right Pause placement/hit isolation/freeze lifecycle.
+- Updated the Regression Checklist from the stale lower-right-only wording to the approved right-default/left-mirrored contract and made the executable left-mode geometry gate explicit.
+- Kept focused source tests that fail if left mode loses the transform overrides or if the handedness adapter starts owning combat direction logic.
+
+### Regression boundary
+
+- No CombatEngine timing, reach, damage, parry/Perfect, STEP rules, posture, boss phase, score, mastery/run-analysis, renderer animation/geometry, assets or network/privacy behaviour changed.
+- Player-screen tap/swipe directions remain fixed; only the footwork cluster presentation is mirrored. Pause remains top-right in both handedness modes.
+- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before FEATURE work resumes.

@@ -6,7 +6,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 
 - [ ] App loads without JS errors; Start remains usable inside 320×568 and safe areas.
 - [ ] Guided Duel, 刀路清晰, 節拍提示, 練浪人 / 練將軍 remain reachable without pushing 拔刀 off-screen.
-- [ ] STEP/range stay lower-right and do not obstruct centre/bottom/right parry regions.
+- [ ] STEP/range/feedback follow the selected lower safe corner: right remains default, left-hand mode mirrors only the footwork cluster to the lower-left, and both layouts stay fully inside the 320×568 safe area without obstructing centre/bottom/opposite parry regions.
 - [ ] Pause remains a bounded 44×44 top-right HUD control; its own hit is isolated and immediately adjacent top/right canvas taps still map correctly.
 - [ ] Portrait top parry extends to 42% height; left/right/bottom retain 28%; nearest edge wins overlaps; centre stays neutral; landscape stays symmetric 28%.
 - [ ] Top/right/bottom/left taps and swipes map correctly; one gesture cannot trigger both; mouse fallback works.
@@ -62,7 +62,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] `npm test` passes.
 - [ ] `npm run test:browser` passes.
 - [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact, practice, 刀路清晰 and 節拍提示.
-- [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow.
+- [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
 - [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, actual-Sword multi-pose afterimage history, telegraph→strike→parry→counter and all directional player-facing cuts.
 - [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.

@@ -33,9 +33,11 @@ function ensureStyles() {
     .control-hand-toggle{position:absolute;z-index:24;top:calc(var(--safe-top) + 6px);right:calc(var(--safe-right) + 6px);min-width:92px;min-height:42px;padding:0 9px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(8,9,12,.72);color:rgba(244,240,231,.74);font-size:9.5px;font-weight:850;letter-spacing:.035em;box-shadow:0 8px 24px rgba(0,0,0,.24);backdrop-filter:blur(8px);cursor:pointer}
     .control-hand-toggle[aria-pressed="true"]{border-color:rgba(126,174,255,.55);background:rgba(46,61,101,.55);color:#e3ecff;box-shadow:0 0 20px rgba(96,146,255,.12)}
     .control-hand-toggle:active{transform:scale(.97)}
-    html[data-control-hand="left"] .footwork-step{left:calc(var(--safe-left) + 8px)!important;right:auto!important}
-    html[data-control-hand="left"] .footwork-range{left:calc(var(--safe-left) + 12px)!important;right:auto!important}
-    html[data-control-hand="left"] .footwork-feedback{left:calc(var(--safe-left) + 8px)!important;right:auto!important}
+    html[data-control-hand="left"] .footwork-step{left:calc(var(--safe-left) + 8px)!important;right:auto!important;transform:none!important}
+    html[data-control-hand="left"] .footwork-step:active,html[data-control-hand="left"] .footwork-step.is-active{transform:scale(.94)!important}
+    html[data-control-hand="left"] .footwork-range{left:calc(var(--safe-left) + 12px)!important;right:auto!important;transform:none!important}
+    html[data-control-hand="left"] .footwork-feedback{left:calc(var(--safe-left) + 8px)!important;right:auto!important;transform:translateY(5px)!important}
+    html[data-control-hand="left"] .footwork-feedback.is-visible{transform:translateY(0)!important}
     @media(max-width:360px){
       .control-hand-toggle{min-width:84px;min-height:40px;padding:0 7px;font-size:9px}
       html[data-control-hand="left"] .footwork-step{left:calc(var(--safe-left) + 4px)!important}

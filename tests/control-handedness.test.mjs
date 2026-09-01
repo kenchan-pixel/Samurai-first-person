@@ -26,8 +26,10 @@ test('production entry loads persistent handedness and mirrors only the STEP clu
   const handednessIndex = index.indexOf('./src/control-handedness.js');
   const mainIndex = index.indexOf('./src/main.js');
   assert.ok(footworkIndex >= 0 && handednessIndex > footworkIndex && mainIndex > handednessIndex);
-  assert.match(source, /data-control-hand="left"\] \.footwork-step/);
-  assert.match(source, /data-control-hand="left"\] \.footwork-range/);
-  assert.match(source, /data-control-hand="left"\] \.footwork-feedback/);
+  assert.match(source, /data-control-hand="left"\] \.footwork-step\{[^}]*transform:none!important/);
+  assert.match(source, /data-control-hand="left"\] \.footwork-step:active,[^}]*transform:scale\(\.94\)!important/);
+  assert.match(source, /data-control-hand="left"\] \.footwork-range\{[^}]*transform:none!important/);
+  assert.match(source, /data-control-hand="left"\] \.footwork-feedback\{[^}]*transform:translateY\(5px\)!important/);
+  assert.match(source, /data-control-hand="left"\] \.footwork-feedback\.is-visible\{[^}]*transform:translateY\(0\)!important/);
   assert.doesNotMatch(source, /directionFrom|attemptParry|directionFromSwipe/);
 });
