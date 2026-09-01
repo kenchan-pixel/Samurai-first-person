@@ -190,3 +190,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No gameplay, renderer, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, asset, network/privacy or production-main behaviour changed.
 - This is a material delivery-loop blocker repair, not a feature and not a relaxation of Preview acceptance.
 - The commit intentionally serves as the one bounded re-arm event after the expired external provider cooldown; its own exact-head CI/Vercel result now determines whether feature work may resume.
+
+## Run 071 — Persist one-shot external-provider recovery incidents
+
+**Date:** 2026-09-01  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `1a2ddce4f610d911a519a3808412d2b4c6232bf6`.
+- Exact-head CI #105 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success` at deployment `3jPHtzwpzwXbWsean16q9VutK6Mf`. Draft PR #1 remained open/Draft/unmerged and `main` was untouched.
+- The current Second Hourly review raised one actionable P2: Run 70 said only one re-arm commit was allowed, but no durable incident receipt recorded whether that one attempt had already been consumed. A repeated rate-limit on the re-arm HEAD could therefore start another SOT-only re-arm cycle.
+- Because this is a boundedness/correctness defect in the deployment safety loop, it is handled before any player-visible feature work.
+
+### Delivered repair
+
+- Added a durable `external_deployment_recovery.last_incident` receipt to evolution state with provider/failure identity, blocked HEAD, status target, first-seen/cooldown timestamps, `rearm_attempted`, re-arm HEAD and resolution.
+- Defined the same incident as one continuous provider/failure lineage without an intervening terminal-green exact-head Preview. A new SHA created by the re-arm is explicitly not a new incident.
+- If `rearm_attempted` is already true and the re-arm HEAD fails for that same incident, the loop must `HOLD` with no further SOT/state/log retry commit until same-SHA/provider-native recovery or materially new provider evidence exists.
+- Added a focused Node regression contract that fails if either canonical protocol loses the durable receipt/one-shot/HOLD semantics or if state stops exposing the required incident fields.
+- Backfilled the recovered Run 69/70 Vercel incident: first failure `2026-08-30T20:30:16Z`, cooldown expiry `2026-08-31T20:30:16Z`, re-arm HEAD `1a2ddce4...`, resolved by exact-head Vercel success at `2026-09-01T01:23:55Z`.
+
+### Regression boundary
+
+- No gameplay, renderer, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, asset, network/privacy or production-main behaviour changed.
+- This repair tightens the delivery loop only; it does not relax the terminal-green exact-head requirement or authorize feature work on a failed Preview.
+- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before feature work resumes.

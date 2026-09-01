@@ -34,13 +34,20 @@ Treat a Vercel failure as an **external deployment blocker** only when all of th
 - the Vercel status/target explicitly identifies provider capacity, deployment-rate-limit, quota, or equivalent account-side throttling rather than a source build/runtime error;
 - there is no contradictory browser/runtime/review evidence that the game itself is broken.
 
+Every external-provider recovery incident must be durably represented in `evolution/state.json` under `external_deployment_recovery.last_incident`. The receipt must include at least `provider`, `incident_key`, `failure_kind`, `blocked_head`, `status_target`, `first_seen_at`, `cooldown_until`, `rearm_attempted`, `rearm_head`, and `resolution`.
+
+The **same incident** means a continuous failure lineage for the same provider/failure class without an intervening terminal-green exact-head Preview. A re-arm commit creating a new SHA does **not** by itself create a new incident. A genuinely new incident may begin only after an intervening terminal-green exact-head Preview, or when materially different provider evidence proves a different failure class.
+
 Recovery rules:
 
 - While the provider's stated retry/cooldown window is still active, `HOLD`; create no commit.
 - After that window has elapsed, first try a same-SHA/provider-native redeploy when an authenticated tool safely supports it.
 - If direct redeploy/enumeration is unavailable and the old failure status remains stale, **do not deadlock indefinitely**. One meaningful `BLOCKER_FIX` commit may repair/re-arm the delivery protocol and naturally trigger a fresh Preview. It must update the relevant SOT/state/run log in the same commit, must not contain unrelated feature work, and must never be an empty/log-only retry commit.
+- That re-arm commit must set the receipt's `rearm_attempted` to `true` in the same commit. Because the commit cannot know its own SHA in advance, `rearm_head` may be `pending-current-commit`; the next real implementation commit may reconcile it from Git history. Do not create a second bookkeeping-only commit.
+- If `rearm_attempted` is already `true` and the re-arm HEAD again fails for the **same incident**, switch to `HOLD`: make no further SOT/state/log retry commit for that incident. Wait for same-SHA/provider-native recovery or materially new provider/failure evidence.
 - The new commit then returns to the normal exact-head fence: its CI and Preview must both become terminal green before FEATURE work resumes.
 - If the fresh deployment fails for an actual source build/runtime reason, inspect that failure and repair the source; do not classify it as external capacity.
+- A terminal-green exact-head Preview resolves the incident. The PR run comment is authoritative for post-commit status; the durable receipt may be reconciled in the next real implementation commit rather than creating a bookkeeping-only commit.
 
 This exception exists only to recover the delivery loop from a stale external-provider failure. It does not weaken the exact-head Preview requirement for feature work.
 

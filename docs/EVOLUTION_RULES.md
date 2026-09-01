@@ -33,11 +33,18 @@ An explicitly external provider-capacity failure remains a feature blocker, but 
 
 Classify a failed Vercel status as external only when exact-head CI is terminal green and the Vercel status/target identifies deployment rate limiting, provider capacity, quota, or equivalent account-side throttling rather than source build/runtime failure. If browser/runtime/review evidence contradicts that classification, treat the game/source defect as authoritative.
 
+Persist every external-provider recovery incident in `evolution/state.json` under `external_deployment_recovery.last_incident`, including at minimum `provider`, `incident_key`, `failure_kind`, `blocked_head`, `status_target`, `first_seen_at`, `cooldown_until`, `rearm_attempted`, `rearm_head`, and `resolution`.
+
+The **same incident** is the continuous failure lineage for the same provider/failure class without an intervening terminal-green exact-head Preview. A re-arm commit's new SHA does not create a new incident. Only an intervening terminal-green exact-head Preview, or materially different provider evidence proving a different failure class, may establish a new incident.
+
 - During the provider's stated retry/cooldown window: `HOLD`, no commit.
 - After the window expires: first use a same-SHA/provider-native redeploy when an authenticated tool safely supports it.
 - If direct redeploy/enumeration is unavailable and the old external failure status remains stale, one meaningful `BLOCKER_FIX` commit may repair/re-arm the delivery protocol and naturally trigger a fresh Preview. It must include the relevant SOT/state/run-log repair, contain no unrelated feature work, and must not be an empty/log-only retry commit.
+- The re-arm commit must set `rearm_attempted: true` in its durable incident receipt. `rearm_head` may be `pending-current-commit` because the commit cannot know its own SHA; reconcile that field only in the next real implementation commit, never through a bookkeeping-only commit.
+- If `rearm_attempted` is already true and the re-arm HEAD again fails for the **same incident**, `HOLD`: do not create another SOT/state/log retry commit. Wait for same-SHA/provider-native recovery or materially new provider/failure evidence.
 - The fresh commit immediately returns to the ordinary exact-head fence. FEATURE work is still prohibited until its CI and Preview are terminal green.
 - A fresh source build/runtime failure is not an external-capacity exception and must be repaired normally.
+- A terminal-green exact-head Preview resolves the incident. The PR run comment is authoritative for the post-commit result; state may be reconciled in the next real implementation commit rather than generating a second commit.
 
 This is a delivery-loop recovery rule, not a relaxation of Preview acceptance.
 
@@ -122,7 +129,7 @@ Before completing an implementation run:
 - perform a mobile-oriented browser/runtime check when tooling permits;
 - for visual/animation work, inspect the Preview using all self-observable evidence available: browser output, screenshots when supported, DOM/runtime/renderer-state instrumentation, transform/animation invariants and deterministic browser tests;
 - if pixel-level inspection is unavailable, explicitly record that limitation and use the strongest remaining evidence rather than requesting a human test as a gate;
-- verify the Draft PR remains open and unmerged;
+- verify the Draft PR remains open/Draft/unmerged;
 - inspect exact-head CI and deployment status.
 
 A recent iPhone remains the target design surface, but physical human-device testing is supplemental evidence only. When supplied, it can expose regressions that automation missed and must be acted on. Its absence must never stop bounded autonomous work.
