@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.26.0-evolution — Persistent STEP handedness
+
+- Added a start-screen **STEP：右手側 / STEP：左手側** preference that persists locally and defaults safely to the existing right-side layout.
+- Left-hand mode mirrors only the lower-corner STEP button, distance chip and STEP feedback into the left safe area; player-screen parry/swipe directions and the top-right Pause contract remain unchanged.
+- Added focused source/integration guards for production script ordering and ownership boundaries; no combat timing, reach, damage, boss, scoring, assets or network/privacy behaviour changed.
+
 ## 0.25.0-evolution — Actual-Sword strike afterimages
 
 - Added four pooled full-blade afterimages sampled from the actual enemy Sword world transform during authored strikes, making real cut direction and follow-through easier to read without changing the weapon pose.

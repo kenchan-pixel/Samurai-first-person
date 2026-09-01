@@ -241,3 +241,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No gameplay, renderer implementation, animation, input, timing, damage, parry/Perfect, STEP, posture, boss, score, persistence, assets, network/privacy or production-main behaviour changed.
 - The new smoke checks documentation against the already-running renderer architecture; it does not change or weaken the existing real PlayCanvas/browser acceptance gates.
 - Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before FEATURE work resumes.
+
+## Run 073 — Persistent STEP-side handedness
+
+**Date:** 2026-09-01  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `86c6d53546d4f19ebdaf2e46cd445a62c3de7212`.
+- Exact-head CI #107 was terminal green (`npm test` + `npm run test:browser`) and GitHub's exact-head `Vercel` status was `success`. Direct Vercel project lookup still returned 404, so the canonical GitHub commit status fallback remained authoritative.
+- Draft PR #1 remained open/Draft/unmerged, `main` was untouched, review threads were empty, and the latest exact-head review reported no actionable P0/P1/P2 finding.
+- Candidate score (impact / goal alignment / novelty / confidence / safety): persistent left-handed STEP layout 4/4/5/5/5 = 23; normal-speed Guard/four-cut visual refinement 5/5/3/2/3 = 18 without pixel-level Preview tooling; bounded endless/seeded challenge 5/4/5/3/3 = 20. Handedness won as the strongest complete mobile accessibility slice with bounded input risk.
+
+### Delivered slice
+
+- Added `src/control-handedness.js` as a narrow presentation adapter with a default-right, local-only persistent preference exposed on the start screen as **STEP：右手側 / STEP：左手側**.
+- Left-hand mode mirrors only the lower-corner STEP button, distance chip and STEP feedback to the lower-left safe area. It does not touch CombatEngine direction values, parry hit regions, swipe direction, STEP timing/reach/damage, or the accepted top-right Pause contract.
+- The preference fails safely to right when storage is missing/blocked and remains usable for the current page. The start-screen toggle stays inside the viewport using safe-area positioning and does not consume gameplay pointer regions because the start modal is the only place it is interactive.
+- Added focused Node coverage for normalization/mirroring, production script ordering and source-level ownership boundaries; the existing full browser suite remains the acceptance gate for production startup, campaign/practice, footwork, Pause and renderer behaviour.
+- Updated cumulative baseline, backlog and persistent state/run log in the same feature commit.
+
+### Regression boundary
+
+- No enemy animation, renderer geometry, tap/swipe/parry semantics, combat timing, damage, Perfect windows, posture, boss phase, score, mastery/run-analysis, remote data, asset or deployment behaviour changed.
+- Right-hand remains the default/current baseline; only the footwork cluster is mirrored. All directional words remain player-screen semantics regardless of preferred STEP side.
+- Post-commit exact-head Node/browser CI and GitHub Vercel status must both return terminal green before another feature run.

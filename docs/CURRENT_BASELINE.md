@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.25.0-evolution**
+Version: **0.26.0-evolution**
 
 This is the cumulative approved baseline on `autonomous-evolution`. `main` remains Ken-approved production until Draft PR #1 is manually merged. Future work may replace implementations but must not silently remove user-facing behaviour.
 
@@ -11,6 +11,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - Touch, stylus and mouse remain supported. Four defensive directions and four-direction swipe counters are unchanged.
 - Portrait parry regions are intentionally asymmetric for thumb reach: central top extends to 42% height; left/right/bottom retain 28% edge depth; nearest edge wins overlaps; centre remains neutral. Landscape keeps symmetric 28% mapping.
 - A 44×44 Pause button stays in the top-right HUD safe area and owns only its own hit rectangle. Adjacent top/right canvas taps remain parry targets. Pause freezes game time, combat phase and animation; 玩法 returns to still-paused state; resume has no wall-clock catch-up.
+- The start screen now exposes a persistent **STEP：右手側 / STEP：左手側** preference. Right remains the default; left mirrors only the lower-corner STEP button, distance chip and STEP feedback. Screen-space parry/swipe directions and the accepted top-right Pause contract never mirror.
 
 ## Direction semantics and enemy blade baseline
 
@@ -43,7 +44,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - Normal STEP works only in its bounded early strike window, moves one distance step and creates evade recovery only if the attack no longer reaches. It deals no automatic damage.
 - Perfect STEP is a narrower subset (roughly first 48–68 ms depending on strike duration): 1 automatic sidestep-riposte damage, no enemy posture, normally one manual counter remains. If the auto-riposte triggers Blood Moon or defeat, the opening closes and no swipe follow-up is advertised/accepted.
 - Long/heavy tracking attacks can still reach at far distance, so STEP is not universal invulnerability. Stage start/restart resets distance to mid.
-- STEP remains in the lower-right safe corner with phone-readable primary text and pointer capture/drag rejection.
+- STEP defaults to the lower-right safe corner with phone-readable primary text and pointer capture/drag rejection. The persistent left-hand preference mirrors only this lower-corner footwork cluster to the lower-left safe corner; combat direction semantics remain fixed in screen space.
 
 ## Crimson Shogun
 
@@ -75,6 +76,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - Gameplay/animation timing is elapsed-time based. PlayCanvas adaptively caps pixel ratio from rolling frame time before timing/responsiveness is sacrificed.
 - Skinned model, attack pack, stage identity, trails, full-blade afterimages, first-person grip and UI overlays reuse bounded entities/nodes; no unbounded gameplay-loop allocation, timer or network work is allowed.
 - `src/game-core.js` remains deterministic combat authority. Boss, mastery, onboarding, footwork, Perfect Parry, Perfect STEP, practice, run-analysis, accessibility and renderer systems remain bounded adapters.
+- `src/control-handedness.js` owns only the local STEP-side preference and footwork-cluster presentation. It may not rewrite tap/swipe/parry direction, combat timing, reach, damage or Pause placement.
 - `src/main.js` owns gameplay/input/HUD orchestration. `src/renderer.js` composes PlayCanvas primary/fallback plus authored attacks, stage identity, blade trajectory, actual-Sword strike afterimages, mobile readability, player weapon fidelity and the enemy screen-space direction adapter.
 - `src/authored-enemy-attacks.js` owns Guard/Attack* binding and continuous normalized authored sampling. `src/enemy-screen-space-direction.js` mirrors only opponent horizontal presentation. `src/blade-trajectory.js` samples the actual Sword/HandR pose and may apply only bounded whole-model depth assist in authored mode.
 - Browser acceptance uses 320×568 mobile rendering plus real production CombatEngine paths. Renderer contract must fail closed if the ready Sword world axis is not player-facing, if player-screen RIGHT/LEFT travel is reversed, if grip-lock continuity fails, if the actual-Sword afterimage cannot retain multiple historical strike poses, or if a directional strike misses the player-facing plane.

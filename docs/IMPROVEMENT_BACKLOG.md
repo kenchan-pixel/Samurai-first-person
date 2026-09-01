@@ -16,6 +16,8 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 065: repaired the remaining owner animation P1 with authored player-facing `Guard` plus explicit player-screen RIGHT/LEFT cut-travel semantics and enemy-only horizontal mirroring.
 - Runs 066–067: restored exact-head SOT verification after wording drift, then replaced the brittle sentence-literal smoke with section-scoped semantic invariants so harmless editorial rewrites cannot consume another blocker run.
 - Run 068: added four pooled full-blade afterimages sampled from the actual authored Sword transform, strengthening cut/follow-through readability without steering the weapon or changing combat.
+- Runs 069–072: live reduced-motion afterimage correctness, bounded Vercel rate-limit recovery, durable one-shot incident receipts and renderer-architecture SOT reconciliation.
+- Run 073: added a persistent right/left STEP-side preference that mirrors only the lower-corner footwork cluster while keeping all screen-space parry/swipe directions and top-right Pause unchanged.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
@@ -24,13 +26,13 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 3. **Perfect Parry / Perfect STEP clarity** — keep their rewards visibly distinct: Perfect Parry builds posture; Perfect STEP does not and requires spacing to escape reach.
 4. **Timing-assist coexistence** — keep optional/default-off, subordinate to the real blade, correct through Ronin feints, pointer-transparent and DOM-idle when off.
 5. **First-person grip readability** — ensure hands/forearms improve embodiment without covering enemy blade reads or making directional parry/counter motion noisy.
-6. **STEP + blade-read + Pause layout** — maintain quiet HUD, top-right bounded Pause, reachable adjacent top/right parries, lower-right STEP and optional rails/ring without overlap.
+6. **STEP + blade-read + Pause layout** — maintain quiet HUD, top-right bounded Pause, reachable adjacent top/right parries, persistent right/left STEP-side preference and optional rails/ring without overlap.
 7. **Performance evidence** — tune shadows/material/pixel ratio only from concrete browser/runtime evidence; physical-phone heat/frame evidence remains valuable but not mandatory.
 
 ## High-value candidates after core acceptance
 
 - Evidence-based difficulty refinement: tune one bounded Ronin/Shogun rhythm/window/phase pressure only if repeatable practice/runtime evidence shows a wall.
-- Accessibility: left-handed layout and broader motion controls. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
+- Accessibility: broader motion controls only where they solve a concrete accessibility gap; the persistent left-handed STEP layout is now delivered. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
 - Challenge mode: bounded endless/seeded pressure with mastery-aware scoring and clean restart.
 - Further Shogun motion/phase refinement only from concrete readability/performance evidence.
 - Deeper first-person weapon fidelity only if current two-hand silhouette stays readable and performant.
