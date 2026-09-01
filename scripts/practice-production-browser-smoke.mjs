@@ -41,7 +41,7 @@ server.stderr.on('data', (chunk) => { stderrRef.value += chunk; });
 try {
   await waitForServer(server, stderrRef);
   const dom = await dumpDomWithDeviceMetrics(browser, '/tests/practice-production-browser-harness.html', {
-    budget: 36000,
+    budget: 42000,
     width: 320,
     height: 568,
     doneExpression: `document.documentElement.dataset.practiceProductionBrowser === 'pass' || document.documentElement.dataset.practiceProductionBrowser === 'fail'`,
@@ -50,6 +50,9 @@ try {
   const required = [
     ['data-practice-production-browser="pass"', 'production practice orchestration lifecycle failed'],
     ['data-practice-production-viewport="true"', 'production practice gate did not run at 320×568'],
+    ['data-practice-production-normal-ronin="true"', 'real 練浪人 start control did not enter Stage 2 practice'],
+    ['data-practice-production-normal-oni="true"', 'real 練鬼 start control did not enter Stage 3 practice'],
+    ['data-practice-production-normal-shogun="true"', 'real 練將軍 start control did not enter Stage 4 Phase I practice'],
     ['data-practice-production-training-launch="true"', 'weak-stage recommendation did not enter real Ronin practice'],
     ['data-practice-production-training-terminal="true"', 'real Ronin practice did not reach terminal recommendation state'],
     ['data-practice-production-training-retry="true"', 'recommended practice retry did not use production restart'],
@@ -64,7 +67,7 @@ try {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 7000)}`);
   }
 
-  console.log(`production practice browser smoke passed with ${browser}: recommendation → Ronin terminal/retry/handoff + 練血月 direct Phase II terminal/retry/handoff`);
+  console.log(`production practice browser smoke passed with ${browser}: 練浪人/練鬼/練將軍 real start controls + recommendation → Ronin terminal/retry/handoff + 練血月 direct Phase II terminal/retry/handoff`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

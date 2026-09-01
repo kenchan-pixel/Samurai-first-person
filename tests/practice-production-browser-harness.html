@@ -45,6 +45,37 @@
       , timeout);
     }
 
+    async function returnHome(doc, label) {
+      doc.querySelector('#pause-button')?.click();
+      const paused = await waitFor(() => !doc.querySelector('#pause-screen')?.hidden, 800);
+      if (!paused) throw new Error(`${label}: could not enter production pause`);
+      doc.querySelector('#pause-home-button')?.click();
+      const home = await waitFor(() => doc.querySelector('#start-screen')?.classList.contains('modal--visible'), 1000);
+      if (!home) throw new Error(`${label}: pause home did not return to start screen`);
+      return true;
+    }
+
+    async function launchStartPractice(doc, { selector, mode, stage, enemy, phaseOne = false }) {
+      const appRoot = doc.documentElement;
+      const button = doc.querySelector(selector);
+      if (!button) return false;
+      button.click();
+      return waitFor(() => {
+        const phaseOneOk = !phaseOne || (
+          doc.querySelector('#app')?.dataset.bossPhase === '1' &&
+          appRoot.dataset.bloodMoonPracticeActive !== 'true' &&
+          appRoot.dataset.nextBloodMoonPractice !== 'blood-moon'
+        );
+        return (
+          appRoot.dataset.runMode === mode &&
+          phaseOneOk &&
+          !doc.querySelector('#start-screen')?.classList.contains('modal--visible') &&
+          doc.querySelector('#stage-label')?.textContent?.includes(stage) &&
+          doc.querySelector('#enemy-name')?.textContent?.includes(enemy)
+        );
+      }, 2200);
+    }
+
     function captureBloodMoonDebug(doc) {
       const appRoot = doc.documentElement;
       const fields = {
@@ -74,6 +105,9 @@
           appRoot.dataset.bloodMoonPracticeReady === 'true' &&
           appRoot.dataset.trainingRecommendationReady === 'true' &&
           doc.querySelector('#restart-button') &&
+          doc.querySelector('#practice-ronin-button') &&
+          doc.querySelector('#practice-oni-button') &&
+          doc.querySelector('#practice-shogun-button') &&
           doc.querySelector('#practice-blood-moon-button') &&
           doc.querySelector('[data-analysis-focus]')
         );
@@ -83,6 +117,37 @@
       const doc = frame.contentDocument;
       const appRoot = doc.documentElement;
       mark('practiceProductionViewport', window.innerWidth === 320 && window.innerHeight === 568 && frame.getBoundingClientRect().width === 320 && frame.getBoundingClientRect().height === 568);
+
+      const normalRonin = await launchStartPractice(doc, {
+        selector: '#practice-ronin-button',
+        mode: 'ronin-practice',
+        stage: 'STAGE 2 / 4',
+        enemy: 'Wandering Ronin',
+      });
+      mark('practiceProductionNormalRonin', normalRonin);
+      if (!normalRonin) throw new Error('real 練浪人 start control was reset to campaign instead of Stage 2 practice');
+      await returnHome(doc, '練浪人');
+
+      const normalOni = await launchStartPractice(doc, {
+        selector: '#practice-oni-button',
+        mode: 'oni-practice',
+        stage: 'STAGE 3 / 4',
+        enemy: 'Oni Guard',
+      });
+      mark('practiceProductionNormalOni', normalOni);
+      if (!normalOni) throw new Error('real 練鬼 start control was reset to campaign instead of Stage 3 practice');
+      await returnHome(doc, '練鬼');
+
+      const normalShogun = await launchStartPractice(doc, {
+        selector: '#practice-shogun-button',
+        mode: 'shogun-practice',
+        stage: 'STAGE 4 / 4',
+        enemy: 'Crimson Shogun',
+        phaseOne: true,
+      });
+      mark('practiceProductionNormalShogun', normalShogun);
+      if (!normalShogun) throw new Error('real 練將軍 start control did not enter Stage 4 Phase I practice');
+      await returnHome(doc, '練將軍');
 
       doc.querySelector('#start-screen')?.classList.remove('modal--visible');
       doc.querySelector('#result-screen')?.classList.add('modal--visible');
@@ -138,13 +203,7 @@
       mark('practiceProductionTrainingHandoff', trainingHandoff);
       if (!trainingHandoff) throw new Error('practice campaign handoff did not return through production restart to Stage 1');
 
-      const pauseButton = doc.querySelector('#pause-button');
-      pauseButton?.click();
-      const paused = await waitFor(() => !doc.querySelector('#pause-screen')?.hidden, 800);
-      if (!paused) throw new Error('could not enter production pause before Blood Moon practice');
-      doc.querySelector('#pause-home-button')?.click();
-      const home = await waitFor(() => doc.querySelector('#start-screen')?.classList.contains('modal--visible'), 1000);
-      if (!home) throw new Error('production pause home did not return to start screen');
+      await returnHome(doc, 'Blood Moon setup');
 
       doc.querySelector('#practice-blood-moon-button').click();
       const bloodMoonLaunch = await waitFor(() =>
@@ -196,6 +255,9 @@
 
       const allPass = [
         'practiceProductionViewport',
+        'practiceProductionNormalRonin',
+        'practiceProductionNormalOni',
+        'practiceProductionNormalShogun',
         'practiceProductionTrainingLaunch',
         'practiceProductionTrainingTerminal',
         'practiceProductionTrainingRetry',

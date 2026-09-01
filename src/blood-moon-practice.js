@@ -17,6 +17,14 @@ const states = new WeakMap();
 let bloodMoonSelected = false;
 let bloodMoonLaunchArmed = false;
 
+function setBloodMoonSelection(enabled) {
+  bloodMoonSelected = Boolean(enabled);
+  if (typeof document !== 'undefined') {
+    document.documentElement.dataset.nextBloodMoonPractice = bloodMoonSelected ? 'blood-moon' : 'off';
+  }
+  return bloodMoonSelected;
+}
+
 function renderMode(active, terminal = false) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
@@ -128,7 +136,9 @@ function installUi() {
       bloodMoonLaunchArmed = false;
       return;
     }
-    requestBloodMoonPractice(false);
+    // This capture handler owns only the Blood Moon variant. Normal practice,
+    // challenge and campaign launchers retain authority over the shared practice request.
+    setBloodMoonSelection(false);
   };
   for (const selector of [
     '#start-button',
@@ -166,12 +176,9 @@ function installUi() {
 }
 
 export function requestBloodMoonPractice(enabled = true) {
-  bloodMoonSelected = Boolean(enabled);
-  requestShogunPractice(bloodMoonSelected);
-  if (typeof document !== 'undefined') {
-    document.documentElement.dataset.nextBloodMoonPractice = bloodMoonSelected ? 'blood-moon' : 'off';
-  }
-  return bloodMoonSelected;
+  const selected = setBloodMoonSelection(enabled);
+  requestShogunPractice(selected);
+  return selected;
 }
 
 export function activateBloodMoonPractice(engine, now = 0) {

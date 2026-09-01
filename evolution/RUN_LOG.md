@@ -120,3 +120,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No `game-core` combat rule, enemy definition, HP/posture/timing/damage, score, input mapping, Perfect/STEP rule, boss transition, challenge momentum/tactics/rival, persistence key, renderer animation/geometry, asset, account/network/privacy or telemetry authority changed.
 - Existing stage-focused coaching and practice routing remain authoritative; the new map only exposes evidence already present in the combat event stream.
 - Current Baseline advances to 0.35.0-evolution and the checklist/backlog/changelog/state are updated in this same implementation commit. Exact-head CI and Vercel remain mandatory post-commit acceptance gates.
+
+## Run 093 — Normal dojo launch isolation repair
+
+**Date:** 2026-09-02  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `82d136149ec1480d9c7ac7ee95edc03b5aeea01d`.
+- Its first CI #136 attempt passed all 98 Node tests but timed out in the first renderer-motion browser smoke. One exact-head rerun completed green for both `npm test` and `npm run test:browser`, confirming the timeout was transient rather than a repeatable renderer regression. GitHub's exact-head `Vercel` commit status was `success`; the direct Vercel connector still enumerated zero projects / returned 404 for the known project, so the canonical GitHub status remained the deployment signal.
+- Draft PR #1 remained open/Draft/unmerged, `main` remained untouched, and inline review threads were empty.
+- The latest exact-head All Repos review identified a separate material P1: the Blood Moon capture reset could erase the shared requested practice mode during the nested Start click for **練浪人 / 練鬼 / 練將軍**, silently launching Stage 1 campaign instead. That P1 prohibited feature selection.
+
+### Repair
+
+- `blood-moon-practice.js` now separates Blood Moon UI selection cleanup from the shared normal-practice request. Its capture listener clears only the Blood Moon variant; the existing `practice-mode.js` launcher/reset listener remains the sole authority for campaign vs Ronin/Oni/Shogun practice selection. The exported `requestBloodMoonPractice(false)` keeps its existing full-reset API semantics for explicit callers.
+- This preserves the intended source-aware nested Start handshake: normal **練浪人 / 練鬼 / 練將軍** clicks can arm Stage 2 / Stage 3 / Stage 4 Phase I without a later Blood Moon capture handler forcing `requestedMode` back to campaign, while the dedicated **練血月** armed Start path still reaches direct Phase II.
+- Strengthened the existing true 320×568 production-document browser gate. Before the recommendation/Blood Moon lifecycle it now clicks each real start-screen normal-practice control, requires Ronin Stage 2, Oni Stage 3 and Shogun Stage 4 Phase I respectively, confirms Blood Moon is not active for normal Shogun practice, and returns through real Pause → Home between launches. The existing real Ronin terminal/retry/campaign handoff and Blood Moon terminal/retry/handoff assertions remain fail-closed.
+
+### Regression boundary
+
+- No enemy definition, HP/posture/timing/damage, parry/Perfect/STEP rule, direction mapping, boss phase threshold/reward, mastery/run-analysis formula, challenge/今日陣 rule, renderer animation/geometry, storage key, network/account/privacy or asset authority changed.
+- The repair narrows UI orchestration ownership only; `practice-mode.js` still owns normal direct-practice selection and `boss-encounter.js` still owns Blood Moon Phase II.
+- Exact-head GitHub Actions and exact-head Vercel remain mandatory post-commit acceptance gates. The run is not complete until this implementation SHA has both terminal green and one concise Draft-PR receipt.
