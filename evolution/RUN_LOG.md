@@ -299,3 +299,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No challenge choice values, enemy timing definitions, damage/reach, parry/Perfect/STEP rules, Blood Moon thresholds, direction mapping, renderer, persistence, account/network/privacy or campaign/practice behavior changed.
 - The tactic adapter now wraps `CombatEngine.update` only to obtain the authoritative combat-clock timestamp for one pending resume; it introduces no second clock, timer, polling loop or remote dependency.
 - Local source/test syntax checks passed. Exact-head repository CI and GitHub Vercel Preview after this single commit remain required before feature work resumes.
+
+## Run 085 — Challenge rematch visual identity repair
+
+**Date:** 2026-09-01  
+**Action type:** REGRESSION_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `13f25a0bac62f28cc3ae3ad6a6d5c8cbbb8d8439`.
+- Exact-head GitHub Actions run `33527777000` was terminal green and the exact-head GitHub `Vercel` commit status was `success`; Vercel Preview feedback reported zero unresolved items. Draft PR #1 remained open/Draft/unmerged, inline review threads were empty and `main` remained untouched.
+- The prior P1 against `4b59042e6259cbdca9bb29b59f66d3c20cd55b91` was substantively closed by Run 084: the installed tactic adapter now freezes remaining transition time and rebases it on the first authoritative post-choice CombatEngine clock tick.
+- Preflight source inspection found a separate material baseline regression that existing CI did not cover: both primary PlayCanvas presentation and the WebGL2 fallback consumed raw `enemyIndex` as a four-stage visual index. In the eight-wave challenge this made every Wave 4–8 progression index clamp into the Shogun visual style, despite the documented pressure roster being Ashigaru → Ronin → Oni → Ronin → Shogun.
+
+### Repair
+
+- Moved the correction to the shared renderer façade instead of changing combat or duplicating mapping in both backends. Presentation now resolves the four authored visual stages from the current `enemy.id`: `ashigaru-scout`, `wandering-ronin`, `oni-guard`, `crimson-shogun`.
+- Only the synchronous renderer call sees that projected visual index; a `finally` restore returns the snapshot to its original eight-wave progression index before control leaves `View.draw()`. CombatEngine state, challenge wave counting, run analysis, tactics, momentum and boss authority therefore remain unchanged.
+- Added a focused 320×568 PlayCanvas browser regression under the existing daily browser runner. It renders the real challenge pressure roster at Waves 4–8 and requires `ashigaru-jingasa → ronin-travel-wrap → oni-heavy-guard → ronin-travel-wrap → crimson-shogun-banner`, then proves every snapshot still contains its original progression index after rendering.
+- Updated the cumulative regression checklist, changelog, backlog, state and this run log in the same candidate tree. No Current Baseline wording changed because this commit restores its already-documented “challenge rematches reuse existing identities cleanly” contract rather than introducing a new product rule.
+
+### Regression boundary
+
+- No enemy HP/posture/timing/damage, attack order, parry/Perfect/STEP rule, challenge reward/tactic, Blood Moon threshold, progression index, run analysis, persistence, account/network/privacy or asset behavior changed.
+- The repair is presentation-only and applies through the shared renderer façade, so PlayCanvas and the legacy WebGL2 fallback receive the same identity projection without a second gameplay authority.
+- Local syntax checks passed for the modified renderer and browser runner. Repository checkout/network access remained unavailable, so exact-head repository CI and GitHub Vercel status after this single commit remain the required acceptance evidence.

@@ -64,7 +64,23 @@ try {
   for (const [marker, message] of required) {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 6000)}`);
   }
-  console.log(`daily challenge browser smoke passed with ${browser}: real 今日陣 entry → 3 tactical checkpoints → 8-stage terminal → same-date retry → campaign handoff`);
+
+  const identityDom = await dumpDomWithDeviceMetrics(browser, '/tests/challenge-visual-identity-browser-harness.html', {
+    budget: 7000,
+    width: 320,
+    height: 568,
+    doneExpression: `document.documentElement.dataset.challengeVisualIdentityBrowser === 'pass' || document.documentElement.dataset.challengeVisualIdentityBrowser === 'fail'`,
+  });
+  const identityRequired = [
+    ['data-challenge-visual-identity-browser="pass"', 'challenge rematch visual identity browser gate failed'],
+    ['data-challenge-visual-identity-progression-restored="true"', 'renderer visual projection leaked into CombatEngine progression state'],
+    ['data-challenge-visual-identity-sequence="ashigaru-jingasa,ronin-travel-wrap,oni-heavy-guard,ronin-travel-wrap,crimson-shogun-banner"', 'challenge Waves 4–8 did not reuse Ashigaru/Ronin/Oni/Ronin/Shogun authored visual identities'],
+  ];
+  for (const [marker, message] of identityRequired) {
+    if (!identityDom.includes(marker)) throw new Error(`${message}. DOM:\n${identityDom.slice(0, 6000)}`);
+  }
+
+  console.log(`daily challenge browser smoke passed with ${browser}: 今日陣 lifecycle + tactical checkpoints + challenge rematch visual identity projection`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

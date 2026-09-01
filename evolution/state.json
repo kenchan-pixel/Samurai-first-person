@@ -3,15 +3,15 @@
   "branch": "autonomous-evolution",
   "base_branch": "main",
   "status": "verifying",
-  "run_number": 84,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Rebased challenge tactical-choice pause timing onto the authoritative CombatEngine clock so decision time cannot fast-forward the next stage",
-  "last_commit": "4b59042e6259cbdca9bb29b59f66d3c20cd55b91",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the tactical-choice pause timing repair",
+  "run_number": 85,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Restored challenge and 今日陣 pressure-rematch visual identity by projecting renderer presentation from enemy id instead of the 8-wave progression index",
+  "last_commit": "13f25a0bac62f28cc3ae3ad6a6d5c8cbbb8d8439",
+  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the challenge rematch visual-identity repair",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_self_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Fs1Lz3vcvSsRA4dTaBpmgAxG3QDT",
+  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/7gqL5UkT9pGhgRCXwXnEv15EACmJ",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
   "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
@@ -33,7 +33,7 @@
     }
   },
   "next_candidates": [
-    "Re-review the tactical-choice timing repair and exact Preview before any further challenge feature work",
+    "Self-inspect exact Preview challenge and 今日陣 Waves 4–8 to confirm Ashigaru/Ronin/Oni/Ronin/Shogun identities remain visually coherent at normal speed",
     "Self-inspect challenge and 今日陣 tactical-choice evidence; tune only if the 2/4/6 cadence or HP-score trade proves trivial, confusing or dominant",
     "Self-inspect the exact Preview at normal speed: player-facing Guard plus all four authored cuts, including whether actual-Sword afterimages stay subordinate to the real blade and preserve screen-space RIGHT/LEFT readability"
   ]

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.30.1-evolution — Challenge rematch visual identity repair
+
+- Repaired an escaped renderer regression in 連戰試煉 / 今日陣: pressure rematches no longer inherit the Shogun look merely because their 8-wave progression index is 4–7.
+- The renderer façade now projects presentation from the current enemy id while leaving the authoritative CombatEngine progression index untouched. Waves 4–8 therefore reuse Ashigaru → Ronin → Oni → Ronin → Shogun authored silhouettes/palettes in both PlayCanvas and the WebGL2 fallback.
+- Added a focused real 320×568 PlayCanvas browser gate for the complete pressure-rematch identity sequence and explicit proof that renderer-only projection cannot leak back into gameplay progression state.
+
 ## 0.30.0-evolution — Challenge post-wave tactical choice
 
 - Added three challenge-only **戰前抉擇** checkpoints after Waves 2/4/6. The stage-clear transition waits for one phone-friendly tap, then resumes the same CombatEngine progression path.

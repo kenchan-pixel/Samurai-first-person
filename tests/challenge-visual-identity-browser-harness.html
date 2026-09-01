@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body>
+<script type="module">
+  import { CombatEngine } from '/src/game-core.js';
+  import { createChallengeEnemies } from '/src/challenge-mode.js';
+  import { View } from '/src/renderer.js';
+
+  const root = document.documentElement;
+  const expected = [
+    [3, 'ashigaru-scout', 'ashigaru-jingasa'],
+    [4, 'wandering-ronin', 'ronin-travel-wrap'],
+    [5, 'oni-guard', 'oni-heavy-guard'],
+    [6, 'wandering-ronin', 'ronin-travel-wrap'],
+    [7, 'crimson-shogun', 'crimson-shogun-banner'],
+  ];
+  let view = null;
+
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 568;
+    Object.assign(canvas.style, { width: '320px', height: '568px' });
+    document.body.append(canvas);
+
+    view = new View(canvas);
+    if (view.backend !== 'playcanvas') throw new Error(`Expected PlayCanvas, got ${view.backend}`);
+    const ready = await view.impl.characterReady;
+    if (!ready || !view.impl.skinnedModel) throw new Error('Skinned samurai did not load');
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+    const engine = new CombatEngine({ enemies: createChallengeEnemies() });
+    engine.start(0);
+    const observed = [];
+
+    for (const [progressionIndex, enemyId, identity] of expected) {
+      engine.enemyIndex = progressionIndex;
+      engine.enemyHp = engine.enemy.maxHp;
+      engine.enemyPosture = 0;
+      engine.currentAttack = null;
+      engine.phase = 'stage-intro';
+      engine.phaseStartedAt = 0;
+      engine.phaseEndsAt = 1550;
+
+      const snapshot = engine.snapshot(0);
+      if (snapshot.enemy?.id !== enemyId) {
+        throw new Error(`Unexpected challenge enemy at ${progressionIndex + 1}: ${snapshot.enemy?.id}`);
+      }
+      view.draw(snapshot, performance.now(), {
+        attackDirectionIndex: 0,
+        playerAction: 0,
+        playerDirectionIndex: 0,
+        hitAge: 999,
+        shake: 0,
+      });
+
+      const renderedIdentity = root.dataset.enemyStageIdentity || '';
+      observed.push(renderedIdentity);
+      if (renderedIdentity !== identity) {
+        throw new Error(`Stage ${progressionIndex + 1} rendered ${renderedIdentity}, expected ${identity}`);
+      }
+      if (snapshot.enemyIndex !== progressionIndex) {
+        throw new Error(`Renderer leaked visual index ${snapshot.enemyIndex} back into progression stage ${progressionIndex}`);
+      }
+    }
+
+    root.dataset.challengeVisualIdentitySequence = observed.join(',');
+    root.dataset.challengeVisualIdentityProgressionRestored = 'true';
+    root.dataset.challengeVisualIdentityBrowser = 'pass';
+  } catch (error) {
+    console.error(error);
+    root.dataset.challengeVisualIdentityError = String(error?.stack || error);
+    root.dataset.challengeVisualIdentityBrowser = 'fail';
+  } finally {
+    view?.impl?.app?.destroy?.();
+  }
+</script>
+</body>
+</html>

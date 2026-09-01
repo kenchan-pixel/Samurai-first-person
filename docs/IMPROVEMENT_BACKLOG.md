@@ -25,6 +25,8 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 081: added local **今日陣**, a player-local date-keyed challenge variant that deterministically permutes only existing pressure rematches and rotates their opening attack order while preserving all combat-rule values and the same challenge momentum/best surfaces.
 - Run 082: added a true 320×568 browser lifecycle for 今日陣 covering real entry/banner cleanup, eight-stage terminal identity, same-date retry and campaign handoff.
 - Run 083: added challenge-only **戰前抉擇** after Waves 2/4/6: one-tap 整息 (+1 HP) versus 血誓 (-1 HP, +350 score), with last-HP safety, parked stage transition and real 320×568 今日陣 integration coverage.
+- Run 084: repaired tactical-choice pause timing so time spent reading the between-wave decision cannot fast-forward the next duel; resume now rebases the frozen remaining transition on the authoritative CombatEngine clock.
+- Run 085: repaired challenge/今日陣 pressure-rematch presentation so Waves 4–8 reuse Ashigaru → Ronin → Oni → Ronin → Shogun authored identities by enemy id instead of collapsing all progression indexes ≥4 into the Shogun look.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
