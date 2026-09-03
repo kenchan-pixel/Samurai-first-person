@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 101,
-  "last_action_type": "FEATURE",
-  "last_action": "Added session-only same-opponent practice progress on direct-practice results: first completion prompts one repeat, then the result analysis compares authoritative four-direction defense rate, hits taken and manual-counter conversion against the immediately previous attempt for that practice route. No persistence, identifier, analytics, network or balance rule was added.",
+  "run_number": 102,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Repaired practice-progress DOM ownership so the injected style and the visible result row no longer share a selector. The row now has a unique result-analysis marker, hide logic targets only that row, and the 320x568 browser gate proves both repeated-practice comparison and cleanup on a subsequent normal campaign result.",
   "last_commit": "0ffa84f6ec02fada1fa8c45538075fa084e69ddd",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further feature work. If both are terminal green and no new review blocker appears, use repeated Ronin/Oni/Shogun/Blood Moon practice plus the new session comparison and 四向防守 evidence before any further combat balance change. Remote Closed Beta feedback/leaderboard/telemetry remains SOT/privacy-gated.",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further feature work. Run 102 specifically must prove the Run 101 browser-CI failure and P2 practice-progress leakage are closed before any new feature or release-prep slice.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "practice_progress_pending_exact_head",
-    "last_observed_head": "0ffa84f6ec02fada1fa8c45538075fa084e69ddd",
-    "incoming_ci_run": 33767801127,
-    "incoming_ci_result": "success",
+    "status": "practice_progress_isolation_fix_pending_exact_head",
+    "last_observed_head": "e059ced77444b1b4a95b047998606fd31b6c4e1c",
+    "incoming_ci_run": 33773856599,
+    "incoming_ci_result": "failure_browser_selector_and_row_hide",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "github_exact_head_status_authoritative_for_preflight",
+    "direct_vercel_connector": "team enumeration returned zero projects; github exact-head status authoritative for preflight",
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 101 is result-only practice coaching. src/practice-progress.js observes the same authoritative combat events into an independent in-memory analysis session, keeps one previous snapshot per direct-practice route for the current page session, and renders a compact comparison row inside the existing result-analysis card. First practice shows a retry-to-compare prompt; a repeat compares defense rate from strike/parry/STEP/hit outcomes, hits taken and manual-counter conversion. Campaign/challenge terminals hide the row. Combat, score, storage, renderer and remote-data behavior are unchanged."
+    "note": "Run 102 is a bounded blocker repair for Run 101. src/practice-progress.js now uses data-practice-progress-style only on the injected style and data-practice-progress-row only on the visible result row. hideProgress is scoped to #result-analysis, preventing the style node from intercepting cleanup. The focused browser harness now selects the real row and, after proving the first/repeat practice states and 320x568 bounds, emits a normal campaign victory and requires the row plus root practice markers to clear. Combat, score, route history semantics, persistence, renderer and remote-data behavior are unchanged."
   },
   "external_deployment_recovery": {
     "last_incident": {

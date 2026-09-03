@@ -151,7 +151,7 @@
       ], 700);
       await flush();
 
-      const progress = document.querySelector('[data-practice-progress]');
+      const progress = document.querySelector('#result-analysis [data-practice-progress-row]');
       const firstProgress = Boolean(
         progress && !progress.hidden &&
         root.dataset.practiceProgressState === 'first' &&
@@ -194,7 +194,27 @@
         throw new Error(`repeat-practice comparison failed or overflowed: ${progress?.textContent || 'missing progress'}`);
       }
 
-      root.dataset.runAnalysisDirectionBrowser = firstPass && challengeOmitted && firstProgress && secondProgress && progressLayout ? 'pass' : 'fail';
+      const campaignAfterPractice = new CombatEngine({ enemies: [enemy] });
+      campaignAfterPractice.start(4000);
+      campaignAfterPractice.drainEvents();
+      campaignAfterPractice.events.push(
+        { type: 'strike', detail: { direction: Direction.TOP } },
+        { type: 'parry', detail: { direction: Direction.TOP } },
+        { type: 'enemy-defeated', detail: { enemyId: enemy.id, stage: 1 } },
+        { type: 'victory', detail: { score: 1000, playerHp: 4 } },
+      );
+      campaignAfterPractice.drainEvents();
+      await flush();
+
+      const progressIsolation = Boolean(
+        progress && progress.hidden &&
+        !root.dataset.practiceProgressState &&
+        !root.dataset.practiceProgressRoute
+      );
+      root.dataset.practiceProgressIsolation = progressIsolation ? 'pass' : 'fail';
+      if (!progressIsolation) throw new Error('practice progress row leaked into a later campaign result');
+
+      root.dataset.runAnalysisDirectionBrowser = firstPass && challengeOmitted && firstProgress && secondProgress && progressLayout && progressIsolation ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);

@@ -72,9 +72,9 @@ export function comparePracticeSnapshots(previous, current) {
 }
 
 function installStyles() {
-  if (document.querySelector('style[data-practice-progress]')) return;
+  if (document.querySelector('style[data-practice-progress-style]')) return;
   const style = document.createElement('style');
-  style.dataset.practiceProgress = 'true';
+  style.dataset.practiceProgressStyle = 'true';
   style.textContent = `
     .result-analysis__practice-progress{margin-top:8px;padding:7px 8px;border:1px solid rgba(129,193,154,.2);border-radius:9px;background:rgba(57,106,75,.09)}
     .result-analysis__practice-progress[hidden]{display:none}
@@ -89,11 +89,11 @@ function installStyles() {
 function ensureProgressNode() {
   const panel = document.querySelector('#result-analysis');
   if (!panel) return null;
-  let node = panel.querySelector('[data-practice-progress]');
+  let node = panel.querySelector('[data-practice-progress-row]');
   if (!node) {
     node = document.createElement('div');
     node.className = 'result-analysis__practice-progress';
-    node.dataset.practiceProgress = 'true';
+    node.dataset.practiceProgressRow = 'true';
     node.hidden = true;
     node.innerHTML = '<strong data-practice-progress-title></strong><span data-practice-progress-copy></span>';
     const tip = panel.querySelector('[data-analysis-tip]');
@@ -104,7 +104,7 @@ function ensureProgressNode() {
 }
 
 function hideProgress() {
-  const node = document.querySelector('[data-practice-progress]');
+  const node = document.querySelector('#result-analysis [data-practice-progress-row]');
   if (node) node.hidden = true;
   delete document.documentElement.dataset.practiceProgressState;
   delete document.documentElement.dataset.practiceProgressRoute;

@@ -55,12 +55,13 @@ try {
     ['data-practice-progress-first="pass"', 'first same-opponent practice did not show the repeat-to-compare prompt'],
     ['data-practice-progress-comparison="pass"', 'repeat practice did not compare defense, hits and counter conversion'],
     ['data-practice-progress-layout="pass"', 'repeat-practice progress row overflowed the 320×568 result surface'],
+    ['data-practice-progress-isolation="pass"', 'practice-progress row leaked into a later campaign result'],
   ];
   for (const [marker, message] of required) {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 7000)}`);
   }
 
-  console.log(`run-analysis browser smoke passed with ${browser}: four-way defense + challenge omission + same-opponent practice progress at 320x568`);
+  console.log(`run-analysis browser smoke passed with ${browser}: four-way defense + challenge omission + same-opponent practice progress/isolation at 320x568`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

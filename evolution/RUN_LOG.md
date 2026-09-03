@@ -70,3 +70,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Added deterministic Node tests for snapshot derivation, improvement/regression deltas and unavailable counter-rate handling.
 - Extended the existing focused 320×568 run-analysis browser gate: it retains the four-way defense/weakest-direction and eight-stage omission checks, then completes the same direct practice twice and requires the first-repeat prompt, expected `防守 +50% · 受擊 −1 · 反擊 ±0%` comparison and an in-bounds result row.
 - This execution surface has no local repository/browser checkout; exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are therefore the post-commit acceptance gate. The PR run comment records final receipts; no second bookkeeping commit is allowed.
+
+## Run 102 — Practice-progress selector/isolation repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `e059ced77444b1b4a95b047998606fd31b6c4e1c`.
+- Exact-head Vercel status is terminal **success**, but CI #147 / run `33773856599` is terminal **failure** in `npm run test:browser`; `npm test` passed.
+- Latest exact-head review confirms one actionable blocking P2: the injected style and visible 修行進度 row both used `data-practice-progress`, so `hideProgress()` and the browser harness selected the `<style>` element first. Besides breaking CI, this could leave the visible practice-progress row on a later campaign/challenge result.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty. New feature work is prohibited until this blocker is repaired.
+
+### Implementation
+
+- Split DOM ownership: injected CSS now uses `data-practice-progress-style`; the visible result row uses the unique `data-practice-progress-row` marker.
+- Scoped `hideProgress()` to `#result-analysis [data-practice-progress-row]`, so cleanup can no longer be intercepted by the style node.
+- Updated the focused 320×568 browser harness to select the real result row, preserve the first/repeat comparison assertions, then emit a normal campaign result after practice and require the row plus practice root-state markers to clear.
+- No combat timing, damage, parry/Perfect/STEP rules, score, route-history semantics, persistence, renderer, account/identifier, analytics, backend or network behavior changed.
+
+### Verification boundary
+
+- Pre-commit review is source-level because this execution surface has no local repository/browser checkout.
+- Exact-head GitHub CI (`npm test` + complete `npm run test:browser`) and exact-head Vercel Preview remain the authoritative post-commit gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
