@@ -18,6 +18,9 @@
         <button id="restart-button" class="primary-button" type="button">再戰連陣</button>
       </div>
     </section>
+    <section id="start-screen" class="modal">
+      <div class="modal__content"><h1>刃返</h1><button id="start-button" class="primary-button" type="button">拔刀</button></div>
+    </section>
     <pre id="harness-error" hidden></pre>
   </main>
 
@@ -31,9 +34,8 @@
       await new Promise((resolve) => setTimeout(resolve, 0));
     };
 
-    const rectInsideViewport = (rect) =>
-      rect.width >= 44 &&
-      rect.height >= 44 &&
+    const rectInsideViewport = (rect, requireTouch = true) =>
+      (!requireTouch || (rect.width >= 44 && rect.height >= 44)) &&
       rect.left >= -0.5 &&
       rect.right <= innerWidth + 0.5 &&
       rect.top >= -0.5 &&
@@ -97,10 +99,7 @@
       const feedbackLayoutOk =
         rectInsideViewport(feedbackButtonRect) &&
         !panel.hidden &&
-        panelRect.left >= -0.5 &&
-        panelRect.right <= innerWidth + 0.5 &&
-        panelRect.top >= -0.5 &&
-        panelRect.bottom <= innerHeight + 0.5 &&
+        rectInsideViewport(panelRect, false) &&
         privacyText.includes('不會自動上傳');
       root.dataset.resultFeedbackLayout = feedbackLayoutOk ? 'pass' : 'fail';
       if (!feedbackLayoutOk) throw new Error(`feedback panel failed 320x568/privacy boundary: ${privacyText}`);
@@ -127,6 +126,28 @@
       root.dataset.resultFeedbackClose = closedOk ? 'pass' : 'fail';
       if (!closedOk) throw new Error('feedback panel did not close cleanly');
 
+      document.querySelector('#result-screen')?.classList.remove('modal--visible');
+      document.querySelector('#start-screen')?.classList.add('modal--visible');
+      await import('../src/beta-readiness.js');
+      await flush();
+      const betaButton = document.querySelector('#beta-readiness-button');
+      const betaPanel = document.querySelector('#beta-readiness-panel');
+      if (!betaButton || !betaPanel) throw new Error('Closed Beta readiness controls missing');
+      const betaButtonOk = rectInsideViewport(betaButton.getBoundingClientRect());
+      betaButton.click();
+      await flush();
+      const betaPrivacy = betaPanel.querySelector('[data-beta-readiness-privacy]')?.textContent || '';
+      const betaItems = [...betaPanel.querySelectorAll('[data-beta-readiness-item]')];
+      const betaLayoutOk = betaButtonOk && !betaPanel.hidden && rectInsideViewport(betaPanel.getBoundingClientRect(), false);
+      const betaCopyOk = betaItems.length === 3 && betaPrivacy.includes('唔會自動上傳') && betaPrivacy.includes('冇登入') && betaPrivacy.includes('背景遙測');
+      betaPanel.querySelector('[data-beta-readiness-close]')?.click();
+      const betaCloseOk = betaPanel.hidden && betaButton.getAttribute('aria-expanded') === 'false';
+      root.dataset.betaReadinessLayout = betaLayoutOk ? 'pass' : 'fail';
+      root.dataset.betaReadinessCopy = betaCopyOk ? 'pass' : 'fail';
+      root.dataset.betaReadinessClose = betaCloseOk ? 'pass' : 'fail';
+      root.dataset.betaReadinessBrowser = betaLayoutOk && betaCopyOk && betaCloseOk ? 'pass' : 'fail';
+      if (root.dataset.betaReadinessBrowser !== 'pass') throw new Error(`Closed Beta readiness failed: layout=${betaLayoutOk} copy=${betaCopyOk} close=${betaCloseOk}`);
+
       root.dataset.resultShareBrowser = shareLayoutOk && nativeOk && clipboardOk ? 'pass' : 'fail';
       root.dataset.resultFeedbackBrowser = feedbackLayoutOk && feedbackExportOk && closedOk ? 'pass' : 'fail';
     } catch (error) {
@@ -134,6 +155,7 @@
       errorNode.textContent = error?.stack || String(error);
       root.dataset.resultShareBrowser = 'fail';
       root.dataset.resultFeedbackBrowser = 'fail';
+      root.dataset.betaReadinessBrowser = 'fail';
     }
   </script>
 </body>

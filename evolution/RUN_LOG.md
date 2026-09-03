@@ -119,3 +119,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Added Node coverage for structured report content, URL sanitisation, note bound, native share, clipboard fallback/cancellation, and a source guard that rejects automatic upload transports in the feedback module.
 - Extended the existing result-actions browser gate at true 320×568: both share and feedback controls must remain ≥44 px/in bounds; the feedback panel must remain inside the viewport, show the no-auto-upload disclosure, export a structured bug report with the player note through the local clipboard fallback, and close cleanly back to the terminal result.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
+
+## Run 104 — Closed Beta tester guide / release-readiness surface
+
+**Date:** 2026-09-04  
+**Action type:** RELEASE_PREP
+
+### Preflight
+
+- Incoming exact HEAD: `8c8fc6fbced3465246f4f0e6209adf12e60f7959`.
+- Exact-head Actions CI #149 / run `33785837788` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest applicable review history has no unresolved P0/P1/P2 blocker.
+- Three eligible next actions were scored: (1) bounded Closed Beta tester/privacy guide 24/25; (2) local personal-record summary 20/25 but adds more storage-facing UI; (3) repeated-practice acceptance 19/25 because this execution surface cannot produce stronger subjective device evidence by itself. Candidate 1 won and stays fully inside the approved local/export-only v0.5 boundary.
+
+### Implementation
+
+- Added a compact start-only **封測資訊** control and phone-safe **Closed Beta v0.5 測試指南** panel. It tells testers to play one duel, repeat the same practice opponent once to inspect **修行進度**, then use the existing explicit **回報** path when something is unclear or broken.
+- The panel states that the Preview is still a Closed Beta preparation build, requires no account, does not automatically upload reports, and has no cloud leaderboard or background telemetry.
+- The guide is informational only: it creates no storage key, player/tester identifier, analytics event, backend, network request or gameplay authority. Because it is owned by the start modal, it disappears automatically when play begins and adds no combat HUD density.
+- Extended `docs/CLOSED_BETA_V0_5_BASELINE.md` with the release-readiness UI contract so future runs cannot silently turn the guide into tracking or account collection.
+
+### Verification boundary
+
+- Added Node coverage for the bounded three-step tester flow plus a source guard prohibiting persistence/network transports in the readiness module.
+- Extended the existing true 320×568 result-actions browser harness: after it proves 分享 and 回報, it switches to the start modal and requires the real **封測資訊** touch target/panel to stay in bounds, show the no-auto-upload/no-account/no-background-telemetry copy, expose exactly three tester steps and close cleanly.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the post-commit acceptance gates. The PR run comment records final receipts; no second bookkeeping commit is permitted.

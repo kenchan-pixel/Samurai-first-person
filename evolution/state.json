@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 103,
-  "last_action_type": "FEATURE",
-  "last_action": "Reconciled the Closed Beta v0.5 local/export-only privacy boundary into mandatory repository SOT and added a player-visible result 回報 surface. Testers can choose 體驗意見 or 錯誤回報, type a bounded note, and explicitly export visible result context through native Web Share or local clipboard; the game states that it does not automatically upload the report.",
-  "last_commit": "9368b7ed371bd3b21479e2c59d1ec308510c2978",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further feature work. Run 103 must prove the 320x568 result feedback panel/export path, existing result sharing and the full playable regression suite remain green before any next release-prep slice.",
+  "run_number": 104,
+  "last_action_type": "RELEASE_PREP",
+  "last_action": "Added a start-surface Closed Beta v0.5 tester guide that makes the bounded pre-release test loop and privacy boundary visible before play: play a duel, repeat one practice opponent to inspect 修行進度, then use the existing explicit 回報 path. The guide is informational only and adds no storage, identifier, analytics, backend or network transport.",
+  "last_commit": "8c8fc6fbced3465246f4f0e6209adf12e60f7959",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 104 must prove the new 封測資訊 control/panel fits the true 320x568 start surface and that the existing result share/feedback plus full playable regression suite remain green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "closed_beta_feedback_export_pending_exact_head",
-    "last_observed_head": "9368b7ed371bd3b21479e2c59d1ec308510c2978",
-    "incoming_ci_run": 33778427313,
+    "status": "closed_beta_readiness_guide_pending_exact_head",
+    "last_observed_head": "8c8fc6fbced3465246f4f0e6209adf12e60f7959",
+    "incoming_ci_run": 33785837788,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "team enumeration returned zero projects; github exact-head status authoritative for preflight",
+    "direct_vercel_connector": "not required; github exact-head Vercel status is green for preflight",
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 103 adds no backend or hidden collection. src/result-feedback.js reads only visible terminal result fields plus text deliberately typed by the player, strips query/hash from the game URL, and acts only after an explicit export tap. Native Web Share is preferred; clipboard is local fallback; AbortError is a no-op. The 320x568 result-actions gate now checks the feedback control/panel bounds, no-auto-upload disclosure, structured bug export and clean close alongside the existing result-share path. A new mandatory Closed Beta v0.5 SOT explicitly gates accounts, cloud leaderboard, remote feedback ingestion and telemetry behind a separate privacy/data Decision Gate."
+    "note": "Run 104 is a bounded local-only release-prep surface. src/beta-readiness.js injects one start-only 封測資訊 control and a phone-safe guide describing the intended duel → repeated practice → explicit report loop and the no-account/no-auto-upload/no-cloud-leaderboard/no-background-telemetry boundary. The module has no persistence or transport calls. The existing result-actions 320x568 browser harness now switches to the start modal after proving share/report behavior and must also prove the readiness button/panel bounds, copy and close lifecycle before it can report success."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,8 +65,8 @@
     }
   },
   "next_candidates": [
-    "RELEASE_PREP: add a bounded Closed Beta release-readiness/privacy checklist or local tester identity shell only if it remains entirely local; do not create any remote write without the privacy/data Decision Gate",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus 修行進度 comparison; change difficulty only if repeated evidence shows a concrete wall",
-    "DECISION_GATE: before cloud leaderboard, remote feedback inbox or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
+    "RELEASE_PREP: expose a bounded local personal-record summary only by reusing existing campaign/challenge local records; no new identifier or remote write",
+    "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

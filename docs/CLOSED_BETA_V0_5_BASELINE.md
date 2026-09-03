@@ -35,6 +35,14 @@ The Decision Gate must define data fields, retention/deletion, abuse/spam contro
 - Native share cancellation is a clean no-op; unsupported share may fall back to local clipboard copy.
 - Result/report controls must remain ≥44 px and fit the 320×568 acceptance viewport without obscuring the terminal result flow.
 
+## Closed Beta release-readiness UI contract
+
+- The start surface may expose one compact **封測資訊** control that opens a bounded tester guide without changing the playable mode selector or combat HUD.
+- The guide should make the intended test loop explicit: play at least one duel, repeat the same practice opponent once to inspect **修行進度**, then use the existing explicit **回報** path when something is unclear or broken.
+- The guide must state that the current Preview is a Closed Beta preparation build, requires no account, performs no automatic report upload, and has no cloud leaderboard or background telemetry.
+- This release-prep guide is informational only: it must not create a storage key, tester/player identifier, analytics event, network request or gameplay rule.
+- The control and panel must remain inside the 320×568 acceptance viewport, preserve ≥44 px touch ownership for the control/close action, and disappear with the start modal once play begins.
+
 ## Release boundary
 
 `autonomous-evolution` may continue building local/export-only Closed Beta readiness under this baseline. It must stop at the first remote-data write or public leaderboard/account design and open the privacy/data Decision Gate instead. Draft PR #1 remains unmerged until Ken explicitly decides to merge/release.
