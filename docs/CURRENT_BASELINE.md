@@ -33,15 +33,15 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 - The start screen has a complete **玩法** guide for parry, counter direction bonus, posture/guard break, STEP, Perfect STEP and Ronin feints. Stage 2 gives a short cue to wait for the final feint direction.
 - Live combat is intentionally quiet: HP, stage/enemy and posture remain; persistent READ/PARRY copy, footer gesture text, block-zone labels and arena subtitle remain removed.
 - **刀路清晰** is optional/default-off: four pointer-transparent edge rails follow displayed/final direction, strengthen at strike, clear after resolution, stay static under reduced motion, and do not change gameplay.
-- **節拍提示** is optional/default-off: a hollow pointer-transparent ring shrinks from authoritative telegraph progress, follows displayed/final direction, shows the existing Perfect window then normal legal strike window, and clears outside telegraph/strike. It does not widen windows, change enemy timing/damage/reach/STEP/score/input or create a second clock. When disabled it performs no per-update timing frame derivation or DOM writes after its one-time off render; toggle-off clears once then remains idle.
+- **節拍提示** is optional/default-off: a hollow pointer-transparent ring shrinks from authoritative telegraph progress, follows displayed/final direction, shows the existing Perfect boundary then normal strike window, and clears outside telegraph/strike. It does not expose a second timing clock or change enemy timing/damage/reach/STEP/score/input; the bounded near-contact guard buffer remains an input-tolerance seam rather than a new advertised timing window. When disabled it performs no per-update timing frame derivation or DOM writes after its one-time off render; toggle-off clears once then remains idle.
 
 ## Combat rules
 
-- Correct direction/timing parries; wrong direction/timing can fail and lead to damage. Each recovery accepts at most one manual counter.
+- Correct-direction parry remains legal throughout strike. A bounded near-contact late-telegraph buffer, derived from the current enemy Perfect window and clamped to 60–110 ms, accepts only after the final attack direction has resolved; it commits the guard and resolves at strike contact as a normal parry, never Perfect. Earlier telegraph taps, unresolved feints, wrong directions and input after the strike window still fail. Each recovery accepts at most one manual counter.
 - Enemy posture rises on parry and faster on Perfect Parry. Ashigaru/Ronin/Oni thresholds remain 3/4/5. Guard break extends the opening and gives exactly +2 damage to the next valid manual counter before posture resets.
 - Incoming hits build player posture; heavy hits build faster. Player guard break at 4 adds +1 damage to that hit and resets posture. A successful parry relieves one player-posture point.
 - **Perfect Parry** immediately performs a 1-damage automatic light riposte and builds enemy posture. The player may still swipe once in the same recovery unless that riposte triggers Blood Moon or defeat. The old later perfect-counter +1 is suppressed for that opening so the total normal perfect + opposite-direction follow-up budget stays approximately unchanged.
-- Normal parry has no automatic attack and still requires the manual swipe counter.
+- Normal parry, including a buffered near-contact guard, has no automatic attack and still requires the manual swipe counter.
 
 ## Spacing, STEP and Perfect STEP
 
@@ -92,7 +92,7 @@ This is the cumulative approved baseline on `autonomous-evolution`. `main` remai
 
 - Gameplay/animation timing is elapsed-time based. PlayCanvas adaptively caps pixel ratio from rolling frame time before timing/responsiveness is sacrificed.
 - Skinned model, attack pack, stage identity, trails, full-blade afterimages, first-person grip and UI overlays reuse bounded entities/nodes; no unbounded gameplay-loop allocation, timer or network work is allowed.
-- `src/game-core.js` remains deterministic combat authority. Boss, mastery, onboarding, footwork, Perfect Parry, Perfect STEP, practice, challenge, run-analysis, accessibility and renderer systems remain bounded adapters.
+- `src/game-core.js` remains deterministic combat authority, including the bounded telegraph-to-strike parry commitment seam. Boss, mastery, onboarding, footwork, Perfect Parry, Perfect STEP, practice, challenge, run-analysis, accessibility and renderer systems remain bounded adapters.
 - `src/run-analysis.js` may observe authoritative `strike`, parry, successful STEP and `player-hit` events to derive result-only directional defense statistics. It may not alter engine state, timing, input, scoring, persistence, renderer authority or network behaviour.
 - `src/boss-encounter.js` remains the sole Crimson Shogun Phase I/II definition/transition authority. Direct Blood Moon practice may request the existing Phase II definition at 6 HP with no transition score, but may not duplicate or rewrite Phase II attack/timing values.
 - `src/blood-moon-practice.js` owns only the direct Phase II practice request/UI and route identity. It composes outside the established Shogun practice and boss adapters, may mark practice terminal identity/retry presentation, and may not change campaign/challenge boss rules, Phase II balance, storage, network behaviour or renderer authority.

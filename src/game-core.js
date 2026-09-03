@@ -74,6 +74,15 @@ const OPPOSITE = Object.freeze({
   [Direction.LEFT]: Direction.RIGHT,
 });
 
+const PARRY_LEAD_BUFFER_MIN_MS = 60;
+const PARRY_LEAD_BUFFER_MAX_MS = 110;
+
+function parryLeadBufferMs(enemy) {
+  const perfectWindowMs = Number(enemy?.perfectWindowMs);
+  const derived = Number.isFinite(perfectWindowMs) ? Math.round(perfectWindowMs + 12) : 72;
+  return Math.max(PARRY_LEAD_BUFFER_MIN_MS, Math.min(PARRY_LEAD_BUFFER_MAX_MS, derived));
+}
+
 export function oppositeDirection(direction) {
   return OPPOSITE[direction] ?? null;
 }
@@ -119,6 +128,8 @@ function cloneAttack(definition) {
     counterUsed: false,
     guardBroken: false,
     strikeStartedAt: 0,
+    bufferedParryDirection: null,
+    bufferedParryCommittedAt: 0,
   };
 }
 
@@ -213,6 +224,38 @@ export class CombatEngine {
       return { accepted: false, reason: 'invalid-input' };
     }
 
+    if (this.phase === 'telegraph' && this.currentAttack) {
+      const remainingMs = this.phaseEndsAt - now;
+      const withinLeadBuffer =
+        remainingMs >= 0 &&
+        remainingMs <= parryLeadBufferMs(this.enemy) &&
+        this.currentAttack.feintResolved;
+
+      if (!withinLeadBuffer) {
+        this.combo = 0;
+        this.#emit('parry-miss', { direction, reason: 'wrong-time' });
+        return { accepted: false, reason: 'wrong-time' };
+      }
+
+      if (direction !== this.currentAttack.direction) {
+        this.combo = 0;
+        this.#emit('parry-miss', {
+          direction,
+          expected: this.currentAttack.direction,
+          reason: 'wrong-direction',
+        });
+        return { accepted: false, reason: 'wrong-direction' };
+      }
+
+      if (this.currentAttack.bufferedParryDirection) {
+        return { accepted: false, reason: 'already-buffered' };
+      }
+
+      this.currentAttack.bufferedParryDirection = direction;
+      this.currentAttack.bufferedParryCommittedAt = now;
+      return { accepted: true, perfect: false, buffered: true };
+    }
+
     if (this.phase !== 'strike' || !this.currentAttack) {
       this.combo = 0;
       this.#emit('parry-miss', { direction, reason: 'wrong-time' });
@@ -230,7 +273,8 @@ export class CombatEngine {
     }
 
     const elapsed = Math.max(0, now - this.currentAttack.strikeStartedAt);
-    const perfect = elapsed <= this.enemy.perfectWindowMs;
+    const buffered = Boolean(this.currentAttack.bufferedParryDirection);
+    const perfect = !buffered && elapsed <= this.enemy.perfectWindowMs;
     this.currentAttack.parried = true;
     this.currentAttack.perfect = perfect;
     this.playerPosture = Math.max(0, this.playerPosture - 1);
@@ -256,7 +300,7 @@ export class CombatEngine {
         enemyPostureMax: this.enemyPostureMax,
       });
     }
-    return { accepted: true, perfect };
+    return { accepted: true, perfect, ...(buffered ? { buffered: true } : {}) };
   }
 
   attemptAttack(direction, now) {
@@ -382,6 +426,7 @@ export class CombatEngine {
   }
 
   #startStrike(now) {
+    const bufferedParryDirection = this.currentAttack.bufferedParryDirection;
     this.currentAttack.displayedDirection = this.currentAttack.direction;
     this.currentAttack.feintResolved = true;
     this.currentAttack.strikeStartedAt = now;
@@ -393,6 +438,7 @@ export class CombatEngine {
       damage: this.currentAttack.damage,
       heavy: Boolean(this.currentAttack.heavy),
     });
+    if (bufferedParryDirection) this.attemptParry(bufferedParryDirection, now);
   }
 
   #resolveMissedStrike(now) {

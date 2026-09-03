@@ -1,5 +1,11 @@
 # Changelog
 
+## Run 098 — Near-contact normal-parry tolerance repair
+
+- Added a bounded final-telegraph guard commitment buffer derived from each opponent's existing Perfect timing, clamped to 60–110 ms so slower early-game cuts receive more mobile-input grace while Oni/Shogun/Blood Moon remain tighter.
+- A buffered correct-direction guard resolves only when strike contact begins and is always a normal parry: it cannot earn Perfect, auto-riposte or the legacy Perfect damage budget. Earlier telegraph taps, unresolved feints and wrong final directions still fail.
+- Enemy telegraph/strike durations, Perfect-window values, damage, posture, STEP/reach, direction mapping, renderer motion, persistence and network/privacy behavior are unchanged; focused deterministic tests cover the boundary, non-Perfect/manual-counter budget and feint protection.
+
 ## Run 096 — Bottom parry / STEP ownership repair
 
 - Repaired the default right-hand STEP layout so the STEP button, range chip and feedback now live in the approved lower-right safe corner instead of occupying the bottom-centre parry lane; left-hand preference continues to mirror the same cluster into the lower-left safe corner.

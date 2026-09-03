@@ -24,11 +24,11 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 
 ## Combat / STEP / progression
 
-- [ ] Correct timing+direction parries; wrong/early/late input does not become an unintended success/perfect.
+- [ ] Correct-direction parry remains legal throughout strike. A bounded near-contact late-telegraph buffer accepts only after the final direction is resolved, resolves at strike contact as a normal parry and can never become Perfect; earlier telegraph input, unresolved feints, wrong directions and input after the strike window still fail.
 - [ ] Enemy hits cause damage; health/posture never becomes invalid; only one manual counter lands per opening.
 - [ ] Parry raises enemy posture; Perfect raises faster; guard break gives exactly +2 next valid manual counter and resets correctly.
 - [ ] Incoming hits build player posture; heavy hits build faster; player guard break adds +1 to that hit and resets; successful parry relieves one point.
-- [ ] Perfect Parry immediately deals 1 auto-riposte damage, builds posture and normally leaves one manual counter; normal parry does not auto-attack.
+- [ ] Perfect Parry immediately deals 1 auto-riposte damage, builds posture and normally leaves one manual counter; normal parry—including a buffered near-contact guard—does not auto-attack.
 - [ ] Stage start/restart begins mid distance. Normal STEP works only in bounded early strike and only evades if reach is escaped. Heavy/long attacks still track at far distance.
 - [ ] Perfect STEP remains narrower, deals exactly 1 auto-riposte damage, adds no posture and normally leaves one manual counter. Blood Moon/defeat closes that opening immediately.
 - [ ] Ashigaru → Ronin → Oni → Crimson Shogun campaign progression remains intact; stage transition/restart resets combat state and distance.
@@ -72,7 +72,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 
 ## Delivery gates
 
-- [ ] `npm test` passes, including direct Stage 2/3/4 Phase I practice activation/terminal isolation, direct Blood Moon Phase II entry/terminal identity with no transition-score grant, challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, final-wave full-health +300 terminal-score-authority regressions, and four-direction run-analysis accounting for parry/STEP/hit outcomes.
+- [ ] `npm test` passes, including bounded late-telegraph parry-buffer boundary/feint/Perfect-isolation coverage, direct Stage 2/3/4 Phase I practice activation/terminal isolation, direct Blood Moon Phase II entry/terminal identity with no transition-score grant, challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, final-wave full-health +300 terminal-score-authority regressions, and four-direction run-analysis accounting for parry/STEP/hit outcomes.
 - [ ] `npm run test:browser` passes.
 - [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact and the full six-entry practice/challenge selector inside the shared 320×568 start layout, plus 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.

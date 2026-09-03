@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 97,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Closed the Run 094 heavy-attack acceptance P2 by adding a focused real 320x568 PlayCanvas Oni heavy telegraph-to-strike-to-recovery gate with heavy-pass lifecycle diagnostics, authored blade attachment/readability checks, and normal-attack neutrality.",
-  "last_commit": "28656c938c63b07912459914c45ff72cf59e3535",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before feature work. If both are terminal green, no known review blocker remains; the next bounded combat work should use current practice/runtime evidence to address basic parry tolerance/readability or Top/Bottom choreography.",
+  "run_number": 98,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Added a bounded late-telegraph normal-parry commitment buffer derived from each enemy's existing Perfect window so near-contact mobile taps survive the phase boundary without slowing attacks, flattening enemy identity, or granting Perfect Parry.",
+  "last_commit": "f831f9ff2e72ae7aa121310ffbc9c36866f13aaf",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further feature work. If both are terminal green and no new review blocker appears, the next owner-feedback repair is Top/Bottom authored katana choreography continuity, followed by repeat practice evidence before broader Closed Beta preparation.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "heavy_attack_renderer_gate_pending_exact_head",
-    "last_observed_head": "28656c938c63b07912459914c45ff72cf59e3535",
-    "incoming_ci_run": 33750594724,
+    "status": "parry_tolerance_pending_exact_head",
+    "last_observed_head": "f831f9ff2e72ae7aa121310ffbc9c36866f13aaf",
+    "incoming_ci_run": 33755569071,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "A dedicated production-build browser gate now runs the real PlayCanvas View at 320x568 against the Oni Guard's real first heavy AttackTop. It requires heavy load/drive/recovery/clear diagnostics, continuous authored AttackTop, Sword directly parented to HandR, grip-lock/read-trail/finite blade-tip evidence, bounded depth/camera transforms, and a normal Ashigaru attack with zero heavy weighting."
+    "note": "Run 098 changes only guard acceptance around the telegraph-to-strike boundary: the lead buffer scales from the existing enemy Perfect window (clamped 60-110 ms), requires the final direction to be resolved, commits the guard without resolving early, and converts it to a normal non-Perfect parry exactly when strike contact begins. Existing strike durations, enemy Perfect windows, damage, posture, STEP, boss definitions and renderer timing are unchanged."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,8 +65,8 @@
     }
   },
   "next_candidates": [
-    "REGRESSION_FIX: rebalance basic parry readability/tolerance using current stage timing evidence without flattening fast/heavy attack identity",
-    "REGRESSION_FIX/FEATURE: improve Top/Bottom authored katana choreography continuity now that lower input ownership and heavy-path acceptance are executable",
-    "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice evidence to choose the next visible combat refinement from measured weak directions and timing pressure"
+    "REGRESSION_FIX/FEATURE: improve Top/Bottom authored katana choreography continuity now that lower input ownership, heavy-path acceptance and basic parry tolerance are executable",
+    "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice evidence to choose the next visible combat refinement from measured weak directions and timing pressure",
+    "RELEASE_PREP: reconcile the approved Closed Beta v0.5 release baseline into repository SOT after core combat repairs are closed, before any backend/remote-data implementation"
   ]
 }

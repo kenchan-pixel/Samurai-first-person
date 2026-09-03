@@ -119,3 +119,30 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No gameplay timing, parry/Perfect window, damage, posture, score, STEP/input semantics, enemy/boss definitions, renderer production transforms, persistence, network/account/privacy behavior or asset authority changed. This run adds acceptance instrumentation/tests only to close a material visual-runtime review blocker.
 - The gate uses existing local source/assets and creates no account, telemetry, identifier, API or remote data flow.
 - Post-commit acceptance requires exact-head GitHub CI (including the new focused browser smoke) plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.
+
+## Run 098 — Near-contact normal-parry tolerance repair
+
+**Date:** 2026-09-03  
+**Action type:** REGRESSION_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `f831f9ff2e72ae7aa121310ffbc9c36866f13aaf`.
+- Exact-head GitHub Actions CI #143 / run `33755569071` is terminal **success**, and the exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review comments are empty, and the latest exact-head review reports no actionable P0/P1/P2 finding.
+- Run 096 closed the Bottom/STEP ownership defect and Run 097 closed the heavy-attack renderer-evidence P2, so feature/regression selection is unblocked.
+- Current evolution state and owner feedback both identify basic parry tolerance/readability ahead of Top/Bottom choreography. Candidate scoring: (1) bounded late-telegraph guard commitment 23/25; (2) Top/Bottom authored choreography 20/25; (3) repeated practice-evidence pass 19/25. The first candidate has the strongest direct playability evidence and lowest combat-identity risk.
+
+### Repair
+
+- Added a bounded **near-contact guard commitment buffer** inside deterministic `CombatEngine` authority. A correct-direction tap in the final slice of telegraph is accepted only after the attack's final direction has resolved; the guard stays committed through the phase boundary and resolves only when strike contact begins.
+- The buffer is derived from the opponent's existing Perfect window and clamped to **60–110 ms**: slower Ashigaru attacks receive the largest mobile-input grace, while Oni/Shogun/Blood Moon remain tighter. No telegraph/strike duration, attack order, damage, reach, STEP or enemy Perfect value changes.
+- Buffered guards are explicitly **normal parries, never Perfect**. They award normal parry posture/score, require the established manual swipe counter, and cannot trigger Perfect Parry auto-riposte. Direct strike-phase parries keep the existing Perfect calculation unchanged.
+- Earlier telegraph taps still fail wrong-time; unresolved feints cannot buffer; a wrong final direction still fails wrong-direction; a second buffered commitment is rejected. Added focused deterministic tests for the contact-boundary success, non-Perfect/manual-counter budget, too-early rejection and feint/final-direction protection.
+- Updated the regression contract so future acceptance distinguishes this intentional near-contact tolerance from unintended early/late success.
+
+### Regression boundary
+
+- No enemy/boss telegraph or strike durations, Perfect-window values, damage, posture thresholds, STEP timing/reach, swipe/tap direction mapping, score formulas outside the existing normal-parry reward, renderer animation/geometry, persistence, account/network/privacy behavior or asset authority changed.
+- The repair does not flatten fast/heavy identity: its grace scales from each opponent's already-authoritative Perfect timing and is capped at 110 ms.
+- Post-commit acceptance requires exact-head GitHub CI plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.

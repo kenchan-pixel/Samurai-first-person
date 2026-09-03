@@ -33,6 +33,7 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 089: added **師範弱點再練** on normal campaign results. The existing stage-focused analysis now offers one-tap routing into the real Ronin/Oni/Shogun practice for a Stage 2/3/4 weakness, or a clean Stage 1 campaign restart for an Ashigaru focus; recommended practice completion keeps a same-opponent retry cue while preserving campaign best.
 - Runs 090–091: converted the remaining practice orchestration review gaps into a true production-document 320×568 gate, then repaired the real **Pause → Home → 練血月** fallback by making the shared practice Start reset listener idempotent and explicitly arming the existing Shogun-practice launch contract before direct Blood Moon Phase II.
 - Run 092: added result-only **四向防守** analysis for campaign/direct practice. It derives each direction from authoritative strike/parry/STEP/player-hit outcomes, highlights the weakest observed defense rate, stays compact at 320×568 and deliberately omits the extra map from eight-wave challenge/今日陣 terminals.
+- Runs 093–098: repaired normal practice capture under the Blood Moon adapter, added and then real-renderer-verified heavy-attack weight, restored exact-head Preview identity verification with `/build-meta.json`, moved default STEP out of the Bottom parry lane with 320×568 input coverage, and added a bounded near-contact normal-parry buffer that preserves Perfect/feint/fast-attack identity.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
@@ -49,14 +50,14 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 
 - Tactical-choice refinement only if runtime evidence shows the current 2/4/6 cadence, +1 HP safe option or -1 HP/+350 score risk option is trivial, confusing or dominant; do not expand it into inventory/economy/perks without a separate product need.
 - 宿敵步速 refinement only if repeated challenge evidence shows the compact split badge is unreadable, distracting or not useful for replay decisions. Do not create online leaderboards/accounts/cloud sync without a separate product/privacy Decision Gate.
-- Evidence-based difficulty refinement: tune one bounded Ronin/Oni/Shogun/Blood Moon rhythm/window/phase pressure only if repeatable practice/runtime evidence shows a wall.
+- Evidence-based difficulty refinement: after the bounded near-contact parry repair, tune at most one further Ronin/Oni/Shogun/Blood Moon rhythm/window/phase pressure only if repeatable practice/runtime evidence still shows a wall.
 - Accessibility: broader motion controls only where they solve a concrete accessibility gap. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
 - Further Shogun motion/phase refinement only from concrete readability/performance evidence.
 - Deeper first-person weapon fidelity only if current two-hand silhouette stays readable and performant.
 
 ## Data / telemetry Decision Gate
 
-Remote gameplay collection remains unapproved. Current practice, challenge, mastery and run-analysis are local-only. Before any backend implementation, define minimum anonymous schema, explicit raw-input/device-ID exclusions, retention/deletion, backend/secrets, player notice/consent/opt-out, test-session handling and the dashboard/AI output that justifies collection. Until approved, send no gameplay records remotely.
+Remote gameplay collection remains unapproved in repository SOT. Current practice, challenge, mastery and run-analysis are local-only. Before backend implementation, reconcile the owner-approved Closed Beta v0.5 release baseline with this section and define minimum anonymous schema, explicit raw-input/device-ID exclusions, retention/deletion, backend/secrets, player notice/consent/opt-out, test-session handling and the dashboard/AI output that justifies collection. Until that repository SOT reconciliation is committed, send no gameplay records remotely.
 
 ## Technical opportunities
 

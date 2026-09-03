@@ -54,6 +54,86 @@ test('matching strike direction parries and opens one counter window', () => {
   assert.equal(combat.attemptAttack(Direction.LEFT, 1720).reason, 'already-used');
 });
 
+test('near-contact telegraph tap buffers a normal parry without becoming Perfect', () => {
+  const enemy = {
+    id: 'buffer-target', name: 'Buffer Target', title: 'Test Stage', maxHp: 4,
+    gapMs: 100, recoveryMs: 500, perfectWindowMs: 60,
+    attacks: [{ direction: Direction.TOP, telegraphMs: 200, strikeMs: 100, damage: 1 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy] });
+  combat.start(0);
+  combat.update(1550);
+  assert.equal(combat.phase, 'telegraph');
+
+  const buffered = combat.attemptParry(Direction.TOP, 1680);
+  assert.deepEqual(buffered, { accepted: true, perfect: false, buffered: true });
+  assert.equal(combat.phase, 'telegraph');
+  assert.equal(combat.drainEvents().some((event) => event.type === 'parry'), false);
+
+  combat.update(1750);
+  assert.equal(combat.phase, 'recovery');
+  assert.equal(combat.currentAttack.perfect, false);
+  assert.equal(combat.enemyPosture, 1);
+  assert.equal(combat.score, 100);
+  const events = combat.drainEvents();
+  assert.ok(events.some((event) => event.type === 'strike'));
+  assert.ok(events.some((event) => event.type === 'parry'));
+  assert.equal(events.some((event) => event.type === 'perfect-parry'), false);
+
+  const counter = combat.attemptAttack(Direction.BOTTOM, 1760);
+  assert.equal(counter.accepted, true);
+  assert.equal(counter.damage, 2);
+});
+
+test('telegraph taps before the bounded lead buffer remain wrong-time misses', () => {
+  const enemy = {
+    id: 'buffer-target', name: 'Buffer Target', title: 'Test Stage', maxHp: 4,
+    gapMs: 100, recoveryMs: 500, perfectWindowMs: 60,
+    attacks: [{ direction: Direction.TOP, telegraphMs: 200, strikeMs: 100, damage: 1 }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy] });
+  combat.start(0);
+  combat.update(1550);
+
+  const early = combat.attemptParry(Direction.TOP, 1670);
+  assert.deepEqual(early, { accepted: false, reason: 'wrong-time' });
+  assert.equal(combat.phase, 'telegraph');
+  const miss = combat.drainEvents().find((event) => event.type === 'parry-miss');
+  assert.equal(miss?.detail?.reason, 'wrong-time');
+});
+
+test('late telegraph buffer waits for a resolved feint and still rejects wrong direction', () => {
+  const enemy = {
+    id: 'feint-buffer-target', name: 'Feint Buffer Target', title: 'Test Stage', maxHp: 4,
+    gapMs: 100, recoveryMs: 500, perfectWindowMs: 60,
+    attacks: [{
+      direction: Direction.RIGHT,
+      feintFrom: Direction.LEFT,
+      feintAt: 0.7,
+      telegraphMs: 200,
+      strikeMs: 100,
+      damage: 1,
+    }],
+  };
+  const combat = new CombatEngine({ enemies: [enemy] });
+  combat.start(0);
+  combat.update(1550);
+
+  const unresolved = combat.attemptParry(Direction.RIGHT, 1680);
+  assert.deepEqual(unresolved, { accepted: false, reason: 'wrong-time' });
+
+  combat.update(1695);
+  assert.equal(combat.snapshot(1695).attack.displayedDirection, Direction.RIGHT);
+  const wrong = combat.attemptParry(Direction.LEFT, 1696);
+  assert.deepEqual(wrong, { accepted: false, reason: 'wrong-direction' });
+  const buffered = combat.attemptParry(Direction.RIGHT, 1697);
+  assert.deepEqual(buffered, { accepted: true, perfect: false, buffered: true });
+
+  combat.update(1750);
+  assert.equal(combat.phase, 'recovery');
+  assert.equal(combat.currentAttack.perfect, false);
+});
+
 test('wrong direction does not parry and unanswered strike damages player', () => {
   const enemy = {
     id: 'test-enemy', name: 'Test Enemy', title: 'Test Stage', maxHp: 2,
