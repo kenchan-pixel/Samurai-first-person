@@ -40,6 +40,13 @@
       const button = document.querySelector('#beta-readiness-button');
       const panel = document.querySelector('#beta-readiness-panel');
       if (!button || !panel) throw new Error('Closed Beta guide missing');
+      const betaDomIntact = () => Boolean(
+        document.body &&
+        document.querySelector('#start-button') &&
+        document.body.contains(resultScreen) &&
+        document.body.contains(button) &&
+        document.body.contains(panel)
+      );
       button.click();
       await flush();
       const section = panel.querySelector('[data-local-records]');
@@ -50,16 +57,20 @@
         section && !panel.hidden && inside(button.getBoundingClientRect(), true) && inside(panel.getBoundingClientRect()) &&
         campaign.includes('A級 · MASTERY 82 · 004200') && challenge.includes('連戰 5/8 · 006800') && next.includes('6/8') &&
         section.textContent.includes('只讀 · 不上傳') && root.dataset.localRecordsReady === 'true' &&
-        root.dataset.betaReadinessProgress === '0/3'
+        root.dataset.betaReadinessProgress === '0/3' && betaDomIntact()
       );
       if (!normalPass) throw new Error(`local records failed: ${campaign} | ${challenge} | ${next}`);
 
       resultScreen.classList.add('modal--visible');
       await flush();
-      if (root.dataset.betaReadinessProgress !== '1/3') throw new Error(`terminal result did not advance beta progress: ${root.dataset.betaReadinessProgress}`);
+      if (root.dataset.betaReadinessProgress !== '1/3' || !betaDomIntact()) {
+        throw new Error(`terminal result did not advance beta progress without detaching app DOM: ${root.dataset.betaReadinessProgress}`);
+      }
       root.dataset.practiceProgressState = 'comparison';
       await flush();
-      if (root.dataset.betaReadinessProgress !== '2/3') throw new Error(`same-opponent comparison did not advance beta progress: ${root.dataset.betaReadinessProgress}`);
+      if (root.dataset.betaReadinessProgress !== '2/3' || !betaDomIntact()) {
+        throw new Error(`same-opponent comparison did not advance beta progress without detaching app DOM: ${root.dataset.betaReadinessProgress}`);
+      }
       root.dataset.resultFeedbackLast = 'cancelled';
       await flush();
       if (root.dataset.betaReadinessProgress !== '2/3') throw new Error('cancelled feedback incorrectly completed tester progress');
@@ -68,7 +79,7 @@
       const completedRows = [...panel.querySelectorAll('[data-beta-readiness-complete="true"]')];
       const progressText = panel.querySelector('[data-beta-readiness-progress]')?.textContent || '';
       const betaProgressPass = Boolean(
-        root.dataset.betaReadinessProgress === '3/3' && root.dataset.betaReadinessComplete === 'true' &&
+        root.dataset.betaReadinessProgress === '3/3' && root.dataset.betaReadinessComplete === 'true' && betaDomIntact() &&
         completedRows.length === 3 && progressText.includes('3/3') && progressText.includes('完成') && button.textContent.includes('封測完成') &&
         inside(button.getBoundingClientRect(), true) && inside(panel.getBoundingClientRect())
       );
@@ -80,13 +91,13 @@
           configurable: true,
           get() { throw new DOMException('storage denied by browser policy', 'SecurityError'); },
         });
-        await import('../src/local-records.js?denied-storage=run109');
+        await import('../src/local-records.js?denied-storage=run110');
         await flush();
         const deniedCampaign = panel.querySelector('[data-local-record-campaign]')?.textContent || '';
         const deniedChallenge = panel.querySelector('[data-local-record-challenge]')?.textContent || '';
         const deniedNext = panel.querySelector('[data-local-record-next]')?.textContent || '';
         const deniedPass = Boolean(
-          !panel.hidden && !button.disabled && document.querySelector('#start-button')?.disabled !== true &&
+          !panel.hidden && !button.disabled && document.querySelector('#start-button')?.disabled !== true && betaDomIntact() &&
           deniedCampaign.includes('未有主線紀錄') && deniedChallenge.includes('未有連戰紀錄') && deniedNext.includes('完整主線') &&
           root.dataset.localRecordsReady === 'true' && root.dataset.betaReadinessProgress === '3/3'
         );

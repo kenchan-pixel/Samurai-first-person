@@ -39,7 +39,7 @@ function renderSessionProgress(documentRef = globalThis.document) {
   if (!documentRef) return betaReadinessProgress(sessionCompleted);
   const progress = betaReadinessProgress(sessionCompleted);
   const button = documentRef.querySelector?.('#beta-readiness-button');
-  const progressText = documentRef.querySelector?.('[data-beta-readiness-progress]');
+  const progressText = documentRef.querySelector?.('#beta-readiness-panel [data-beta-readiness-progress]');
   const progressHint = documentRef.querySelector?.('[data-beta-readiness-progress-hint]');
 
   if (button) {

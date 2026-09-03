@@ -150,3 +150,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source/lifecycle reasoning is complete in this execution surface; there is no local repository/browser checkout.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
+
+## Run 110 — Beta progress DOM-ownership repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `a3d765dd95faf955e9d218ab5c0f66a064ee9fcb`.
+- Exact-head Actions CI #155 / run `33813147207` is terminal **failure**. Both the original job and one diagnostic rerun passed `npm test` 127/127, then failed the required mastery browser gate with the same deterministic receipt: `data-ronin-practice-controls="false"`, `data-ronin-practice-integration="false"`, `data-mastery-integration="fail"`.
+- The failure DOM is decisive: `<html>` retains runtime receipts but its children are gone and its only text is `本次封測 1/3`. The new checklist root receipt `data-beta-readiness-progress` shares the same selector as the visible progress label; after the first render the root itself becomes the first `[data-beta-readiness-progress]` match, so the next update writes `textContent` to `<html>` and destroys the live app DOM.
+- Latest exact-head review therefore remains a blocking P1 until the full browser baseline is restored. PR #1 has no inline review comments/threads; Vercel exact-head status is **success**; Draft PR remains open/Draft/unmerged and `main` remains untouched. Feature work is prohibited.
+
+### Implementation
+
+- Scoped the visible checklist progress-label lookup to `#beta-readiness-panel [data-beta-readiness-progress]`. The root continues to expose its machine-readable `data-beta-readiness-progress` receipt, but can no longer be selected as the UI text node.
+- Strengthened the existing true 320×568 Closed Beta/local-record browser gate with an explicit DOM-ownership assertion. Through the genuine 1/3 terminal transition, 2/3 same-opponent comparison, 3/3 copied-feedback completion and denied-storage fallback, `document.body`, Start, result screen, guide button and guide panel must all remain attached to the live document.
+- This keeps Run 109's hidden→visible transition semantics intact and does not weaken/skip the mastery browser assertions.
+- No combat timing, damage, parry/Perfect/STEP rules, scoring, renderer, record schema, storage key, identifier, analytics, backend or network behaviour changed.
+
+### Verification boundary
+
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 110 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.

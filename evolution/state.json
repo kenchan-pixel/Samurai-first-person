@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 109,
+  "run_number": 110,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Closed Beta session checklist so it records a duel only from a post-install hidden-to-visible result transition instead of backfilling from pre-existing DOM visibility. Practice-comparison and feedback completion likewise remain mutation-driven, and the focused 320x568 browser gate now starts with a pre-visible result, proves progress stays 0/3, then proves a genuine later result transition advances to 1/3 before the existing 2/3 and 3/3 flow.",
-  "last_commit": "bf030e63a35a65f028d140d1c95884892252f910",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 109 must prove the transition-based Closed Beta observer restores the full browser baseline, ignores pre-existing result visibility, advances on a genuine later terminal transition, and preserves the local-only/no-persistence contract.",
+  "last_action": "Repaired a Closed Beta checklist DOM-ownership collision exposed by exact-head CI #155. Once the root carried data-beta-readiness-progress, the unscoped progress-label selector could select <html> on the next checklist update and replace the entire document via textContent. The visible progress label is now scoped to #beta-readiness-panel, and the true 320x568 local-record gate explicitly proves the app DOM and Start/result/guide controls remain attached through 1/3, 2/3 and 3/3 transitions.",
+  "last_commit": "a3d765dd95faf955e9d218ab5c0f66a064ee9fcb",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 110 must prove the beta progress selector-ownership repair restores the full mastery/practice browser baseline and preserves the transition-only, session-only, local/no-network contract.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "beta_progress_transition_repair_pending_exact_head",
-    "last_observed_head": "bf030e63a35a65f028d140d1c95884892252f910",
-    "incoming_ci_run": 33808331453,
-    "incoming_ci_result": "failure",
+    "status": "beta_progress_dom_ownership_repair_pending_exact_head",
+    "last_observed_head": "a3d765dd95faf955e9d218ab5c0f66a064ee9fcb",
+    "incoming_ci_run": 33813147207,
+    "incoming_ci_result": "failure_on_original_and_rerun",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required; github exact-head Vercel status is green for preflight",
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 109 repairs exact-head CI #154 / run 33808331453. The 320x568 Closed Beta/local-record browser gate intentionally starts with #result-screen already visible, must remain at 0/3 after observer installation and after a visible-to-hidden transition, then must reach 1/3 only on the subsequent hidden-to-visible terminal transition, continue to 2/3 on same-route practice comparison, reject cancelled feedback, reach 3/3 on copied/shared feedback, and keep denied storage non-fatal."
+    "note": "Run 110 repairs exact-head CI #155 / run 33813147207. Both the original job and one diagnostic rerun passed 127/127 Node tests but deterministically failed the mastery browser gate after the second Ronin practice. The failure DOM had no body/head and consisted only of the root receipt plus '本次封測 1/3', proving renderSessionProgress had selected the root itself through [data-beta-readiness-progress] and textContent-replaced the document. The focused 320x568 gate now requires live DOM ownership after every checklist transition."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -67,7 +67,7 @@
   "next_candidates": [
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: inspect Guard + four authored cuts at normal speed and refine only concrete blade/body continuity defects",
-    "RELEASE_PREP: after Run 109 exact-head CI/Vercel acceptance, use the session-only 0/3 guide to expose concrete Closed Beta friction; keep records/export local-only and do not add another persistence key or remote write",
+    "RELEASE_PREP: after Run 110 exact-head CI/Vercel acceptance, use the session-only 0/3 guide to expose concrete Closed Beta friction; keep records/export local-only and do not add another persistence key or remote write",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }
