@@ -40,6 +40,8 @@ The Decision Gate must define data fields, retention/deletion, abuse/spam contro
 
 - The start surface may expose one compact **封測資訊** control that opens a bounded tester guide without changing the playable mode selector or combat HUD.
 - The guide should make the intended test loop explicit: play at least one duel, repeat the same practice opponent once to inspect **修行進度**, then use the existing explicit **回報** path when something is unclear or broken.
+- The same guide may show a **session-only 0/3 completion state** for those three canonical steps. A visible terminal result completes the duel step; the existing same-route `修行進度` comparison completes the repeat-practice step; only a successfully shared or copied feedback/bug report completes the report step. Cancelled/unavailable export must not count as complete.
+- Session completion is guidance only. It must reset on page refresh and must not create `localStorage`/`sessionStorage`, a tester/player identifier, analytics event, network request, gameplay reward or unlock.
 - The guide must state that the current Preview is a Closed Beta preparation build, requires no account, performs no automatic report upload, and has no cloud leaderboard or background telemetry.
 - This release-prep guide is informational only: it must not create a storage key, tester/player identifier, analytics event, network request or gameplay rule.
 - The guide may show a **本機戰績** summary by read-only reuse of the existing campaign mastery best and challenge best records. It may derive a simple next-play suggestion from those already-stored values, but it must not create or update any storage key, add a hidden identifier, or imply cloud/global ranking.

@@ -101,3 +101,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source/syntax reasoning is complete in this execution surface; there is no local repository/browser checkout.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
+
+## Run 108 — Session-only Closed Beta checklist
+
+**Date:** 2026-09-04  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `a1b6c68c220228e498e4e87b95fd88b94b6b7c0e`.
+- Exact-head Actions CI #153 / run `33802633346` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**.
+- Latest qualifying exact-head Second Hourly review reports **no actionable P0–P2 finding**; PR #1 has no inline review comments/threads. Draft PR remains open/Draft/unmerged and `main` remains untouched.
+- Candidate scoring: session-only Closed Beta checklist **22/25** (impact 4, goal 5, novelty 4, confidence 4, safety 5); repeated-practice evidence helper **20/25**; challenge tactic result recap **19/25**. The beta checklist wins because it turns the already-approved three-step test guide into one complete player-visible test loop without another gameplay balance change or remote data surface.
+
+### Implementation
+
+- The existing start-only Closed Beta guide now shows **本次封測 0/3** and a visible completion state for the three already-approved tester steps.
+- A real terminal result advances the duel step; the existing same-route `修行進度` comparison advances the repeat-practice step; only a successfully shared/copied feedback or bug report advances the report step. Cancelled/unavailable export does not count.
+- Completion is deliberately session-only: page refresh resets it. The feature observes existing authoritative UI state only and creates no storage key, tester ID, analytics event, network request, gameplay reward, unlock or balance change.
+- Extended the existing 320×568 Closed Beta/local-record browser gate to prove 0/3 → 1/3 → 2/3, cancellation staying at 2/3, successful local export reaching 3/3, completed-row/button presentation remaining in bounds, and storage-denied startup remaining non-fatal.
+- Reconciled `docs/CLOSED_BETA_V0_5_BASELINE.md` so the session-only completion contract and remote-data gate are explicit.
+
+### Verification boundary
+
+- Source/syntax reasoning is complete in this execution surface; there is no local repository/browser checkout.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
