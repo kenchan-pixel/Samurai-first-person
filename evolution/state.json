@@ -1,40 +1,70 @@
 {
-  "protocol_version": 1,
-  "branch": "autonomous-evolution",
-  "base_branch": "main",
   "status": "verifying",
-  "run_number": 94,
-  "last_action_type": "FEATURE",
-  "last_action": "Added presentation-only heavy-attack weight for authored Oni/Shogun heavy strikes: a continuous crouched load, stronger forward body drive, enlarged real-blade read trail and bounded camera pressure while preserving normal attacks and all CombatEngine timing/damage/input rules",
+  "run_number": 95,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Added an exact-head Preview build receipt so the delivery loop can prove which commit the reachable Vercel alias is serving when the Vercel connector and GitHub commit-status integration are unavailable.",
   "last_commit": "835d6899a991920586c862e71d000fa7c0f0e5c7",
-  "active_blocker": "Awaiting fresh exact-head CI and Vercel Preview for the heavy-attack weight slice",
+  "active_blocker": "Post-commit exact-head CI and Preview build-receipt verification are required. After delivery verification is green, the blocking Bottom-parry/STEP input-ownership P2 and current-head heavy-attack focused browser-verification P2 remain ahead of feature work.",
   "ci_status": "pending_self_verification",
-  "preview_status": "pending_self_verification",
+  "preview_status": "pending_exact_head_build_receipt",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
-  "preview_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/DBCGdZYbGf7FNPsMS1LF4Yij9Ykp",
+  "preview_status_target": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app/build-meta.json",
+  "deployment_status_source": "Direct Vercel exact-SHA deployment data when available; otherwise exact-head GitHub Vercel status; when those integration signals are unavailable/missing (not failed), fail-closed Preview /build-meta.json exact-SHA receipt.",
+  "vercel_project": "samurai-first-person",
+  "vercel_team": "kenchan-pixels-projects",
   "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
-  "vercel_project_slug": "samurai-first-person",
   "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
-  "vercel_team_slug": "kenchan-pixels-projects",
-  "deployment_status_source": "GitHub Vercel commit status",
+  "preview_feedback_unresolved": 0,
+  "preview_self_verification": {
+    "viewport": "320x568",
+    "status": "delivery_receipt_repair_pending_exact_head",
+    "last_observed_head": "5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+    "incoming_ci_run": 33571293133,
+    "incoming_ci_result": "success",
+    "incoming_github_vercel_status_count": 0,
+    "direct_vercel_list_result": "403_forbidden",
+    "direct_vercel_alias_lookup_result": "404_not_found",
+    "owner_preview_reachability": "confirmed",
+    "receipt_path": "/build-meta.json",
+    "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
+    "note": "A reachable Preview does not prove exact-head identity by itself. The receipt fallback never overrides an explicit failed Vercel status."
+  },
   "external_deployment_recovery": {
     "last_incident": {
-      "provider": "Vercel",
-      "incident_key": "vercel:build-rate-limit:173c1495:2026-08-30T20:30:16Z",
-      "failure_kind": "build-rate-limit",
-      "blocked_head": "173c149522f60a0fa300655993571ff9deaf131e",
-      "status_target": "https://vercel.com/kenchan-pixels-projects?upgradeToPro=build-rate-limit",
-      "first_seen_at": "2026-08-30T20:30:16Z",
-      "cooldown_until": "2026-08-31T20:30:16Z",
+      "provider": "vercel",
+      "incident_key": "vercel:deployment-rate-limit:42ada958c082324b0fd9f057556266f34eb334d8",
+      "failure_kind": "deployment_rate_limit",
+      "blocked_head": "42ada958c082324b0fd9f057556266f34eb334d8",
+      "status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Fpu2hoWYQiNfDnCkjYFKJ16FwyBj",
+      "first_seen_at": "2026-08-29T19:38:36Z",
+      "cooldown_until": "2026-08-30T19:38:36Z",
       "rearm_attempted": true,
       "rearm_head": "1a2ddce4f610d911a519a3808412d2b4c6232bf6",
       "resolution": "success",
-      "resolved_at": "2026-09-01T01:23:55Z"
+      "resolved_at": "2026-09-01T01:33:00Z",
+      "resolved_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/3jPHtzwpzwXbWsean16q9VutK6Mf"
+    }
+  },
+  "delivery_verification_recovery": {
+    "last_incident": {
+      "provider": "vercel",
+      "incident_key": "vercel:missing-integration-signal:5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+      "failure_kind": "missing_exact_head_integration_signal",
+      "blocked_head": "5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+      "first_observed_at": "2026-09-03T10:21:08Z",
+      "incoming_ci": "success",
+      "github_vercel_status": "missing",
+      "direct_vercel_connector": "403_list_deployments_and_404_alias_lookup",
+      "preview_alias_reachable": true,
+      "repair": "emit_no_store_build_meta_exact_sha_receipt",
+      "receipt_path": "/build-meta.json",
+      "resolution": "pending_current_commit_verification"
     }
   },
   "next_candidates": [
-    "Self-inspect Oni and Shogun heavy attacks on the exact Preview at normal speed; refine the new load/drive/trail pressure only if the authored blade becomes obscured or the body commitment reads weakly",
-    "Use 四向防守 together with direct Ronin/Oni/Shogun/Blood Moon practice to identify repeatable direction-specific walls before changing duel balance",
-    "Self-inspect challenge and 今日陣 repeated runs; tune 宿敵步速 or the 2/4/6 tactical trade only if repeatable evidence shows confusion, triviality or dominance"
+    "REGRESSION_FIX: repair and production-verify Bottom parry input ownership against STEP at true 320x568, including real Bottom and Left parry routing in both handedness modes",
+    "BLOCKER_FIX: add focused real 320x568 Oni/Shogun heavy telegraph-to-strike-to-recovery verification while retaining normal-attack neutrality",
+    "REGRESSION_FIX: rebalance basic parry readability/tolerance using current stage timing evidence without flattening fast/heavy attack identity",
+    "REGRESSION_FIX/FEATURE: improve Top/Bottom authored katana choreography continuity after input correctness is restored"
   ]
 }

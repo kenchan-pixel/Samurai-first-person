@@ -10,7 +10,7 @@ Continuously evolve `kenchan-pixel/Samurai-first-person` into a substantially be
 
 At the start of every run, read the latest `autonomous-evolution` branch and the repository documents required by `AGENTS.md`. Inspect Draft PR #1 (`autonomous-evolution` → `main`), all unresolved review threads/comments/reviews, CI/check state, recent evolution log, and deployment state. Do not rely on previous-chat memory when repository evidence is available.
 
-For Vercel, prefer direct project/deployment data when available. If the Vercel connector cannot enumerate the imported project, use GitHub's `Vercel` commit status on the current branch head as the authoritative deployment signal.
+For Vercel, prefer direct project/deployment data when available. If the Vercel connector cannot enumerate the imported project, use GitHub's `Vercel` commit status on the current branch head as the normal authoritative deployment signal. If both integration channels are unavailable or the GitHub `Vercel` status is **missing rather than failed**, while the known Preview alias is reachable, a fail-closed exact-head build receipt may be used: fetch `/build-meta.json` from the Preview alias and require a valid 40-character `commitSha` exactly equal to the current `autonomous-evolution` HEAD; when `branch` is available it must equal `autonomous-evolution`. A missing, `unknown`, malformed, stale or mismatched receipt is not green. An explicit Vercel failure status is never overridden by the receipt. See `docs/DEPLOYMENT.md`.
 
 Human/device testing is auxiliary evidence only. Autonomous runs must not pause, HOLD, or request a Decision Gate merely because a fresh human/physical-iPhone test is unavailable. The agent must make the best bounded decision from available Preview/browser/runtime/screenshot/DOM/renderer-state/CI/test evidence. If later human feedback reveals a real regression, that evidence overrides the earlier automated conclusion and must be handled as a blocker/regression repair.
 
@@ -21,6 +21,8 @@ Before selecting any new feature, resolve the exact current `autonomous-evolutio
 - CI and Preview both terminal green → feature selection may continue if review/regression gates are also clear.
 - CI or Preview missing, queued, or in progress → `HOLD`; make no commit and do not start feature work.
 - CI or Preview failed → `BLOCKER_FIX`; repair before any feature work.
+
+The build receipt fallback above counts as Preview identity evidence only when the ordinary Vercel integration signal is unavailable/missing and every receipt condition passes. It does not waive any other gate.
 
 Do not infer success from an older SHA. Lack of human/device testing is not part of this HOLD fence.
 

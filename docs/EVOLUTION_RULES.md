@@ -27,6 +27,14 @@ Before any new feature selection, resolve the exact current `autonomous-evolutio
 - Never treat an older SHA's successful verification as evidence for the current HEAD.
 - Missing human/device testing is not a HOLD condition.
 
+### Preview identity fallback
+
+Use direct Vercel deployment data when it can identify the exact Git SHA. If direct deployment enumeration is unavailable, GitHub's exact-head `Vercel` commit status is the normal fallback.
+
+If those integration channels are unavailable or the GitHub `Vercel` status is **missing rather than failed**, while the known Preview alias is reachable, `/build-meta.json` may be used as a fail-closed exact-head identity receipt. It is green only when its `commitSha` is a valid 40-character SHA exactly equal to the current `autonomous-evolution` HEAD and, when available, its `branch` equals `autonomous-evolution`.
+
+A missing, `unknown`, malformed, stale or mismatched receipt remains `HOLD`. An explicit Vercel failure status is never overridden by the receipt. This fallback verifies which commit the Preview alias is actually serving; it does not waive CI, review, runtime, regression, security or browser gates. See `docs/DEPLOYMENT.md`.
+
 ### External deployment-provider failure recovery
 
 An explicitly external provider-capacity failure remains a feature blocker, but it must not permanently deadlock the branch.
