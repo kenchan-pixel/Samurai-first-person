@@ -93,3 +93,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No combat damage, timing, posture, score, enemy/boss definitions, player-screen direction semantics, persistence, account/network/privacy behavior, renderer geometry/animation or asset authority changed.
 - Existing Top/Right Pause-adjacent production checks remain in the same gate; the new lower-input checks extend rather than replace them.
 - Post-commit acceptance requires exact-head GitHub CI plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.
+
+## Run 097 — Heavy-attack real-renderer acceptance closure
+
+**Date:** 2026-09-03  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `28656c938c63b07912459914c45ff72cf59e3535`.
+- Exact-head GitHub Actions CI #142 / run `33750594724` is terminal **success**, and the exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty.
+- The latest current-head All Repos review confirms the Run 096 lower-control repair and leaves one actionable P2 ahead of feature work: Run 094 heavy weighting has unit/mocked evidence but no focused real-PlayCanvas 320×568 sequence proving it activates/settles correctly while the authored blade remains attached/readable and normal attacks remain neutral.
+
+### Repair
+
+- Added a dedicated production-build PlayCanvas browser contract at **320×568** rather than relying on a generic renderer-health pass. It uses the real `View` composition and a real `CombatEngine` configured with the existing Oni Guard definition, so the first existing heavy `AttackTop` is driven deterministically through telegraph → strike → recovery → gap.
+- The gate requires the heavy load/read telegraph, committed strike drive, recovery decay and final zeroed state; verifies the authored attack remains on `AttackTop`; and checks the actual Sword stays directly parented to `HandR`, grip-lock/orientation remains bounded, the real-blade read trail/finite blade-tip diagnostics remain present, and depth/camera/body transforms stay finite/bounded.
+- The same real renderer is then fed an existing normal Ashigaru telegraph and must report zero heavy load/drive/follow/read, proving the presentation adapter does not leak into ordinary attacks.
+- Added a focused browser runner to `npm run test:browser` and made the production page expose this smoke only behind `?browser-smoke=heavy-attack`. `docs/REGRESSION_CHECKLIST.md` now carries the executable heavy-attack acceptance gate.
+- Both new JavaScript files were syntax-checked locally with `node --check` before the Git commit. Full application/browser execution remains the post-commit CI acceptance gate because the connected GitHub surface does not provide an arbitrary pre-commit repository runner.
+
+### Regression boundary
+
+- No gameplay timing, parry/Perfect window, damage, posture, score, STEP/input semantics, enemy/boss definitions, renderer production transforms, persistence, network/account/privacy behavior or asset authority changed. This run adds acceptance instrumentation/tests only to close a material visual-runtime review blocker.
+- The gate uses existing local source/assets and creates no account, telemetry, identifier, API or remote data flow.
+- Post-commit acceptance requires exact-head GitHub CI (including the new focused browser smoke) plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.

@@ -107,8 +107,11 @@
   <script type="module" src="./src/combat-ux-runtime-observer.js"></script>
   <script type="module" src="./src/main.js"></script>
   <script type="module">
-    if (new URLSearchParams(location.search).get('browser-smoke') === 'renderer-motion') {
+    const smoke = new URLSearchParams(location.search).get('browser-smoke');
+    if (smoke === 'renderer-motion') {
       import('./src/renderer-contract-smoke.js');
+    } else if (smoke === 'heavy-attack') {
+      import('./src/heavy-attack-renderer-contract-smoke.js');
     }
   </script>
 </body>
