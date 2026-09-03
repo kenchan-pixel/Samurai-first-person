@@ -8,6 +8,7 @@ Ken's next release goal is a limited external Closed Beta after the current comb
 
 - Keep the current mobile playable campaign, direct practice, challenge and 今日陣 baseline intact.
 - Local/session-only personal records, practice comparison and post-run coaching using existing authoritative combat events.
+- Direct-practice coaching may identify the weakest **observed** incoming direction from the current duel and, on a same-opponent repeat, compare that prior weak direction against the new attempt. It must stay result-only, route-isolated and session-only; unseen directions are never invented as failures and the coaching may not change combat timing/balance.
 - Explicit player-triggered result sharing through Web Share or clipboard.
 - Explicit player-triggered **體驗意見 / 錯誤回報** export through Web Share or clipboard. The export may include only already-visible result context, a clean game URL and text the player deliberately types.
 - Release-readiness copy/checklists and mobile result/report UI needed for a small Closed Beta.
@@ -43,6 +44,7 @@ The Decision Gate must define data fields, retention/deletion, abuse/spam contro
 - This release-prep guide is informational only: it must not create a storage key, tester/player identifier, analytics event, network request or gameplay rule.
 - The guide may show a **本機戰績** summary by read-only reuse of the existing campaign mastery best and challenge best records. It may derive a simple next-play suggestion from those already-stored values, but it must not create or update any storage key, add a hidden identifier, or imply cloud/global ranking.
 - The local-record summary must label itself as **只讀 · 不上傳**, tolerate missing/malformed/storage-disabled data, and remain inside the same scrollable 320×568 guide panel without adding another start-screen touch target.
+- Direct-practice **修行進度** may add one compact result-only weak-direction target/tracking line. The first attempt should name only a direction actually faced; a repeat may report the prior weak direction's change and then choose the next weakest observed direction, or acknowledge that all observed directions were defended. It must hide outside direct practice and remain inside the existing 320×568 result surface.
 - The control and panel must remain inside the 320×568 acceptance viewport, preserve ≥44 px touch ownership for the control/close action, and disappear with the start modal once play begins.
 
 ## Release boundary

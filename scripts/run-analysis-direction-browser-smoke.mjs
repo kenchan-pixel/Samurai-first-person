@@ -53,15 +53,17 @@ try {
     ['data-run-analysis-direction-layout="pass"', 'direction analysis overflowed the 320×568 result surface'],
     ['data-run-analysis-direction-challenge-omitted="true"', 'eight-stage terminal did not suppress the extra direction map'],
     ['data-practice-progress-first="pass"', 'first same-opponent practice did not show the repeat-to-compare prompt'],
+    ['data-practice-progress-focus-first="pass"', 'first practice did not turn the weakest observed direction into a next-run target'],
     ['data-practice-progress-comparison="pass"', 'repeat practice did not compare defense, hits and counter conversion'],
+    ['data-practice-progress-focus-tracked="pass"', 'repeat practice did not track improvement on the prior weak direction'],
     ['data-practice-progress-layout="pass"', 'repeat-practice progress row overflowed the 320×568 result surface'],
-    ['data-practice-progress-isolation="pass"', 'practice-progress row leaked into a later campaign result'],
+    ['data-practice-progress-isolation="pass"', 'practice-progress coaching leaked into a later campaign result'],
   ];
   for (const [marker, message] of required) {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 7000)}`);
   }
 
-  console.log(`run-analysis browser smoke passed with ${browser}: four-way defense + challenge omission + same-opponent practice progress/isolation at 320x568`);
+  console.log(`run-analysis browser smoke passed with ${browser}: four-way defense + challenge omission + weakest-direction practice coaching/isolation at 320x568`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

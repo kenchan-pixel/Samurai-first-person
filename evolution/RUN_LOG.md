@@ -74,3 +74,30 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source/lifecycle reasoning is complete in this execution surface; there is no local repository/browser checkout.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
+
+## Run 107 — Weak-direction practice coaching
+
+**Date:** 2026-09-04  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `e970bcecdb14fd15c0ddb228de72239650192388`.
+- Exact-head Actions CI #152 / run `33796622617` is terminal **success**; exact-head GitHub `Vercel` status is terminal **success** with Preview deployed.
+- Latest qualifying exact-head review reports **no actionable P0/P1/P2 finding**, and PR #1 has no inline review threads.
+- Draft PR #1 remains open/Draft/unmerged and `main` remains untouched.
+- Candidate scoring: weak-direction same-opponent coaching **22/25** (impact 4, goal 5, novelty 4, confidence 4, safety 5); local beta test-session summary **18/25**; challenge post-run tactic summary **17/25**. The practice slice wins because it turns existing authoritative evidence into a concrete repeat-play loop without changing balance or adding data collection.
+
+### Implementation
+
+- Extended direct-practice **修行進度** snapshots with the existing authoritative four-direction analysis. Only directions actually faced in the duel can become a coaching target; unseen directions are never treated as misses.
+- First completion now adds one compact result-only **下局目標** line naming the weakest observed direction, its defense rate and defended/faced count.
+- A same-opponent repeat tracks the prior weak direction against the new attempt, reports the delta when that direction reappears, then selects the next weakest observed direction. If every direction encountered in the repeat was defended, the coach acknowledges the clean observed set and suggests tightening Perfect timing instead of inventing a weakness.
+- Coaching remains session-only and route-isolated, shares the existing result card, and clears with campaign/challenge results. No combat timing/damage/parry/Perfect/STEP/scoring, persistence key, account/identifier, analytics, backend or network behaviour changed.
+- Extended unit coverage plus the existing true 320×568 run-analysis browser gate to prove first-target derivation, prior-weak-direction tracking, clean-observed-set handling, result layout and campaign isolation.
+- Reconciled the Closed Beta v0.5 SOT so this bounded local/result-only coaching is explicit and remote-data gates remain unchanged.
+
+### Verification boundary
+
+- Source/syntax reasoning is complete in this execution surface; there is no local repository/browser checkout.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.

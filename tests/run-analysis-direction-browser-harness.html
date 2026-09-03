@@ -152,14 +152,26 @@
       await flush();
 
       const progress = document.querySelector('#result-analysis [data-practice-progress-row]');
+      const progressFocus = progress?.querySelector('[data-practice-progress-focus]');
       const firstProgress = Boolean(
         progress && !progress.hidden &&
         root.dataset.practiceProgressState === 'first' &&
         root.dataset.practiceProgressRoute === 'enemy:wandering-ronin' &&
         progress.textContent.includes('再戰同一對手一次')
       );
+      const firstFocus = Boolean(
+        progressFocus && !progressFocus.hidden &&
+        root.dataset.practiceProgressFocusDirection === Direction.TOP &&
+        root.dataset.practiceProgressFocusState === 'target' &&
+        !root.dataset.practiceProgressTrackedDirection &&
+        progressFocus.textContent.includes('下局目標：上方 0%') &&
+        progressFocus.textContent.includes('防 0/1')
+      );
       root.dataset.practiceProgressFirst = firstProgress ? 'pass' : 'fail';
-      if (!firstProgress) throw new Error(`first practice progress prompt missing: ${progress?.textContent || 'missing progress'}`);
+      root.dataset.practiceProgressFocusFirst = firstFocus ? 'pass' : 'fail';
+      if (!firstProgress || !firstFocus) {
+        throw new Error(`first practice progress/focus prompt missing: ${progress?.textContent || 'missing progress'}`);
+      }
 
       const secondPractice = new CombatEngine({ enemies: [enemy] });
       secondPractice.start(3000);
@@ -188,10 +200,18 @@
         progress.textContent.includes('受擊 −1') &&
         progress.textContent.includes('反擊 ±0%')
       );
+      const trackedFocus = Boolean(
+        progressFocus && !progressFocus.hidden &&
+        root.dataset.practiceProgressTrackedDirection === Direction.TOP &&
+        root.dataset.practiceProgressFocusState === 'clear' &&
+        progressFocus.textContent.includes('上局上方 0%→100%（+100%）') &&
+        progressFocus.textContent.includes('今局遇到刀路全守住')
+      );
       root.dataset.practiceProgressComparison = secondProgress ? 'pass' : 'fail';
+      root.dataset.practiceProgressFocusTracked = trackedFocus ? 'pass' : 'fail';
       root.dataset.practiceProgressLayout = progressLayout ? 'pass' : 'fail';
-      if (!secondProgress || !progressLayout) {
-        throw new Error(`repeat-practice comparison failed or overflowed: ${progress?.textContent || 'missing progress'}`);
+      if (!secondProgress || !trackedFocus || !progressLayout) {
+        throw new Error(`repeat-practice comparison/focus failed or overflowed: ${progress?.textContent || 'missing progress'}`);
       }
 
       const campaignAfterPractice = new CombatEngine({ enemies: [enemy] });
@@ -209,12 +229,17 @@
       const progressIsolation = Boolean(
         progress && progress.hidden &&
         !root.dataset.practiceProgressState &&
-        !root.dataset.practiceProgressRoute
+        !root.dataset.practiceProgressRoute &&
+        !root.dataset.practiceProgressFocusDirection &&
+        !root.dataset.practiceProgressTrackedDirection &&
+        !root.dataset.practiceProgressFocusState
       );
       root.dataset.practiceProgressIsolation = progressIsolation ? 'pass' : 'fail';
-      if (!progressIsolation) throw new Error('practice progress row leaked into a later campaign result');
+      if (!progressIsolation) throw new Error('practice progress/focus row leaked into a later campaign result');
 
-      root.dataset.runAnalysisDirectionBrowser = firstPass && challengeOmitted && firstProgress && secondProgress && progressLayout && progressIsolation ? 'pass' : 'fail';
+      root.dataset.runAnalysisDirectionBrowser =
+        firstPass && challengeOmitted && firstProgress && firstFocus &&
+        secondProgress && trackedFocus && progressLayout && progressIsolation ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);

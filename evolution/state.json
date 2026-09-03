@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 106,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the read-only 本機戰績 startup path so browsers that deny access to the localStorage property itself degrade safely to empty local records instead of throwing during module initialization. Storage is now resolved lazily inside a guarded read path; no write, identifier, analytics, backend or network behavior was added.",
-  "last_commit": "9c707774302987ee81ec74514d2e4e96efac4eee",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 106 must prove the denied-localStorage SecurityError path stays non-fatal while the normal 本機戰績 guide and full playable regression suite remain green.",
+  "run_number": 107,
+  "last_action_type": "FEATURE",
+  "last_action": "Extended the session-only direct-practice 修行進度 loop with result-only weak-direction coaching. Each completed practice duel now turns the weakest actually observed incoming direction into a concrete next-run target; a same-opponent repeat tracks whether that prior weak direction improved before selecting the next observed focus or acknowledging a clean observed set. No combat timing/balance, persistence key, identifier, analytics, backend or network behavior was added.",
+  "last_commit": "e970bcecdb14fd15c0ddb228de72239650192388",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 107 must prove the new weak-direction practice coaching stays route-isolated/result-only, remains inside the 320×568 result surface and does not disturb campaign/challenge results.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "denied_storage_repair_pending_exact_head",
-    "last_observed_head": "9c707774302987ee81ec74514d2e4e96efac4eee",
-    "incoming_ci_run": 33790869499,
+    "status": "practice_direction_coaching_pending_exact_head",
+    "last_observed_head": "e970bcecdb14fd15c0ddb228de72239650192388",
+    "incoming_ci_run": 33796622617,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 106 repairs the blocking review P2 in src/local-records.js: localStorage is no longer evaluated in default parameters and is resolved lazily behind try/catch. The focused 320x568 browser harness first proves normal seeded records, then replaces window.localStorage with a throwing SecurityError getter and re-imports the module to require an empty/no-record fallback while the Closed Beta guide and Start control stay usable."
+    "note": "Run 107 extends the existing 320x568 run-analysis/practice-progress browser gate. First practice must derive a target only from a direction actually faced; the repeat must track that same prior weak direction, preserve aggregate defense/hit/counter comparison, fit in-bounds and clear all coaching metadata on later campaign results."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,8 @@
     }
   },
   "next_candidates": [
-    "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus 修行進度 comparison; change difficulty only if repeated evidence shows a concrete wall",
+    "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus the new weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
+    "ACCEPTANCE: inspect Guard + four authored cuts at normal speed and refine only concrete blade/body continuity defects",
     "RELEASE_PREP: refine the local-only Closed Beta test loop only where new player-visible evidence justifies it; do not add another persistence key or remote write",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
