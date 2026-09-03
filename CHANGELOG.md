@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.36.0-evolution — Local result sharing
+
+- Added a compact ≥44 px **分享** action to every terminal result surface so campaign, practice, challenge and 今日陣 results can be shared without adding another vertical result row.
+- Native Web Share receives only the already-visible terminal result plus a query/hash-free game URL after an explicit player tap. Unsupported native share falls back to local clipboard copy; cancelling share is non-error. No account, identifier, persistence, analytics or background gameplay request is introduced.
+- Added deterministic payload/native/fallback tests plus a focused 320×568 browser gate proving button bounds, native challenge-result sharing and clipboard fallback.
+
+## Run 099 — Top/Bottom authored katana choreography continuity
+
+- Refined only the deterministic authored `AttackTop` / `AttackBottom` body-arm-Sword arcs into connected cross-body vertical cuts while preserving the shared Guard endpoints, six-keyframe timing, player-facing contact path and fixed Sword→HandR grip.
+- RIGHT/LEFT clips and all combat timing, input, damage, posture, STEP, persistence and network/privacy behavior remained unchanged; exact-head CI #145 and Vercel were green.
+
 ## Run 098 — Near-contact normal-parry tolerance repair
 
 - Added a bounded final-telegraph guard commitment buffer derived from each opponent's existing Perfect timing, clamped to 60–110 ms so slower early-game cuts receive more mobile-input grace while Oni/Shogun/Blood Moon remain tighter.

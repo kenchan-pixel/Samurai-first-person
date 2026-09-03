@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Result share browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">連戰試煉 · MASTERY 94</p>
+        <h2 id="result-title">S 級 · 八關制霸</h2>
+        <p id="result-summary">格擋 92% · 完美 7/12 · 破防 3 · 受擊 1 · 02:41</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">004200</strong></div>
+        <div id="challenge-result"><strong data-challenge-progress>連戰 8/8 · 制霸</strong></div>
+        <button id="restart-button" class="primary-button" type="button">再戰連陣</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+
+    const flush = async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    };
+
+    try {
+      await import('../src/result-share.js');
+      const button = document.querySelector('#result-share-button');
+      if (!button) throw new Error('result share control missing');
+
+      const rect = button.getBoundingClientRect();
+      const layoutOk =
+        rect.width >= 44 &&
+        rect.height >= 44 &&
+        rect.left >= -0.5 &&
+        rect.right <= innerWidth + 0.5 &&
+        rect.top >= -0.5 &&
+        rect.bottom <= innerHeight + 0.5;
+      root.dataset.resultShareLayout = layoutOk ? 'pass' : 'fail';
+      if (!layoutOk) throw new Error(`share control escaped 320x568 viewport: ${JSON.stringify(rect.toJSON?.() || rect)}`);
+
+      let nativePayload = null;
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: async (payload) => { nativePayload = payload; },
+      });
+      button.click();
+      await flush();
+      const nativeOk = Boolean(
+        nativePayload &&
+        nativePayload.text.includes('S 級 · 八關制霸') &&
+        nativePayload.text.includes('連戰 8/8 · 制霸') &&
+        nativePayload.text.includes('得分 004200') &&
+        nativePayload.text.includes('格擋 92%') &&
+        !nativePayload.url.includes('?') &&
+        !nativePayload.url.includes('#') &&
+        root.dataset.resultShareLast === 'shared'
+      );
+      root.dataset.resultShareNative = nativeOk ? 'pass' : 'fail';
+      if (!nativeOk) throw new Error(`native share payload incomplete: ${JSON.stringify(nativePayload)}`);
+
+      let copied = '';
+      Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { writeText: async (value) => { copied = value; } },
+      });
+      button.click();
+      await flush();
+      const clipboardOk =
+        copied.includes('S 級 · 八關制霸') &&
+        copied.includes('得分 004200') &&
+        copied.includes(location.origin) &&
+        root.dataset.resultShareLast === 'copied';
+      root.dataset.resultShareClipboard = clipboardOk ? 'pass' : 'fail';
+      if (!clipboardOk) throw new Error(`clipboard fallback incomplete: ${copied}`);
+
+      root.dataset.resultShareBrowser = layoutOk && nativeOk && clipboardOk ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.resultShareBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

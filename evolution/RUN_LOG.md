@@ -67,3 +67,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - The existing production PlayCanvas renderer browser contract is the exact runtime acceptance gate for this slice: real Guard, continuous AttackTop through telegraph→strike, Bottom low wind-up/rising strike, player-facing plane crossing, actual Sword trail/history and grip lock, plus unchanged RIGHT/LEFT screen semantics.
 - No pixel-level browser/screenshot controller is available in this execution surface. Therefore the post-commit exact-head CI browser contract plus exact-head Vercel Preview are the strongest self-observable evidence; subjective physical-phone naturalness remains supplemental owner feedback rather than a continuation gate.
 - Post-commit acceptance requires exact-head GitHub CI plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.
+
+## Run 100 — Local result sharing release-prep slice
+
+**Date:** 2026-09-03  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `337c110e7235bfcbd168d2df098fd1b3f84c49b6`.
+- Exact-head GitHub Actions CI #145 / run `33764077699` is terminal **success**, exact-head GitHub `Vercel` status is terminal **success**, and the persistent Preview alias is the established mobile review surface. The direct Vercel connector still returns 404 for the known project id, so GitHub's exact-head Vercel status is the canonical deployment signal for this run.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head review reports no actionable P0/P1/P2.
+- Current SOT still prioritises repeated practice/runtime evidence before another combat balance change. No concrete new combat defect is evidenced at this exact head, so an evidence-only run would not qualify for a commit. Candidate scoring therefore favoured a bounded player-visible release-prep slice: (1) local terminal result sharing 23/25; (2) repeated practice evidence with no demonstrated defect 20/25 but non-committable by itself; (3) Perfect Parry/STEP presentation refinement 19/25 without evidence of current confusion.
+
+### Implementation
+
+- Added `src/result-share.js`, imported through the existing mastery result layer, so campaign, direct practice, challenge and 今日陣 terminal surfaces all expose the same compact **分享** control without changing live combat.
+- On explicit tap the adapter assembles only already-rendered result data: result title, mode/mastery label, challenge progress when present, score, visible summary and a query/hash-free current page URL. It prefers native Web Share; unsupported native share falls back to local clipboard copy; user cancellation is treated as a clean no-op.
+- The control is anchored to the result modal safe top-right at a ≥44 px target rather than inserted into the vertical result stack, protecting existing dense 320×568 challenge terminals. It creates no account, player identifier, persistence record, analytics event, gameplay backend call or automatic network transmission.
+- Added deterministic Node coverage for payload sanitisation/native/fallback/cancel semantics plus a focused 320×568 Chromium harness for the real button bounds, native challenge-result payload and clipboard fallback. The browser test is included in the cumulative `npm run test:browser` gate.
+
+### Self-verification boundary
+
+- CombatEngine, enemy definitions, scoring, mastery calculation, run-analysis authority, input, renderer, challenge persistence and existing local best keys are untouched.
+- New tests must prove the shared URL drops query/hash, native-share cancellation does not copy, a non-cancel native failure can fall back to clipboard, and the player-visible Share target stays fully inside 320×568 at ≥44 px.
+- Post-commit acceptance requires exact-head GitHub CI plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.

@@ -34,6 +34,7 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Runs 090–091: converted the remaining practice orchestration review gaps into a true production-document 320×568 gate, then repaired the real **Pause → Home → 練血月** fallback by making the shared practice Start reset listener idempotent and explicitly arming the existing Shogun-practice launch contract before direct Blood Moon Phase II.
 - Run 092: added result-only **四向防守** analysis for campaign/direct practice. It derives each direction from authoritative strike/parry/STEP/player-hit outcomes, highlights the weakest observed defense rate, stays compact at 320×568 and deliberately omits the extra map from eight-wave challenge/今日陣 terminals.
 - Runs 093–099: repaired normal practice capture under the Blood Moon adapter, added and real-renderer-verified heavy-attack weight, restored exact-head Preview identity verification with `/build-meta.json`, moved default STEP out of the Bottom parry lane with 320×568 input coverage, added a bounded near-contact normal-parry buffer, and refined Top/Bottom authored two-handed katana choreography into connected cross-body vertical arcs while preserving combat timing and grip authority.
+- Run 100: added the first local-only Closed Beta release-prep slice: a ≥44 px result **分享** action across campaign/practice/challenge terminals, native Web Share with clipboard fallback, a clean query/hash-free game URL and focused 320×568 coverage. It sends nothing automatically and adds no account, identifier, persistence or analytics.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
@@ -54,10 +55,11 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Accessibility: broader motion controls only where they solve a concrete accessibility gap. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
 - Further Shogun motion/phase refinement only from concrete readability/performance evidence.
 - Deeper first-person weapon fidelity only if current two-hand silhouette stays readable and performant.
+- Closed Beta release prep may continue with player-visible feedback/bug-reporting and release-readiness surfaces only after the approved v0.5 baseline is reconciled into repository SOT. Keep leaderboard, remote telemetry, remote identifiers and backend writes behind the privacy/data Decision Gate below.
 
 ## Data / telemetry Decision Gate
 
-Remote gameplay collection remains unapproved in repository SOT. Current practice, challenge, mastery and run-analysis are local-only. Before backend implementation, reconcile the owner-approved Closed Beta v0.5 release baseline with this section and define minimum anonymous schema, explicit raw-input/device-ID exclusions, retention/deletion, backend/secrets, player notice/consent/opt-out, test-session handling and the dashboard/AI output that justifies collection. Until that repository SOT reconciliation is committed, send no gameplay records remotely.
+Remote gameplay collection remains unapproved in repository SOT. Current practice, challenge, mastery, run-analysis and explicit result sharing are local/player-triggered only. Before backend implementation, reconcile the owner-approved Closed Beta v0.5 release baseline with this section and define minimum anonymous schema, explicit raw-input/device-ID exclusions, retention/deletion, backend/secrets, player notice/consent/opt-out, test-session handling and the dashboard/AI output that justifies collection. Until that repository SOT reconciliation is committed, send no gameplay records remotely.
 
 ## Technical opportunities
 

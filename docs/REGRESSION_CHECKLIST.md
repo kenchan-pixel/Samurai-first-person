@@ -55,6 +55,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Challenge 宿敵步速 badge appears only during challenge/今日陣, stays inside the 320×568 viewport below the top-right HUD, remains pointer-transparent, displays a signed PB delta only when the stored best has a valid split for that wave, and hides at terminal/campaign handoff.
 - [ ] 今日陣 shows only a compact pointer-transparent dated intro banner before the first telegraph and pressure-stage title identity; the intro banner clears before live blade reading and the terminal strip identifies the date-keyed run without adding non-challenge combat clutter.
 - [ ] 練血月 immediately uses the existing Blood Moon Phase II atmosphere/presentation, not a duplicated visual state, while the direct-practice score starts without the normal transition bonus.
+- [ ] Result **分享** stays off the live-combat HUD, is bounded to its own ≥44 px result-screen target inside the 320×568 safe viewport, and does not make campaign/practice/challenge/今日陣 terminal content taller.
 
 ## Mastery / privacy / performance
 
@@ -66,13 +67,14 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Challenge 氣勢/不屈, 戰前抉擇 and 宿敵步速 introduce no new persistence key, account, identifier or remote record. Only a better challenge result may write optional PB splits into the existing challenge-best key.
 - [ ] 今日陣 adds no persistence key, account, remote identifier or network request. It intentionally reuses the existing local challenge best, challenge momentum/tactics and PB split comparison; its date key is run-local only.
 - [ ] 練血月 adds no persistence key, account, network request or practice-only boss definition; it reuses the real Phase II definition and established local practice isolation.
+- [ ] Result sharing reads only already-rendered terminal text on an explicit tap, strips query/hash from the shared page URL, treats native-share cancellation as non-error, falls back to local clipboard copy when needed, and creates no identifier/persistence/analytics/background gameplay request.
 - [ ] No login, analytics, tracking, advertising, paid API, remote identifier or new gameplay backend is introduced without approval.
 - [ ] Timing remains elapsed-time based; no unbounded entity/listener/particle/timer/audio-node/animation-loop growth is introduced.
 - [ ] Generated base character stays lightweight and attack pack remains animation-only/local/reproducible.
 
 ## Delivery gates
 
-- [ ] `npm test` passes, including bounded late-telegraph parry-buffer boundary/feint/Perfect-isolation coverage, direct Stage 2/3/4 Phase I practice activation/terminal isolation, direct Blood Moon Phase II entry/terminal identity with no transition-score grant, challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, final-wave full-health +300 terminal-score-authority regressions, and four-direction run-analysis accounting for parry/STEP/hit outcomes.
+- [ ] `npm test` passes, including bounded late-telegraph parry-buffer boundary/feint/Perfect-isolation coverage, direct Stage 2/3/4 Phase I practice activation/terminal isolation, direct Blood Moon Phase II entry/terminal identity with no transition-score grant, challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, final-wave full-health +300 terminal-score-authority regressions, four-direction run-analysis accounting for parry/STEP/hit outcomes, and result-share payload/native/fallback behavior.
 - [ ] `npm run test:browser` passes.
 - [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact and the full six-entry practice/challenge selector inside the shared 320×568 start layout, plus 刀路清晰 and 節拍提示.
 - [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
@@ -86,6 +88,7 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Mastery browser harness clicks the real 連戰試煉 control, proves composed 8-stage activation, visible pointer-safe 氣勢 UI, first clean-wave stack, a real two-clean-wave +1 HP 不屈 reward, terminal 不屈 summary and 8-card analysis, keeps challenge best isolated from campaign best, exercises 再戰連陣 / 開始完整主線, and keeps terminal content plus both controls inside 320×568.
 - [ ] Focused 320×568 challenge-rival browser gate starts from an existing eight-wave split PB, proves a visible behind split then an ahead split after the same-wave 不屈 score reward, persists eight authoritative monotonic splits after a better victory, reloads them on retry, and clears the badge on campaign handoff.
 - [ ] Focused 320×568 run-analysis direction gate renders all four directions, identifies a synthetic left-side 50% weakness from strike/parry/STEP/hit events, stays in-bounds, then proves an eight-stage terminal suppresses the extra map.
+- [ ] Focused 320×568 result-share browser gate proves the ≥44 px Share control stays in-bounds, native Web Share receives the visible terminal result/challenge progress/score with a clean URL, and clipboard fallback carries the same payload when native share is unavailable.
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
 - [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation when their represented product/engineering state changes.
 - [ ] Draft PR remains open/Draft/unmerged and contains one concise run comment with Before/After/verification/regression/risk/Preview.
