@@ -94,3 +94,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Pre-commit review is source-level because this execution surface has no local repository/browser checkout.
 - Exact-head GitHub CI (`npm test` + complete `npm run test:browser`) and exact-head Vercel Preview remain the authoritative post-commit gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
+
+## Run 103 — Closed Beta feedback / bug-report export
+
+**Date:** 2026-09-04  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `9368b7ed371bd3b21479e2c59d1ec308510c2978`.
+- Exact-head Actions run `33778427313` is terminal **success** after a transient first Chromium startup timeout; exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest exact-head review reports **no actionable P0/P1/P2**.
+- Balance changes remain evidence-gated. Ken's approved next direction is Closed Beta release prep, but remote accounts/leaderboards/feedback ingestion/telemetry still need a privacy/data Decision Gate. The highest-value safe slice is therefore an explicit local/export-only tester feedback path plus a durable v0.5 data boundary.
+
+### Implementation
+
+- Added mandatory `docs/CLOSED_BETA_V0_5_BASELINE.md` and wired it into `AGENTS.md` preflight. It records the approved local/export-only release-prep boundary and explicitly blocks server-stored identities, cloud leaderboard, remote feedback ingestion and telemetry until a separate privacy/data Decision Gate defines fields, retention/deletion, visibility, abuse controls and hosting/cost ownership.
+- Added a compact **回報** action to terminal result surfaces. Testers can choose **體驗意見** or **錯誤回報**, type up to 800 characters and explicitly export the report through native Web Share; unsupported share falls back to local clipboard.
+- Exported context is limited to already-visible result/mode/progress/score/summary, the player's typed note and a query/hash-free game URL. The panel states that the game does not automatically upload the report. No user agent, hidden device data, identifier, storage record, analytics event, backend or background network request is added.
+- Existing **分享** remains unchanged and independently usable.
+
+### Verification boundary
+
+- Added Node coverage for structured report content, URL sanitisation, note bound, native share, clipboard fallback/cancellation, and a source guard that rejects automatic upload transports in the feedback module.
+- Extended the existing result-actions browser gate at true 320×568: both share and feedback controls must remain ≥44 px/in bounds; the feedback panel must remain inside the viewport, show the no-auto-upload disclosure, export a structured bug report with the player note through the local clipboard fallback, and close cleanly back to the terminal result.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.

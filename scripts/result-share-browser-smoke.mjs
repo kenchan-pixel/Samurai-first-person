@@ -40,11 +40,11 @@ server.stderr.on('data', (chunk) => { stderrRef.value += chunk; });
 
 try {
   await waitForServer(server, stderrRef);
-  const dom = await dumpDomWithDeviceMetrics(browser, '/tests/result-share-browser-harness.html', {
+  const dom = await dumpDomWithDeviceMetrics(browser, '/tests/result-share-browser-harness.html?browser-smoke=result-actions#debug', {
     budget: 3000,
     width: 320,
     height: 568,
-    doneExpression: `document.documentElement.dataset.resultShareBrowser === 'pass' || document.documentElement.dataset.resultShareBrowser === 'fail'`,
+    doneExpression: `document.documentElement.dataset.resultShareBrowser === 'fail' || document.documentElement.dataset.resultFeedbackBrowser === 'fail' || (document.documentElement.dataset.resultShareBrowser === 'pass' && document.documentElement.dataset.resultFeedbackBrowser === 'pass')`,
   });
 
   const required = [
@@ -52,12 +52,16 @@ try {
     ['data-result-share-layout="pass"', 'share control escaped the 320×568 result surface or dropped below 44px'],
     ['data-result-share-native="pass"', 'native Web Share payload did not contain the visible terminal result'],
     ['data-result-share-clipboard="pass"', 'clipboard fallback did not preserve the visible terminal result and clean URL'],
+    ['data-result-feedback-browser="pass"', 'Closed Beta feedback/bug-report lifecycle failed'],
+    ['data-result-feedback-layout="pass"', 'feedback control/panel escaped 320×568 or privacy disclosure is missing'],
+    ['data-result-feedback-export="pass"', 'structured bug report did not export locally with visible result + player note'],
+    ['data-result-feedback-close="pass"', 'feedback panel did not return to the result surface cleanly'],
   ];
   for (const [marker, message] of required) {
-    if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 6000)}`);
+    if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 8000)}`);
   }
 
-  console.log(`result-share browser smoke passed with ${browser}: 320x568 layout + native share + clipboard fallback`);
+  console.log(`result-actions browser smoke passed with ${browser}: 320x568 share + local Closed Beta feedback/bug export`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {

@@ -52,12 +52,13 @@ Before modifying code, read:
 
 1. `docs/PRODUCT_GOAL.md`
 2. `docs/CURRENT_BASELINE.md`
-3. `docs/EVOLUTION_RULES.md`
-4. `docs/REGRESSION_CHECKLIST.md`
-5. `docs/IMPROVEMENT_BACKLOG.md`
-6. `docs/SCHEDULED_TASK_PROMPT.md`
-7. `evolution/state.json`
-8. `evolution/RUN_LOG.md`
+3. `docs/CLOSED_BETA_V0_5_BASELINE.md`
+4. `docs/EVOLUTION_RULES.md`
+5. `docs/REGRESSION_CHECKLIST.md`
+6. `docs/IMPROVEMENT_BACKLOG.md`
+7. `docs/SCHEDULED_TASK_PROMPT.md`
+8. `evolution/state.json`
+9. `evolution/RUN_LOG.md`
 
 Then inspect current code, the long-lived Draft PR, unresolved review threads/comments, CI/checks, and latest deployment state.
 

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 102,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired practice-progress DOM ownership so the injected style and the visible result row no longer share a selector. The row now has a unique result-analysis marker, hide logic targets only that row, and the 320x568 browser gate proves both repeated-practice comparison and cleanup on a subsequent normal campaign result.",
-  "last_commit": "0ffa84f6ec02fada1fa8c45538075fa084e69ddd",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further feature work. Run 102 specifically must prove the Run 101 browser-CI failure and P2 practice-progress leakage are closed before any new feature or release-prep slice.",
+  "run_number": 103,
+  "last_action_type": "FEATURE",
+  "last_action": "Reconciled the Closed Beta v0.5 local/export-only privacy boundary into mandatory repository SOT and added a player-visible result 回報 surface. Testers can choose 體驗意見 or 錯誤回報, type a bounded note, and explicitly export visible result context through native Web Share or local clipboard; the game states that it does not automatically upload the report.",
+  "last_commit": "9368b7ed371bd3b21479e2c59d1ec308510c2978",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further feature work. Run 103 must prove the 320x568 result feedback panel/export path, existing result sharing and the full playable regression suite remain green before any next release-prep slice.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "practice_progress_isolation_fix_pending_exact_head",
-    "last_observed_head": "e059ced77444b1b4a95b047998606fd31b6c4e1c",
-    "incoming_ci_run": 33773856599,
-    "incoming_ci_result": "failure_browser_selector_and_row_hide",
+    "status": "closed_beta_feedback_export_pending_exact_head",
+    "last_observed_head": "9368b7ed371bd3b21479e2c59d1ec308510c2978",
+    "incoming_ci_run": 33778427313,
+    "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "team enumeration returned zero projects; github exact-head status authoritative for preflight",
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 102 is a bounded blocker repair for Run 101. src/practice-progress.js now uses data-practice-progress-style only on the injected style and data-practice-progress-row only on the visible result row. hideProgress is scoped to #result-analysis, preventing the style node from intercepting cleanup. The focused browser harness now selects the real row and, after proving the first/repeat practice states and 320x568 bounds, emits a normal campaign victory and requires the row plus root practice markers to clear. Combat, score, route history semantics, persistence, renderer and remote-data behavior are unchanged."
+    "note": "Run 103 adds no backend or hidden collection. src/result-feedback.js reads only visible terminal result fields plus text deliberately typed by the player, strips query/hash from the game URL, and acts only after an explicit export tap. Native Web Share is preferred; clipboard is local fallback; AbortError is a no-op. The 320x568 result-actions gate now checks the feedback control/panel bounds, no-auto-upload disclosure, structured bug export and clean close alongside the existing result-share path. A new mandatory Closed Beta v0.5 SOT explicitly gates accounts, cloud leaderboard, remote feedback ingestion and telemetry behind a separate privacy/data Decision Gate."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,8 +65,8 @@
     }
   },
   "next_candidates": [
-    "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus same-opponent 修行進度 comparison; change difficulty only if repeated evidence shows a concrete wall",
-    "RELEASE_PREP: reconcile the approved Closed Beta v0.5 feedback/bug-reporting/data baseline into repository SOT before any remote backend, leaderboard or telemetry write",
-    "FEATURE: refine Perfect Parry versus Perfect STEP visual distinction only if repeated practice evidence shows the current reward/read separation is unclear"
+    "RELEASE_PREP: add a bounded Closed Beta release-readiness/privacy checklist or local tester identity shell only if it remains entirely local; do not create any remote write without the privacy/data Decision Gate",
+    "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus 修行進度 comparison; change difficulty only if repeated evidence shows a concrete wall",
+    "DECISION_GATE: before cloud leaderboard, remote feedback inbox or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

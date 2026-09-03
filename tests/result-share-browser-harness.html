@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="../src/styles.css" />
-  <title>Result share browser harness</title>
+  <title>Result actions browser harness</title>
 </head>
 <body>
   <main id="app" class="app">
@@ -31,28 +31,31 @@
       await new Promise((resolve) => setTimeout(resolve, 0));
     };
 
+    const rectInsideViewport = (rect) =>
+      rect.width >= 44 &&
+      rect.height >= 44 &&
+      rect.left >= -0.5 &&
+      rect.right <= innerWidth + 0.5 &&
+      rect.top >= -0.5 &&
+      rect.bottom <= innerHeight + 0.5;
+
     try {
       await import('../src/result-share.js');
-      const button = document.querySelector('#result-share-button');
-      if (!button) throw new Error('result share control missing');
+      await import('../src/result-feedback.js');
 
-      const rect = button.getBoundingClientRect();
-      const layoutOk =
-        rect.width >= 44 &&
-        rect.height >= 44 &&
-        rect.left >= -0.5 &&
-        rect.right <= innerWidth + 0.5 &&
-        rect.top >= -0.5 &&
-        rect.bottom <= innerHeight + 0.5;
-      root.dataset.resultShareLayout = layoutOk ? 'pass' : 'fail';
-      if (!layoutOk) throw new Error(`share control escaped 320x568 viewport: ${JSON.stringify(rect.toJSON?.() || rect)}`);
+      const shareButton = document.querySelector('#result-share-button');
+      if (!shareButton) throw new Error('result share control missing');
+      const shareRect = shareButton.getBoundingClientRect();
+      const shareLayoutOk = rectInsideViewport(shareRect);
+      root.dataset.resultShareLayout = shareLayoutOk ? 'pass' : 'fail';
+      if (!shareLayoutOk) throw new Error(`share control escaped 320x568 viewport: ${JSON.stringify(shareRect.toJSON?.() || shareRect)}`);
 
       let nativePayload = null;
       Object.defineProperty(navigator, 'share', {
         configurable: true,
         value: async (payload) => { nativePayload = payload; },
       });
-      button.click();
+      shareButton.click();
       await flush();
       const nativeOk = Boolean(
         nativePayload &&
@@ -73,7 +76,7 @@
         configurable: true,
         value: { writeText: async (value) => { copied = value; } },
       });
-      button.click();
+      shareButton.click();
       await flush();
       const clipboardOk =
         copied.includes('S 級 · 八關制霸') &&
@@ -83,11 +86,54 @@
       root.dataset.resultShareClipboard = clipboardOk ? 'pass' : 'fail';
       if (!clipboardOk) throw new Error(`clipboard fallback incomplete: ${copied}`);
 
-      root.dataset.resultShareBrowser = layoutOk && nativeOk && clipboardOk ? 'pass' : 'fail';
+      const feedbackButton = document.querySelector('#result-feedback-button');
+      const panel = document.querySelector('#result-feedback-panel');
+      if (!feedbackButton || !panel) throw new Error('Closed Beta feedback controls missing');
+      const feedbackButtonRect = feedbackButton.getBoundingClientRect();
+      feedbackButton.click();
+      await flush();
+      const panelRect = panel.getBoundingClientRect();
+      const privacyText = panel.querySelector('[data-feedback-privacy]')?.textContent || '';
+      const feedbackLayoutOk =
+        rectInsideViewport(feedbackButtonRect) &&
+        !panel.hidden &&
+        panelRect.left >= -0.5 &&
+        panelRect.right <= innerWidth + 0.5 &&
+        panelRect.top >= -0.5 &&
+        panelRect.bottom <= innerHeight + 0.5 &&
+        privacyText.includes('不會自動上傳');
+      root.dataset.resultFeedbackLayout = feedbackLayoutOk ? 'pass' : 'fail';
+      if (!feedbackLayoutOk) throw new Error(`feedback panel failed 320x568/privacy boundary: ${privacyText}`);
+
+      panel.querySelector('[data-feedback-kind="bug"]')?.click();
+      const note = panel.querySelector('[data-feedback-note]');
+      note.value = '血月下段刀有一次睇唔清楚';
+      copied = '';
+      panel.querySelector('[data-feedback-send]')?.click();
+      await flush();
+      const feedbackExportOk =
+        copied.includes('刃返 Closed Beta｜錯誤回報') &&
+        copied.includes('S 級 · 八關制霸') &&
+        copied.includes('得分：004200') &&
+        copied.includes('血月下段刀有一次睇唔清楚') &&
+        copied.includes(location.origin) &&
+        !copied.includes('?browser-smoke') &&
+        root.dataset.resultFeedbackLast === 'copied';
+      root.dataset.resultFeedbackExport = feedbackExportOk ? 'pass' : 'fail';
+      if (!feedbackExportOk) throw new Error(`feedback local export incomplete: ${copied}`);
+
+      panel.querySelector('[data-feedback-close]')?.click();
+      const closedOk = panel.hidden && feedbackButton.getAttribute('aria-expanded') === 'false';
+      root.dataset.resultFeedbackClose = closedOk ? 'pass' : 'fail';
+      if (!closedOk) throw new Error('feedback panel did not close cleanly');
+
+      root.dataset.resultShareBrowser = shareLayoutOk && nativeOk && clipboardOk ? 'pass' : 'fail';
+      root.dataset.resultFeedbackBrowser = feedbackLayoutOk && feedbackExportOk && closedOk ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);
       root.dataset.resultShareBrowser = 'fail';
+      root.dataset.resultFeedbackBrowser = 'fail';
     }
   </script>
 </body>
