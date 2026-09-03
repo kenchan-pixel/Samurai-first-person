@@ -126,3 +126,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source/syntax reasoning is complete in this execution surface; there is no local repository/browser checkout.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
+
+## Run 109 — Session-checklist transition repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `bf030e63a35a65f028d140d1c95884892252f910`.
+- Exact-head Actions CI #154 / run `33808331453` is terminal **failure**: `npm test` passed 127/127, but required `npm run test:browser` failed. Exact-head GitHub `Vercel` status is terminal **success**, and Vercel reports zero unresolved Preview feedback.
+- The latest exact-head All Repos review identifies one actionable P2: the Closed Beta observer immediately sampled a pre-existing `#result-screen.modal--visible` and falsely recorded the duel step before any new terminal transition. There are no inline review comments/threads.
+- Draft PR #1 remains open/Draft/unmerged and `main` remains untouched. Because the exact current HEAD fails the browser baseline, this run is mandatory `BLOCKER_FIX`; feature work is prohibited.
+
+### Implementation
+
+- Replaced state-snapshot bootstrap with transition-sensitive observation. The tracker snapshots result visibility only as its initial baseline and records the duel step solely on a later **hidden → visible** `#result-screen` class transition.
+- Practice-comparison and successful feedback/export receipts are likewise consumed only from post-install attribute mutations; stale/pre-existing DOM markers are not backfilled into the current session checklist.
+- Strengthened the true 320×568 Closed Beta/local-record browser gate by intentionally starting with the result modal already visible. It must remain at 0/3 after observer installation, remain 0/3 when that stale modal hides, then reach 1/3 only after a genuine later hidden→visible result transition before continuing through the existing 2/3 comparison, cancelled-feedback rejection, 3/3 copied-feedback completion and denied-storage fallback.
+- No combat timing, damage, parry/Perfect/STEP rules, scoring, renderer, record schema, persistence key, identifier, analytics, backend or network behaviour changed.
+
+### Verification boundary
+
+- Source/lifecycle reasoning is complete in this execution surface; there is no local repository/browser checkout.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.

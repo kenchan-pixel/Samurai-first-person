@@ -76,32 +76,40 @@ export function markBetaReadinessItem(id, documentRef = globalThis.document) {
   return renderSessionProgress(documentRef);
 }
 
-function syncObservedProgress(documentRef) {
-  const root = documentRef?.documentElement;
-  if (!root) return;
-  if (documentRef.querySelector?.('#result-screen')?.classList?.contains('modal--visible')) {
-    markBetaReadinessItem('duel', documentRef);
-  }
-  if (root.dataset.practiceProgressState === 'comparison') {
-    markBetaReadinessItem('repeat-practice', documentRef);
-  }
-  if (root.dataset.resultFeedbackLast === 'shared' || root.dataset.resultFeedbackLast === 'copied') {
-    markBetaReadinessItem('feedback', documentRef);
-  }
-}
-
 function observeSessionProgress(documentRef) {
   if (observer || typeof MutationObserver !== 'function') return;
   const root = documentRef?.documentElement;
   const result = documentRef?.querySelector?.('#result-screen');
   if (!root) return;
-  observer = new MutationObserver(() => syncObservedProgress(documentRef));
+
+  // Session receipts are transition-based. A result that is already visible when
+  // this tracker installs belongs to pre-existing DOM state and must not backfill 1/3.
+  let resultVisible = Boolean(result?.classList?.contains('modal--visible'));
+  observer = new MutationObserver((records = []) => {
+    for (const record of records) {
+      if (record.target === result && record.attributeName === 'class') {
+        const nextVisible = Boolean(result?.classList?.contains('modal--visible'));
+        if (!resultVisible && nextVisible) markBetaReadinessItem('duel', documentRef);
+        resultVisible = nextVisible;
+        continue;
+      }
+      if (record.target !== root) continue;
+      if (record.attributeName === 'data-practice-progress-state' && root.dataset.practiceProgressState === 'comparison') {
+        markBetaReadinessItem('repeat-practice', documentRef);
+      }
+      if (
+        record.attributeName === 'data-result-feedback-last' &&
+        (root.dataset.resultFeedbackLast === 'shared' || root.dataset.resultFeedbackLast === 'copied')
+      ) {
+        markBetaReadinessItem('feedback', documentRef);
+      }
+    }
+  });
   observer.observe(root, {
     attributes: true,
     attributeFilter: ['data-practice-progress-state', 'data-result-feedback-last'],
   });
   if (result) observer.observe(result, { attributes: true, attributeFilter: ['class'] });
-  syncObservedProgress(documentRef);
 }
 
 function ensureStyles(documentRef) {

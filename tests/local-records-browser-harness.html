@@ -11,7 +11,7 @@
     <section id="start-screen" class="modal modal--visible">
       <div class="modal__content"><h1>刃返</h1><button id="start-button" class="primary-button" type="button">拔刀</button></div>
     </section>
-    <section id="result-screen" class="modal"><div class="modal__content modal__content--result"><h2>結果</h2></div></section>
+    <section id="result-screen" class="modal modal--visible"><div class="modal__content modal__content--result"><h2>結果</h2></div></section>
     <pre id="harness-error" hidden></pre>
   </main>
   <script type="module">
@@ -26,6 +26,17 @@
       await import('../src/beta-readiness.js');
       await import('../src/local-records.js');
       await flush();
+
+      const resultScreen = document.querySelector('#result-screen');
+      if (root.dataset.betaReadinessProgress !== '0/3') {
+        throw new Error(`pre-visible result incorrectly backfilled beta progress: ${root.dataset.betaReadinessProgress}`);
+      }
+      resultScreen.classList.remove('modal--visible');
+      await flush();
+      if (root.dataset.betaReadinessProgress !== '0/3') {
+        throw new Error(`visible-to-hidden transition incorrectly advanced beta progress: ${root.dataset.betaReadinessProgress}`);
+      }
+
       const button = document.querySelector('#beta-readiness-button');
       const panel = document.querySelector('#beta-readiness-panel');
       if (!button || !panel) throw new Error('Closed Beta guide missing');
@@ -43,7 +54,7 @@
       );
       if (!normalPass) throw new Error(`local records failed: ${campaign} | ${challenge} | ${next}`);
 
-      document.querySelector('#result-screen').classList.add('modal--visible');
+      resultScreen.classList.add('modal--visible');
       await flush();
       if (root.dataset.betaReadinessProgress !== '1/3') throw new Error(`terminal result did not advance beta progress: ${root.dataset.betaReadinessProgress}`);
       root.dataset.practiceProgressState = 'comparison';
@@ -69,7 +80,7 @@
           configurable: true,
           get() { throw new DOMException('storage denied by browser policy', 'SecurityError'); },
         });
-        await import('../src/local-records.js?denied-storage=run108');
+        await import('../src/local-records.js?denied-storage=run109');
         await flush();
         const deniedCampaign = panel.querySelector('[data-local-record-campaign]')?.textContent || '';
         const deniedChallenge = panel.querySelector('[data-local-record-challenge]')?.textContent || '';
