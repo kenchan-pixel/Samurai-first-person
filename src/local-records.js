@@ -5,6 +5,15 @@ export const LOCAL_RECORD_STORAGE_KEYS = Object.freeze({
 
 const CHALLENGE_STAGE_COUNT = 8;
 
+function resolveStorage(storage) {
+  if (storage !== undefined) return storage;
+  try {
+    return globalThis.localStorage ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function readJson(storage, key) {
   try {
     return JSON.parse(storage?.getItem?.(key) || 'null');
@@ -32,10 +41,11 @@ function normaliseChallenge(value) {
   });
 }
 
-export function readLocalPersonalRecords(storage = globalThis.localStorage) {
+export function readLocalPersonalRecords(storage) {
+  const resolvedStorage = resolveStorage(storage);
   return Object.freeze({
-    campaign: normaliseCampaign(readJson(storage, LOCAL_RECORD_STORAGE_KEYS.campaign)),
-    challenge: normaliseChallenge(readJson(storage, LOCAL_RECORD_STORAGE_KEYS.challenge)),
+    campaign: normaliseCampaign(readJson(resolvedStorage, LOCAL_RECORD_STORAGE_KEYS.campaign)),
+    challenge: normaliseChallenge(readJson(resolvedStorage, LOCAL_RECORD_STORAGE_KEYS.challenge)),
   });
 }
 
@@ -123,7 +133,7 @@ function render(section, storage) {
   return formatted;
 }
 
-export function installLocalPersonalRecords(documentRef = globalThis.document, storage = globalThis.localStorage) {
+export function installLocalPersonalRecords(documentRef = globalThis.document, storage) {
   if (!documentRef) return null;
   ensureStyles(documentRef);
   const section = ensureUi(documentRef);

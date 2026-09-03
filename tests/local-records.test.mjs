@@ -37,8 +37,10 @@ test('local record next step stays bounded to existing local progress', () => {
   assert.match(localRecordNextStep({ campaign: { masteryPoints: 90 }, challenge: { wavesCleared: 8 } }), /刷新主線或連戰分數/);
 });
 
-test('local records module has no persistence write or network transport', async () => {
+test('local records module guards storage acquisition and has no write/network transport', async () => {
   const source = await readFile(new URL('../src/local-records.js', import.meta.url), 'utf8');
+  assert.equal(/storage\s*=\s*globalThis\.localStorage/.test(source), false, 'localStorage must not be resolved in a default parameter');
+  assert.match(source, /try\s*\{\s*return globalThis\.localStorage \?\? null;\s*\}\s*catch\s*\{/s);
   for (const forbidden of ['setItem(', 'fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket']) {
     assert.equal(source.includes(forbidden), false, `unexpected local-record write/transport token: ${forbidden}`);
   }

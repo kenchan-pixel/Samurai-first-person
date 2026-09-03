@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 105,
-  "last_action_type": "RELEASE_PREP",
-  "last_action": "Added a read-only 本機戰績 section inside the existing Closed Beta guide. It reuses only the existing campaign mastery best and challenge best records, shows grade/mastery/score plus challenge waves/score, and derives one bounded next-play cue without creating or updating storage, identifiers, analytics, backend or network transport.",
-  "last_commit": "a9571e96fc81e0a94fb5249707083db915536f6c",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 105 must prove the read-only record summary and existing Closed Beta guide remain valid at true 320x568 while the full playable regression suite stays green.",
+  "run_number": 106,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Repaired the read-only 本機戰績 startup path so browsers that deny access to the localStorage property itself degrade safely to empty local records instead of throwing during module initialization. Storage is now resolved lazily inside a guarded read path; no write, identifier, analytics, backend or network behavior was added.",
+  "last_commit": "9c707774302987ee81ec74514d2e4e96efac4eee",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 106 must prove the denied-localStorage SecurityError path stays non-fatal while the normal 本機戰績 guide and full playable regression suite remain green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "local_personal_records_pending_exact_head",
-    "last_observed_head": "a9571e96fc81e0a94fb5249707083db915536f6c",
-    "incoming_ci_run": 33787967858,
+    "status": "denied_storage_repair_pending_exact_head",
+    "last_observed_head": "9c707774302987ee81ec74514d2e4e96efac4eee",
+    "incoming_ci_run": 33790869499,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 105 adds src/local-records.js as a read-only release-prep adapter. It reads only blade-reversal-mastery-v1 and blade-reversal-challenge-v1, injects the summary inside the existing scrollable 封測資訊 panel, and performs no storage write or network transport. A focused 320x568 browser harness is executed from the existing result-actions browser smoke so CI must prove the real guide displays the expected campaign/challenge records and next-play cue."
+    "note": "Run 106 repairs the blocking review P2 in src/local-records.js: localStorage is no longer evaluated in default parameters and is resolved lazily behind try/catch. The focused 320x568 browser harness first proves normal seeded records, then replaces window.localStorage with a throwing SecurityError getter and re-imports the module to require an empty/no-record fallback while the Closed Beta guide and Start control stay usable."
   },
   "external_deployment_recovery": {
     "last_incident": {
