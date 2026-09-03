@@ -91,13 +91,17 @@ const neutral = Object.freeze({
 const frame = (time, pose = {}) => ({ time, ...neutral, ...pose });
 const guardFrames = [frame(0), frame(1)];
 
+// Vertical cuts keep the same combat phase timing and six-keyframe budget as the
+// lateral attacks, but use a small cross-body coil/release so the two-handed rig
+// follows the katana instead of reading like a planar arm hinge. The bottom cut also
+// rises from a loaded stance progressively rather than popping the hips at contact.
 const attacks = {
   AttackTop: [
     frame(0),
-    frame(0.30, { hips: [0, 0.90, 0.08], spine: [-7, 0, 0], chest: [-15, 0, -2], head: [5, 0, 0], upperArmR: [-116, -5, -30], forearmR: [-72, 0, 22], handR: [-8, 0, -12], upperArmL: [-104, 7, 29], forearmL: [-68, 0, -18], handL: [-5, 0, 10], sword: [0, 0, -102] }),
-    frame(0.50, { hips: [0, 0.93, -0.05], spine: [3, 0, 0], chest: [5, 0, 2], head: [0, 0, 0], upperArmR: [-62, 4, -4], forearmR: [-38, 0, 12], handR: [-3, 0, -4], upperArmL: [-58, -3, 7], forearmL: [-36, 0, -8], handL: [-2, 0, 4], sword: [0, 0, -42] }),
-    frame(0.68, { hips: [0, 0.95, -0.16], spine: [10, 0, 0], chest: [18, 0, 4], head: [-4, 0, 0], upperArmR: [-18, 8, 30], forearmR: [-12, 0, 4], handR: [5, 0, 8], upperArmL: [-22, -7, -28], forearmL: [-16, 0, 4], handL: [4, 0, -8], sword: [0, 0, 15] }),
-    frame(0.84, { hips: [0, 0.93, -0.10], spine: [7, 0, 0], chest: [12, 0, 8], head: [-2, 0, 0], upperArmR: [16, 10, 50], forearmR: [-6, 0, 1], handR: [8, 0, 14], upperArmL: [4, -10, -44], forearmL: [-8, 0, 1], handL: [6, 0, -12], sword: [0, 0, 74] }),
+    frame(0.30, { hips: [-0.025, 0.90, 0.075], spine: [-8, -5, -2], chest: [-17, -10, -5], head: [6, 6, 2], upperArmR: [-111, -12, -27], forearmR: [-69, 8, 19], handR: [-8, 0, -12], upperArmL: [-100, 10, 27], forearmL: [-66, -7, -16], handL: [-5, 0, 10], sword: [0, 0, -102] }),
+    frame(0.50, { hips: [-0.01, 0.925, -0.035], spine: [0, -2, 0], chest: [1, -3, 1], head: [1, 2, 0], upperArmR: [-69, -2, -7], forearmR: [-42, 4, 12], handR: [-3, 0, -4], upperArmL: [-64, 3, 10], forearmL: [-40, -4, -9], handL: [-2, 0, 4], sword: [0, 0, -42] }),
+    frame(0.68, { hips: [0.018, 0.945, -0.15], spine: [9, 4, 2], chest: [16, 8, 5], head: [-4, -5, -1], upperArmR: [-25, 10, 24], forearmR: [-15, 2, 5], handR: [5, 0, 8], upperArmL: [-29, -8, -23], forearmL: [-19, -2, 4], handL: [4, 0, -8], sword: [0, 0, 15] }),
+    frame(0.84, { hips: [0.03, 0.93, -0.105], spine: [8, 7, 4], chest: [14, 13, 9], head: [-3, -8, -2], upperArmR: [8, 14, 46], forearmR: [-7, 1, 2], handR: [8, 0, 14], upperArmL: [-1, -12, -39], forearmL: [-10, -1, 2], handL: [6, 0, -12], sword: [0, 0, 74] }),
     frame(1),
   ],
   AttackRight: [
@@ -110,10 +114,10 @@ const attacks = {
   ],
   AttackBottom: [
     frame(0),
-    frame(0.30, { hips: [0, 0.79, 0.06], spine: [12, 0, 4], chest: [18, 0, 10], head: [-6, 0, -2], upperArmR: [8, -5, 42], forearmR: [-10, 0, 22], handR: [8, 0, 18], upperArmL: [4, 6, -36], forearmL: [-12, 0, -18], handL: [7, 0, -14], sword: [0, 0, 96] }),
-    frame(0.50, { hips: [0, 0.84, -0.04], spine: [5, 0, 2], chest: [7, 0, 4], head: [-2, 0, -1], upperArmR: [-24, 0, 20], forearmR: [-22, 0, 14], handR: [4, 0, 10], upperArmL: [-22, 0, -18], forearmL: [-22, 0, -10], handL: [4, 0, -8], sword: [0, 0, 55] }),
-    frame(0.68, { hips: [0, 0.96, -0.16], spine: [-8, 0, -4], chest: [-14, 0, -10], head: [5, 0, 2], upperArmR: [-78, 5, -16], forearmR: [-48, 0, 10], handR: [-4, 0, -8], upperArmL: [-70, -4, 18], forearmL: [-46, 0, -9], handL: [-4, 0, 8], sword: [0, 0, -22] }),
-    frame(0.84, { hips: [0, 0.95, -0.10], spine: [-10, 0, -5], chest: [-16, 0, -12], head: [4, 0, 2], upperArmR: [-104, 7, -28], forearmR: [-66, 0, 16], handR: [-7, 0, -12], upperArmL: [-96, -6, 29], forearmL: [-62, 0, -15], handL: [-6, 0, 11], sword: [0, 0, -88] }),
+    frame(0.30, { hips: [-0.035, 0.82, 0.055], spine: [10, -6, 4], chest: [15, -12, 9], head: [-5, 7, -2], upperArmR: [5, -10, 38], forearmR: [-14, 6, 20], handR: [8, 0, 18], upperArmL: [1, 9, -32], forearmL: [-16, -5, -17], handL: [7, 0, -14], sword: [0, 0, 96] }),
+    frame(0.50, { hips: [-0.015, 0.86, -0.04], spine: [5, -3, 2], chest: [7, -6, 4], head: [-2, 4, -1], upperArmR: [-30, -4, 16], forearmR: [-25, 3, 13], handR: [4, 0, 10], upperArmL: [-28, 4, -15], forearmL: [-24, -3, -9], handL: [4, 0, -8], sword: [0, 0, 55] }),
+    frame(0.68, { hips: [0.015, 0.92, -0.15], spine: [-5, 4, -2], chest: [-10, 8, -7], head: [4, -5, 2], upperArmR: [-72, 10, -12], forearmR: [-44, 2, 9], handR: [-4, 0, -8], upperArmL: [-66, -8, 14], forearmL: [-42, -2, -8], handL: [-4, 0, 8], sword: [0, 0, -22] }),
+    frame(0.84, { hips: [0.03, 0.945, -0.10], spine: [-8, 7, -4], chest: [-14, 13, -10], head: [4, -8, 2], upperArmR: [-98, 15, -24], forearmR: [-62, 2, 14], handR: [-7, 0, -12], upperArmL: [-90, -12, 25], forearmL: [-58, -2, -13], handL: [-6, 0, 11], sword: [0, 0, -88] }),
     frame(1),
   ],
   AttackLeft: [
@@ -130,9 +134,9 @@ const attacks = {
 // The production renderer mirrors those horizontal indices at the presentation boundary
 // so CombatEngine RIGHT/LEFT remain defined in the player's screen space.
 const bladePaths = Object.freeze({
-  AttackTop: Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
+  AttackTop: Object.freeze({ wind: [0.14, 0.985, 0.105], contact: [0.02, -0.10, 0.995], follow: [-0.15, -0.80, 0.58] }),
   AttackRight: Object.freeze({ wind: [0.90, 0.42, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
-  AttackBottom: Object.freeze({ wind: [0.00, -0.985, 0.12], contact: [0.00, 0.18, 0.984], follow: [0.05, 0.84, 0.54] }),
+  AttackBottom: Object.freeze({ wind: [-0.16, -0.965, 0.205], contact: [0.02, 0.16, 0.987], follow: [0.18, 0.80, 0.57] }),
   AttackLeft: Object.freeze({ wind: [-0.90, 0.42, 0.12], contact: [-0.06, -0.08, 0.995], follow: [0.79, -0.20, 0.58] }),
 });
 const PLAYER_GUARD_AXIS = Object.freeze([0.00, 0.10, 0.995]);
@@ -202,7 +206,7 @@ for (let i = 0; i < jointSpecs.length; i += 1) {
 align4();
 const bin = Buffer.concat(chunks);
 const gltf = {
-  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v4 player-facing guard', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
+  asset: { version: '2.0', generator: 'Samurai-first-person authored directional attack pack v5 vertical-cut continuity', copyright: 'Original project animation asset; see docs/ASSET_PROVENANCE.md' },
   scene: 0,
   scenes: [{ name: 'SamuraiAttackRig', nodes: [jointIndex.Root] }],
   nodes,
