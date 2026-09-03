@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.37.0-evolution — Same-opponent practice progress
+
+- Added a session-only **修行進度** row to direct-practice result analysis. The first completion prompts one repeat; a repeat against the same practice route compares authoritative four-direction defense rate, hits taken and manual-counter conversion with the immediately previous attempt.
+- Ronin/Oni/Shogun/Blood Moon snapshots are isolated per route and exist only in page memory. Campaign/challenge terminals never show the row; refresh clears the comparison; no storage key, account, identifier, analytics, network request, score or combat balance change was introduced.
+- Extended deterministic Node coverage and the existing focused 320×568 run-analysis browser gate to prove first-attempt prompting, second-attempt deltas and in-bounds result presentation.
+
 ## 0.36.0-evolution — Local result sharing
 
 - Added a compact ≥44 px **分享** action to every terminal result surface so campaign, practice, challenge and 今日陣 results can be shared without adding another vertical result row.

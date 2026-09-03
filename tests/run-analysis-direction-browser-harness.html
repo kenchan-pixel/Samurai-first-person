@@ -46,6 +46,23 @@
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
 
+    function finishPractice(combat, events, score) {
+      combat.events.push(
+        ...events,
+        { type: 'enemy-defeated', detail: { enemyId: enemy.id, stage: 1 } },
+        {
+          type: 'victory',
+          detail: {
+            score,
+            playerHp: 4,
+            practice: true,
+            practiceEnemyId: 'wandering-ronin',
+          },
+        },
+      );
+      combat.drainEvents();
+    }
+
     try {
       const combat = new CombatEngine({ enemies: [enemy] });
       combat.start(0);
@@ -120,8 +137,64 @@
 
       const challengeOmitted = directions.hidden === true && !root.dataset.runAnalysisWeakDirection;
       root.dataset.runAnalysisDirectionChallengeOmitted = String(challengeOmitted);
-      root.dataset.runAnalysisDirectionBrowser = firstPass && challengeOmitted ? 'pass' : 'fail';
       if (!challengeOmitted) throw new Error('eight-stage terminal should omit the four-way direction map');
+
+      const firstPractice = new CombatEngine({ enemies: [enemy] });
+      firstPractice.start(2000);
+      firstPractice.drainEvents();
+      finishPractice(firstPractice, [
+        { type: 'strike', detail: { direction: Direction.TOP } },
+        { type: 'player-hit', detail: { direction: Direction.TOP, damage: 1 } },
+        { type: 'strike', detail: { direction: Direction.LEFT } },
+        { type: 'parry', detail: { direction: Direction.LEFT } },
+        { type: 'counter', detail: { direction: Direction.RIGHT, damage: 1 } },
+      ], 700);
+      await flush();
+
+      const progress = document.querySelector('[data-practice-progress]');
+      const firstProgress = Boolean(
+        progress && !progress.hidden &&
+        root.dataset.practiceProgressState === 'first' &&
+        root.dataset.practiceProgressRoute === 'enemy:wandering-ronin' &&
+        progress.textContent.includes('再戰同一對手一次')
+      );
+      root.dataset.practiceProgressFirst = firstProgress ? 'pass' : 'fail';
+      if (!firstProgress) throw new Error(`first practice progress prompt missing: ${progress?.textContent || 'missing progress'}`);
+
+      const secondPractice = new CombatEngine({ enemies: [enemy] });
+      secondPractice.start(3000);
+      secondPractice.drainEvents();
+      finishPractice(secondPractice, [
+        { type: 'strike', detail: { direction: Direction.TOP } },
+        { type: 'parry', detail: { direction: Direction.TOP } },
+        { type: 'counter', detail: { direction: Direction.BOTTOM, damage: 1 } },
+        { type: 'strike', detail: { direction: Direction.LEFT } },
+        { type: 'parry', detail: { direction: Direction.LEFT } },
+        { type: 'counter', detail: { direction: Direction.RIGHT, damage: 1 } },
+      ], 950);
+      await flush();
+
+      const progressRect = progress?.getBoundingClientRect();
+      const progressLayout = Boolean(progressRect) &&
+        progressRect.left >= -0.5 &&
+        progressRect.right <= window.innerWidth + 0.5 &&
+        progressRect.top >= -0.5 &&
+        progressRect.bottom <= window.innerHeight + 0.5;
+      const secondProgress = Boolean(
+        progress && !progress.hidden &&
+        root.dataset.practiceProgressState === 'comparison' &&
+        progress.textContent.includes('有進步') &&
+        progress.textContent.includes('防守 +50%') &&
+        progress.textContent.includes('受擊 −1') &&
+        progress.textContent.includes('反擊 ±0%')
+      );
+      root.dataset.practiceProgressComparison = secondProgress ? 'pass' : 'fail';
+      root.dataset.practiceProgressLayout = progressLayout ? 'pass' : 'fail';
+      if (!secondProgress || !progressLayout) {
+        throw new Error(`repeat-practice comparison failed or overflowed: ${progress?.textContent || 'missing progress'}`);
+      }
+
+      root.dataset.runAnalysisDirectionBrowser = firstPass && challengeOmitted && firstProgress && secondProgress && progressLayout ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);

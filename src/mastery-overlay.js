@@ -1,5 +1,6 @@
 import './result-share.js';
 import './run-analysis.js';
+import './practice-progress.js';
 import { CombatEngine } from './game-core.js';
 import {
   createMasterySession,

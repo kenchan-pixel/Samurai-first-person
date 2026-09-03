@@ -48,16 +48,19 @@ try {
   });
 
   const required = [
-    ['data-run-analysis-direction-browser="pass"', 'four-way direction analysis did not render correctly'],
+    ['data-run-analysis-direction-browser="pass"', 'four-way direction/practice-progress analysis did not render correctly'],
     ['data-run-analysis-direction-focus="pass"', 'weakest direction was not derived from authoritative event outcomes'],
     ['data-run-analysis-direction-layout="pass"', 'direction analysis overflowed the 320×568 result surface'],
     ['data-run-analysis-direction-challenge-omitted="true"', 'eight-stage terminal did not suppress the extra direction map'],
+    ['data-practice-progress-first="pass"', 'first same-opponent practice did not show the repeat-to-compare prompt'],
+    ['data-practice-progress-comparison="pass"', 'repeat practice did not compare defense, hits and counter conversion'],
+    ['data-practice-progress-layout="pass"', 'repeat-practice progress row overflowed the 320×568 result surface'],
   ];
   for (const [marker, message] of required) {
-    if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 6000)}`);
+    if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 7000)}`);
   }
 
-  console.log(`run-analysis direction browser smoke passed with ${browser}: four-way defense map + weakest-direction focus + eight-stage omission`);
+  console.log(`run-analysis browser smoke passed with ${browser}: four-way defense + challenge omission + same-opponent practice progress at 320x568`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {
