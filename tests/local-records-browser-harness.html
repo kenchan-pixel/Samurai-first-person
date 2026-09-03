@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Local records browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content"><h1>刃返</h1><button id="start-button" class="primary-button" type="button">拔刀</button></div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+  <script type="module">
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const flush = async () => { await Promise.resolve(); await new Promise((resolve) => setTimeout(resolve, 0)); };
+    const inside = (rect, touch = false) =>
+      (!touch || (rect.width >= 44 && rect.height >= 44)) && rect.left >= -0.5 && rect.right <= innerWidth + 0.5 && rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
+    try {
+      localStorage.setItem('blade-reversal-mastery-v1', JSON.stringify({ grade: 'A', masteryPoints: 82, score: 4200 }));
+      localStorage.setItem('blade-reversal-challenge-v1', JSON.stringify({ won: false, wavesCleared: 5, score: 6800 }));
+      await import('../src/beta-readiness.js');
+      await import('../src/local-records.js');
+      await flush();
+      const button = document.querySelector('#beta-readiness-button');
+      const panel = document.querySelector('#beta-readiness-panel');
+      if (!button || !panel) throw new Error('Closed Beta guide missing');
+      button.click();
+      await flush();
+      const section = panel.querySelector('[data-local-records]');
+      const campaign = panel.querySelector('[data-local-record-campaign]')?.textContent || '';
+      const challenge = panel.querySelector('[data-local-record-challenge]')?.textContent || '';
+      const next = panel.querySelector('[data-local-record-next]')?.textContent || '';
+      const pass = Boolean(
+        section && !panel.hidden && inside(button.getBoundingClientRect(), true) && inside(panel.getBoundingClientRect()) &&
+        campaign.includes('A級 · MASTERY 82 · 004200') && challenge.includes('連戰 5/8 · 006800') && next.includes('6/8') &&
+        section.textContent.includes('只讀 · 不上傳') && root.dataset.localRecordsReady === 'true'
+      );
+      root.dataset.localRecordsBrowser = pass ? 'pass' : 'fail';
+      if (!pass) throw new Error(`local records failed: ${campaign} | ${challenge} | ${next}`);
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.localRecordsBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import './result-share.js';
 import './result-feedback.js';
 import './beta-readiness.js';
+import './local-records.js';
 import './run-analysis.js';
 import './practice-progress.js';
 import { CombatEngine } from './game-core.js';

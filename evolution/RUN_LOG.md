@@ -144,3 +144,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Added Node coverage for the bounded three-step tester flow plus a source guard prohibiting persistence/network transports in the readiness module.
 - Extended the existing true 320×568 result-actions browser harness: after it proves 分享 and 回報, it switches to the start modal and requires the real **封測資訊** touch target/panel to stay in bounds, show the no-auto-upload/no-account/no-background-telemetry copy, expose exactly three tester steps and close cleanly.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the post-commit acceptance gates. The PR run comment records final receipts; no second bookkeeping commit is permitted.
+
+## Run 105 — Read-only local personal record book
+
+**Date:** 2026-09-04  
+**Action type:** RELEASE_PREP
+
+### Preflight
+
+- Incoming exact HEAD: `a9571e96fc81e0a94fb5249707083db915536f6c`.
+- Exact-head Actions CI #150 / run `33787967858` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**; Vercel bot also reports the same Preview deployment as Ready.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest exact-head review reports **no actionable P0/P1/P2**.
+- Eligible slices were scored: (1) read-only local **本機戰績** summary + next-play cue using existing campaign/challenge records 23/25; (2) further same-opponent practice comparison detail 20/25 because that subsystem just received two runs; (3) acceptance-only repeated-practice evidence 18/25 because it would not itself deliver a substantial new player-visible slice. Candidate 1 won and stays inside the approved local/export-only v0.5 boundary.
+
+### Implementation
+
+- Added a **本機戰績** section inside the existing **封測資訊** panel. It reads only the already-existing campaign mastery best (`blade-reversal-mastery-v1`) and challenge best (`blade-reversal-challenge-v1`), showing main-line grade/mastery/score and challenge waves/score without adding a new storage key.
+- The section derives one bounded next-play cue from those values: establish a campaign baseline, stabilise practice before retrying a low mastery run, try challenge after a solid campaign, or target the next challenge wave. It is guidance only and never changes combat, score, progression or persistence.
+- The surface is explicitly labelled **只讀 · 不上傳**. Missing/malformed/storage-disabled values degrade to “未有紀錄”; the module performs no storage write, account/identifier creation, analytics, telemetry, backend call or network request.
+- The record cards live inside the existing scrollable phone-safe guide, so no additional start-screen touch target or combat HUD density is introduced.
+
+### Verification boundary
+
+- Added deterministic Node coverage for record normalisation/formatting, next-play guidance and a source guard prohibiting persistence writes/network transports.
+- Added a focused true 320×568 browser harness and folded it into the existing result-actions browser gate. It seeds only the two pre-existing local record keys, opens the real Closed Beta guide, then requires the read-only campaign/challenge values, next-wave cue, privacy label and in-bounds guide/control lifecycle.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the post-commit acceptance gates. The PR run comment records final receipts; no second bookkeeping commit is permitted.

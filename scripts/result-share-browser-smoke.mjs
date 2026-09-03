@@ -61,7 +61,17 @@ try {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 8000)}`);
   }
 
-  console.log(`result-actions browser smoke passed with ${browser}: 320x568 share + local Closed Beta feedback/bug export`);
+  const recordsDom = await dumpDomWithDeviceMetrics(browser, '/tests/local-records-browser-harness.html', {
+    budget: 2500,
+    width: 320,
+    height: 568,
+    doneExpression: `document.documentElement.dataset.localRecordsBrowser === 'pass' || document.documentElement.dataset.localRecordsBrowser === 'fail'`,
+  });
+  if (!recordsDom.includes('data-local-records-browser="pass"')) {
+    throw new Error(`local records 320x568 browser gate failed. DOM:\n${recordsDom.slice(0, 8000)}`);
+  }
+
+  console.log(`result-actions browser smoke passed with ${browser}: 320x568 share + local Closed Beta feedback + read-only personal records`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {
