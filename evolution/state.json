@@ -1,12 +1,12 @@
 {
   "status": "verifying",
-  "run_number": 95,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Added an exact-head Preview build receipt so the delivery loop can prove which commit the reachable Vercel alias is serving when the Vercel connector and GitHub commit-status integration are unavailable.",
-  "last_commit": "835d6899a991920586c862e71d000fa7c0f0e5c7",
-  "active_blocker": "Post-commit exact-head CI and Preview build-receipt verification are required. After delivery verification is green, the blocking Bottom-parry/STEP input-ownership P2 and current-head heavy-attack focused browser-verification P2 remain ahead of feature work.",
+  "run_number": 96,
+  "last_action_type": "REGRESSION_FIX",
+  "last_action": "Restored the approved lower-corner STEP ownership contract by moving the default right-hand STEP cluster out of bottom-centre and expanded the true 320x568 production input gate to prove Bottom/Left parry routing plus STEP pointer isolation in both handedness modes.",
+  "last_commit": "b76784eb181763f6b5d472f511b8a5c9d9afe165",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. After delivery verification is green, the current-head Run 094 heavy-attack focused real-renderer P2 remains ahead of feature work.",
   "ci_status": "pending_self_verification",
-  "preview_status": "pending_exact_head_build_receipt",
+  "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
   "preview_status_target": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app/build-meta.json",
   "deployment_status_source": "Direct Vercel exact-SHA deployment data when available; otherwise exact-head GitHub Vercel status; when those integration signals are unavailable/missing (not failed), fail-closed Preview /build-meta.json exact-SHA receipt.",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "delivery_receipt_repair_pending_exact_head",
-    "last_observed_head": "5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
-    "incoming_ci_run": 33571293133,
+    "status": "input_ownership_repair_pending_exact_head",
+    "last_observed_head": "b76784eb181763f6b5d472f511b8a5c9d9afe165",
+    "incoming_ci_run": 33745121818,
     "incoming_ci_result": "success",
-    "incoming_github_vercel_status_count": 0,
-    "direct_vercel_list_result": "403_forbidden",
-    "direct_vercel_alias_lookup_result": "404_not_found",
+    "incoming_github_vercel_status_count": 1,
+    "incoming_github_vercel_result": "success",
+    "direct_vercel_connector": "not_required_github_status_green",
     "owner_preview_reachability": "confirmed",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "A reachable Preview does not prove exact-head identity by itself. The receipt fallback never overrides an explicit failed Vercel status."
+    "note": "The production 320x568 gate now treats the visible STEP button as the exclusive owner of its pointer stream while the immediately adjacent canvas remains available to Bottom parry. Left parry is exercised under both STEP handedness modes; the left-hand case is also exercised directly adjacent to STEP."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -58,11 +58,13 @@
       "preview_alias_reachable": true,
       "repair": "emit_no_store_build_meta_exact_sha_receipt",
       "receipt_path": "/build-meta.json",
-      "resolution": "pending_current_commit_verification"
+      "resolution": "success",
+      "resolved_head": "b76784eb181763f6b5d472f511b8a5c9d9afe165",
+      "resolved_at": "2026-09-03T10:35:32Z",
+      "resolved_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/EqETAzzctTknakQvodRhUnYJNVBs"
     }
   },
   "next_candidates": [
-    "REGRESSION_FIX: repair and production-verify Bottom parry input ownership against STEP at true 320x568, including real Bottom and Left parry routing in both handedness modes",
     "BLOCKER_FIX: add focused real 320x568 Oni/Shogun heavy telegraph-to-strike-to-recovery verification while retaining normal-attack neutrality",
     "REGRESSION_FIX: rebalance basic parry readability/tolerance using current stage timing evidence without flattening fast/heavy attack identity",
     "REGRESSION_FIX/FEATURE: improve Top/Bottom authored katana choreography continuity after input correctness is restored"

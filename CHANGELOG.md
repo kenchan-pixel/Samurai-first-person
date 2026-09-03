@@ -1,5 +1,11 @@
 # Changelog
 
+## Run 096 — Bottom parry / STEP ownership repair
+
+- Repaired the default right-hand STEP layout so the STEP button, range chip and feedback now live in the approved lower-right safe corner instead of occupying the bottom-centre parry lane; left-hand preference continues to mirror the same cluster into the lower-left safe corner.
+- Kept input precedence explicit: the visible STEP button exclusively owns its own pointer stream, while the adjacent canvas remains available to directional parry/swipe input. Combat timing, parry/Perfect windows, STEP timing/reach, damage and direction semantics are unchanged.
+- Expanded the true 320×568 production Combat UX gate across both handedness modes with real Bottom/Left taps, an adjacent Bottom probe beside STEP, STEP pointerdown→move→up isolation, and an immediate post-STEP Bottom tap that catches duplicate/stale pointer state.
+
 ## 0.35.0-evolution — 四向防守 weakness map
 
 - Extended the existing in-memory run analysis with a compact **四向防守** result map for campaign and direct-practice runs. It counts the authoritative incoming `strike` direction, treats successful parry/STEP as defended and `player-hit` as failed defense, then highlights the lowest observed direction rate.

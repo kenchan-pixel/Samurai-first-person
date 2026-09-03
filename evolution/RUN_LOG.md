@@ -67,3 +67,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No gameplay, combat timing/damage/parry/Perfect/STEP rule, input mapping, enemy/boss definition, score, renderer animation/geometry, local persistence, network/account/privacy or asset authority changed.
 - This is a delivery-safety repair only. It does not bypass CI or the Preview requirement; it creates a self-verifiable exact-head identity channel for the already-reachable Preview when external integration metadata is absent.
 - Post-commit acceptance requires exact-head GitHub CI plus a successful Preview `/build-meta.json` whose SHA equals the new implementation commit. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.
+
+## Run 096 — Bottom parry / STEP input ownership repair
+
+**Date:** 2026-09-03  
+**Action type:** REGRESSION_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `b76784eb181763f6b5d472f511b8a5c9d9afe165`.
+- Exact-head GitHub Actions CI #140 / run `33745121818` is terminal **success**, and GitHub's exact-head `Vercel` status is terminal **success**. The Preview-evidence deadlock from Run 095 is therefore closed for the incoming HEAD.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty.
+- The latest current-head All Repos review has two actionable P2 findings. The Bottom-parry/STEP ownership finding is blocking because it affects core mobile playability; the Run 094 heavy-attack focused-renderer evidence gap remains next after this repair.
+- Code inspection found the concrete defect behind the first P2: the approved baseline says right-hand STEP belongs in the lower-right safe corner and left-hand mode mirrors it to the lower-left, but production CSS only overrode the left-hand layout. The default right-hand STEP therefore remained at the footwork module's bottom-centre base position and directly occupied the most natural Bottom-parry lane.
+
+### Repair
+
+- Restored the approved handedness contract in `control-handedness.js`: right-hand mode now pins STEP, range chip and STEP feedback to the lower-right safe area; left-hand mode keeps the mirrored lower-left placement. The visible STEP button remains the exclusive owner of its own pointer stream, while the rest of the canvas continues to own directional parry/swipe input.
+- Expanded the real production Combat UX smoke at **320×568**. It now runs both right- and left-hand STEP layouts, exercises real Bottom and Left canvas taps in both modes, places the Bottom probe immediately beside the selected STEP button, and in left-hand mode also exercises the Left probe directly above/adjacent to STEP.
+- The same production document now drives STEP `pointerdown → pointermove → pointerup`, proves that stream does not emit a canvas parry, then immediately re-tests the adjacent Bottom parry to catch duplicate/stale pointer ownership.
+- Direction thresholds, parry/Perfect timing, STEP timing/reach, attack/swipe mapping and combat authority are unchanged; this repair moves the control to the baseline-approved corner and adds executable ownership evidence.
+
+### Regression boundary
+
+- No combat damage, timing, posture, score, enemy/boss definitions, player-screen direction semantics, persistence, account/network/privacy behavior, renderer geometry/animation or asset authority changed.
+- Existing Top/Right Pause-adjacent production checks remain in the same gate; the new lower-input checks extend rather than replace them.
+- Post-commit acceptance requires exact-head GitHub CI plus exact-head Vercel Preview success. The PR run comment is authoritative for those post-commit results; no second bookkeeping commit is allowed.

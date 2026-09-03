@@ -37,6 +37,24 @@ function dispatchViewportTap(target, x, y, pointerId) {
   }));
 }
 
+function dispatchViewportPointerStream(target, points, pointerId) {
+  const sequence = [
+    ['pointerdown', points[0]],
+    ...points.slice(1, -1).map((point) => ['pointermove', point]),
+    ['pointerup', points.at(-1)],
+  ];
+  for (const [type, point] of sequence) {
+    target.dispatchEvent(new PointerEvent(type, {
+      bubbles: true,
+      pointerId,
+      pointerType: 'touch',
+      clientX: point.x,
+      clientY: point.y,
+      isPrimary: true,
+    }));
+  }
+}
+
 function describeTarget(target) {
   if (!target) return 'none';
   const id = target.id ? `#${target.id}` : '';
@@ -79,14 +97,130 @@ async function verifyProductionParry(canvas, rect, direction, x, y, pointerId, d
   const mapped = directionFromErgonomicTap(x - rect.left, y - rect.top, rect.width, rect.height);
   if (hitTarget !== canvas || mapped !== direction) return false;
 
-  const before = root.dataset.combatUxProductionParry || 'none';
+  const probe = `probe:${pointerId}`;
+  root.dataset.combatUxProductionParry = probe;
   dispatchViewportTap(hitTarget, x, y, pointerId);
   const routed = await waitFor(() => {
     const value = root.dataset.combatUxProductionParry || 'none';
-    return value !== before && value.startsWith(`${direction}:`);
+    return value !== probe && value.startsWith(`${direction}:`);
   }, 320);
   root.dataset[`${diagnosticKey}Result`] = root.dataset.combatUxProductionParry || 'none';
   return routed;
+}
+
+async function selectControlHand(controlToggle, hand) {
+  if (root.dataset.controlHand === hand && localStorage.getItem(CONTROL_HAND_STORAGE_KEY) !== hand) {
+    controlToggle.click();
+    await sleep(20);
+    controlToggle.click();
+  } else if (root.dataset.controlHand !== hand) {
+    controlToggle.click();
+  }
+  await sleep(30);
+  return (
+    root.dataset.controlHand === hand &&
+    localStorage.getItem(CONTROL_HAND_STORAGE_KEY) === hand &&
+    controlToggle.getAttribute('aria-pressed') === String(hand === ControlHand.LEFT)
+  );
+}
+
+async function verifyLowerInputOwnership({
+  canvas,
+  rect,
+  controlToggle,
+  footworkStep,
+  footworkRange,
+  footworkFeedback,
+  safeBounds,
+  hand,
+  pointerBase,
+}) {
+  const selected = await selectControlHand(controlToggle, hand);
+  const stepRect = footworkStep.getBoundingClientRect();
+  const rangeRect = footworkRange.getBoundingClientRect();
+  const feedbackRect = footworkFeedback.getBoundingClientRect();
+  footworkStep.classList.add('is-active');
+  await sleep(20);
+  const activeStepRect = footworkStep.getBoundingClientRect();
+  footworkStep.classList.remove('is-active');
+
+  const sidePinned = hand === ControlHand.LEFT
+    ? stepRect.left - safeBounds.left <= 8.5 && stepRect.right < rect.left + rect.width * 0.36
+    : safeBounds.right - stepRect.right <= 8.5 && stepRect.left > rect.left + rect.width * 0.64;
+  const layout = Boolean(
+    selected &&
+    sidePinned &&
+    rectFitsSafeViewport(stepRect, safeBounds) &&
+    rectFitsSafeViewport(activeStepRect, safeBounds) &&
+    rectFitsSafeViewport(rangeRect, safeBounds) &&
+    rectFitsSafeViewport(feedbackRect, safeBounds)
+  );
+
+  const bottomX = hand === ControlHand.LEFT ? stepRect.right + 8 : stepRect.left - 8;
+  const bottomY = (stepRect.top + stepRect.bottom) / 2;
+  const leftX = Math.max(rect.left + 2, safeBounds.left + 2);
+  const leftY = hand === ControlHand.LEFT
+    ? Math.max(rect.top + rect.height * 0.5, stepRect.top - 8)
+    : rect.top + rect.height * 0.62;
+
+  const bottom = await verifyProductionParry(
+    canvas,
+    rect,
+    Direction.BOTTOM,
+    bottomX,
+    bottomY,
+    pointerBase,
+    `combatUx${hand}BottomHit`,
+  );
+  const left = await verifyProductionParry(
+    canvas,
+    rect,
+    Direction.LEFT,
+    leftX,
+    leftY,
+    pointerBase + 1,
+    `combatUx${hand}LeftHit`,
+  );
+
+  const stepCenter = {
+    x: (stepRect.left + stepRect.right) / 2,
+    y: (stepRect.top + stepRect.bottom) / 2,
+  };
+  const observed = [];
+  const onDown = () => observed.push('pointerdown');
+  const onMove = () => observed.push('pointermove');
+  const onUp = () => observed.push('pointerup');
+  footworkStep.addEventListener('pointerdown', onDown);
+  footworkStep.addEventListener('pointermove', onMove);
+  footworkStep.addEventListener('pointerup', onUp);
+  footworkStep.setPointerCapture = () => {};
+  const beforeStepParry = root.dataset.combatUxProductionParry || 'none';
+  dispatchViewportPointerStream(footworkStep, [
+    stepCenter,
+    { x: stepCenter.x + (hand === ControlHand.LEFT ? 6 : -6), y: stepCenter.y - 4 },
+    { x: stepCenter.x + (hand === ControlHand.LEFT ? 9 : -9), y: stepCenter.y - 6 },
+  ], pointerBase + 2);
+  await sleep(30);
+  footworkStep.removeEventListener('pointerdown', onDown);
+  footworkStep.removeEventListener('pointermove', onMove);
+  footworkStep.removeEventListener('pointerup', onUp);
+
+  const stepExclusive = Boolean(
+    document.elementFromPoint(stepCenter.x, stepCenter.y) === footworkStep &&
+    observed.join('>') === 'pointerdown>pointermove>pointerup' &&
+    (root.dataset.combatUxProductionParry || 'none') === beforeStepParry
+  );
+  const postStepBottom = await verifyProductionParry(
+    canvas,
+    rect,
+    Direction.BOTTOM,
+    bottomX,
+    bottomY,
+    pointerBase + 3,
+    `combatUx${hand}PostStepBottomHit`,
+  );
+
+  return { selected, layout, bottom, left, stepExclusive, postStepBottom, stepRect, rangeRect, feedbackRect };
 }
 
 async function startProductionDuel(startButton, pauseButton) {
@@ -152,13 +286,12 @@ async function run() {
     return;
   }
 
-  if (root.dataset.controlHand !== ControlHand.LEFT) controlToggle.click();
-  await sleep(30);
+  await selectControlHand(controlToggle, ControlHand.RIGHT);
   mark(
     'combatUxHandednessPersistent',
-    root.dataset.controlHand === ControlHand.LEFT &&
-      controlToggle.getAttribute('aria-pressed') === 'true' &&
-      localStorage.getItem(CONTROL_HAND_STORAGE_KEY) === ControlHand.LEFT,
+    root.dataset.controlHand === ControlHand.RIGHT &&
+      controlToggle.getAttribute('aria-pressed') === 'false' &&
+      localStorage.getItem(CONTROL_HAND_STORAGE_KEY) === ControlHand.RIGHT,
   );
 
   canvas.setPointerCapture = () => {};
@@ -193,25 +326,48 @@ async function run() {
 
   const footworkVisible = await waitFor(() => !footworkStep.hidden && !footworkRange.hidden, 1800);
   const safeBounds = measureSafeHorizontalBounds();
-  const stepRect = footworkStep.getBoundingClientRect();
-  const rangeRect = footworkRange.getBoundingClientRect();
-  const feedbackRect = footworkFeedback.getBoundingClientRect();
-  footworkStep.classList.add('is-active');
-  await sleep(20);
-  const activeStepRect = footworkStep.getBoundingClientRect();
-  footworkStep.classList.remove('is-active');
+  if (!footworkVisible || !safeBounds) {
+    root.dataset.combatUxBrowser = 'fail-footwork-layout';
+    return;
+  }
+
+  const rightOwnership = await verifyLowerInputOwnership({
+    canvas,
+    rect,
+    controlToggle,
+    footworkStep,
+    footworkRange,
+    footworkFeedback,
+    safeBounds,
+    hand: ControlHand.RIGHT,
+    pointerBase: 811,
+  });
+  const leftOwnership = await verifyLowerInputOwnership({
+    canvas,
+    rect,
+    controlToggle,
+    footworkStep,
+    footworkRange,
+    footworkFeedback,
+    safeBounds,
+    hand: ControlHand.LEFT,
+    pointerBase: 821,
+  });
+
+  mark('combatUxHandednessLayout', rightOwnership.layout && leftOwnership.layout);
   mark(
-    'combatUxHandednessLayout',
-    footworkVisible &&
-      root.dataset.controlHand === ControlHand.LEFT &&
-      rectFitsSafeViewport(stepRect, safeBounds) &&
-      rectFitsSafeViewport(activeStepRect, safeBounds) &&
-      rectFitsSafeViewport(rangeRect, safeBounds) &&
-      rectFitsSafeViewport(feedbackRect, safeBounds),
+    'combatUxBottomParryOwnership',
+    rightOwnership.bottom &&
+      rightOwnership.postStepBottom &&
+      leftOwnership.bottom &&
+      leftOwnership.postStepBottom,
   );
-  root.dataset.combatUxHandednessStepLeft = String(Math.round(stepRect.left));
-  root.dataset.combatUxHandednessRangeLeft = String(Math.round(rangeRect.left));
-  root.dataset.combatUxHandednessFeedbackLeft = String(Math.round(feedbackRect.left));
+  mark('combatUxLeftParryOwnership', rightOwnership.left && leftOwnership.left);
+  mark('combatUxStepPointerIsolation', rightOwnership.stepExclusive && leftOwnership.stepExclusive);
+  root.dataset.combatUxRightStepLeft = String(Math.round(rightOwnership.stepRect.left));
+  root.dataset.combatUxLeftStepLeft = String(Math.round(leftOwnership.stepRect.left));
+  root.dataset.combatUxHandednessRangeLeft = String(Math.round(leftOwnership.rangeRect.left));
+  root.dataset.combatUxHandednessFeedbackLeft = String(Math.round(leftOwnership.feedbackRect.left));
 
   const swipeThreshold = Math.max(34, rect.width * 0.085);
   mark(
@@ -311,6 +467,9 @@ async function run() {
     'combatUxHandednessPersistent',
     'combatUxHandednessLayout',
     'combatUxHandednessDirectionSafe',
+    'combatUxBottomParryOwnership',
+    'combatUxLeftParryOwnership',
+    'combatUxStepPointerIsolation',
     'combatUxTopParryPath',
     'combatUxRightParryPath',
     'combatUxPauseHudSafe',
