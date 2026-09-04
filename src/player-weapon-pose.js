@@ -58,7 +58,7 @@ export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
   const safeAction = Number.isFinite(action) ? Math.trunc(action) : 0;
   const direction = normalizePlayerDirectionIndex(directionIndex);
   const p = clamp01(progress);
-  const pulse = safeAction ? Math.sin(Math.PI * p) : 0;
+  const pulse = safeAction && p > 0 && p < 1 ? Math.sin(Math.PI * p) : 0;
   const attack = safeAction === 3;
   const perfect = safeAction === 2;
   const strength = pulse * (perfect ? 1.08 : 1);

@@ -26,6 +26,23 @@ test('neutral first-person grip returns the established two-hand base pose', () 
   assertFiniteBoundedPose(pose);
 });
 
+test('action pulse is exactly zero at start and completion for every direction', () => {
+  for (const action of [1, 2, 3]) {
+    for (let direction = 0; direction < 4; direction += 1) {
+      const start = playerWeaponPose(action, direction, 0);
+      const end = playerWeaponPose(action, direction, 1);
+      assert.equal(start.pulse, 0);
+      assert.equal(end.pulse, 0);
+      assert.deepEqual(end.handRPosition, [...PLAYER_WEAPON_BASE_POSE.handRPosition]);
+      assert.deepEqual(end.handLPosition, [...PLAYER_WEAPON_BASE_POSE.handLPosition]);
+      assert.deepEqual(end.forearmRPosition, [...PLAYER_WEAPON_BASE_POSE.forearmRPosition]);
+      assert.deepEqual(end.forearmLPosition, [...PLAYER_WEAPON_BASE_POSE.forearmLPosition]);
+      assert.deepEqual(end.rigFramingOffset, [0, 0, 0]);
+      assert.deepEqual(end.rigEulerOffset, [0, 0, 0]);
+    }
+  }
+});
+
 test('top and bottom parries visibly brace the complete support silhouette vertically', () => {
   const top = playerWeaponPose(1, 0, mid);
   const bottom = playerWeaponPose(1, 2, mid);
