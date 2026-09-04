@@ -19,7 +19,7 @@ const TOP_PARRY_FRAME_X = -0.22;
 const RIGHT_PARRY_FRAME_X = -0.52;
 const BOTTOM_PARRY_FRAME_X = -0.52;
 const BOTTOM_PARRY_FRAME_Y = 0.10;
-const BOTTOM_PARRY_ROLL = -20;
+const BOTTOM_PARRY_ROLL = -26;
 const BOTTOM_COUNTER_FRAME_X = -0.30;
 const BOTTOM_COUNTER_FRAME_Y = 0.10;
 const add3 = (base, x = 0, y = 0, z = 0) => [base[0] + x, base[1] + y, base[2] + z];

@@ -279,3 +279,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the unchanged player-grip path through BOTTOM normal/Perfect and all later gates, plus exact-head Vercel status are required before Run 129 is accepted.
 - The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 130 — Increase BOTTOM parry blade/support separation
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `07259684bb12aee51aef4ce6ce6a56647f4c30a2`.
+- Exact-head Actions CI #175 / run `33907050792` is terminal **failure** while exact-head GitHub `Vercel` status is terminal **success**. `npm test` passes **145/145** and the broad browser smoke passes. The dedicated real 320×568 player-grip gate now confirms BOTTOM normal-parry support, handle and blade geometry all intersect the viewport, then fails the unchanged **24 px projected blade-extension** requirement because the two-hand silhouette still obscures too much of the blade.
+- Direct Vercel deployment enumeration for the known project/team returns **403**, so the exact-head GitHub `Vercel` commit status is the authoritative deployment signal. Unresolved Vercel toolbar feedback is empty. Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty.
+- The latest same-head All Repos review classifies the exact blade-readability failure as actionable **P1** and reports no separate actionable P0/P2 issue. Feature work is prohibited.
+- Source inspection narrows the remaining defect to screen-space orientation rather than missing geometry or attachment. The authoritative BOTTOM normal/Perfect peak is about `103°`; Run 129's `-20°` complete-rig correction leaves it near `83°`, where the blade remains almost horizontal relative to the support silhouette even though the whole group is now inside portrait framing.
+
+### Blocker repair
+
+- Kept Run 129's accepted BOTTOM normal/Perfect whole-rig portrait translation exactly `-0.52` local X / `+0.10` local Y at peak and changed only the pulse-shaped whole-rig roll correction from `-20°` to `-26°`. Peak presentation is therefore about `77°`, preserving a distinct lower-guard diagonal while giving the live blade more vertical screen-space extension above the hands/forearms.
+- The correction still rotates the complete `PlayerSwordRig` after the authoritative PlayCanvas action pose. `PlayerBlade`, `PlayerGrip`, pommel/habaki and both support hands/forearms remain attached and return to the unchanged neutral pose; no support-only offset or fake blade translation is introduced.
+- Deterministic pose coverage pins the new normal/Perfect BOTTOM `-26°` peak correction and unchanged zero-at-endpoints / BOTTOM-counter scope. TOP/RIGHT/LEFT presentation, the restored BOTTOM `-92°` rising counter, player direction/input, combat timing/damage/posture/Perfect/STEP/reach/scoring, persistence/privacy/network behaviour and every real 320×568 threshold remain unchanged.
+
+### Verification boundary
+
+- The connector execution surface has no dependency-backed repository checkout, so exact-head GitHub Actions `npm test` + complete `npm run test:browser`, especially the unchanged player-grip 24 px blade-extension/attachment path through normal and Perfect BOTTOM, plus exact-head Vercel status are required after the one permitted commit before Run 130 is accepted.
+- No second bookkeeping commit is permitted; the Draft-PR run comment is the authoritative post-commit receipt.

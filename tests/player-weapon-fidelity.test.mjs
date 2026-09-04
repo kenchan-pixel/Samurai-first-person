@@ -80,8 +80,8 @@ test('portrait framing is pulse-shaped for top/right/bottom parry and bottom cou
   assert.deepEqual(perfectRight.rigFramingOffset, [-0.52, 0, 0]);
   assert.deepEqual(bottom.rigFramingOffset, [-0.52, 0.10, 0]);
   assert.deepEqual(perfectBottom.rigFramingOffset, [-0.52, 0.10, 0]);
-  assert.deepEqual(bottom.rigEulerOffset, [0, 0, -20]);
-  assert.deepEqual(perfectBottom.rigEulerOffset, [0, 0, -20]);
+  assert.deepEqual(bottom.rigEulerOffset, [0, 0, -26]);
+  assert.deepEqual(perfectBottom.rigEulerOffset, [0, 0, -26]);
   assert.deepEqual(left.rigFramingOffset, [0, 0, 0]);
   assert.deepEqual(left.rigEulerOffset, [0, 0, 0]);
   assert.deepEqual(bottomCounter.rigFramingOffset, [-0.30, 0.10, 0]);
