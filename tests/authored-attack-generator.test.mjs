@@ -15,6 +15,7 @@ import {
 import {
   authoredAttackProgress,
   authoredAttackTransitionSeconds,
+  AUTHORED_FEINT_BLEND_SECONDS,
   AUTHORED_GUARD_CLIP,
   AUTHORED_ATTACK_CLIPS,
   AUTHORED_PACK_CLIPS,
@@ -78,11 +79,18 @@ test('authored clip timeline stays continuous across telegraph, strike and recov
   assertNear(authoredAttackProgress('strike', 1), authoredAttackProgress('recovery', 0));
 });
 
-test('telegraph direction changes commit directly to the new authored guard while neutral Guard entry is immediate', () => {
+test('telegraph direction changes use the approved bounded authored crossfade while neutral Guard entry stays unchanged', () => {
+  assert.equal(AUTHORED_FEINT_BLEND_SECONDS, 0.05);
   assert.equal(authoredAttackTransitionSeconds('telegraph', null, 'AttackTop'), 0.055);
   assert.equal(authoredAttackTransitionSeconds('telegraph', 'Guard', 'AttackTop'), 0.055);
-  assert.equal(authoredAttackTransitionSeconds('telegraph', 'AttackRight', 'AttackLeft'), 0);
-  assert.equal(authoredAttackTransitionSeconds('telegraph', 'AttackTop', 'AttackRight'), 0);
+  assert.equal(
+    authoredAttackTransitionSeconds('telegraph', 'AttackRight', 'AttackLeft'),
+    AUTHORED_FEINT_BLEND_SECONDS,
+  );
+  assert.equal(
+    authoredAttackTransitionSeconds('telegraph', 'AttackTop', 'AttackRight'),
+    AUTHORED_FEINT_BLEND_SECONDS,
+  );
   assert.equal(authoredAttackTransitionSeconds('gap', 'AttackTop', 'Guard'), 0);
   assert.equal(authoredAttackTransitionSeconds('strike', 'AttackRight', 'AttackLeft'), 0.025);
 });

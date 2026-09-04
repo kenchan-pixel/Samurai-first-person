@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 114,
-  "last_action_type": "FEATURE",
-  "last_action": "Replaced the authored mid-telegraph directional hard cut used by feints with a bounded 50 ms full-rig Attack*-to-Attack* crossfade at the same normalized authored progress. Gameplay/final direction still commits immediately; CombatEngine timing, damage, parry/Perfect/STEP windows, attack definitions, generic Windup isolation and Sword-to-HandR grip authority are unchanged.",
-  "last_commit": "d16d4c8663695d51c8d2ff924346c257d0ed6c05",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 114 must preserve the existing real PlayCanvas authored-direction switch, grip/trajectory, attack-rhythm and full browser regression gates while the new deterministic feint-crossfade contract passes.",
+  "run_number": 115,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Migrated the retained authored attack-pack regression from the retired 0 ms telegraph direction-switch expectation to the approved 50 ms AUTHORED_FEINT_BLEND_SECONDS contract while preserving the existing clip-timeline, Guard-entry and non-feint transition assertions. No runtime, combat, input, persistence or network behavior changed.",
+  "last_commit": "7348925fa142e6be3ee9adfe69f6739b7b631927",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 115 must restore the full Node suite and 320x568 browser/PlayCanvas regression gate for the Run 114 authored feint crossfade without weakening directional, grip, trajectory, tempo or cumulative combat acceptance.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "authored_feint_crossfade_pending_exact_head",
-    "last_observed_head": "d16d4c8663695d51c8d2ff924346c257d0ed6c05",
-    "incoming_ci_run": 33830279572,
-    "incoming_ci_result": "success",
+    "status": "feint_regression_gate_repair_pending_exact_head",
+    "last_observed_head": "7348925fa142e6be3ee9adfe69f6739b7b631927",
+    "incoming_ci_run": 33833289704,
+    "incoming_ci_result": "failure",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "get_project returned 404 for the recorded project/team IDs; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 113 HEAD d16d4c8 passed Actions CI #159 / run 33830279572 and exact-head GitHub Vercel status. Latest exact-head All Repos review reports no actionable P0/P1/P2 and there are no inline review threads. Run 114 addresses the owner's remaining abrupt feint/變刀 presentation feedback with a bounded authored full-rig crossfade rather than runtime joint overrides or combat-timing changes."
+    "note": "Incoming Run 114 HEAD 7348925 failed Actions CI #160 / run 33833289704 at npm test (134/135) because the retained authored attack-pack generator regression still expected the retired 0 ms Attack*-to-Attack* telegraph switch; the browser gate was skipped. Exact-head GitHub Vercel status is success. The current-head Second Hourly review classifies this as P1 and requires migrating that stale expectation to the approved 50 ms contract without weakening the full browser acceptance. Inline review threads are empty."
   },
   "external_deployment_recovery": {
     "last_incident": {

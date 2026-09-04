@@ -80,3 +80,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Incoming exact-head CI/Vercel/review gates were green and source-level transition semantics were inspected before writing the commit; this execution surface has no local repository checkout for a pre-commit browser run.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 114 is accepted. The PR run comment records the resulting SHA and post-commit receipts; no second bookkeeping commit is permitted.
+
+## Run 115 — Feint regression-gate repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `7348925fa142e6be3ee9adfe69f6739b7b631927`.
+- Exact-head Actions CI #160 / run `33833289704` is terminal **failure**: `npm test` reaches 134/135 and fails the retained authored attack-pack generator regression; the required 320×568 browser/PlayCanvas step is skipped. Exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty.
+- The current-head Second Hourly review classifies the red acceptance fence as **P1** and identifies the stale generator expectation: Run 114 intentionally changed authored mid-telegraph `Attack*` → `Attack*` redirection from 0 ms to 50 ms, the new focused test already protects that contract, but `tests/authored-attack-generator.test.mjs` still requires the retired 0 ms value.
+- Under the exact-head verification fence, feature work is prohibited until this blocker is repaired.
+
+### Implementation
+
+- Migrated the retained attack-pack regression to import and assert `AUTHORED_FEINT_BLEND_SECONDS`, keeping the approved value at **50 ms** for authored telegraph direction changes instead of the obsolete 0 ms hard cut.
+- Preserved the rest of the generator/runtime contract: animation-only five-clip pack, 19-joint rig, fixed Sword→HandR grip, player-facing Guard axis, continuous telegraph→strike→recovery progress, Guard→attack timing and non-feint transition timing remain asserted.
+- No production runtime source, combat timing, attack definitions, damage, parry/Perfect/STEP windows, direction authority, renderer composition, persistence, privacy or networking changed in this blocker repair.
+
+### Verification boundary
+
+- The repair is intentionally limited to the stale acceptance contract plus required state/run evidence; it does not weaken or bypass the browser gate that Run 114 still must pass.
+- The resulting exact HEAD must pass the complete Node suite and full 320×568 browser/PlayCanvas suite, and its exact-head Vercel Preview must be terminal green. The Draft-PR run comment is the authoritative post-commit verification receipt.
