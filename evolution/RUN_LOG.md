@@ -49,34 +49,35 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Runs 123–124 repaired concrete TOP parry and BOTTOM-counter portrait framing by moving the complete `PlayerSwordRig`, preserving blade/handle/support attachment.
 - Runs 125–126 investigated BOTTOM-counter support/blade occlusion and hardened the Boss browser timing harness; those support-only counter experiments were superseded by Run 127's authoritative blade-path correction.
 
-## Runs 127–131 — Portrait grip blocker sequence
+## Runs 127–132 — Portrait grip blocker sequence
 
 - Run 127 corrected the authoritative BOTTOM counter from the generic `+92°` sweep to a BOTTOM-specific `-92°` rising cut.
 - Run 128 added bounded complete-rig portrait framing for RIGHT parry after the 320×568 gate exposed an off-screen player blade.
 - Run 129 added BOTTOM normal/Perfect whole-rig `-0.52/+0.10` portrait framing and a bounded roll so support, handle and blade re-entered the viewport.
 - Run 130 refined only the BOTTOM whole-rig roll to `-26°` (~77° peak), preserving all existing combat and 24 px blade-extension thresholds.
-- Run 131 added a pulse-shaped `-0.10` local-X tuck to the dominant/right forearm, hand and cuff only, leaving the blade and left support untouched. Exact HEAD `e6485a54489025c31f444a0307018f647fc74972` deployed successfully to Vercel, but Actions CI #177 / run `33916658464` failed during `npm test`; the complete browser suite was skipped. Same-head review identified the exact cause: `Math.sin(Math.PI)` leaves a tiny non-zero pulse at `progress === 1`, violating the exact neutral-return contract.
+- Run 131 added a pulse-shaped `-0.10` local-X tuck to the dominant/right forearm, hand and cuff only, leaving the blade and left support untouched; exact-head Node acceptance exposed a non-zero `Math.sin(Math.PI)` endpoint residue.
+- Run 132 made action endpoints exactly neutral by returning a zero player-support pulse at `p <= 0` / `p >= 1`. Exact HEAD `1105daf4277239770606692c985f0ed5fe91505c` passes **146/146 Node tests** and the broad browser smoke, but Actions CI #178 / run `33921404599` still fails the unchanged dedicated 320×568 normal-BOTTOM blade-read gate because the support silhouette obscures the required **>24 px** projected blade extension. Exact-head Vercel is successful.
 
-## Run 132 — Make player action endpoints exactly neutral
+## Run 133 — Clear the BOTTOM parry blade lane with a relative forearm brace
 
 **Date:** 2026-09-05  
 **Action type:** BLOCKER_FIX
 
 ### Preflight
 
-- Incoming exact HEAD: `e6485a54489025c31f444a0307018f647fc74972`.
-- Exact-head Actions CI #177 / run `33916658464` is terminal **failure** because `npm test` fails before browser acceptance. Exact-head GitHub `Vercel` status is terminal **success**, Vercel Preview Comments reports zero unresolved feedback, Draft PR #1 remains open/Draft/unmerged and `main` remains untouched.
-- Inline PR review comments are empty. The latest same-head All Repos review reports one actionable **P1** and no other P0/P1/P2: the Run 131 BOTTOM support tuck inherits the shared `Math.sin(Math.PI * p)` pulse, so `p === 1` leaves approximately `1.224646799e-16` instead of exact zero and causes exact `deepEqual` neutral-return coverage to fail.
-- Feature work is prohibited. The repair must keep the exact neutral-return assertion and must not weaken the existing 320×568 support/handle/blade, handle-axis, direction or **>24 px** blade-extension gates.
+- Incoming exact HEAD: `1105daf4277239770606692c985f0ed5fe91505c`.
+- Exact-head Actions CI #178 / run `33921404599` is terminal **failure** after `npm test` passes 146/146 and broad browser smoke succeeds; the dedicated true-320×568 player-grip process fails at normal BOTTOM Parry because support geometry still obscures the unchanged >24 px blade-extension contract. Exact-head GitHub `Vercel` status is terminal **success** and Preview feedback reports zero unresolved items.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty. The latest same-head All Repos review identifies this one actionable P1 and no additional P0/P1/P2.
+- Feature work is prohibited. The repair must preserve BOTTOM direction semantics, pommel→habaki attachment, support/handle/blade viewport intersection, the >24 px blade-read threshold, exact neutral return and all combat timing/input/damage/Perfect/STEP rules.
 
 ### Blocker repair
 
-- Normalised the shared player-weapon action pulse at its actual domain endpoints: action progress `p <= 0` or `p >= 1` now returns pulse `0` exactly; only the open interval `(0,1)` evaluates `Math.sin(Math.PI * p)`.
-- Mid-action presentation is unchanged, including Run 131's `-0.10` BOTTOM dominant-support tuck, BOTTOM whole-rig framing/roll, RIGHT/TOP framing and the restored BOTTOM rising counter. No combat direction/input/timing/damage/posture/Perfect/STEP/reach/scoring, persistence/privacy/network or renderer-authority rule changes.
-- Added focused regression coverage proving actions 1/2/3 across all four directions have an exact zero pulse and exact base support/framing return at both endpoints. Focused local `node --test tests/player-weapon-fidelity.test.mjs` passes **8/8** before commit.
-- Historical Runs 127–131 were compacted above; exact diffs, CI receipts and run comments remain in Git history and Draft PR #1.
+- Stopped relying on further complete-rig roll/framing changes. The accepted BOTTOM `-0.52/+0.10` framing and `-26°` whole-rig roll remain unchanged.
+- Strengthened only the dominant/right BOTTOM-parry support tuck from `-0.10` to `-0.14` local X so the hand/cuff/forearm stay near the handle but sit farther out of the blade lane.
+- Added a pulse-shaped BOTTOM-only `+28°` local roll to the long right forearm. At peak normal BOTTOM parry that changes the forearm's local Z rotation from about `-30°` to about `-2°`, making the forearm splay across the grip instead of projecting vertically through the blade while the actual katana and left support remain untouched.
+- Focused pose coverage now pins both the stronger dominant-support tuck and the BOTTOM forearm splay, while retaining exact endpoint-neutral, transform-bound and existing framing assertions. No acceptance threshold is reduced.
 
 ### Verification boundary
 
-- Exact-head post-commit GitHub Actions `npm test` + complete `npm run test:browser`, especially the unchanged dedicated 320×568 player-grip gate through BOTTOM normal/Perfect, plus exact-head Vercel status are required before Run 132 is accepted.
-- The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit verification receipt.
+- Exact-head post-commit GitHub Actions `npm test` + complete `npm run test:browser` are required. The unchanged dedicated 320×568 player-grip gate must clear normal and Perfect BOTTOM support/handle/blade visibility, >24 px blade extension, hand-axis attachment, all four directions, BOTTOM rising counter and exact neutral return.
+- Exact-head Vercel success is also required. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit verification receipt.

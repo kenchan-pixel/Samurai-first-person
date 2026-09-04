@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 132,
+  "run_number": 133,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the exact-head Node-test regression exposed by CI #177 at e6485a54489025c31f444a0307018f647fc74972. The shared player-weapon pulse used Math.sin(Math.PI * p), which is not exactly zero at p=1 and left a tiny residual in the new BOTTOM dominant-support tuck, violating the exact neutral-return contract. Action endpoints now return pulse 0 exactly and only the open interval evaluates the sine curve. Mid-action BOTTOM support tuck/framing/roll, TOP/RIGHT framing, the restored BOTTOM rising counter and all combat/acceptance thresholds are unchanged; focused endpoint coverage now pins exact zero for actions 1/2/3 in all four directions.",
-  "last_commit": "e6485a54489025c31f444a0307018f647fc74972",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 132 must pass npm test plus the complete browser suite; the unchanged dedicated 320x568 player-grip gate must then re-test the original BOTTOM normal/Perfect support/handle/blade intersection, >24 px projected blade-extension, handle-axis attachment, four-direction identity, BOTTOM rising-counter and exact neutral-return contracts.",
+  "last_action": "Incoming exact HEAD 1105daf4277239770606692c985f0ed5fe91505c closed the exact-neutral endpoint regression but CI #178 still failed the unchanged true-320x568 player-grip gate because the normal BOTTOM parry support silhouette obscured the required >24 px projected blade extension. Run 133 targets the relative support geometry instead of further whole-rig framing: the BOTTOM-only dominant/right forearm-hand-cuff tuck is strengthened from -0.10 to -0.14 local X, and the long right forearm receives a pulse-shaped +28 degree local roll so it splays across the grip instead of standing through the blade lane. Blade/root path, left support, accepted BOTTOM -0.52/+0.10 framing and -26 degree whole-rig roll, TOP/RIGHT fixes, BOTTOM rising counter, exact endpoint neutral return and every combat/acceptance threshold remain unchanged.",
+  "last_commit": "1105daf4277239770606692c985f0ed5fe91505c",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The unchanged dedicated 320x568 player-grip gate must clear BOTTOM normal and Perfect Parry support/handle/blade intersection, >24 px projected blade extension, pommel-to-habaki hand-axis attachment, four-direction identity, BOTTOM rising-counter and exact neutral-return contracts before this repair is accepted.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "bottom_parry_endpoint_neutral_fix_pending_exact_head",
-    "last_observed_head": "e6485a54489025c31f444a0307018f647fc74972",
-    "incoming_ci_run": 33916658464,
-    "incoming_ci_result": "failure_node_exact_neutral_return_due_sin_pi_residue_browser_skipped",
+    "status": "bottom_parry_relative_support_clearance_pending_exact_head",
+    "last_observed_head": "1105daf4277239770606692c985f0ed5fe91505c",
+    "incoming_ci_run": 33921404599,
+    "incoming_ci_result": "failure_browser_bottom_parry_support_obscures_required_blade_extension_after_node_146_146",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "403 list_deployments for the known project/team; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 131 HEAD e6485a5 has exact-head Vercel success and zero unresolved Preview feedback but CI #177 fails during npm test, so the browser suite never reaches the dedicated player-grip gate. The latest same-head All Repos review identifies one actionable P1 and no other P0/P1/P2: Math.sin(Math.PI * p) produces a tiny non-zero value at p=1, and the new BOTTOM right-support tuck converts that residue into an exact deepEqual neutral-return failure. Run 132 fixes the shared pulse seam centrally by returning exact zero at p<=0 and p>=1 while evaluating the same sine curve only on the open interval. The mid-action -0.10 BOTTOM right-support tuck, accepted BOTTOM -0.52/+0.10 framing and -26 degree roll, TOP/RIGHT framing, restored BOTTOM -92 degree rising counter, combat direction/input/timing/damage/posture/STEP/reach/score/persistence/network authority and every live 320x568 threshold remain unchanged. Focused local player-weapon tests pass 8/8; dependency-backed exact-head CI/browser acceptance remains authoritative post-commit evidence."
+    "note": "Incoming Run 132 HEAD 1105daf has exact-head Vercel success and zero unresolved Preview feedback. Actions CI #178 proves npm test 146/146 and broad browser smoke are green, then the dedicated player-grip gate fails only at normal BOTTOM parry because the support silhouette still overlaps the blade lane beyond the accepted >24 px projection contract. The latest same-head All Repos review identifies that one actionable P1 and no other P0/P1/P2. Run 133 therefore leaves the blade and complete-rig framing untouched and changes only the BOTTOM dominant support: -0.14 local-X tuck plus +28 degree right-forearm roll at peak action pulse. Focused pose coverage pins the stronger tuck/splay while the existing exact endpoint, bounds, handle-axis and full real-renderer browser gates remain authoritative post-commit evidence."
   },
   "external_deployment_recovery": {
     "last_incident": {

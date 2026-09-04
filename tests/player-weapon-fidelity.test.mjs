@@ -51,7 +51,8 @@ test('top and bottom parries visibly brace the complete support silhouette verti
   assert.ok(bottom.handRPosition[1] < PLAYER_WEAPON_BASE_POSE.handRPosition[1] - 0.04);
   assert.ok(bottom.handLPosition[1] < PLAYER_WEAPON_BASE_POSE.handLPosition[1] - 0.03);
   assert.ok(top.forearmREuler[0] > bottom.forearmREuler[0] + 10);
-  assert.ok(bottom.forearmRPosition[0] < PLAYER_WEAPON_BASE_POSE.forearmRPosition[0] - 0.09);
+  assert.ok(bottom.forearmRPosition[0] < PLAYER_WEAPON_BASE_POSE.forearmRPosition[0] - 0.13);
+  assert.ok(bottom.forearmREuler[2] > PLAYER_WEAPON_BASE_POSE.forearmREuler[2] + 15);
   assert.ok(Math.abs(bottom.handRPosition[0]) < Math.abs(PLAYER_WEAPON_BASE_POSE.handRPosition[0]));
   assert.ok(Math.abs(bottom.cuffRPosition[0]) < Math.abs(PLAYER_WEAPON_BASE_POSE.cuffRPosition[0]));
   assert.equal(bottom.handLPosition[0], PLAYER_WEAPON_BASE_POSE.handLPosition[0]);
