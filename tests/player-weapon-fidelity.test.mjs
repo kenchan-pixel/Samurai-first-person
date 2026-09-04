@@ -10,7 +10,7 @@ function assertFiniteBoundedPose(pose) {
     for (const value of values) {
       assert.equal(Number.isFinite(value), true, `${key} contains a non-finite value`);
       if (key.endsWith('Position')) assert.ok(Math.abs(value) < 1, `${key} escaped the compact foreground position budget`);
-      if (key.endsWith('Euler')) assert.ok(Math.abs(value) < 90, `${key} escaped the bounded joint rotation budget`);
+      if (key.endsWith('Euler') || key.endsWith('EulerOffset')) assert.ok(Math.abs(value) < 90, `${key} escaped the bounded joint/rig rotation budget`);
     }
   }
 }
@@ -22,6 +22,7 @@ test('neutral first-person grip returns the established two-hand base pose', () 
   assert.deepEqual(pose.handRPosition, [...PLAYER_WEAPON_BASE_POSE.handRPosition]);
   assert.deepEqual(pose.handLPosition, [...PLAYER_WEAPON_BASE_POSE.handLPosition]);
   assert.deepEqual(pose.rigFramingOffset, [0, 0, 0]);
+  assert.deepEqual(pose.rigEulerOffset, [0, 0, 0]);
   assertFiniteBoundedPose(pose);
 });
 
@@ -62,11 +63,13 @@ test('Perfect Parry strengthens the same directional brace and counter stays bou
   assertFiniteBoundedPose(counter);
 });
 
-test('portrait framing is pulse-shaped and limited to top/right parry and bottom counter', () => {
+test('portrait framing is pulse-shaped for top/right/bottom parry and bottom counter', () => {
   const top = playerWeaponPose(1, 0, mid);
   const perfectTop = playerWeaponPose(2, 0, mid);
   const right = playerWeaponPose(1, 1, mid);
   const perfectRight = playerWeaponPose(2, 1, mid);
+  const bottom = playerWeaponPose(1, 2, mid);
+  const perfectBottom = playerWeaponPose(2, 2, mid);
   const left = playerWeaponPose(1, 3, mid);
   const bottomCounter = playerWeaponPose(3, 2, mid);
   const rightCounter = playerWeaponPose(3, 1, mid);
@@ -75,11 +78,20 @@ test('portrait framing is pulse-shaped and limited to top/right parry and bottom
   assert.deepEqual(perfectTop.rigFramingOffset, [-0.22, 0, 0]);
   assert.deepEqual(right.rigFramingOffset, [-0.52, 0, 0]);
   assert.deepEqual(perfectRight.rigFramingOffset, [-0.52, 0, 0]);
+  assert.deepEqual(bottom.rigFramingOffset, [-0.52, 0.10, 0]);
+  assert.deepEqual(perfectBottom.rigFramingOffset, [-0.52, 0.10, 0]);
+  assert.deepEqual(bottom.rigEulerOffset, [0, 0, -20]);
+  assert.deepEqual(perfectBottom.rigEulerOffset, [0, 0, -20]);
   assert.deepEqual(left.rigFramingOffset, [0, 0, 0]);
+  assert.deepEqual(left.rigEulerOffset, [0, 0, 0]);
   assert.deepEqual(bottomCounter.rigFramingOffset, [-0.30, 0.10, 0]);
+  assert.deepEqual(bottomCounter.rigEulerOffset, [0, 0, 0]);
   assert.deepEqual(rightCounter.rigFramingOffset, [0, 0, 0]);
-  assert.deepEqual(playerWeaponPose(1, 1, 0).rigFramingOffset, [0, 0, 0]);
-  assert.ok(Math.abs(playerWeaponPose(1, 1, 1).rigFramingOffset[0]) < 1e-12);
+  assert.deepEqual(playerWeaponPose(1, 2, 0).rigFramingOffset, [0, 0, 0]);
+  assert.deepEqual(playerWeaponPose(1, 2, 0).rigEulerOffset, [0, 0, 0]);
+  assert.ok(Math.abs(playerWeaponPose(1, 2, 1).rigFramingOffset[0]) < 1e-12);
+  assert.ok(Math.abs(playerWeaponPose(1, 2, 1).rigFramingOffset[1]) < 1e-12);
+  assert.ok(Math.abs(playerWeaponPose(1, 2, 1).rigEulerOffset[2]) < 1e-12);
   assert.deepEqual(playerWeaponPose(3, 2, 0).rigFramingOffset, [0, 0, 0]);
   assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[0]) < 1e-12);
   assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[1]) < 1e-12);
@@ -110,6 +122,9 @@ test('all four directions return cleanly to the base grip at action completion',
     assert.ok(Math.abs(pose.rigFramingOffset[0]) < 1e-12);
     assert.ok(Math.abs(pose.rigFramingOffset[1]) < 1e-12);
     assert.ok(Math.abs(pose.rigFramingOffset[2]) < 1e-12);
+    assert.ok(Math.abs(pose.rigEulerOffset[0]) < 1e-12);
+    assert.ok(Math.abs(pose.rigEulerOffset[1]) < 1e-12);
+    assert.ok(Math.abs(pose.rigEulerOffset[2]) < 1e-12);
     assertFiniteBoundedPose(pose);
   }
 });

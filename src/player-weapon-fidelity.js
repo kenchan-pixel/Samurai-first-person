@@ -20,11 +20,18 @@ function applyPose(entity, position, euler) {
 }
 
 function applyPlayerRigFraming(rig, pose) {
-  if (!rig?.getLocalPosition || !rig?.setLocalPosition) return;
+  if (!rig) return;
   const [x, y, z] = pose.rigFramingOffset || [0, 0, 0];
-  if (!x && !y && !z) return;
-  const current = rig.getLocalPosition();
-  rig.setLocalPosition(current.x + x, current.y + y, current.z + z);
+  if ((x || y || z) && rig.getLocalPosition && rig.setLocalPosition) {
+    const current = rig.getLocalPosition();
+    rig.setLocalPosition(current.x + x, current.y + y, current.z + z);
+  }
+
+  const [pitch, yaw, roll] = pose.rigEulerOffset || [0, 0, 0];
+  if ((pitch || yaw || roll) && rig.getLocalEulerAngles && rig.setLocalEulerAngles) {
+    const current = rig.getLocalEulerAngles();
+    rig.setLocalEulerAngles(current.x + pitch, current.y + yaw, current.z + roll);
+  }
 }
 
 export function installPlayerWeaponFidelity(view) {
@@ -51,11 +58,10 @@ export function installPlayerWeaponFidelity(view) {
     const progress = view.playerProgress(now, action, direction);
     const pose = playerWeaponPose(action, direction, progress);
 
-    // Portrait-only framing corrections always move the complete camera-child
-    // PlayerSwordRig. TOP and RIGHT parries get bounded leftward composition
-    // corrections; the BOTTOM counter keeps its bounded left/up follow-through.
-    // Blade, handle and both support hands therefore remain attached and return
-    // with the shared action pulse.
+    // Portrait-only corrections always move/rotate the complete camera-child
+    // PlayerSwordRig after the authoritative action pose. TOP/RIGHT/BOTTOM parries
+    // and the BOTTOM counter therefore preserve blade, handle and two-hand attachment
+    // while keeping their authored action pulse and exact neutral return.
     applyPlayerRigFraming(rig, pose);
 
     applyPose(view.playerForearmR, pose.forearmRPosition, pose.forearmREuler);
@@ -72,6 +78,6 @@ export function installPlayerWeaponFidelity(view) {
   document.documentElement.dataset.playerWeaponFidelity = 'directional-two-hand-rig-v2';
   document.documentElement.dataset.playerWeaponParts = '8';
   document.documentElement.dataset.playerGripDirections = 'top,right,bottom,left';
-  document.documentElement.dataset.playerGripFraming = 'portrait-top-right-bottom-safe-v3';
+  document.documentElement.dataset.playerGripFraming = 'portrait-four-direction-safe-v4';
   return view;
 }

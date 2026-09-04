@@ -255,3 +255,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the unchanged dedicated player-grip gate through RIGHT, BOTTOM, LEFT and Perfect paths, plus exact-head Vercel status are required before Run 128 is accepted.
 - The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 129 — Restore BOTTOM parry support and blade readability
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `53d6954fda29a6172072c5e70e5e5c82ab0d89b9`.
+- Exact-head Actions CI #174 / run `33901136466` is terminal **failure** while exact-head GitHub `Vercel` status is terminal **success**. `npm test` remains **145/145** green; the browser suite advances past the repaired TOP, BOTTOM-counter and RIGHT paths, then the dedicated 320×568 player-grip gate fails at **BOTTOM normal parry** because the live two-hand support silhouette has no geometry intersecting the viewport.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, unresolved inline review threads are empty and Vercel toolbar feedback reports zero unresolved items. The latest same-head review classifies the exact failure as actionable **P1**. Feature work is prohibited.
+- Source inspection identifies a BOTTOM-only choreography root cause: the generic parry formula reaches `-34 + 180*0.55 + 38 = 103°` at peak, uniquely carrying the katana past a 90° lower guard. The blade therefore drops below the support while the support projects toward/outside the portrait edge; a translation-only repair would risk passing support visibility while failing the unchanged 24 px blade-extension gate.
+
+### Blocker repair
+
+- Added a BOTTOM normal/Perfect-parry whole-rig portrait correction at the existing action pulse: peak `-0.52` local X and `+0.10` local Y. Blade, grip, pommel/habaki, both hands, cuffs and forearms translate together and the correction is exactly zero at action start/completion.
+- Added one bounded BOTTOM normal/Perfect-parry `-20°` whole-rig roll correction at the same pulse. Peak presentation becomes about `83°`, retaining a distinct lower-guard identity without carrying the blade below the support. The correction rotates the complete `PlayerSwordRig`, so handle-axis and two-hand attachment are preserved rather than faked by moving support parts independently.
+- Pure pose coverage now pins normal/Perfect BOTTOM framing, the bounded roll, zero-at-endpoint return and unchanged BOTTOM counter scope. The existing real 320×568 support/handle/blade intersection, 24 px blade-extension, hand-axis, spacing, transform and neutral-return thresholds are not relaxed.
+- TOP/RIGHT framing, LEFT, the restored BOTTOM `-92°` rising counter, combat input/direction/timing/damage/posture/STEP/reach/score/persistence/network authority are unchanged. Focused pure player-weapon tests pass **7/7** before commit.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the unchanged player-grip path through BOTTOM normal/Perfect and all later gates, plus exact-head Vercel status are required before Run 129 is accepted.
+- The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
