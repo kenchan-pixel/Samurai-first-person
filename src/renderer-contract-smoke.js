@@ -1,4 +1,5 @@
-import { CombatEngine, Direction } from './game-core.js';
+import { CombatEngine, Direction, ENEMIES } from './game-core.js';
+import { AUTHORED_FEINT_BLEND_SECONDS } from './authored-enemy-attacks.js';
 import { motionPhaseForSnapshot } from './animation-motion.js';
 import { ENEMY_DIRECTION_SEMANTICS } from './enemy-screen-space-direction.js';
 import { View } from './renderer.js';
@@ -52,6 +53,7 @@ function render(engine, now, playerAction = 0, playerDirection = Direction.TOP, 
   return {
     backend: view.backend,
     phase: snapshot.phase,
+    attackDisplayedDirection: snapshot.attack?.displayedDirection || '',
     motionPhase: impl.motion.phase,
     interruptedRecovery: impl.motion.interruptedRecovery === true,
     wind: Number(impl.motion.wind) || 0,
@@ -144,12 +146,45 @@ try {
   assert(guard.phase === 'ready' && guard.authoredLayerState === 'Guard' && guard.authoredAttackClip === 'Guard', 'Ready state did not use the authored Guard clip');
   assert(guard.bladeAxisZ > 0.90 && Math.abs(guard.bladeAxisX) < 0.25 && Math.abs(guard.bladeAxisY) < 0.40, `Initial katana tip/blade axis did not face the player (${guardDiagnostic})`);
 
+  const DIRECTION_SETTLE_SECONDS = 0.07;
+  const sampleDirectionalCut = (direction) => {
+    const sampleEngine = new CombatEngine();
+    sampleEngine.start(0);
+    sampleEngine.drainEvents();
+    sampleEngine.update(1550);
+
+    // Each baseline direction begins from the real authored Guard, then advances the
+    // actual PlayCanvas animation system past the production Guard→Attack* transition.
+    // This preserves the spatial thresholds while avoiding contamination from a prior
+    // direction's active crossfade.
+    render(guardEngine, 0);
+    render(sampleEngine, 2150, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    view.impl.app.update(DIRECTION_SETTLE_SECONDS);
+    const windPose = render(sampleEngine, 2150, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+
+    sampleEngine.update(2430);
+    const strikeEarlyPose = render(sampleEngine, 2470, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    render(sampleEngine, 2525, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    const strikePose = render(sampleEngine, 2580, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    return { wind: windPose, strikeEarly: strikeEarlyPose, strike: strikePose };
+  };
+
+  const rightCut = sampleDirectionalCut(Direction.RIGHT);
+  const leftCut = sampleDirectionalCut(Direction.LEFT);
+  const bottomCut = sampleDirectionalCut(Direction.BOTTOM);
+  const windRight = rightCut.wind;
+  const windLeft = leftCut.wind;
+  const windBottom = bottomCut.wind;
+
   const engine = new CombatEngine();
   engine.start(0);
   engine.drainEvents();
-
   engine.update(1550);
+  render(guardEngine, 0);
+  render(engine, 2150);
+  view.impl.app.update(DIRECTION_SETTLE_SECONDS);
   const wind = render(engine, 2150);
+  const topWind = wind;
   assert(wind.phase === 'telegraph' && wind.wind > 0.35, 'Telegraph did not reach a readable wind-up pose');
   assert(wind.characterReady && wind.characterClip === 'Windup', 'Skinned rig did not enter the Windup compatibility phase');
   assert(wind.readTrailEnabled, 'Skinned sword did not expose the in-world blade-read trail during telegraph');
@@ -157,10 +192,8 @@ try {
 
   // RIGHT/LEFT are defined by the player's screen-space travel direction. Because the
   // opponent faces the player, the renderer mirrors only the enemy horizontal index:
-  // RIGHT starts on screen-left and cuts right; LEFT starts right and cuts left.
-  const windRight = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
-  const windLeft = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
-  const windBottom = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
+  // RIGHT starts on screen-left and cuts right; LEFT starts right and cuts left. These
+  // baselines are sampled only after the real authored transition has settled.
   assert(windRight.characterYaw > 8 && windLeft.characterYaw < -8, 'Player-screen Right/Left telegraphs did not mirror the opponent full-body orientation correctly');
   assert(Math.abs(windRight.characterYaw - windLeft.characterYaw) > 20, 'Right/left directional body language was not materially distinct');
   assert(windBottom.enemyY < wind.enemyY - 0.04, 'Bottom telegraph did not lower the opponent stance');
@@ -170,8 +203,6 @@ try {
   assert(windBottom.bladeTipY < wind.bladeTipY - 0.55, 'Bottom wind-up blade tip did not start materially below the top attack');
   assert(windRight.authoredLayerState === 'AttackLeft' && windLeft.authoredLayerState === 'AttackRight' && windBottom.authoredLayerState === 'AttackBottom', 'Player-screen direction adapter did not select the mirrored opponent-local authored side clips');
   assert([windRight, windLeft, windBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional telegraphs rotated the blade away from the authored HandR grip');
-
-  const topWind = render(engine, 2150, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
   assert(topWind.authoredAttackClip === 'AttackTop' && topWind.authoredLayerState === 'AttackTop', 'Top telegraph did not run the authored AttackTop clip');
 
   engine.update(2430);
@@ -191,9 +222,9 @@ try {
   assert(strike.bladeTipY < topWind.bladeTipY - 0.45, 'Top strike did not visibly cut downward from the overhead wind-up');
   assert(strike.worldTrailSegments >= 2, 'World-space blade trail did not record the actual strike path');
 
-  const strikeRight = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.RIGHT]);
-  const strikeLeft = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.LEFT]);
-  const strikeBottom = render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.BOTTOM]);
+  const strikeRight = rightCut.strike;
+  const strikeLeft = leftCut.strike;
+  const strikeBottom = bottomCut.strike;
   assert(strikeRight.bladeCrossedPlane && strikeLeft.bladeCrossedPlane && strikeBottom.bladeCrossedPlane, 'One or more directional strikes failed to cross the player-facing parry plane');
   assert([strikeRight, strikeLeft, strikeBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional strikes rotated the blade away from the authored HandR grip');
   assert(strikeRight.bladeTipX > windRight.bladeTipX + 0.20, 'RIGHT did not travel toward the player screen-right from its left-side wind-up');
@@ -244,6 +275,57 @@ try {
   const directionSwitchTransitions = attackTransitions.slice(directionSwitchStart);
   assert(directionSwitchTransitions.includes('AttackLeft') && directionSwitchTransitions.includes('AttackRight'), 'Direction switch did not transition between the mirrored authored directional tracks');
   assert(!directionSwitchTransitions.includes('Windup'), 'Direction switch leaked through the generic Windup state');
+
+  // Exercise a real Ronin feint instead of inferring production behavior from immediate
+  // back-to-back renderer overrides. CombatEngine commits the final player-screen RIGHT
+  // direction at feintAt; the authored rig then has 50 ms to blend directly from the
+  // opponent-local AttackRight (displayed LEFT) to AttackLeft (final RIGHT).
+  render(guardEngine, 0);
+  const roninEngine = new CombatEngine({ enemies: [ENEMIES[1]] });
+  roninEngine.start(0);
+  roninEngine.drainEvents();
+  roninEngine.update(1550);
+  const roninTelegraphStart = roninEngine.phaseStartedAt;
+  const roninTelegraphMs = roninEngine.currentAttack.telegraphMs;
+  const roninStrikeMs = roninEngine.currentAttack.strikeMs;
+  const feintResolveAt = roninTelegraphStart + Math.ceil((roninEngine.currentAttack.feintAt ?? 0.62) * roninTelegraphMs);
+  const feintLeadAt = feintResolveAt - 85;
+
+  render(roninEngine, feintLeadAt);
+  view.impl.app.update(DIRECTION_SETTLE_SECONDS);
+  const feintLead = render(roninEngine, feintLeadAt);
+  assert(feintLead.attackDisplayedDirection === Direction.LEFT, 'Ronin feint did not begin on the authored displayed LEFT direction');
+  assert(feintLead.authoredAttackClip === 'AttackRight' && feintLead.authoredLayerState === 'AttackRight', 'Ronin feint lead did not settle on the mirrored opponent-local AttackRight clip');
+
+  const strikeStartsAt = roninEngine.phaseEndsAt;
+  roninEngine.update(feintResolveAt);
+  const feintImmediate = render(roninEngine, feintResolveAt);
+  assert(feintImmediate.attackDisplayedDirection === Direction.RIGHT, 'CombatEngine did not commit the Ronin final RIGHT direction immediately at feint resolution');
+  assert(feintImmediate.authoredAttackClip === 'AttackLeft' && feintImmediate.authoredLayerState === 'AttackLeft', 'Ronin feint did not target the final mirrored AttackLeft clip immediately');
+
+  const feintSettleMs = Math.ceil((AUTHORED_FEINT_BLEND_SECONDS + 0.015) * 1000);
+  const feintSettledAt = feintResolveAt + feintSettleMs;
+  view.impl.app.update(feintSettleMs / 1000);
+  roninEngine.update(feintSettledAt);
+  const feintSettled = render(roninEngine, feintSettledAt);
+  const feintRemainingMs = roninEngine.phaseEndsAt - feintSettledAt;
+  assert(feintSettled.attackDisplayedDirection === Direction.RIGHT, 'Ronin final direction changed after the authored feint blend');
+  assert(feintSettled.authoredAttackClip === 'AttackLeft' && feintSettled.authoredLayerState === 'AttackLeft', 'Ronin final authored clip did not remain AttackLeft after the 50 ms blend');
+  assert(feintSettled.bladeTipX < -0.7, `Ronin final RIGHT cue did not settle on screen-left before the cut (x=${feintSettled.bladeTipX.toFixed(3)})`);
+  assert(feintSettled.bladeGripLocked && feintSettled.bladeOrientationDeltaDeg < 0.25, 'Ronin feint blend broke the authored Sword→HandR grip');
+  assert(feintRemainingMs >= 150, `Ronin final cue settled too late to read before strike (${feintRemainingMs} ms remaining)`);
+  assert(strikeStartsAt - roninTelegraphStart === roninTelegraphMs, 'Ronin feint blend changed authoritative telegraph timing');
+
+  roninEngine.update(strikeStartsAt);
+  const roninStrikeEarly = render(roninEngine, strikeStartsAt + 40);
+  render(roninEngine, strikeStartsAt + 105);
+  const roninStrike = render(roninEngine, strikeStartsAt + 175);
+  assert(roninEngine.phase === 'strike' && roninEngine.phaseEndsAt - strikeStartsAt === roninStrikeMs, 'Ronin feint blend changed authoritative strike timing');
+  assert(roninStrike.bladeTipX > feintSettled.bladeTipX + 0.20, 'Ronin final RIGHT cut did not travel toward player screen-right after the settled feint');
+  assert(roninStrike.bladeTipX > roninStrikeEarly.bladeTipX, 'Ronin final RIGHT blade path did not continue screen-right through strike');
+  assert(roninStrike.bladeCrossedPlane, 'Ronin final RIGHT strike did not cross the player-facing parry plane');
+  assert(roninStrike.bladeGripLocked && roninStrike.bladeOrientationDeltaDeg < 0.25, 'Ronin final RIGHT strike lost the authored Sword→HandR grip');
+  root.dataset.rendererRoninFeint = `left-to-right-settled-v1:${feintRemainingMs}ms`;
 
   root.dataset.rendererMotionIntegration = 'pass';
   root.dataset.rendererMotionSequence = 'telegraph-strike-parry-counter';

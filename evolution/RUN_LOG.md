@@ -104,3 +104,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The repair is intentionally limited to the stale acceptance contract plus required state/run evidence; it does not weaken or bypass the browser gate that Run 114 still must pass.
 - The resulting exact HEAD must pass the complete Node suite and full 320×568 browser/PlayCanvas suite, and its exact-head Vercel Preview must be terminal green. The Draft-PR run comment is the authoritative post-commit verification receipt.
+
+## Run 116 — Real Ronin feint renderer acceptance
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `47b9c7fec3b21d72861eddbaa9c4d922106f36ed`.
+- Exact-head Actions CI #161 / run `33836576070` is terminal **failure**: `npm test` is **135/135 green**, while `npm run test:browser` fails the PlayCanvas lateral wind-up check (`rightStartX=0.645`, `leftStartX=-0.137`). Exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty.
+- The latest same-head Second Hourly review classifies the red gate as **P1**. It identifies the acceptance-harness defect precisely: the old renderer smoke forces RIGHT → LEFT → BOTTOM synchronously on the same PlayCanvas animation layer, so Run 114's intentional 50 ms authored crossfade contaminates the spatial samples. The review explicitly requires retaining the existing X thresholds, sampling clean directions from Guard/fresh state, and adding a real Ronin feint lifecycle that advances actual animation time beyond the blend before asserting final direction, blade travel, grip/trajectory and unchanged combat timing.
+- Under the exact-head fence, feature work remains prohibited; this run is limited to that material regression-gate repair.
+
+### Implementation
+
+- Kept the established player-screen RIGHT/LEFT spatial thresholds unchanged. Each baseline directional cut now starts from the real authored `Guard`, enters its production Attack* clip, and advances the actual PlayCanvas animation system past the Guard→Attack transition before sampling the telegraph and strike path. This removes cross-direction blend contamination rather than relaxing acceptance.
+- Added a true Wandering Ronin first-attack feint lifecycle using the production CombatEngine definition: displayed LEFT settles first, the authoritative final RIGHT commits immediately at `feintAt`, PlayCanvas advances beyond the 50 ms full-rig crossfade, and the final cue must settle screen-left with at least 150 ms of telegraph remaining before cutting screen-right across the player-facing plane.
+- The real-feint gate also requires Sword→HandR grip/orientation continuity and proves the existing Ronin telegraph/strike durations are unchanged. Generic `Windup` routing remains prohibited by the retained transition assertions.
+- No production runtime, combat timing, damage, parry/Perfect/STEP window, input, persistence, privacy, network or asset behavior changed in this blocker repair.
+
+### Verification boundary
+
+- Source syntax for the modified browser harness was checked before the commit. The resulting exact HEAD must pass the complete Node suite and full `npm run test:browser`, including the real 320×568 PlayCanvas renderer contract, and its exact-head Vercel Preview must be terminal green before further feature work.
+- The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.

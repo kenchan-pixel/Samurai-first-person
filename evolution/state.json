@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 115,
+  "run_number": 116,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Migrated the retained authored attack-pack regression from the retired 0 ms telegraph direction-switch expectation to the approved 50 ms AUTHORED_FEINT_BLEND_SECONDS contract while preserving the existing clip-timeline, Guard-entry and non-feint transition assertions. No runtime, combat, input, persistence or network behavior changed.",
-  "last_commit": "7348925fa142e6be3ee9adfe69f6739b7b631927",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 115 must restore the full Node suite and 320x568 browser/PlayCanvas regression gate for the Run 114 authored feint crossfade without weakening directional, grip, trajectory, tempo or cumulative combat acceptance.",
+  "last_action": "Repaired the real 320x568 PlayCanvas feint acceptance contract without changing production gameplay: clean RIGHT/LEFT/BOTTOM baselines now begin from authored Guard and settle through the actual animation system, and a real Wandering Ronin LEFT-to-RIGHT feint lifecycle now proves immediate CombatEngine final-direction authority, the bounded 50 ms authored crossfade, settled screen-space cue/travel, Sword-to-HandR grip/trajectory continuity and unchanged telegraph/strike timing.",
+  "last_commit": "47b9c7fec3b21d72861eddbaa9c4d922106f36ed",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 116 must make the full 320x568 PlayCanvas/browser acceptance green while retaining the established RIGHT/LEFT spatial thresholds and proving the real Ronin feint settles with readable telegraph time remaining.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "feint_regression_gate_repair_pending_exact_head",
-    "last_observed_head": "7348925fa142e6be3ee9adfe69f6739b7b631927",
-    "incoming_ci_run": 33833289704,
+    "status": "feint_real_renderer_acceptance_repair_pending_exact_head",
+    "last_observed_head": "47b9c7fec3b21d72861eddbaa9c4d922106f36ed",
+    "incoming_ci_run": 33836576070,
     "incoming_ci_result": "failure",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "get_project returned 404 for the recorded project/team IDs; GitHub exact-head Vercel status is the authoritative fallback",
+    "direct_vercel_connector": "get_project remains unavailable for the recorded project/team IDs; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 114 HEAD 7348925 failed Actions CI #160 / run 33833289704 at npm test (134/135) because the retained authored attack-pack generator regression still expected the retired 0 ms Attack*-to-Attack* telegraph switch; the browser gate was skipped. Exact-head GitHub Vercel status is success. The current-head Second Hourly review classifies this as P1 and requires migrating that stale expectation to the approved 50 ms contract without weakening the full browser acceptance. Inline review threads are empty."
+    "note": "Incoming Run 115 HEAD 47b9c7f passed npm test 135/135 but failed Actions CI #161 / run 33836576070 in npm run test:browser. The latest same-head Second Hourly review classifies the blocker as P1: the renderer smoke sampled RIGHT->LEFT->BOTTOM synchronously on one animation layer, so the new 50 ms crossfade contaminated old spatial measurements. Run 116 keeps the existing spatial thresholds, starts clean directional baselines from Guard after real PlayCanvas settling, and adds a real Wandering Ronin feint lifecycle that advances both CombatEngine and the PlayCanvas animation system beyond the blend before asserting final cue, travel, grip and unchanged timing. Exact-head GitHub Vercel for the incoming SHA is success and inline review threads are empty."
   },
   "external_deployment_recovery": {
     "last_incident": {
