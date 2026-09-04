@@ -129,3 +129,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source syntax for the modified browser harness was checked before the commit. The resulting exact HEAD must pass the complete Node suite and full `npm run test:browser`, including the real 320×568 PlayCanvas renderer contract, and its exact-head Vercel Preview must be terminal green before further feature work.
 - The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.
+
+## Run 117 — Renderer acceptance lifecycle repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `0832139154cdd6ecf1940019978f9e5a63f372d6`.
+- Exact-head Actions CI #162 / run `33840791996` is terminal **failure**: `npm test` remains **135/135 green**, but `npm run test:browser` times out on `/?browser-smoke=renderer-motion` before the DOM receipt is emitted. Exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head Second Hourly review classifies the browser deadlock as **P1**.
+- The review identifies the new Run 116 `view.impl.app.update(...)` calls as the blocker: the production PlayCanvas application is already running via its own main loop, so manually stepping the whole application inside the imported smoke creates a non-production double-drive path under SwiftShader/`--dump-dom`.
+- Feature work remains prohibited under the exact-head fence; this run only repairs that acceptance lifecycle without weakening the feint contract.
+
+### Implementation
+
+- Removed every manual whole-application `app.update(...)` step from the 320×568 renderer smoke.
+- Added a focused PlayCanvas `AnimComponentLayer` settling seam used only by the acceptance module. It advances the real authored animation controller/evaluator through the existing 55–70 ms Guard→Attack transition and the existing 50 ms Ronin AttackRight→AttackLeft feint transition while the production application itself stays on its normal RAF lifecycle.
+- Clean per-direction samples still reset through authored Guard, retain the established RIGHT `< -0.700` / LEFT `> +0.700` thresholds and require the same blade travel, player-facing plane crossing and Sword→HandR orientation lock.
+- The real Ronin LEFT→RIGHT feint lifecycle is retained unchanged in meaning: CombatEngine final-direction authority is immediate, the final authored clip must settle after the bounded crossfade with at least 150 ms telegraph remaining, then travel screen-right through strike with unchanged telegraph/strike timing.
+- No production gameplay/runtime source, attack timing, damage, parry/Perfect/STEP window, persistence, privacy, network or asset behavior changed.
+
+### Verification boundary
+
+- The repair deliberately leaves the existing 20 s browser process timeout, 320×568 viewport, lateral thresholds, feint timing and blade/grip assertions unchanged. The resulting exact HEAD must pass `npm test` plus the complete `npm run test:browser` suite and exact-head Vercel before further feature work.
+- The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.

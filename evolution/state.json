@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 116,
+  "run_number": 117,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the real 320x568 PlayCanvas feint acceptance contract without changing production gameplay: clean RIGHT/LEFT/BOTTOM baselines now begin from authored Guard and settle through the actual animation system, and a real Wandering Ronin LEFT-to-RIGHT feint lifecycle now proves immediate CombatEngine final-direction authority, the bounded 50 ms authored crossfade, settled screen-space cue/travel, Sword-to-HandR grip/trajectory continuity and unchanged telegraph/strike timing.",
-  "last_commit": "47b9c7fec3b21d72861eddbaa9c4d922106f36ed",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 116 must make the full 320x568 PlayCanvas/browser acceptance green while retaining the established RIGHT/LEFT spatial thresholds and proving the real Ronin feint settles with readable telegraph time remaining.",
+  "last_action": "Repaired the Run 116 renderer acceptance deadlock without changing production gameplay: the 320x568 PlayCanvas smoke no longer manually calls the running pc.Application.update(). It now advances only the authored AnimComponentLayer through the existing 55-70 ms Guard-to-Attack and 50 ms Ronin feint transitions, while retaining the real final-direction, spatial, grip, blade-path and combat-timing assertions.",
+  "last_commit": "0832139154cdd6ecf1940019978f9e5a63f372d6",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 117 must restore the complete 320x568 browser suite without relaxing the 20 s process timeout, lateral thresholds, Ronin feint timing, Sword-to-HandR grip or blade-path acceptance.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "feint_real_renderer_acceptance_repair_pending_exact_head",
-    "last_observed_head": "47b9c7fec3b21d72861eddbaa9c4d922106f36ed",
-    "incoming_ci_run": 33836576070,
+    "status": "feint_animation_layer_settle_repair_pending_exact_head",
+    "last_observed_head": "0832139154cdd6ecf1940019978f9e5a63f372d6",
+    "incoming_ci_run": 33840791996,
     "incoming_ci_result": "failure",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 115 HEAD 47b9c7f passed npm test 135/135 but failed Actions CI #161 / run 33836576070 in npm run test:browser. The latest same-head Second Hourly review classifies the blocker as P1: the renderer smoke sampled RIGHT->LEFT->BOTTOM synchronously on one animation layer, so the new 50 ms crossfade contaminated old spatial measurements. Run 116 keeps the existing spatial thresholds, starts clean directional baselines from Guard after real PlayCanvas settling, and adds a real Wandering Ronin feint lifecycle that advances both CombatEngine and the PlayCanvas animation system beyond the blend before asserting final cue, travel, grip and unchanged timing. Exact-head GitHub Vercel for the incoming SHA is success and inline review threads are empty."
+    "note": "Incoming Run 116 HEAD 0832139 passed npm test 135/135 and exact-head Vercel but failed Actions CI #162 / run 33840791996 because /?browser-smoke=renderer-motion hit the unchanged 20 s headless timeout before emitting a DOM receipt. The latest same-head Second Hourly review classifies this as P1 and identifies repeated manual view.impl.app.update(...) calls as the non-production double-drive path. Run 117 keeps the real Ronin lifecycle and all established spatial/grip/timing thresholds, removes whole-application manual stepping, and uses the focused PlayCanvas AnimComponentLayer update seam solely inside the browser acceptance module to settle the existing authored transitions. Inline review threads remain empty."
   },
   "external_deployment_recovery": {
     "last_incident": {

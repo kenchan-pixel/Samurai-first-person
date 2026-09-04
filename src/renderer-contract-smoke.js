@@ -146,6 +146,24 @@ try {
   assert(guard.phase === 'ready' && guard.authoredLayerState === 'Guard' && guard.authoredAttackClip === 'Guard', 'Ready state did not use the authored Guard clip');
   assert(guard.bladeAxisZ > 0.90 && Math.abs(guard.bladeAxisX) < 0.25 && Math.abs(guard.bladeAxisY) < 0.40, `Initial katana tip/blade axis did not face the player (${guardDiagnostic})`);
 
+  // The production pc.Application is already running its own RAF loop. The browser
+  // acceptance seam must never call app.update() manually: doing so double-drives the
+  // whole app under SwiftShader/--dump-dom and can deadlock the receipt. Advancing only
+  // the authored AnimComponentLayer is enough to evaluate the real PlayCanvas transition
+  // weights/pose while keeping every other production system on its normal lifecycle.
+  const settleAuthoredLayer = (seconds, label) => {
+    assert(animLayer.transitioning, `${label} did not begin an authored animation transition`);
+    const before = Number(animLayer.transitionProgress);
+    assert(Number.isFinite(before) && before >= 0 && before <= 1, `${label} exposed invalid transition progress`);
+    animLayer.update(seconds);
+    assert(!animLayer.transitioning, `${label} did not settle within ${(seconds * 1000).toFixed(0)} ms`);
+  };
+  const resetToAuthoredGuard = () => {
+    render(guardEngine, 0);
+    if (animLayer.transitioning) animLayer.update(0.001);
+    assert(animLayer.activeState === 'Guard' && !animLayer.transitioning, 'Authored Guard did not settle before the next directional sample');
+  };
+
   const DIRECTION_SETTLE_SECONDS = 0.07;
   const sampleDirectionalCut = (direction) => {
     const sampleEngine = new CombatEngine();
@@ -153,13 +171,12 @@ try {
     sampleEngine.drainEvents();
     sampleEngine.update(1550);
 
-    // Each baseline direction begins from the real authored Guard, then advances the
-    // actual PlayCanvas animation system past the production Guard→Attack* transition.
-    // This preserves the spatial thresholds while avoiding contamination from a prior
-    // direction's active crossfade.
-    render(guardEngine, 0);
+    // Each baseline direction begins from the real authored Guard, then advances only
+    // the real PlayCanvas animation layer past the production Guard→Attack* transition.
+    // This preserves the spatial thresholds while avoiding cross-direction blend contamination.
+    resetToAuthoredGuard();
     render(sampleEngine, 2150, 0, Direction.TOP, DIRECTION_INDEX[direction]);
-    view.impl.app.update(DIRECTION_SETTLE_SECONDS);
+    settleAuthoredLayer(DIRECTION_SETTLE_SECONDS, `${direction} Guard-to-attack`);
     const windPose = render(sampleEngine, 2150, 0, Direction.TOP, DIRECTION_INDEX[direction]);
 
     sampleEngine.update(2430);
@@ -180,9 +197,9 @@ try {
   engine.start(0);
   engine.drainEvents();
   engine.update(1550);
-  render(guardEngine, 0);
+  resetToAuthoredGuard();
   render(engine, 2150);
-  view.impl.app.update(DIRECTION_SETTLE_SECONDS);
+  settleAuthoredLayer(DIRECTION_SETTLE_SECONDS, 'top Guard-to-attack');
   const wind = render(engine, 2150);
   const topWind = wind;
   assert(wind.phase === 'telegraph' && wind.wind > 0.35, 'Telegraph did not reach a readable wind-up pose');
@@ -280,7 +297,7 @@ try {
   // back-to-back renderer overrides. CombatEngine commits the final player-screen RIGHT
   // direction at feintAt; the authored rig then has 50 ms to blend directly from the
   // opponent-local AttackRight (displayed LEFT) to AttackLeft (final RIGHT).
-  render(guardEngine, 0);
+  resetToAuthoredGuard();
   const roninEngine = new CombatEngine({ enemies: [ENEMIES[1]] });
   roninEngine.start(0);
   roninEngine.drainEvents();
@@ -292,7 +309,7 @@ try {
   const feintLeadAt = feintResolveAt - 85;
 
   render(roninEngine, feintLeadAt);
-  view.impl.app.update(DIRECTION_SETTLE_SECONDS);
+  settleAuthoredLayer(DIRECTION_SETTLE_SECONDS, 'Ronin feint lead Guard-to-AttackRight');
   const feintLead = render(roninEngine, feintLeadAt);
   assert(feintLead.attackDisplayedDirection === Direction.LEFT, 'Ronin feint did not begin on the authored displayed LEFT direction');
   assert(feintLead.authoredAttackClip === 'AttackRight' && feintLead.authoredLayerState === 'AttackRight', 'Ronin feint lead did not settle on the mirrored opponent-local AttackRight clip');
@@ -305,7 +322,7 @@ try {
 
   const feintSettleMs = Math.ceil((AUTHORED_FEINT_BLEND_SECONDS + 0.015) * 1000);
   const feintSettledAt = feintResolveAt + feintSettleMs;
-  view.impl.app.update(feintSettleMs / 1000);
+  settleAuthoredLayer(feintSettleMs / 1000, 'Ronin AttackRight-to-AttackLeft feint');
   roninEngine.update(feintSettledAt);
   const feintSettled = render(roninEngine, feintSettledAt);
   const feintRemainingMs = roninEngine.phaseEndsAt - feintSettledAt;
@@ -326,6 +343,7 @@ try {
   assert(roninStrike.bladeCrossedPlane, 'Ronin final RIGHT strike did not cross the player-facing parry plane');
   assert(roninStrike.bladeGripLocked && roninStrike.bladeOrientationDeltaDeg < 0.25, 'Ronin final RIGHT strike lost the authored Sword→HandR grip');
   root.dataset.rendererRoninFeint = `left-to-right-settled-v1:${feintRemainingMs}ms`;
+  root.dataset.rendererAnimationSettle = 'anim-layer-only-v1';
 
   root.dataset.rendererMotionIntegration = 'pass';
   root.dataset.rendererMotionSequence = 'telegraph-strike-parry-counter';
