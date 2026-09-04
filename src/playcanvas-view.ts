@@ -433,7 +433,8 @@ export class PlayCanvasView {
       this.playerRig.setLocalEulerAngles(-13, -18, -34);
     } else if (action === 3) {
       this.playerRig.setLocalPosition(0.52 - pulse * 0.18, -0.48 + pulse * 0.10, -1.18 - pulse * 0.15);
-      this.playerRig.setLocalEulerAngles(-16 + pulse * 18, -18, -34 + targetZ + pulse * 92);
+      const counterSweep = pdir === 2 ? -92 : 92;
+      this.playerRig.setLocalEulerAngles(-16 + pulse * 18, -18, -34 + targetZ + pulse * counterSweep);
     } else {
       this.playerRig.setLocalPosition(0.56 - pulse * 0.10, -0.48 + pulse * 0.06, -1.20);
       this.playerRig.setLocalEulerAngles(-12 + pulse * 12, -18, -34 + targetZ * 0.55 + pulse * 38);

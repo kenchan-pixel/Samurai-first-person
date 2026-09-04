@@ -206,3 +206,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The focused pure player-weapon pose test passes locally in isolation (7/7). The execution surface has no networked repository checkout, so the complete dependency-backed browser suite cannot be run before the one permitted Git commit.
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially both the Boss event-stream and dedicated player-grip projection/attachment gates, plus exact-head Vercel status are required before Run 126 is accepted. The Draft-PR run comment is the authoritative post-commit receipt; no second bookkeeping commit is permitted.
+
+## Run 127 — Restore the real BOTTOM lower-to-upper counter path
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `1dbd3af3dba78a78ce2f382b6fd3a930275bde17`.
+- Exact-head Actions CI #172 / run `33889599704` is terminal **failure** while exact-head GitHub `Vercel` status is terminal **success**. `npm test` remains **145/145** green; on the bounded retry the broad browser/Boss paths pass and the dedicated 320×568 player-grip gate still fails the unchanged BOTTOM 24 px projected blade-extension assertion.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, Preview feedback reports zero unresolved items and inline review threads are empty. The latest same-head Second Hourly review classifies the failed exact-head browser acceptance as actionable **P1**. Feature work is prohibited.
+- Source inspection shows Runs 125/126 were compensating at the support silhouette while the authoritative player katana path still applied the same `+92°` action-3 pulse sweep to all four directions. BOTTOM begins 180° opposite TOP but therefore sweeps in the same rotational sense, conflicting with the intended lower-origin → upper-contact cut and with the live projection gate.
+
+### Blocker repair
+
+- Changed only the authoritative first-person **BOTTOM counter** sweep direction: action 3 now uses `-92°` at BOTTOM while TOP/RIGHT/LEFT keep the established `+92°`. The BOTTOM blade therefore rises toward the shared contact line instead of carrying the lower-origin orientation farther through the same generic rotation.
+- Removed the Run 126 `+0.10` support advance. Both hands/forearms/cuffs again use the established bounded downward BOTTOM brace, stay on the same handle choreography and return to neutral; the blade rather than a handle-space support translation now owns the readable rising lane.
+- The accepted Run 123/124 whole-rig portrait framing remains unchanged. Combat direction/input/timing/damage/posture/STEP/reach/score/persistence/network authority are untouched, and the existing 320×568 viewport, handle-axis, two-hand spacing and **24 px blade-extension** thresholds are not weakened.
+- Focused pure player-weapon pose tests pass **7/7** before commit. The dependency-backed PlayCanvas browser gate remains authoritative post-commit evidence for the actual projected blade path.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the unchanged Boss and dedicated player-grip gates, plus exact-head Vercel status are required before Run 127 is accepted.
+- The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
