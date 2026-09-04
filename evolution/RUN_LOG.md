@@ -230,3 +230,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the unchanged Boss and dedicated player-grip gates, plus exact-head Vercel status are required before Run 127 is accepted.
 - The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 128 — Keep the RIGHT parry katana inside portrait framing
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `1609cdbf0495d24abe2716460630cb27822a9d49`.
+- Exact-head Actions CI #173 / run `33895712983` is terminal **failure** while exact-head GitHub `Vercel` status is terminal **success**. `npm test` remains **145/145** green; the complete browser suite reaches the dedicated 320×568 player-grip gate and fails at **RIGHT normal parry** because the live `PlayerBlade` has no geometry intersecting the viewport.
+- Direct Vercel deployment enumeration for the known project/team returns **403**, so the exact-head GitHub `Vercel` commit status is the authoritative deployment signal. Unresolved Vercel toolbar feedback is empty. Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty.
+- The latest same-head ChatGPT review classifies this as actionable **P1** and explicitly requires repairing the real RIGHT player-blade projection/pose without weakening the existing 320×568 blade/handle/support/attachment thresholds. Feature work is prohibited.
+- Source inspection confirms RIGHT parry reaches its peak with the first-person rig still right-biased while the blade arc rotates toward positive screen X. Unlike TOP, there was no whole-rig portrait correction for this parry family, so the strengthened Run 122 projection gate exposes a real composition hole.
+
+### Blocker repair
+
+- Added one bounded camera-local **`-0.52` X** framing correction only to normal/Perfect RIGHT parry. It uses the existing action pulse, so the offset is zero at action start/completion and reaches its maximum only around the visible parry brace.
+- The correction moves the complete `PlayerSwordRig` after the authoritative PlayCanvas action pose. `PlayerBlade`, `PlayerGrip`, pommel/habaki and both support hands/forearms therefore translate together; the established RIGHT support choreography, direction identity and hand-to-handle attachment are not bypassed.
+- TOP's accepted `-0.22` parry correction, BOTTOM counter's accepted `-0.30/+0.10` framing and restored `-92°` rising sweep, LEFT framing, combat input/timing/damage/posture/STEP/reach/score/persistence/network authority are unchanged. The live 320×568 support/handle/blade intersection, 24 px blade-extension, handle-axis, spacing, bounded-transform and neutral-return assertions are unchanged.
+- Focused pure player-weapon tests pass **7/7** before commit and now pin normal/Perfect RIGHT peak framing plus zero-at-endpoints behaviour. The execution surface has no dependency-backed repository checkout, so the real PlayCanvas projection remains authoritative post-commit evidence.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the unchanged dedicated player-grip gate through RIGHT, BOTTOM, LEFT and Perfect paths, plus exact-head Vercel status are required before Run 128 is accepted.
+- The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.

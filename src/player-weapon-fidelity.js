@@ -52,10 +52,10 @@ export function installPlayerWeaponFidelity(view) {
     const pose = playerWeaponPose(action, direction, progress);
 
     // Portrait-only framing corrections always move the complete camera-child
-    // PlayerSwordRig. TOP parry keeps its accepted leftward nudge; the BOTTOM
-    // counter adds a bounded left/up follow-through correction so its rotated
-    // blade does not leave the 320x568 view. Blade, handle and both support hands
-    // therefore remain attached and return with the shared action pulse.
+    // PlayerSwordRig. TOP and RIGHT parries get bounded leftward composition
+    // corrections; the BOTTOM counter keeps its bounded left/up follow-through.
+    // Blade, handle and both support hands therefore remain attached and return
+    // with the shared action pulse.
     applyPlayerRigFraming(rig, pose);
 
     applyPose(view.playerForearmR, pose.forearmRPosition, pose.forearmREuler);
@@ -72,6 +72,6 @@ export function installPlayerWeaponFidelity(view) {
   document.documentElement.dataset.playerWeaponFidelity = 'directional-two-hand-rig-v2';
   document.documentElement.dataset.playerWeaponParts = '8';
   document.documentElement.dataset.playerGripDirections = 'top,right,bottom,left';
-  document.documentElement.dataset.playerGripFraming = 'portrait-top-bottom-safe-v2';
+  document.documentElement.dataset.playerGripFraming = 'portrait-top-right-bottom-safe-v3';
   return view;
 }

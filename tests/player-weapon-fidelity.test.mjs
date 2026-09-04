@@ -62,16 +62,24 @@ test('Perfect Parry strengthens the same directional brace and counter stays bou
   assertFiniteBoundedPose(counter);
 });
 
-test('portrait framing is pulse-shaped and limited to top parry and bottom counter', () => {
+test('portrait framing is pulse-shaped and limited to top/right parry and bottom counter', () => {
   const top = playerWeaponPose(1, 0, mid);
   const perfectTop = playerWeaponPose(2, 0, mid);
+  const right = playerWeaponPose(1, 1, mid);
+  const perfectRight = playerWeaponPose(2, 1, mid);
+  const left = playerWeaponPose(1, 3, mid);
   const bottomCounter = playerWeaponPose(3, 2, mid);
   const rightCounter = playerWeaponPose(3, 1, mid);
 
   assert.deepEqual(top.rigFramingOffset, [-0.22, 0, 0]);
   assert.deepEqual(perfectTop.rigFramingOffset, [-0.22, 0, 0]);
+  assert.deepEqual(right.rigFramingOffset, [-0.52, 0, 0]);
+  assert.deepEqual(perfectRight.rigFramingOffset, [-0.52, 0, 0]);
+  assert.deepEqual(left.rigFramingOffset, [0, 0, 0]);
   assert.deepEqual(bottomCounter.rigFramingOffset, [-0.30, 0.10, 0]);
   assert.deepEqual(rightCounter.rigFramingOffset, [0, 0, 0]);
+  assert.deepEqual(playerWeaponPose(1, 1, 0).rigFramingOffset, [0, 0, 0]);
+  assert.ok(Math.abs(playerWeaponPose(1, 1, 1).rigFramingOffset[0]) < 1e-12);
   assert.deepEqual(playerWeaponPose(3, 2, 0).rigFramingOffset, [0, 0, 0]);
   assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[0]) < 1e-12);
   assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[1]) < 1e-12);

@@ -16,6 +16,7 @@ const BASE = Object.freeze({
 });
 
 const TOP_PARRY_FRAME_X = -0.22;
+const RIGHT_PARRY_FRAME_X = -0.52;
 const BOTTOM_COUNTER_FRAME_X = -0.30;
 const BOTTOM_COUNTER_FRAME_Y = 0.10;
 const add3 = (base, x = 0, y = 0, z = 0) => [base[0] + x, base[1] + y, base[2] + z];
@@ -29,6 +30,9 @@ function playerRigFramingOffset(action, direction, pulse) {
   if (pulse <= 0) return [0, 0, 0];
   if ((action === 1 || action === 2) && direction === 0) {
     return [TOP_PARRY_FRAME_X * pulse, 0, 0];
+  }
+  if ((action === 1 || action === 2) && direction === 1) {
+    return [RIGHT_PARRY_FRAME_X * pulse, 0, 0];
   }
   if (action === 3 && direction === 2) {
     return [BOTTOM_COUNTER_FRAME_X * pulse, BOTTOM_COUNTER_FRAME_Y * pulse, 0];

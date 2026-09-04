@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 127,
+  "run_number": 128,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the persistent BOTTOM-counter blade-read blocker at the weapon-path root instead of moving the support silhouette again. The PlayCanvas player counter now reverses its 92-degree sweep only for BOTTOM so the lower-origin counter rises toward the contact pose; TOP/RIGHT/LEFT retain the established sweep. Removed the Run 126 +0.10 support advance so both hands/forearms return to the established bounded downward BOTTOM brace while the blade itself owns the rising lane.",
-  "last_commit": "1dbd3af3dba78a78ce2f382b6fd3a930275bde17",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 127 must pass npm test plus the complete browser suite, including the unchanged 320x568 player-grip 24 px blade-extension/attachment gate and Boss event-stream gate.",
+  "last_action": "Repaired the exact-head RIGHT-parry portrait-framing blocker exposed by CI #173. The authoritative PlayCanvas RIGHT parry rotates the complete camera-child PlayerSwordRig toward screen-right from an already right-biased anchor; at the dedicated 320x568 peak sample the live PlayerBlade therefore leaves the viewport. Added one pulse-shaped -0.52 local-X correction only for normal/Perfect RIGHT parry, moving blade, grip, pommel/habaki and both support hands/forearms together while preserving direction semantics, handle attachment, the existing 24 px blade-read threshold and exact neutral return.",
+  "last_commit": "1609cdbf0495d24abe2716460630cb27822a9d49",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 128 must pass npm test plus the complete browser suite, including the unchanged 320x568 player-grip support/handle/blade visibility, 24 px blade-extension, handle-axis attachment and BOTTOM rising-counter gates.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "bottom_counter_rising_blade_path_repair_pending_exact_head",
-    "last_observed_head": "1dbd3af3dba78a78ce2f382b6fd3a930275bde17",
-    "incoming_ci_run": 33889599704,
-    "incoming_ci_result": "failure_player_grip_bottom_blade_extension_after_broad_browser_and_boss_paths_passed_on_bounded_retry",
+    "status": "right_parry_whole_rig_framing_repair_pending_exact_head",
+    "last_observed_head": "1609cdbf0495d24abe2716460630cb27822a9d49",
+    "incoming_ci_run": 33895712983,
+    "incoming_ci_result": "failure_player_grip_right_parry_blade_no_geometry_intersecting_320x568_after_node_145_of_145_green",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "project enumeration remains unavailable; GitHub exact-head Vercel status is the authoritative fallback",
-    "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
+    "direct_vercel_connector": "403 list_deployments for the known project/team; GitHub exact-head Vercel status is the authoritative fallback",
+    "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 126 HEAD 1dbd3af passes npm test 145/145 and exact-head Vercel, but CI #172 remains red at the unchanged BOTTOM 24 px projected blade-extension gate after the Boss harness path is stable. Same-head review classifies this as actionable P1 and inline review threads are empty. Source inspection identifies the root cause in the authoritative player katana path: action 3 applied the same +92-degree pulse sweep to every direction. BOTTOM therefore started 180 degrees opposite TOP but swept in the same rotational sense, leaving the blade/support projection fighting the intended lower-to-upper read. Run 127 reverses only the BOTTOM counter sweep to -92 degrees and removes the compensating +0.10 support advance, restoring the already-authored downward support brace. Combat direction, timing, damage, input, whole-rig portrait framing, handle-axis attachment and the 24 px acceptance threshold are unchanged."
+    "note": "Incoming Run 127 HEAD 1609cdb passes npm test 145/145 and exact-head GitHub Vercel, but CI #173 fails the unchanged dedicated player-grip gate at RIGHT normal parry because the live PlayerBlade has no geometry intersecting the 320x568 viewport. The latest same-head ChatGPT review classifies this as actionable P1; inline review threads and unresolved Vercel toolbar feedback are empty. Source inspection confirms RIGHT parry reaches a rightward blade arc while the rig remains anchored to the established right-biased first-person stance. Run 128 adds only a pulse-shaped -0.52 camera-local X framing correction for action 1/2 direction RIGHT; the complete PlayerSwordRig moves together, so blade/handle/support attachment and local support choreography are unchanged. TOP framing, BOTTOM rising counter/framing, LEFT, combat direction/input/timing/damage/posture/STEP/reach/score/persistence/network authority and every live 320x568 threshold remain unchanged. Focused pure player-weapon tests pass 7/7 before commit; dependency-backed browser acceptance remains authoritative post-commit evidence."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,7 +66,7 @@
   },
   "next_candidates": [
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP-parry and BOTTOM-counter portrait-framing/rising-cut repairs; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
+    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP/RIGHT parry and BOTTOM-counter portrait-framing/rising-cut repairs; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
