@@ -24,185 +24,48 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Runs 055–061: authored AttackTop/Right/Bottom/Left, continuous Attack* playback, fixed HandR/Sword hierarchy, lateral-read repair, same-draw pose evaluation and bounded forward commitment.
 - Runs 062–064: optional 節拍提示 plus disabled-path DOM-idle and deterministic browser-harness repair.
 
-## Runs 065–089 — Blade semantics, delivery recovery, handedness, challenge and dojo
+## Runs 065–100 — Blade semantics, delivery recovery, handedness, challenge, dojo and owner repairs
 
 - Runs 065–069: player-facing Guard/directional cut semantics, semantic SOT smoke, actual-Sword afterimages and reduced-motion cleanup.
-- Runs 070–072: bounded one-shot Vercel capacity recovery and architecture SOT reconciliation with PlayCanvas + Vite primary and WebGL2 fallback.
-- Runs 073–074: persistent STEP handedness, left-side clipping repair and true 320×568 production input gate.
-- Runs 075–086: eight-duel 連戰試煉, momentum, 今日陣, tactical choice, rematch visual identity and per-wave split records with lifecycle/browser repairs.
-- Runs 087–089: direct Oni/Blood Moon practice and 師範弱點再練 routing while preserving campaign best and combat authority.
+- Runs 070–074: bounded Vercel recovery, architecture reconciliation, persistent STEP handedness, safe-area repair and 320×568 coverage.
+- Runs 075–089: eight-duel challenge, 氣勢/不屈, 今日陣, tactical choice, 宿敵步速, Oni/Blood Moon practice and 師範弱點再練.
+- Runs 090–093: production practice orchestration, 四向防守 and normal-practice capture repair.
+- Runs 094–098: heavy-attack presentation/acceptance, exact-head build receipt recovery, Bottom/STEP repair and bounded 60–110 ms near-contact normal-parry buffer.
+- Run 099: connected authored Top/Bottom vertical katana choreography with fixed Sword→HandR grip.
+- Run 100: explicit local result 分享 through Web Share/clipboard with no account, persistence, analytics or background network request.
 
-## Runs 090–100 — Production acceptance, owner-feedback repair and release prep
+## Runs 101–113 — Closed Beta readiness and combat-read refinement
 
-- Runs 090–091: real production 練血月 orchestration gate exposed and repaired the Pause → Home → direct Blood Moon fallback.
-- Runs 092–093: result-only 四向防守 analysis plus normal-practice capture repair under the Blood Moon adapter.
-- Runs 094–097: heavy-attack presentation, exact-head `/build-meta.json` recovery, Bottom/STEP 320×568 input repair and real-renderer heavy acceptance.
-- Run 098: bounded 60–110 ms near-contact final-direction guard commitment; normal parry only, never Perfect.
-- Run 099: refined deterministic AttackTop/AttackBottom into connected cross-body vertical cuts while preserving combat timing and fixed Sword→HandR grip.
-- Run 100: explicit result 分享 through Web Share/clipboard with no account, persistence, analytics or background network request.
+- Runs 101–107: session-only 修行進度, DOM ownership repair, local/export-only feedback, 封測資訊, local records, storage-denied startup and weak-direction repeat coaching.
+- Runs 108–112: session-only 封測 0/3 progress, terminal/bootstrap/DOM ownership repairs and challenge/今日陣 戰策回顧 with cumulative 320×568 acceptance.
+- Run 113: presentation-only measured / standard / quick / heavy attack-tempo readability from unchanged authoritative timing. Exact HEAD `d16d4c8663695d51c8d2ff924346c257d0ed6c05` passed Actions CI #159 and exact-head Vercel.
 
-## Runs 101–113 — Practice evidence, Closed Beta readiness and combat-read refinement
+## Runs 114–119 — Feint continuity and Perfect technique identity
 
-- Run 101: added session-only 修行進度 comparing repeated same-opponent practice from authoritative defense/hit/manual-counter outcomes.
-- Run 102: repaired practice-progress DOM marker ownership after CI exposed a style/result-row selector collision.
-- Run 103: added explicit local/export-only 體驗意見 / 錯誤回報 and established the approved Closed Beta v0.5 local/export-only boundary.
-- Run 104: added start-only 封測資訊 guide with the duel → repeated practice → explicit 回報 loop.
-- Run 105: added read-only 本機戰績 inside that guide using only established campaign/challenge local best records.
-- Run 106: repaired storage-denied startup so the guide/game stay usable when `localStorage` access throws.
-- Run 107: extended 修行進度 with an observed weak-direction target and repeat tracking without balance/data changes.
-- Runs 108–110: added session-only 封測 0/3 progress, repaired false terminal bootstrap, then fixed a DOM ownership collision that could replace the app root.
-- Run 111: added challenge/今日陣 terminal 戰策回顧 for accepted Waves 2/4/6 choices and direct HP/score effects.
-- Run 112: repaired the cumulative baseline/browser acceptance gap for 戰策回顧; exact route/effect text, bounds and retry/campaign clearing are now covered at 320×568.
-- Run 113: added presentation-only measured / standard / quick / heavy attack-tempo readability from each exact current attack's existing telegraph/strike timing. Exact HEAD `d16d4c8663695d51c8d2ff924346c257d0ed6c05` passed Actions CI #159 / run `33830279572`, exact-head GitHub `Vercel` status was success, and the latest exact-head All Repos review reported no actionable P0/P1/P2 findings.
+- Runs 114–118 replaced abrupt Ronin mid-telegraph hard cuts with a bounded 50 ms authored full-rig crossfade, then repaired stale/contaminated PlayCanvas acceptance until clean Guard→direction, lateral authored-contact travel and real LEFT→RIGHT feint evidence passed without relaxing blade/grip/travel thresholds or changing combat timing.
+- Run 119 added separate transient Perfect Parry `破` / Perfect STEP `閃` identities on the existing action cue. Exact HEAD `d0a4e5b93ed3dcdfe5190e69ee2ce003915de37e` passed Actions CI #165 / run `33853876903`, exact-head GitHub `Vercel` status was success, inline review threads were empty and the same-head All Repos review reported no actionable P0/P1/P2 finding.
 
-## Run 114 — Authored feint redirection continuity
+## Run 120 — Direction-aware first-person two-hand brace
 
 **Date:** 2026-09-04  
 **Action type:** FEATURE
 
 ### Preflight
 
-- Incoming exact HEAD: `d16d4c8663695d51c8d2ff924346c257d0ed6c05`.
-- Exact-head Actions CI #159 / run `33830279572` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success**. The direct Vercel connector still cannot resolve the recorded imported project (`get_project` returned 404), so the GitHub status remains the authoritative deployment fallback.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest exact-head All Repos review says **No actionable P0/P1/P2 findings**.
-- Owner feedback still identifies abrupt **變刀 / feint** presentation as unresolved. This is stronger evidence than the backlog's prior caution against speculative interpolation, so a bounded authored-track repair is justified without reopening combat balance.
-- Candidate scoring: (1) authored feint redirection continuity **22/25** (visible impact 5, goal 5, novelty 4, confidence 4, safety 4); (2) further Top/Bottom choreography refinement **19/25** because Run 099 already repaired the known deterministic path and no new concrete defect is observed; (3) difficulty tuning **18/25** because repository SOT still requires repeatable practice evidence before changing combat pressure. Candidate 1 wins.
+- Incoming exact HEAD: `d0a4e5b93ed3dcdfe5190e69ee2ce003915de37e`.
+- Exact-head Actions CI #165 / run `33853876903` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**. The direct Vercel project enumeration remains unavailable, so the GitHub status is the authoritative deployment signal.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head All Repos review reports **No actionable P0/P1/P2 finding**. Feature work is therefore allowed.
+- Candidate scoring: (1) **direction-aware first-person two-hand bracing** **22/25** (visible impact 5, goal 5, novelty 4, confidence 4, safety 4); (2) further Closed Beta diagnostics/export polish **19/25** (impact 3, goal 4, novelty 4, confidence 4, safety 4); (3) opponent difficulty/challenge tuning **15/25** (impact 5, goal 5, novelty 3, confidence 1, safety 1) because current SOT still requires repeated practice/challenge evidence before balance changes. Candidate 1 wins. Source inspection provides a concrete implementation gap: `player-weapon-fidelity.js` already receives the player direction index but previously ignored it, while the backlog explicitly prioritises first-person grip readability.
 
 ### Implementation
 
-- Replaced the mid-telegraph authored `Attack*` → `Attack*` hard cut with a bounded **50 ms full-rig crossfade** using the existing PlayCanvas animation-layer transition API.
-- The final gameplay/read direction still changes immediately when CombatEngine resolves the feint. The destination authored clip begins at the **same normalized authored progress**, so the crossfade smooths body/arms/katana continuity without adding a second clock, delaying the final direction or rewinding the cut.
-- The transition stays directly between authored directional tracks: no generic `Windup` contamination, no per-frame Chest/arm/HandR overrides, no runtime Sword rotation, and no new asset/downloaded motion.
-- Added deterministic coverage for the feint-specific 50 ms transition while preserving the established Guard→attack and non-telegraph transition durations. The existing true 320×568 PlayCanvas renderer/browser contract remains the runtime acceptance fence for actual directional track switching, authored grip/trajectory and the cumulative combat baseline.
-- CombatEngine timing, attack definitions, telegraph/strike durations, damage, parry/Perfect/STEP windows, late-telegraph guard buffer, feint/final-direction authority, attack-tempo classification, heavy weighting, persistence/privacy and networking are unchanged.
+- Added pure `src/player-weapon-pose.js` with a bounded four-direction foreground support pose family layered on the existing player katana action progress. TOP raises both support hands/forearms, BOTTOM lowers them, RIGHT/LEFT mirror a compact lateral brace, Perfect Parry strengthens the same direction family, and counter follow-through stays bounded.
+- `src/player-weapon-fidelity.js` now applies the complete hand/forearm/wrist-guard pose after the authoritative PlayCanvas player katana rig draws. The established blade/root direction motion remains authoritative; the new support offsets only improve embodiment and return to the neutral grip when the action completes.
+- Added deterministic tests for neutral preservation, top/bottom vertical separation, right/left mirroring, Perfect strength, bounded counter motion and clean return to the base grip across all four directions.
+- No enemy animation, Sword→HandR grip, player input mapping, combat timing, damage, posture, Perfect/STEP windows, reach, scoring, persistence, privacy or network behaviour changed. Existing 320×568 production renderer/browser gates remain cumulative.
+- Updated Current Baseline, changelog/backlog, state and this run log inside the same implementation tree.
 
 ### Verification boundary
 
-- Incoming exact-head CI/Vercel/review gates were green and source-level transition semantics were inspected before writing the commit; this execution surface has no local repository checkout for a pre-commit browser run.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 114 is accepted. The PR run comment records the resulting SHA and post-commit receipts; no second bookkeeping commit is permitted.
-
-## Run 115 — Feint regression-gate repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `7348925fa142e6be3ee9adfe69f6739b7b631927`.
-- Exact-head Actions CI #160 / run `33833289704` is terminal **failure**: `npm test` reaches 134/135 and fails the retained authored attack-pack generator regression; the required 320×568 browser/PlayCanvas step is skipped. Exact-head GitHub `Vercel` status is terminal **success**.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty.
-- The current-head Second Hourly review classifies the red acceptance fence as **P1** and identifies the stale generator expectation: Run 114 intentionally changed authored mid-telegraph `Attack*` → `Attack*` redirection from 0 ms to 50 ms, the new focused test already protects that contract, but `tests/authored-attack-generator.test.mjs` still requires the retired 0 ms value.
-- Under the exact-head verification fence, feature work is prohibited until this blocker is repaired.
-
-### Implementation
-
-- Migrated the retained attack-pack regression to import and assert `AUTHORED_FEINT_BLEND_SECONDS`, keeping the approved value at **50 ms** for authored telegraph direction changes instead of the obsolete 0 ms hard cut.
-- Preserved the rest of the generator/runtime contract: animation-only five-clip pack, 19-joint rig, fixed Sword→HandR grip, player-facing Guard axis, continuous telegraph→strike→recovery progress, Guard→attack timing and non-feint transition timing remain asserted.
-- No production runtime source, combat timing, attack definitions, damage, parry/Perfect/STEP windows, direction authority, renderer composition, persistence, privacy or networking changed in this blocker repair.
-
-### Verification boundary
-
-- The repair is intentionally limited to the stale acceptance contract plus required state/run evidence; it does not weaken or bypass the browser gate that Run 114 still must pass.
-- The resulting exact HEAD must pass the complete Node suite and full 320×568 browser/PlayCanvas suite, and its exact-head Vercel Preview must be terminal green. The Draft-PR run comment is the authoritative post-commit verification receipt.
-
-## Run 116 — Real Ronin feint renderer acceptance
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `47b9c7fec3b21d72861eddbaa9c4d922106f36ed`.
-- Exact-head Actions CI #161 / run `33836576070` is terminal **failure**: `npm test` is **135/135 green**, while `npm run test:browser` fails the PlayCanvas lateral wind-up check (`rightStartX=0.645`, `leftStartX=-0.137`). Exact-head GitHub `Vercel` status is terminal **success**.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty.
-- The latest same-head Second Hourly review classifies the red gate as **P1**. It identifies the acceptance-harness defect precisely: the old renderer smoke forces RIGHT → LEFT → BOTTOM synchronously on the same PlayCanvas animation layer, so Run 114's intentional 50 ms authored crossfade contaminates the spatial samples. The review explicitly requires retaining the existing X thresholds, sampling clean directions from Guard/fresh state, and adding a real Ronin feint lifecycle that advances actual animation time beyond the blend before asserting final direction, blade travel, grip/trajectory and unchanged combat timing.
-- Under the exact-head fence, feature work remains prohibited; this run is limited to that material regression-gate repair.
-
-### Implementation
-
-- Kept the established player-screen RIGHT/LEFT spatial thresholds unchanged. Each baseline directional cut now starts from the real authored `Guard`, enters its production Attack* clip, and advances the actual PlayCanvas animation system past the Guard→Attack transition before sampling the telegraph and strike path. This removes cross-direction blend contamination rather than relaxing acceptance.
-- Added a true Wandering Ronin first-attack feint lifecycle using the production CombatEngine definition: displayed LEFT settles first, the authoritative final RIGHT commits immediately at `feintAt`, PlayCanvas advances beyond the 50 ms full-rig crossfade, and the final cue must settle screen-left with at least 150 ms of telegraph remaining before cutting screen-right across the player-facing plane.
-- The real-feint gate also requires Sword→HandR grip/orientation continuity and proves the existing Ronin telegraph/strike durations are unchanged. Generic `Windup` routing remains prohibited by the retained transition assertions.
-- No production runtime, combat timing, damage, parry/Perfect/STEP window, input, persistence, privacy, network or asset behavior changed in this blocker repair.
-
-### Verification boundary
-
-- Source syntax for the modified browser harness was checked before the commit. The resulting exact HEAD must pass the complete Node suite and full `npm run test:browser`, including the real 320×568 PlayCanvas renderer contract, and its exact-head Vercel Preview must be terminal green before further feature work.
-- The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.
-
-## Run 117 — Renderer acceptance lifecycle repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `0832139154cdd6ecf1940019978f9e5a63f372d6`.
-- Exact-head Actions CI #162 / run `33840791996` is terminal **failure**: `npm test` remains **135/135 green**, but `npm run test:browser` times out on `/?browser-smoke=renderer-motion` before the DOM receipt is emitted. Exact-head GitHub `Vercel` status is terminal **success**.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head Second Hourly review classifies the browser deadlock as **P1**.
-- The review identifies the new Run 116 `view.impl.app.update(...)` calls as the blocker: the production PlayCanvas application is already running via its own main loop, so manually stepping the whole application inside the imported smoke creates a non-production double-drive path under SwiftShader/`--dump-dom`.
-- Feature work remains prohibited under the exact-head fence; this run only repairs that acceptance lifecycle without weakening the feint contract.
-
-### Implementation
-
-- Removed every manual whole-application `app.update(...)` step from the 320×568 renderer smoke.
-- Added a focused PlayCanvas `AnimComponentLayer` settling seam used only by the acceptance module. It advances the real authored animation controller/evaluator through the existing 55–70 ms Guard→Attack transition and the existing 50 ms Ronin AttackRight→AttackLeft feint transition while the production application itself stays on its normal RAF lifecycle.
-- Clean per-direction samples still reset through authored Guard, retain the established RIGHT `< -0.700` / LEFT `> +0.700` thresholds and require the same blade travel, player-facing plane crossing and Sword→HandR orientation lock.
-- The real Ronin LEFT→RIGHT feint lifecycle is retained unchanged in meaning: CombatEngine final-direction authority is immediate, the final authored clip must settle after the bounded crossfade with at least 150 ms telegraph remaining, then travel screen-right through strike with unchanged telegraph/strike timing.
-- No production gameplay/runtime source, attack timing, damage, parry/Perfect/STEP window, persistence, privacy, network or asset behavior changed.
-
-### Verification boundary
-
-- The repair deliberately leaves the existing 20 s browser process timeout, 320×568 viewport, lateral thresholds, feint timing and blade/grip assertions unchanged. The resulting exact HEAD must pass `npm test` plus the complete `npm run test:browser` suite and exact-head Vercel before further feature work.
-- The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.
-
-## Run 118 — Lateral authored-contact acceptance repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `08b61512f1dc44eb9ff173627013fd717d15807f`.
-- Exact-head Actions CI #163 / run `33844746928` is terminal **failure**: `npm test` is **135/135 green**, while `npm run test:browser` reaches the real PlayCanvas directional gate and fails only the retained RIGHT full-travel assertion. Exact-head GitHub `Vercel` status is terminal **success**.
-- The clean 320×568 wind-up evidence is now valid (`RIGHT x=-0.851`, `LEFT x=1.258`), Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head Second Hourly review classifies the remaining red directional acceptance as **P1**.
-- Source inspection identifies the acceptance seam rather than production motion as the concrete defect: the failed RIGHT sample is at 2580 ms, only 150/330 ms (45.5%) into the Ashigaru strike. `authoredAttackProgress()` maps that to about 0.567 authored progress, before the deterministic lateral contact key at 0.68. The earlier contaminated harness had masked this pre-contact/full-travel mismatch. The real Ronin feint gate already samples its final strike at 175/250 ms (70%), so it is already aligned with authored contact.
-- Under the exact-head fence, feature work remains prohibited; this run is limited to repairing the false-negative acceptance sampling without changing the game.
-
-### Implementation
-
-- Kept clean per-direction Guard setup and the Run 117 AnimComponentLayer-only settling path intact; no whole-app manual update was reintroduced.
-- `sampleDirectionalCut()` now derives the strike start and duration from the authoritative CombatEngine state, retains early/mid renders for real trail/path accumulation, and takes the full RIGHT/LEFT/BOTTOM travel sample at **68% of the real strike**, which maps to the authored contact key instead of the former pre-contact pose.
-- Preserved every player-visible acceptance threshold: RIGHT wind-up remains `< -0.700`, LEFT remains `> +0.700`, lateral full travel remains `>=0.20`, Bottom rise remains `>0.35`, all three cuts must cross the player-facing plane, and Sword→HandR orientation lock remains `<0.25°`. Added a contact-travel diagnostic so any future failure reports the real deltas instead of only the assertion label.
-- Production runtime source, authored animation pack, 50 ms Ronin feint crossfade, attack timings, damage, parry/Perfect/STEP windows, direction authority, persistence, privacy and networking are unchanged.
-
-### Verification boundary
-
-- The modified acceptance path is deliberately semantic rather than a threshold relaxation: it measures complete cut travel at authored contact while retaining the same spatial limits. This execution surface has no local checkout, so the resulting exact HEAD must pass `npm test` plus the complete `npm run test:browser` suite and exact-head Vercel before further feature work.
-- The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.
-
-## Run 119 — Perfect technique identity
-
-**Date:** 2026-09-04  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `c6564c3ec2543cea1779ea9d081dac55f9ab9eef`.
-- Exact-head Actions CI #164 / run `33849468816` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**. The direct Vercel project enumeration remains unavailable, so GitHub's exact-head Vercel status is the authoritative deployment signal.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head All Repos review reports **No actionable P0/P1/P2 finding**. Run 118 therefore closes the blocker fence and feature work is allowed.
-- Candidate scoring: (1) **Perfect Parry / Perfect STEP technique identity** **23/25** (visible impact 4, goal alignment 5, novelty 4, confidence 5, safety 5); (2) first-person grip embellishment **18/25** (impact 4, goal 4, novelty 3, confidence 3, safety 4) because extra foreground motion can obstruct blade reads; (3) opponent difficulty tuning **15/25** (impact 5, goal 5, novelty 3, confidence 1, safety 1) because repository SOT still requires repeated practice evidence before changing pressure. Candidate 1 wins and also closes the explicit Perfect-technique clarity backlog item without reopening renderer motion after four consecutive acceptance repairs.
-
-### Implementation
-
-- Added `src/perfect-technique-cue.js` after the existing Perfect Parry / Perfect STEP adapters. It observes only the already-drained authoritative events and reuses the established `#combat-action-cue`; it adds no combat state, persistence, network call, timer or new persistent HUD element.
-- Perfect Parry now finishes as `PERFECT PARRY · 正面截刀 · 敵勢大增 · 自動返刀` with a cool clash/`破` visual identity. The mapped automatic riposte counter is deliberately ignored so it cannot immediately overwrite that technique identity.
-- Perfect STEP now finishes as `PERFECT STEP · 側身避刃 · 無敵勢 · 仲可掃屏` with a green lateral/`閃` identity. Existing Blood Moon/defeat close-opening cases receive truthful terminal copy and do not advertise the unavailable follow-up swipe.
-- Normal parry/counter, damage, posture, scoring, Perfect/STEP windows, spacing/reach, direction semantics and input ownership are unchanged. Reduced-motion suppresses the decorative STEP streak while preserving the static cue identity.
-- Added deterministic event/copy/no-duplicate tests and a focused true **320×568** browser harness using the production onboarding action-cue surface. It requires distinct parry/STEP visual signatures, truthful posture wording, in-viewport bounds and `pointer-events:none`. The harness is appended to the full `npm run test:browser` chain.
-- Updated Current Baseline, regression checklist, changelog, backlog, state and this run log inside the same implementation tree.
-
-### Verification boundary
-
-- New module/test/smoke source passed isolated syntax checks, and the pure cue-profile logic passed a local stubbed Node test before the Git commit. This environment cannot execute the repository's complete dependency/browser suite before the branch update.
-- The resulting exact HEAD must pass GitHub Actions `npm test` plus the complete `npm run test:browser` chain (including the new 320×568 technique gate) and exact-head Vercel before Run 119 is accepted. The PR run comment is the authoritative post-commit receipt; no second bookkeeping commit is permitted.
+- Incoming exact-head CI/Vercel/review gates were green. The connector execution surface has no local repository checkout, so exact-head GitHub Actions `npm test` + complete `npm run test:browser` and exact-head Vercel are required after the single branch commit before Run 120 is accepted.
+- No second bookkeeping commit is permitted; the Draft-PR run comment is the authoritative post-commit receipt.

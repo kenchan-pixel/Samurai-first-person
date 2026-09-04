@@ -1,6 +1,7 @@
 import * as pc from 'playcanvas';
+import { playerWeaponPose } from './player-weapon-pose.js';
 
-const installed = Symbol.for('blade-reversal.player-weapon-fidelity-v1');
+const installed = Symbol.for('blade-reversal.player-weapon-fidelity-v2');
 
 function addPart(parent, type, name, material, position, scale, euler = [0, 0, 0]) {
   const entity = new pc.Entity(name);
@@ -11,6 +12,11 @@ function addPart(parent, type, name, material, position, scale, euler = [0, 0, 0
   entity.setLocalEulerAngles(...euler);
   parent.addChild(entity);
   return entity;
+}
+
+function applyPose(entity, position, euler) {
+  entity?.setLocalPosition?.(...position);
+  entity?.setLocalEulerAngles?.(...euler);
 }
 
 export function installPlayerWeaponFidelity(view) {
@@ -35,16 +41,21 @@ export function installPlayerWeaponFidelity(view) {
     const action = meta.playerAction || 0;
     const direction = meta.playerDirectionIndex || 0;
     const progress = view.playerProgress(now, action, direction);
-    const pulse = action ? Math.sin(Math.PI * progress) : 0;
-    const attack = action === 3;
+    const pose = playerWeaponPose(action, direction, progress);
 
-    view.playerForearmR.setLocalEulerAngles(-8 + pulse * (attack ? 18 : 9), 0, -22 - pulse * (attack ? 18 : 8));
-    view.playerForearmL.setLocalEulerAngles(-12 + pulse * (attack ? 13 : 7), 0, 19 + pulse * (attack ? 14 : 7));
-    view.playerHandR.setLocalEulerAngles(pulse * 5, 0, -10 - pulse * (attack ? 12 : 6));
-    view.playerHandL.setLocalEulerAngles(pulse * 4, 0, 10 + pulse * (attack ? 10 : 5));
+    applyPose(view.playerForearmR, pose.forearmRPosition, pose.forearmREuler);
+    applyPose(view.playerForearmL, pose.forearmLPosition, pose.forearmLEuler);
+    applyPose(view.playerHandR, pose.handRPosition, pose.handREuler);
+    applyPose(view.playerHandL, pose.handLPosition, pose.handLEuler);
+    applyPose(view.playerCuffR, pose.cuffRPosition, pose.cuffREuler);
+    applyPose(view.playerCuffL, pose.cuffLPosition, pose.cuffLEuler);
+
+    document.documentElement.dataset.playerGripDirection = String(pose.direction);
+    document.documentElement.dataset.playerGripAction = String(pose.action);
   };
 
-  document.documentElement.dataset.playerWeaponFidelity = 'two-hand-rig-v1';
+  document.documentElement.dataset.playerWeaponFidelity = 'directional-two-hand-rig-v2';
   document.documentElement.dataset.playerWeaponParts = '8';
+  document.documentElement.dataset.playerGripDirections = 'top,right,bottom,left';
   return view;
 }

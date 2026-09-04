@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.40.0-evolution — Direction-aware first-person grip
+
+- Upgraded the existing first-person katana support silhouette from a direction-neutral hand/forearm pulse to a bounded four-direction two-hand brace. TOP raises the support hands/forearms, BOTTOM lowers them, RIGHT/LEFT mirror a compact lateral brace, Perfect Parry strengthens the same family, and counter follow-through remains bounded.
+- The authoritative PlayCanvas player katana rig still owns the blade/root direction. The new support pose is applied only after that draw and returns to the established neutral grip at action completion; input mapping, combat timing, damage, posture, Perfect/STEP windows, reach, scoring, persistence and networking are unchanged.
+- Added a pure pose seam plus deterministic tests for neutral preservation, vertical separation, lateral mirroring, Perfect strength, bounded counter motion and clean four-direction return-to-base. Existing 320×568 production PlayCanvas/browser acceptance remains cumulative.
+
 ## 0.39.0-evolution — Perfect technique identity
 
 - Reused the existing transient combat action-cue surface to give **Perfect Parry** and **Perfect STEP** visibly different technique identities after the authoritative event adapters resolve. Perfect Parry now keeps a cool clash/`破` treatment with explicit enemy-posture language; Perfect STEP keeps a green lateral/`閃` treatment with explicit no-posture/spacing language.

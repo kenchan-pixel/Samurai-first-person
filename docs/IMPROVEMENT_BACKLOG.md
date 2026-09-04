@@ -39,6 +39,7 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Run 113: added presentation-only **攻擊節奏可讀性** from each exact current attack's existing telegraph/strike timing. Slow non-heavy cuts now visibly settle into a measured load, mid-tempo cuts remain neutral, genuinely quick cuts get a bounded snap/forward real-blade accent, and heavy attacks remain solely owned by the established heavy-weight pass; combat timing and feint authority are unchanged.
 - Runs 114–118: replaced abrupt authored Ronin mid-telegraph hard cuts with a bounded 50 ms full-rig feint crossfade, then repaired stale/contaminated renderer acceptance until the real 320×568 clean Guard→direction and LEFT→RIGHT Ronin feint contracts passed without relaxing blade/grip/travel thresholds or changing combat timing.
 - Run 119: added a **Perfect technique identity** pass on the existing transient action cue. Perfect Parry now ends on a cool clash/`破` treatment with explicit posture language, while Perfect STEP ends on a green lateral/`閃` treatment with explicit no-posture/spacing language; normal parry/counter and the Perfect Parry auto-riposte counter do not create duplicate technique identities, and combat rewards/timing are unchanged.
+- Run 120: upgraded the first-person player katana support silhouette into a **direction-aware two-hand brace**. TOP raises the visible hands/forearms, BOTTOM lowers them, RIGHT/LEFT mirror a compact lateral brace, Perfect strengthens the same family and counters retain bounded follow-through; the authoritative player blade/root motion, input and combat rules are unchanged.
 
 ## Highest priority — autonomous visual/runtime acceptance
 
@@ -47,7 +48,7 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 3. **Challenge / 今日陣 pressure + momentum + tactics + 宿敵 evidence** — compare standard challenge and same-date 今日陣 over repeated runs. Check whether pressure order, hitless recovery, the three HP/score decisions and PB split feedback create meaningful endurance/replay decisions without flattening difficulty or obscuring blade reads. Tune challenge-only values/UI only from repeatable evidence.
 4. **Perfect technique coexistence** — keep the Run 119 transient identities distinct and truthful: Perfect Parry builds posture; Perfect STEP does not and still depends on spacing. Refine only if the cue overlaps blade reads, misstates a closed opening or becomes visually redundant with existing impact/footwork feedback.
 5. **Timing-assist coexistence** — keep optional/default-off, subordinate to the real blade, correct through Ronin feints, pointer-transparent and DOM-idle when off.
-6. **First-person grip readability** — ensure hands/forearms improve embodiment without covering enemy blade reads or making directional parry/counter motion noisy.
+6. **First-person grip coexistence** — inspect the Run 120 directional two-hand brace at 320×568. Hands/forearms must improve embodiment without covering enemy blade reads, detaching visually from the katana or making parry/counter motion noisy; refine only concrete Preview/runtime defects.
 7. **STEP + blade-read + Pause layout** — maintain quiet HUD, top-right bounded Pause, reachable adjacent top/right parries, persistent right/left STEP-side preference and optional rails/ring without overlap.
 8. **Performance evidence** — tune shadows/material/pixel ratio only from concrete browser/runtime evidence; physical-phone heat/frame evidence remains valuable but not mandatory.
 
@@ -58,7 +59,7 @@ Candidate pool, not a fixed roadmap. Every run re-evaluates against exact-head C
 - Evidence-based difficulty refinement: after the bounded near-contact parry repair, tune at most one further Ronin/Oni/Shogun/Blood Moon rhythm/window/phase pressure only if repeated **修行進度** / 四向防守 evidence still shows a stable wall rather than normal run variance.
 - Accessibility: broader motion controls only where they solve a concrete accessibility gap. Do not duplicate 刀路清晰 or 節拍提示 as another overlay system.
 - Further Shogun motion/phase refinement only from concrete readability/performance evidence.
-- Deeper first-person weapon fidelity only if current two-hand silhouette stays readable and performant.
+- Deeper first-person weapon fidelity only if the Run 120 direction-aware two-hand silhouette remains readable, attached and performant in exact Preview evidence.
 - Closed Beta release prep may continue with player-visible feedback/bug-reporting and release-readiness surfaces only after the approved v0.5 baseline is reconciled into repository SOT. Keep leaderboard, remote telemetry, remote identifiers and backend writes behind the privacy/data Decision Gate below.
 
 ## Data / telemetry Decision Gate
