@@ -81,3 +81,39 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Exact-head post-commit GitHub Actions `npm test` + complete `npm run test:browser` are required. The unchanged dedicated 320×568 player-grip gate must clear normal and Perfect BOTTOM support/handle/blade visibility, >24 px blade extension, hand-axis attachment, all four directions, BOTTOM rising counter and exact neutral return.
 - Exact-head Vercel success is also required. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit verification receipt.
+
+## Run 134 — Structured Closed Beta feedback triage
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `ef144507f28fc744aabd0fb41196f3db225f8366`.
+- Exact-head Actions CI #179 / run `33925730386` is terminal **success** through `npm test` and the complete browser suite, including the true 320×568 player-grip gate that cleared the prior BOTTOM-parry blocker. Exact-head GitHub `Vercel` status is terminal **success** and Preview feedback reports zero unresolved items.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest exact-head review reports no actionable P0–P2 findings.
+- No delivery/runtime/regression blocker remains, so feature selection is allowed.
+
+### Candidate selection
+
+Scored impact / product-goal alignment / novelty / confidence / safety, each out of 5:
+
+- Structured Closed Beta feedback topic triage — **23/25** (`4/5/4/5/5`).
+- Repeat-practice directional coaching expansion — **21/25** (`4/5/3/4/5`).
+- Challenge tactical/PB retrospective clarity — **20/25** (`4/4/4/4/4`).
+
+Selected the feedback slice because Closed Beta release preparation is already approved, it creates a new player-visible workflow without changing combat balance, and it improves the usefulness of explicit tester reports while remaining fully local/export-only.
+
+### Implementation
+
+- The existing result-screen **回報** panel now offers six ≥44 px optional topic chips: **刀路 / 格擋 / STEP / 畫面 / 難度 / 其他**.
+- Topic selection is single-select and reversible; leaving every chip unselected preserves the previous report format.
+- When selected, the explicit Web Share/clipboard payload adds one `範圍：…` line before the existing mode/progress/score/summary/player-note context.
+- The topic is run-time UI state only. No `localStorage`, `sessionStorage`, account, identifier, analytics, fetch/XHR/beacon/WebSocket, remote feedback endpoint or gameplay authority is added.
+- Existing feedback privacy copy, share cancellation, clipboard fallback, clean URL, 800-character note bound and scrollable 320×568 panel remain intact.
+
+### Verification boundary
+
+- Focused pre-commit Node acceptance for `result-feedback` passes **6/6**, including topic opt-in/unknown-value fail-closed behavior, note bounding, Web Share/clipboard behavior, and explicit assertions that the module contains no automatic upload transport or persistence.
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser` are required. The existing 320×568 result-actions browser gate must still prove the feedback control/panel fits the viewport, retains privacy disclosure/local export and closes cleanly; all combat/player-grip regression gates remain authoritative.
+- Exact-head Vercel success is also required. Per the one-commit rule, the Draft-PR run comment is the authoritative post-commit verification receipt.

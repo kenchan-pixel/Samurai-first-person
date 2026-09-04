@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 133,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 1105daf4277239770606692c985f0ed5fe91505c closed the exact-neutral endpoint regression but CI #178 still failed the unchanged true-320x568 player-grip gate because the normal BOTTOM parry support silhouette obscured the required >24 px projected blade extension. Run 133 targets the relative support geometry instead of further whole-rig framing: the BOTTOM-only dominant/right forearm-hand-cuff tuck is strengthened from -0.10 to -0.14 local X, and the long right forearm receives a pulse-shaped +28 degree local roll so it splays across the grip instead of standing through the blade lane. Blade/root path, left support, accepted BOTTOM -0.52/+0.10 framing and -26 degree whole-rig roll, TOP/RIGHT fixes, BOTTOM rising counter, exact endpoint neutral return and every combat/acceptance threshold remain unchanged.",
-  "last_commit": "1105daf4277239770606692c985f0ed5fe91505c",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The unchanged dedicated 320x568 player-grip gate must clear BOTTOM normal and Perfect Parry support/handle/blade intersection, >24 px projected blade extension, pommel-to-habaki hand-axis attachment, four-direction identity, BOTTOM rising-counter and exact neutral-return contracts before this repair is accepted.",
+  "run_number": 134,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD ef144507f28fc744aabd0fb41196f3db225f8366 is fully green: Actions CI #179 succeeds through Node + complete browser acceptance including the true 320x568 player-grip gate, exact-head GitHub Vercel status succeeds, inline review threads are empty, and the latest same-head review reports no actionable P0-P2 findings. Run 134 selects the highest-scoring bounded Closed Beta slice from three materially different candidates: structured local/export-only feedback triage. The existing result 回報 panel now offers one optional, single-select issue area (刀路 / 格擋 / STEP / 畫面 / 難度 / 其他); the chosen area is added to the explicit Web Share/clipboard report as 範圍 and can be toggled off. No account, storage, analytics, background upload, network transport, combat rule or result authority is added.",
+  "last_commit": "ef144507f28fc744aabd0fb41196f3db225f8366",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete browser suite must retain the existing 320x568 result-actions layout/privacy/export gate so the new >=44 px topic controls stay bounded inside the scrollable feedback panel without obscuring terminal flow; all combat, player-grip and delivery gates must remain green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "bottom_parry_relative_support_clearance_pending_exact_head",
-    "last_observed_head": "1105daf4277239770606692c985f0ed5fe91505c",
-    "incoming_ci_run": 33921404599,
-    "incoming_ci_result": "failure_browser_bottom_parry_support_obscures_required_blade_extension_after_node_146_146",
+    "status": "structured_feedback_topic_pending_exact_head",
+    "last_observed_head": "ef144507f28fc744aabd0fb41196f3db225f8366",
+    "incoming_ci_run": 33925730386,
+    "incoming_ci_result": "success_node_and_complete_browser_including_player_grip",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "403 list_deployments for the known project/team; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 132 HEAD 1105daf has exact-head Vercel success and zero unresolved Preview feedback. Actions CI #178 proves npm test 146/146 and broad browser smoke are green, then the dedicated player-grip gate fails only at normal BOTTOM parry because the support silhouette still overlaps the blade lane beyond the accepted >24 px projection contract. The latest same-head All Repos review identifies that one actionable P1 and no other P0/P1/P2. Run 133 therefore leaves the blade and complete-rig framing untouched and changes only the BOTTOM dominant support: -0.14 local-X tuck plus +28 degree right-forearm roll at peak action pulse. Focused pose coverage pins the stronger tuck/splay while the existing exact endpoint, bounds, handle-axis and full real-renderer browser gates remain authoritative post-commit evidence."
+    "note": "Run 133 cleared the long BOTTOM-parry viewport blocker and exact HEAD ef14450 is green across CI #179, the full real-renderer 320x568 player-grip gate and GitHub Vercel status; latest same-head review reports no actionable P0-P2. Run 134 therefore returns to feature work. Candidate scoring (impact/alignment/novelty/confidence/safety, /25): structured Closed Beta feedback topic triage 4/5/4/5/5=23; repeat-practice directional coaching expansion 4/5/3/4/5=21; challenge tactical/PB retrospective clarity 4/4/4/4/4=20. The selected slice adds only optional explicit topic classification inside the existing local Web Share/clipboard feedback path. Focused Node tests pass 6/6 before commit; exact-head CI/Vercel and the existing 320x568 result-actions browser gate remain authoritative post-commit evidence."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,9 +66,9 @@
   },
   "next_candidates": [
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP/RIGHT/BOTTOM parry and BOTTOM-counter portrait-framing/rising-cut repairs; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
+    "ACCEPTANCE: exercise the new optional Closed Beta feedback 範圍 chips on the exact Preview and refine only concrete 320x568 readability/touch defects",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }
