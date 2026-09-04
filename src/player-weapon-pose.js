@@ -20,6 +20,7 @@ const RIGHT_PARRY_FRAME_X = -0.52;
 const BOTTOM_PARRY_FRAME_X = -0.52;
 const BOTTOM_PARRY_FRAME_Y = 0.10;
 const BOTTOM_PARRY_ROLL = -26;
+const BOTTOM_PARRY_RIGHT_SUPPORT_TUCK_X = -0.10;
 const BOTTOM_COUNTER_FRAME_X = -0.30;
 const BOTTOM_COUNTER_FRAME_Y = 0.10;
 const add3 = (base, x = 0, y = 0, z = 0) => [base[0] + x, base[1] + y, base[2] + z];
@@ -63,11 +64,14 @@ export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
   const strength = pulse * (perfect ? 1.08 : 1);
   const side = direction === 1 ? 1 : direction === 3 ? -1 : 0;
   const vertical = direction === 0 ? 1 : direction === 2 ? -1 : 0;
+  const bottomParryRightSupportTuck = ((safeAction === 1 || safeAction === 2) && direction === 2)
+    ? BOTTOM_PARRY_RIGHT_SUPPORT_TUCK_X * pulse
+    : 0;
 
   // The complete player katana rig owns the large directional blade motion. These
-  // offsets keep the visible two-hand support compact around the handle. BOTTOM
-  // counters therefore retain the normal downward brace while the authoritative rig
-  // performs the lower-to-upper sweep instead of sliding the support toward the blade.
+  // offsets keep the visible two-hand support compact around the handle. At BOTTOM
+  // parry the dominant/right support tucks toward the handle centre as the rig rolls
+  // through portrait, clearing the blade lane without moving the blade or left hand.
   const lateral = side * strength * (attack ? 0.035 : 0.045);
   const lift = vertical * strength * (attack ? 0.025 : 0.055);
   const depth = -strength * (attack ? 0.018 : 0.012);
@@ -87,11 +91,11 @@ export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
     pulse,
     rigFramingOffset: playerRigFramingOffset(safeAction, direction, pulse),
     rigEulerOffset: playerRigEulerOffset(safeAction, direction, pulse),
-    forearmRPosition: add3(BASE.forearmRPosition, lateral, lift, depth),
+    forearmRPosition: add3(BASE.forearmRPosition, lateral + bottomParryRightSupportTuck, lift, depth),
     forearmLPosition: add3(BASE.forearmLPosition, lateral * 0.88, lift * 0.90, depth * 0.85),
-    handRPosition: add3(BASE.handRPosition, lateral * 0.72, lift * 0.78, depth * 0.72),
+    handRPosition: add3(BASE.handRPosition, lateral * 0.72 + bottomParryRightSupportTuck, lift * 0.78, depth * 0.72),
     handLPosition: add3(BASE.handLPosition, lateral * 0.68, lift * 0.74, depth * 0.68),
-    cuffRPosition: add3(BASE.cuffRPosition, lateral * 0.84, lift * 0.86, depth * 0.80),
+    cuffRPosition: add3(BASE.cuffRPosition, lateral * 0.84 + bottomParryRightSupportTuck, lift * 0.86, depth * 0.80),
     cuffLPosition: add3(BASE.cuffLPosition, lateral * 0.80, lift * 0.82, depth * 0.76),
     forearmREuler: add3(BASE.forearmREuler, attackR + pitch, yaw, attackRollR - roll),
     forearmLEuler: add3(BASE.forearmLEuler, attackL + pitch * 0.86, yaw * 0.88, attackRollL - roll * 0.72),

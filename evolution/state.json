@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 130,
+  "run_number": 131,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Refined the exact-head BOTTOM normal/Perfect-parry blade-readability repair exposed by CI #175. The Run 129 framing successfully brought the support silhouette into the 320x568 portrait viewport, but the unchanged 24 px live blade-extension gate still failed. Kept the accepted -0.52 local-X/+0.10 local-Y whole-rig framing and tightened only the BOTTOM normal/Perfect whole-rig roll correction from -20 to -26 degrees, moving the peak lower-guard presentation from about 83 to 77 degrees so more of the live blade rises clear of the two-hand silhouette while blade, grip, pommel/habaki and both support hands/forearms remain attached and return exactly to neutral.",
-  "last_commit": "07259684bb12aee51aef4ce6ce6a56647f4c30a2",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 130 must pass npm test plus the complete browser suite, including the unchanged 320x568 player-grip support/handle/blade intersection, 24 px blade-extension, handle-axis attachment, four-direction identity, BOTTOM rising-counter and neutral-return gates.",
+  "last_action": "Repaired the exact-head BOTTOM normal/Perfect-parry blade-readability blocker exposed by CI #176 at 6ab0cfc601f48bb3490255da75e34b0fe230f632. Whole-rig translation/roll already keeps blade, handle and support in the 320x568 viewport but cannot create relative blade/support clearance. Kept the accepted -0.52 local-X/+0.10 local-Y framing and -26 degree whole-rig roll unchanged, then added a pulse-shaped -0.10 local-X tuck only to the dominant/right forearm, hand and cuff during BOTTOM normal/Perfect parry. At the 77-degree peak this moves the support that projects highest in screen space toward the handle centre/below the blade lane while leaving the left support and authoritative blade untouched; the right hand moves closer to the pommel-to-habaki axis rather than away from it and every offset returns exactly to neutral.",
+  "last_commit": "6ab0cfc601f48bb3490255da75e34b0fe230f632",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 131 must pass npm test plus the complete browser suite, including the unchanged 320x568 player-grip support/handle/blade intersection, >24 px projected blade-extension, handle-axis attachment, four-direction identity, BOTTOM rising-counter and neutral-return gates.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "bottom_parry_blade_extension_roll_refinement_pending_exact_head",
-    "last_observed_head": "07259684bb12aee51aef4ce6ce6a56647f4c30a2",
-    "incoming_ci_run": 33907050792,
+    "status": "bottom_parry_right_support_tuck_pending_exact_head",
+    "last_observed_head": "6ab0cfc601f48bb3490255da75e34b0fe230f632",
+    "incoming_ci_run": 33911572070,
     "incoming_ci_result": "failure_player_grip_bottom_parry_support_obscured_24px_blade_extension_after_node_145_of_145_and_broad_browser_green",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 129 HEAD 0725968 passes npm test 145/145 and the broad browser smoke, and exact-head GitHub Vercel is success. The dedicated real PlayCanvas player-grip gate confirms the BOTTOM normal-parry support, handle and blade are now in the 320x568 viewport but fails the unchanged 24 px projected blade-extension assertion because the support silhouette still obscures too much of the blade. The latest same-head All Repos review classifies this as actionable P1, with no separate actionable P0/P2; inline review threads and unresolved Vercel toolbar feedback are empty. Source inspection shows Run 129 leaves the peak BOTTOM normal/Perfect parry at about 83 degrees (-34 + 180*0.55 + 38 - 20), where the blade remains nearly horizontal in screen space. Run 130 keeps the existing whole-rig portrait translation and changes only the BOTTOM normal/Perfect roll correction to -26 degrees, yielding about 77 degrees at peak. The complete PlayerSwordRig still moves/rotates together, so blade/handle/support attachment, TOP/RIGHT/LEFT behaviour, the restored BOTTOM -92 degree rising counter, combat direction/input/timing/damage/posture/STEP/reach/score/persistence/network authority and every live 320x568 threshold remain unchanged. Dependency-backed exact-head browser acceptance remains authoritative post-commit evidence."
+    "note": "Incoming Run 130 HEAD 6ab0cfc passes npm test 145/145 and the broad browser smoke, and exact-head GitHub Vercel is success. The dedicated real PlayCanvas player-grip gate still fails only the unchanged >24 px projected BOTTOM normal-parry blade-extension requirement. The latest same-head review classifies this as actionable P1 with no separate P0/P2 and explicitly advises stopping whole-rig-only roll/framing changes in favour of a BOTTOM-specific relative support-hand/forearm or legitimate weapon-pose seam. Inline review comments and unresolved Vercel toolbar feedback are empty. Source inspection shows the BOTTOM peak is about 77 degrees after Run 130; in that orientation the dominant/right support's positive local X projects upward into the blade-read lane. Run 131 therefore keeps all accepted whole-rig framing/rotation and moves only PlayerForearmR, PlayerHandR and PlayerCuffR by -0.10 local X at the shared BOTTOM normal/Perfect pulse. The peak right-hand radial offset to the handle axis becomes smaller, not larger, while the left support, blade, grip, pommel/habaki, TOP/RIGHT/LEFT behaviour, restored BOTTOM -92 degree rising counter, combat direction/input/timing/damage/posture/STEP/reach/score/persistence/network authority and every live 320x568 threshold remain unchanged. Dependency-backed exact-head browser acceptance remains authoritative post-commit evidence."
   },
   "external_deployment_recovery": {
     "last_incident": {
