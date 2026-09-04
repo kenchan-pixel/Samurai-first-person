@@ -136,3 +136,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially the dedicated player-grip projection/attachment process, and exact-head Vercel status are required before Run 123 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 124 — Keep the BOTTOM counter katana inside portrait framing
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `6b062dda5e4dea27704e319e39b0ee25e111af88`.
+- Exact-head Actions CI #169 / run `33872969506` is terminal **failure**. `npm test` passes **143/143** and the broad PlayCanvas renderer smoke passes. The dedicated `?browser-smoke=player-grip` process advances beyond Run 123's repaired TOP-handle check, then fails because the real **BOTTOM counter `PlayerBlade` has no geometry intersecting the required 320×568 viewport**. Exact-head GitHub `Vercel` status is terminal **success**.
+- Direct Vercel project enumeration still returns no projects, so the exact-head GitHub `Vercel` commit status remains the authoritative deployment signal. Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty.
+- The latest same-head review treats the BOTTOM counter framing defect as actionable **P1** and requires the live blade, handle and two-hand support to remain meaningfully in-frame through counter follow-through while preserving pommel→habaki hand alignment, directional separation, combat timing/input/damage semantics, neutral return and the fail-closed projection thresholds. Feature work is prohibited.
+
+### Blocker repair
+
+- Moved portrait framing into the pure player weapon pose family so TOP parry and BOTTOM counter share the same action progress/pulse and cannot leave a residual offset. The accepted normal/Perfect TOP correction stays exactly `-0.22` local X at peak.
+- BOTTOM action/counter now adds a bounded peak `-0.30` local X and `+0.10` local Y correction to the complete camera-child `PlayerSwordRig`. The correction is zero at action start/completion and does not change the authored directional rotation; `PlayerBlade`, `PlayerGrip`, pommel/habaki and both support hands/forearms translate together.
+- Deterministic tests pin the action/direction scope, exact peak offsets and zero-at-endpoints behaviour. RIGHT/LEFT counter framing remains unchanged. Existing real 320×568 grip/handle/blade projection, blade-extension, hand-axis, spacing and neutral-return assertions are not relaxed.
+- No player input mapping, counter eligibility, combat timing, damage, posture, Perfect/STEP windows, reach, scoring, persistence, privacy, enemy animation or network behaviour changed. State and this run log are updated in the same implementation tree; no product baseline rule changes are required because this repairs the existing first-person grip/readability baseline.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially the dedicated player-grip projection/attachment process, and exact-head Vercel status are required before Run 124 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.

@@ -15,11 +15,25 @@ const BASE = Object.freeze({
   cuffLEuler: Object.freeze([0, 0, 16]),
 });
 
+const TOP_PARRY_FRAME_X = -0.22;
+const BOTTOM_COUNTER_FRAME_X = -0.30;
+const BOTTOM_COUNTER_FRAME_Y = 0.10;
 const add3 = (base, x = 0, y = 0, z = 0) => [base[0] + x, base[1] + y, base[2] + z];
 
 export function normalizePlayerDirectionIndex(value) {
   const direction = Number.isFinite(value) ? Math.trunc(value) : 0;
   return direction >= 0 && direction <= 3 ? direction : 0;
+}
+
+function playerRigFramingOffset(action, direction, pulse) {
+  if (pulse <= 0) return [0, 0, 0];
+  if ((action === 1 || action === 2) && direction === 0) {
+    return [TOP_PARRY_FRAME_X * pulse, 0, 0];
+  }
+  if (action === 3 && direction === 2) {
+    return [BOTTOM_COUNTER_FRAME_X * pulse, BOTTOM_COUNTER_FRAME_Y * pulse, 0];
+  }
+  return [0, 0, 0];
 }
 
 export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
@@ -53,6 +67,7 @@ export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
     direction,
     progress: p,
     pulse,
+    rigFramingOffset: playerRigFramingOffset(safeAction, direction, pulse),
     forearmRPosition: add3(BASE.forearmRPosition, lateral, lift, depth),
     forearmLPosition: add3(BASE.forearmLPosition, lateral * 0.88, lift * 0.90, depth * 0.85),
     handRPosition: add3(BASE.handRPosition, lateral * 0.72, lift * 0.78, depth * 0.72),

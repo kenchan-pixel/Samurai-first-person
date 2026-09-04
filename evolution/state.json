@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 123,
+  "run_number": 124,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Run 122 first-person TOP-grip presentation blocker by applying one bounded camera-local framing shift to the complete PlayerSwordRig during normal/Perfect TOP parry only. The whole blade, handle and two-hand support move together, preserving attachment, direction, timing and neutral return while bringing the live handle back toward the accepted 320x568 portrait frame.",
-  "last_commit": "af1e990e60e05e4ceae2033251c405765a686e00",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 123 must pass npm test plus the complete browser suite, especially the dedicated player-grip PlayCanvas projection/attachment gate, without weakening its existing thresholds.",
+  "last_action": "Repaired the Run 123 first-person BOTTOM-counter presentation blocker by extending the existing pulse-shaped whole-PlayerSwordRig portrait framing correction to BOTTOM counter follow-through. At peak action the complete rig moves -0.30 local X and +0.10 local Y, keeping blade, handle and both support hands together while preserving direction, timing, attachment and neutral return; the accepted TOP parry correction remains unchanged.",
+  "last_commit": "6b062dda5e4dea27704e319e39b0ee25e111af88",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 124 must pass npm test plus the complete browser suite, especially the dedicated player-grip PlayCanvas projection/attachment gate, without weakening any viewport, blade-read, handle-axis or neutral-return threshold.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "top_grip_framing_repair_pending_exact_head",
-    "last_observed_head": "af1e990e60e05e4ceae2033251c405765a686e00",
-    "incoming_ci_run": 33868173692,
-    "incoming_ci_result": "failure_player_grip_top_handle_outside_viewport",
+    "status": "bottom_counter_framing_repair_pending_exact_head",
+    "last_observed_head": "6b062dda5e4dea27704e319e39b0ee25e111af88",
+    "incoming_ci_run": 33872969506,
+    "incoming_ci_result": "failure_player_grip_bottom_counter_blade_outside_viewport",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "project enumeration remains unavailable; GitHub exact-head Vercel status is the authoritative fallback",
+    "direct_vercel_connector": "project enumeration still returns no projects; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 122 HEAD af1e990 passes npm test 143/143 and the restored broad PlayCanvas renderer smoke, but Actions CI #168 / run 33868173692 fails in the dedicated player-grip gate because TOP parry live handle geometry does not intersect the required 320x568 viewport. Exact-head GitHub Vercel status is success; Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head review treats the off-screen live handle as actionable P1 and requires production player-grip/rig/camera composition repair without weakening the fail-closed gate. Run 123 therefore remains BLOCKER_FIX and applies a smooth bounded camera-left translation to the complete PlayerSwordRig only during TOP parry/Perfect Parry, leaving every child attached and all combat authority unchanged."
+    "note": "Incoming Run 123 HEAD 6b062dd passes npm test 143/143 and exact-head Vercel, and its TOP whole-rig framing repair advances the dedicated player-grip gate beyond the prior handle failure. Actions CI #169 / run 33872969506 then fails because the real BOTTOM counter PlayerBlade has no geometry intersecting the required 320x568 viewport. Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head review treats the BOTTOM counter framing defect as actionable P1 and requires the real blade, handle and two-hand support to remain meaningfully in-frame without weakening attachment/direction/timing/neutral-return assertions. Run 124 therefore remains BLOCKER_FIX and applies one shared pulse-shaped whole-rig camera-local framing policy: the accepted TOP parry left shift stays unchanged, while BOTTOM counter gains a bounded left/up correction that is zero at action endpoints."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,7 +66,7 @@
   },
   "next_candidates": [
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP-handle framing repair; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
+    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP-parry and BOTTOM-counter portrait-framing repairs; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"

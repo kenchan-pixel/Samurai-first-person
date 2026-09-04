@@ -21,6 +21,7 @@ test('neutral first-person grip returns the established two-hand base pose', () 
   assert.deepEqual(pose.forearmLPosition, [...PLAYER_WEAPON_BASE_POSE.forearmLPosition]);
   assert.deepEqual(pose.handRPosition, [...PLAYER_WEAPON_BASE_POSE.handRPosition]);
   assert.deepEqual(pose.handLPosition, [...PLAYER_WEAPON_BASE_POSE.handLPosition]);
+  assert.deepEqual(pose.rigFramingOffset, [0, 0, 0]);
   assertFiniteBoundedPose(pose);
 });
 
@@ -61,12 +62,30 @@ test('Perfect Parry strengthens the same directional brace and counter stays bou
   assertFiniteBoundedPose(counter);
 });
 
+test('portrait framing is pulse-shaped and limited to top parry and bottom counter', () => {
+  const top = playerWeaponPose(1, 0, mid);
+  const perfectTop = playerWeaponPose(2, 0, mid);
+  const bottomCounter = playerWeaponPose(3, 2, mid);
+  const rightCounter = playerWeaponPose(3, 1, mid);
+
+  assert.deepEqual(top.rigFramingOffset, [-0.22, 0, 0]);
+  assert.deepEqual(perfectTop.rigFramingOffset, [-0.22, 0, 0]);
+  assert.deepEqual(bottomCounter.rigFramingOffset, [-0.30, 0.10, 0]);
+  assert.deepEqual(rightCounter.rigFramingOffset, [0, 0, 0]);
+  assert.deepEqual(playerWeaponPose(3, 2, 0).rigFramingOffset, [0, 0, 0]);
+  assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[0]) < 1e-12);
+  assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[1]) < 1e-12);
+});
+
 test('all four directions return cleanly to the base grip at action completion', () => {
   for (let direction = 0; direction < 4; direction += 1) {
     const pose = playerWeaponPose(1, direction, 1);
     assert.deepEqual(pose.handRPosition, [...PLAYER_WEAPON_BASE_POSE.handRPosition]);
     assert.deepEqual(pose.handLPosition, [...PLAYER_WEAPON_BASE_POSE.handLPosition]);
     assert.deepEqual(pose.forearmRPosition, [...PLAYER_WEAPON_BASE_POSE.forearmRPosition]);
+    assert.ok(Math.abs(pose.rigFramingOffset[0]) < 1e-12);
+    assert.ok(Math.abs(pose.rigFramingOffset[1]) < 1e-12);
+    assert.ok(Math.abs(pose.rigFramingOffset[2]) < 1e-12);
     assertFiniteBoundedPose(pose);
   }
 });
