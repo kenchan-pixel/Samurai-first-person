@@ -78,3 +78,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source/lifecycle reasoning is complete in this execution surface; no local browser checkout is available.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 111 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.
+
+## Run 112 — 戰策回顧 baseline/browser acceptance repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `f21fa8f859641d8d6b526ebaadc0353cb5ee0315`.
+- Exact-head Actions CI #157 / run `33821954766` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success** and Preview feedback reports zero unresolved items.
+- The direct Vercel connector still enumerates zero projects for the recorded team, so the exact-head GitHub `Vercel` status is the authoritative deployment fallback for this run.
+- The latest exact-head All Repos review identifies one actionable P2: Run 111's player-visible **戰策回顧** was not recorded in `CURRENT_BASELINE.md` / `REGRESSION_CHECKLIST.md`, and the existing 320×568 今日陣 browser gate did not assert the recap's rendered text, result bounds or retry/campaign clear lifecycle. There are no inline review threads.
+- This is a material cumulative-baseline/acceptance gap, so it blocks feature selection under the review rules. Run 112 is `BLOCKER_FIX` only.
+
+### Implementation
+
+- Reconciled `CURRENT_BASELINE.md` and `REGRESSION_CHECKLIST.md` so **戰策回顧** is explicitly durable: accepted Waves 2/4/6 choices only, direct authoritative HP/score effect only, active-run only, in-bounds terminal presentation, and clean retry/full-campaign reset with no persistence/network authority.
+- Extended the existing true 320×568 今日陣/challenge browser harness rather than creating another broad suite. The deterministic `2誓 · 4息 · 6誓` route must visibly render `戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1`, keep the recap rectangle inside both the challenge result surface and viewport, then clear text/root receipts on retry and full-campaign handoff.
+- Updated the existing browser-smoke receipt list so CI fails closed if any recap terminal/bounds/reset marker is missing.
+- No gameplay implementation, combat timing/damage/parry/Perfect/STEP rule, tactical reward value, challenge-best schema, storage key, identifier, analytics, backend or network behaviour changed.
+
+### Verification boundary
+
+- Source/lifecycle reasoning is complete in this execution surface; no local browser checkout is available.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 112 is accepted. The PR run comment records the resulting SHA, reviewer disposition and receipts; no second bookkeeping commit is permitted.

@@ -102,6 +102,13 @@
       }) && buttons.every((button) => button.getBoundingClientRect().height >= 44);
     }
 
+    function recapCleared(node) {
+      return node?.hidden === true &&
+        node.textContent === '' &&
+        !root.dataset.challengeTacticRecap &&
+        root.dataset.challengeTacticRecapChoices === '0';
+    }
+
     async function forceStageClear(stage, tacticChoice = null) {
       if (uiCombat.enemyIndex !== stage - 1) throw new Error(`expected stage ${stage}, got ${uiCombat.enemyIndex + 1}`);
       const enemyId = uiCombat.enemy?.id;
@@ -204,7 +211,8 @@
       const banner = document.querySelector('#daily-challenge-banner');
       const challengeResult = document.querySelector('#challenge-result');
       const tacticPanel = document.querySelector('#challenge-tactic');
-      if (!dailyButton || !campaignButton || !banner || !challengeResult || !tacticPanel) {
+      const tacticRecap = challengeResult?.querySelector('[data-challenge-tactic-recap]');
+      if (!dailyButton || !campaignButton || !banner || !challengeResult || !tacticPanel || !tacticRecap) {
         throw new Error('daily/challenge/tactical player-facing controls were not installed');
       }
 
@@ -270,8 +278,30 @@
 
       const victory = finalEvents.find((event) => event.type === 'victory');
       const progress = document.querySelector('[data-challenge-progress]');
+      const expectedTacticRecap = '戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1';
+      const resultRect = challengeResult.getBoundingClientRect();
+      const recapRect = tacticRecap.getBoundingClientRect();
+      const tacticRecapOk =
+        tacticRecap.hidden === false &&
+        tacticRecap.textContent.trim() === expectedTacticRecap &&
+        root.dataset.challengeTacticRecap === expectedTacticRecap &&
+        root.dataset.challengeTacticRecapChoices === '3' &&
+        recapRect.width > 0 &&
+        recapRect.height > 0 &&
+        recapRect.left >= resultRect.left - 0.5 &&
+        recapRect.right <= resultRect.right + 0.5 &&
+        recapRect.top >= resultRect.top - 0.5 &&
+        recapRect.bottom <= resultRect.bottom + 0.5 &&
+        recapRect.left >= -0.5 &&
+        recapRect.right <= innerWidth + 0.5 &&
+        recapRect.top >= -0.5 &&
+        recapRect.bottom <= innerHeight + 0.5;
+      root.dataset.challengeTacticRecapTerminal = String(tacticRecapOk);
+      if (!tacticRecapOk) throw new Error('challenge tactic recap text/bounds did not match the accepted route');
+
       const terminalOk =
         stageTagsOk &&
+        tacticRecapOk &&
         victory?.detail?.challenge === true &&
         victory?.detail?.dailyChallenge === true &&
         victory?.detail?.dailyChallengeKey === key &&
@@ -289,6 +319,8 @@
       const retry = drainExpectedStage(1, 'daily retry');
       const retryKey = root.dataset.dailyChallengeKey || '';
       const retryFormation = rosterSignature();
+      const retryRecapCleared = recapCleared(tacticRecap);
+      root.dataset.challengeTacticRecapRetryCleared = String(retryRecapCleared);
       const retryOk =
         retryKey === key &&
         retryFormation === formation &&
@@ -296,6 +328,7 @@
         root.dataset.dailyChallengeActive === 'true' &&
         root.dataset.challengeTacticChoices === '0' &&
         root.dataset.challengeTacticPending === 'false' &&
+        retryRecapCleared &&
         retry.start.detail?.dailyChallenge === true &&
         retry.start.detail?.dailyChallengeKey === key &&
         banner.hidden === false;
@@ -311,6 +344,8 @@
 
       campaignButton.click();
       const campaign = drainExpectedStage(1, 'daily campaign handoff');
+      const campaignRecapCleared = recapCleared(tacticRecap);
+      root.dataset.challengeTacticRecapCampaignCleared = String(campaignRecapCleared);
       const campaignOk =
         uiCombat.enemies.length === ENEMIES.length + 1 &&
         uiCombat[DAILY_CHALLENGE_ACTIVE] === false &&
@@ -318,6 +353,7 @@
         root.dataset.dailyChallengeActive === 'false' &&
         root.dataset.challengeTacticPending === 'false' &&
         root.dataset.challengeTacticChoices === '0' &&
+        campaignRecapCleared &&
         tacticPanel.hidden === true &&
         !root.dataset.dailyChallengeKey &&
         root.dataset.nextChallengeVariant === 'standard' &&
@@ -331,7 +367,7 @@
       if (!campaignOk) throw new Error('今日陣/tactical state leaked into the restored four-stage campaign');
 
       root.dataset.dailyChallengeBrowserIntegration =
-        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk ? 'pass' : 'fail';
+        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk ? 'pass' : 'fail';
     } catch (error) {
       requestDailyChallenge(false);
       requestChallenge(false);

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 111,
-  "last_action_type": "FEATURE",
-  "last_action": "Added a run-local 戰策回顧 to 連戰試煉/今日陣 terminal results. Accepted Waves 2/4/6 整息/血誓 decisions are now retained only in engine memory for the active run, summarised into the exact checkpoint path plus direct HP/score effect, and rendered as one compact second line inside the existing challenge-result strip. Retry/campaign start clears the recap; no combat values, persistence schema, identifiers, analytics or network behavior changed.",
-  "last_commit": "2e32b27d73c3c6e555a8c3d7745b7d6d439ad7ac",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 111 must prove the new challenge tactic recap preserves the full 320x568 challenge/今日陣 terminal layout and all existing combat/practice/Closed Beta regressions.",
+  "run_number": 112,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Repaired the Run 111 review P2 by making 戰策回顧 part of the durable Current Baseline/Regression Checklist and extending the existing true 320x568 今日陣 browser gate to assert the exact accepted route/effect text, recap bounds inside the challenge result surface, and clean retry/full-campaign lifecycle. No combat, balance, persistence, identifier, analytics or network behavior changed.",
+  "last_commit": "f21fa8f859641d8d6b526ebaadc0353cb5ee0315",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 112 must prove the new 戰策回顧 regression gate itself passes together with all existing challenge/今日陣 and full browser regressions.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "challenge_tactic_recap_pending_exact_head",
-    "last_observed_head": "2e32b27d73c3c6e555a8c3d7745b7d6d439ad7ac",
-    "incoming_ci_run": 33817524748,
+    "status": "challenge_tactic_recap_regression_gate_pending_exact_head",
+    "last_observed_head": "f21fa8f859641d8d6b526ebaadc0353cb5ee0315",
+    "incoming_ci_run": 33821954766,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "not required; github exact-head Vercel status is green for preflight",
+    "direct_vercel_connector": "list_projects returned zero projects; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 110 HEAD 2e32b27 passed Actions CI #156 / run 33817524748 and exact-head GitHub Vercel status. The latest exact-head Second Hourly review reports no actionable P0/P1/P2 finding and there are no inline review threads. Run 111 adds only a player-visible run-local challenge tactic recap and requires ordinary post-commit exact-head acceptance before another feature run."
+    "note": "Incoming Run 111 HEAD f21fa8f passed Actions CI #157 / run 33821954766 and exact-head GitHub Vercel status. The latest exact-head All Repos review identified one actionable P2: 戰策回顧 was not yet recorded in the durable baseline/checklist and the 320x568 今日陣 browser gate did not assert its rendered text, bounds or clear lifecycle. Run 112 is a blocker repair only; feature work is prohibited until its exact-head acceptance returns green."
   },
   "external_deployment_recovery": {
     "last_incident": {

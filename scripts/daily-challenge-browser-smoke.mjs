@@ -55,6 +55,9 @@ try {
     ['data-challenge-tactic-browser="true"', 'post-wave tactical choice did not safely park/render at 320×568'],
     ['data-challenge-tactic-risk-reward="true"', '整息/血誓 reward trade did not match the challenge rule'],
     ['data-challenge-tactic-three-choices="true"', 'challenge did not complete exactly the three Stage 2/4/6 tactical checkpoints'],
+    ['data-challenge-tactic-recap-terminal="true"', '戰策回顧 did not render the expected terminal route/effect inside the 320×568 result surface'],
+    ['data-challenge-tactic-recap-retry-cleared="true"', '戰策回顧 did not clear on 今日陣 retry'],
+    ['data-challenge-tactic-recap-campaign-cleared="true"', '戰策回顧 leaked into full-campaign handoff'],
     ['data-daily-challenge-terminal="true"', '今日陣 terminal date summary failed'],
     ['data-daily-challenge-retry="true"', '今日陣 retry did not preserve date key'],
     ['data-daily-challenge-same-formation="true"', '今日陣 retry changed the daily formation'],
@@ -100,7 +103,7 @@ try {
     if (!rivalDom.includes(marker)) throw new Error(`${message}. DOM:\n${rivalDom.slice(0, 6000)}`);
   }
 
-  console.log(`daily challenge browser smoke passed with ${browser}: 今日陣 lifecycle + tactical checkpoints + rematch identity + challenge rival PB splits`);
+  console.log(`daily challenge browser smoke passed with ${browser}: 今日陣 lifecycle + tactical checkpoints/recap + rematch identity + challenge rival PB splits`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {
