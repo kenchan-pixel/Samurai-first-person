@@ -113,3 +113,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the dedicated player-grip process, and exact-head Vercel status are required before Run 122 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 123 — Keep the live TOP katana handle inside portrait framing
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `af1e990e60e05e4ceae2033251c405765a686e00`.
+- Exact-head Actions CI #168 / run `33868173692` is terminal **failure**. `npm test` passes **143/143** and the restored broad PlayCanvas renderer smoke passes; the dedicated `?browser-smoke=player-grip` process then fails fast because **TOP parry live handle geometry has no intersection with the required 320×568 viewport**. Exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty. The latest same-head review treats the off-screen TOP handle as actionable **P1** and explicitly requires production player-grip/rig/camera composition repair while preserving the handle-axis, two-hand spacing, directional and blade-read thresholds. Feature work is prohibited.
+- Source inspection confirms the authoritative PlayCanvas TOP parry keeps the camera-child `PlayerSwordRig` on the right-side portrait composition while rotating toward an almost vertical guard. The support silhouette can still enter frame through its wider child geometry, but the compact handle itself is the element exposed by the stronger Run 122 projection gate.
+
+### Blocker repair
+
+- `player-weapon-fidelity.js` now applies one smooth bounded camera-local leftward framing correction only to normal/Perfect **TOP** parry. At peak brace the correction is `-0.22` local X and follows the existing parry pulse, so it is zero at action start/completion; RIGHT/LEFT/BOTTOM parry and all attack/counter actions are unchanged.
+- The correction moves the complete `PlayerSwordRig` after the authoritative draw rather than shifting individual blade, grip or support pieces. `PlayerBlade`, `PlayerGrip`, pommel/habaki and both hands/forearms therefore remain attached and move together; the existing hand-to-handle-axis and neutral-return contracts are not bypassed.
+- No player direction mapping, input, combat timing, damage, posture, Perfect/STEP window, reach, score, persistence, privacy, enemy animation or network behaviour changed. The fail-closed 320×568 player-grip visibility/attachment assertions are unchanged.
+- State and this run log are updated in the same implementation tree. No product baseline rule changes are required because this repairs the existing Run 120 first-person grip/readability baseline rather than introducing a new mechanic or authority seam.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially the dedicated player-grip projection/attachment process, and exact-head Vercel status are required before Run 123 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.

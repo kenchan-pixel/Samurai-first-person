@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 122,
+  "run_number": 123,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Run 121 exact-head browser lifecycle blocker by removing the sequential second PlayCanvas app from the renderer-motion document and moving the directional first-person grip contract onto its own focused 320x568 CDP browser process. The grip gate now also fails closed on live hand-to-pommel/habaki alignment plus projected support/handle/blade visibility while preserving all existing direction, Perfect, counter, transform and neutral-return thresholds.",
-  "last_commit": "0300c3f48dad51773ba87943cbbab6b52022ff52",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 122 must pass npm test plus the complete browser suite, including the dedicated player-grip PlayCanvas process with handle-axis and 320x568 projected-visibility assertions.",
+  "last_action": "Repaired the Run 122 first-person TOP-grip presentation blocker by applying one bounded camera-local framing shift to the complete PlayerSwordRig during normal/Perfect TOP parry only. The whole blade, handle and two-hand support move together, preserving attachment, direction, timing and neutral return while bringing the live handle back toward the accepted 320x568 portrait frame.",
+  "last_commit": "af1e990e60e05e4ceae2033251c405765a686e00",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 123 must pass npm test plus the complete browser suite, especially the dedicated player-grip PlayCanvas projection/attachment gate, without weakening its existing thresholds.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "dedicated_player_grip_renderer_gate_pending_exact_head",
-    "last_observed_head": "0300c3f48dad51773ba87943cbbab6b52022ff52",
-    "incoming_ci_run": 33863727134,
-    "incoming_ci_result": "failure_browser_renderer_motion_timeout",
+    "status": "top_grip_framing_repair_pending_exact_head",
+    "last_observed_head": "af1e990e60e05e4ceae2033251c405765a686e00",
+    "incoming_ci_run": 33868173692,
+    "incoming_ci_result": "failure_player_grip_top_handle_outside_viewport",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "project enumeration remains unavailable; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 121 HEAD 0300c3f passes npm test 143/143 but fails Actions CI #167 / run 33863727134 because the renderer-motion browser document times out after serially running the existing renderer contract and a second full player-grip PlayCanvas View. Exact-head GitHub Vercel status is success; Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The same-head Second Hourly review identifies that lifecycle as P1 and also requires live handle-relative alignment plus viewport/blade-read visibility evidence as P2. Run 122 therefore remains BLOCKER_FIX and isolates the grip gate into its own browser process while strengthening those real-renderer assertions."
+    "note": "Incoming Run 122 HEAD af1e990 passes npm test 143/143 and the restored broad PlayCanvas renderer smoke, but Actions CI #168 / run 33868173692 fails in the dedicated player-grip gate because TOP parry live handle geometry does not intersect the required 320x568 viewport. Exact-head GitHub Vercel status is success; Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head review treats the off-screen live handle as actionable P1 and requires production player-grip/rig/camera composition repair without weakening the fail-closed gate. Run 123 therefore remains BLOCKER_FIX and applies a smooth bounded camera-left translation to the complete PlayerSwordRig only during TOP parry/Perfect Parry, leaving every child attached and all combat authority unchanged."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,7 +66,7 @@
   },
   "next_candidates": [
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview; dedicated 320x568 PlayCanvas acceptance now protects direction, handle alignment, projected support/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
+    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP-handle framing repair; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"

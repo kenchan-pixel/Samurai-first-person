@@ -2,6 +2,7 @@ import * as pc from 'playcanvas';
 import { playerWeaponPose } from './player-weapon-pose.js';
 
 const installed = Symbol.for('blade-reversal.player-weapon-fidelity-v2');
+const TOP_PARRY_FRAME_X = -0.22;
 
 function addPart(parent, type, name, material, position, scale, euler = [0, 0, 0]) {
   const entity = new pc.Entity(name);
@@ -17,6 +18,13 @@ function addPart(parent, type, name, material, position, scale, euler = [0, 0, 0
 function applyPose(entity, position, euler) {
   entity?.setLocalPosition?.(...position);
   entity?.setLocalEulerAngles?.(...euler);
+}
+
+function applyTopParryFraming(rig, pose) {
+  if (!rig?.getLocalPosition || !rig?.setLocalPosition) return;
+  if ((pose.action !== 1 && pose.action !== 2) || pose.direction !== 0 || pose.pulse <= 0) return;
+  const current = rig.getLocalPosition();
+  rig.setLocalPosition(current.x + TOP_PARRY_FRAME_X * pose.pulse, current.y, current.z);
 }
 
 export function installPlayerWeaponFidelity(view) {
@@ -43,6 +51,13 @@ export function installPlayerWeaponFidelity(view) {
     const progress = view.playerProgress(now, action, direction);
     const pose = playerWeaponPose(action, direction, progress);
 
+    // TOP parry turns the camera-child katana almost vertical. On the accepted
+    // 320x568 portrait framing that could leave the compact handle completely
+    // beyond the right edge even while the blade/support still intersected it.
+    // Move the whole rig together, never individual blade/grip/support pieces,
+    // so handle attachment and the authoritative direction/timing stay intact.
+    applyTopParryFraming(rig, pose);
+
     applyPose(view.playerForearmR, pose.forearmRPosition, pose.forearmREuler);
     applyPose(view.playerForearmL, pose.forearmLPosition, pose.forearmLEuler);
     applyPose(view.playerHandR, pose.handRPosition, pose.handREuler);
@@ -57,5 +72,6 @@ export function installPlayerWeaponFidelity(view) {
   document.documentElement.dataset.playerWeaponFidelity = 'directional-two-hand-rig-v2';
   document.documentElement.dataset.playerWeaponParts = '8';
   document.documentElement.dataset.playerGripDirections = 'top,right,bottom,left';
+  document.documentElement.dataset.playerGripFraming = 'top-handle-safe-v1';
   return view;
 }
