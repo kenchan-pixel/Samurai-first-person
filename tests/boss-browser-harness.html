@@ -47,6 +47,16 @@
       await new Promise((resolve) => setTimeout(resolve, ms));
     }
 
+    async function waitUntil(predicate, { timeoutMs, intervalMs = 25 }) {
+      let elapsedMs = 0;
+      while (elapsedMs <= timeoutMs) {
+        if (predicate()) return elapsedMs;
+        await wait(intervalMs);
+        elapsedMs += intervalMs;
+      }
+      return null;
+    }
+
     try {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       root.dataset.bossReducedMotion = String(reducedMotion);
@@ -74,9 +84,16 @@
         throw new Error('Phase II banner was not shown');
       }
 
-      await wait(1250);
-      const bannerHidden = !banner.classList.contains('is-visible') && getComputedStyle(banner).opacity === '0';
+      // The production timer is 1150 ms. Poll until its real cleanup is visible instead
+      // of sampling one fixed instant; the 1500 ms ceiling preserves a bounded contract
+      // while tolerating headless/virtual-time callback scheduling jitter under CI load.
+      const bannerCleanupMs = await waitUntil(
+        () => !banner.classList.contains('is-visible') && getComputedStyle(banner).opacity === '0',
+        { timeoutMs: 1500 },
+      );
+      const bannerHidden = bannerCleanupMs !== null;
       root.dataset.bossBannerCleanup = String(bannerHidden);
+      root.dataset.bossBannerCleanupMs = bannerHidden ? String(bannerCleanupMs) : 'timeout';
       if (!bannerHidden) throw new Error('reduced-motion Phase II banner did not hide after its bounded lifetime');
       if (app.dataset.bossActive !== 'true' || app.dataset.bossPhase !== '2') {
         throw new Error('boss atmosphere ended when only the transition banner should hide');
@@ -124,8 +141,15 @@
       root.dataset.bossVictory = String(victoryReached);
       if (!victoryReached) throw new Error('stage-4 boss defeat did not reach final victory');
 
-      await wait(950);
-      if (app.dataset.bossActive === 'true') throw new Error('boss atmosphere did not clear after final victory');
+      // The production atmosphere deactivation timer is 900 ms. Use the same bounded
+      // condition-driven observation so a delayed headless callback cannot create a
+      // false event-stream regression while still failing if cleanup exceeds the cap.
+      const atmosphereCleanupMs = await waitUntil(
+        () => app.dataset.bossActive !== 'true',
+        { timeoutMs: 1250 },
+      );
+      root.dataset.bossAtmosphereCleanupMs = atmosphereCleanupMs === null ? 'timeout' : String(atmosphereCleanupMs);
+      if (atmosphereCleanupMs === null) throw new Error('boss atmosphere did not clear after final victory');
 
       const passed =
         root.dataset.bossReducedMotion === 'true' &&

@@ -183,3 +183,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The focused pure pose test passes locally in isolation (7/7). Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially the unchanged dedicated player-grip projection/attachment gate, and exact-head Vercel status are required before Run 125 is accepted.
 - The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 126 — Correct BOTTOM support projection and harden Boss browser timing
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `1c64358b9fda97d255e83a4e88e4e8fd8b480087`.
+- Exact-head Actions CI #171 / run `33883915264` is terminal **failure** while exact-head GitHub `Vercel` status is terminal **success**. `npm test` passes **145/145**. In the first browser attempt the broad smoke passes but the unchanged dedicated 320×568 player-grip gate still fails the BOTTOM 24 px projected blade-extension assertion; the single bounded rerun then fails earlier in the Boss reduced-motion/event-stream browser integration.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty. The latest same-head Second Hourly review reports actionable **P1**: the Run 125 support shift did not close the BOTTOM blade-read blocker and no exact current HEAD has a green complete browser suite. Feature work is prohibited.
+
+### Blocker repair
+
+- Kept the accepted TOP/BOTTOM whole-rig framing, BOTTOM cut orientation/path and every live 320×568 threshold unchanged. Source/contract inspection showed the Run 125 catch-back moved every support part farther toward the pommel even though the BOTTOM follow-through rotates the handle through the failing projected blade/support relationship. Run 126 reverses only that relative support motion: at BOTTOM-counter peak, both forearms, both hands and both cuffs advance `+0.10` local Y toward the habaki/tsuba and return with the same pulse.
+- The two hands still move along the existing pommel→habaki handle axis rather than radially away from it; RIGHT/LEFT/TOP paths, hand spacing, whole-rig framing and neutral return are unchanged. The authoritative blade remains untouched. Focused pure pose coverage now proves all six support parts advance meaningfully only for BOTTOM counter, remain inside the existing transform budget and return exactly to neutral.
+- Hardened the existing Boss browser harness without changing production timers or pass semantics. Instead of sampling the 1150 ms Phase-II banner cleanup and 900 ms final-atmosphere cleanup at one fixed instant, the harness polls the real DOM cleanup conditions with explicit 1500 ms / 1250 ms ceilings. This preserves a bounded lifetime contract while removing CI scheduling jitter that could prevent the suite reaching the player-grip gate.
+- No 24 px blade-extension, viewport, handle-axis, spacing, direction, timing, damage, posture, Perfect/STEP, reach, scoring, persistence, privacy, enemy animation or network threshold was lowered.
+
+### Verification boundary
+
+- The focused pure player-weapon pose test passes locally in isolation (7/7). The execution surface has no networked repository checkout, so the complete dependency-backed browser suite cannot be run before the one permitted Git commit.
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially both the Boss event-stream and dedicated player-grip projection/attachment gates, plus exact-head Vercel status are required before Run 126 is accepted. The Draft-PR run comment is the authoritative post-commit receipt; no second bookkeeping commit is permitted.

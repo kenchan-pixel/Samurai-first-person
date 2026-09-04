@@ -18,7 +18,7 @@ const BASE = Object.freeze({
 const TOP_PARRY_FRAME_X = -0.22;
 const BOTTOM_COUNTER_FRAME_X = -0.30;
 const BOTTOM_COUNTER_FRAME_Y = 0.10;
-const BOTTOM_COUNTER_SUPPORT_TRAIL_Y = -0.06;
+const BOTTOM_COUNTER_SUPPORT_ADVANCE_Y = 0.10;
 const add3 = (base, x = 0, y = 0, z = 0) => [base[0] + x, base[1] + y, base[2] + z];
 
 export function normalizePlayerDirectionIndex(value) {
@@ -63,12 +63,12 @@ export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
   const attackRollR = attack ? -18 * pulse : -8 * pulse;
   const attackRollL = attack ? 14 * pulse : 7 * pulse;
 
-  // On the BOTTOM counter only, trail the whole support silhouette a little
-  // toward the pommel along the katana's local handle axis. The weapon rig still
-  // owns the cut path; this relative catch-back keeps the rising blade readable
-  // instead of letting the forearms cover it through follow-through.
-  const supportTrailY = attack && direction === 2
-    ? BOTTOM_COUNTER_SUPPORT_TRAIL_Y * pulse
+  // At peak BOTTOM follow-through the complete rig has rotated the handle past vertical.
+  // Moving the support farther toward the pommel projects it ahead of the blade and makes
+  // the 320x568 read worse. Keep both hands on the same handle axis, but slide the whole
+  // support silhouette toward the habaki/tsuba instead so the rising blade clears it.
+  const supportAdvanceY = attack && direction === 2
+    ? BOTTOM_COUNTER_SUPPORT_ADVANCE_Y * pulse
     : 0;
 
   return {
@@ -77,12 +77,12 @@ export function playerWeaponPose(action = 0, directionIndex = 0, progress = 1) {
     progress: p,
     pulse,
     rigFramingOffset: playerRigFramingOffset(safeAction, direction, pulse),
-    forearmRPosition: add3(BASE.forearmRPosition, lateral, lift + supportTrailY, depth),
-    forearmLPosition: add3(BASE.forearmLPosition, lateral * 0.88, lift * 0.90 + supportTrailY, depth * 0.85),
-    handRPosition: add3(BASE.handRPosition, lateral * 0.72, lift * 0.78 + supportTrailY, depth * 0.72),
-    handLPosition: add3(BASE.handLPosition, lateral * 0.68, lift * 0.74 + supportTrailY, depth * 0.68),
-    cuffRPosition: add3(BASE.cuffRPosition, lateral * 0.84, lift * 0.86 + supportTrailY, depth * 0.80),
-    cuffLPosition: add3(BASE.cuffLPosition, lateral * 0.80, lift * 0.82 + supportTrailY, depth * 0.76),
+    forearmRPosition: add3(BASE.forearmRPosition, lateral, lift + supportAdvanceY, depth),
+    forearmLPosition: add3(BASE.forearmLPosition, lateral * 0.88, lift * 0.90 + supportAdvanceY, depth * 0.85),
+    handRPosition: add3(BASE.handRPosition, lateral * 0.72, lift * 0.78 + supportAdvanceY, depth * 0.72),
+    handLPosition: add3(BASE.handLPosition, lateral * 0.68, lift * 0.74 + supportAdvanceY, depth * 0.68),
+    cuffRPosition: add3(BASE.cuffRPosition, lateral * 0.84, lift * 0.86 + supportAdvanceY, depth * 0.80),
+    cuffLPosition: add3(BASE.cuffLPosition, lateral * 0.80, lift * 0.82 + supportAdvanceY, depth * 0.76),
     forearmREuler: add3(BASE.forearmREuler, attackR + pitch, yaw, attackRollR - roll),
     forearmLEuler: add3(BASE.forearmLEuler, attackL + pitch * 0.86, yaw * 0.88, attackRollL - roll * 0.72),
     handREuler: add3(BASE.handREuler, 5 * pulse + pitch * 0.55, yaw * 0.70, (attack ? -12 : -6) * pulse - roll * 0.70),

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 125,
+  "run_number": 126,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the remaining Run 124 BOTTOM-counter blade-read blocker by trailing the complete two-hand support silhouette 0.06 local units toward the pommel only during BOTTOM counter follow-through, while retaining the accepted whole-rig portrait framing. The player katana keeps its authoritative cut path; hands, cuffs and forearms move together along the handle axis and return to the established neutral pose.",
-  "last_commit": "3c8bb36e8f348b4196d973c931664a4d17a541ee",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 125 must pass npm test plus the complete browser suite, especially the unchanged dedicated 320x568 player-grip blade-extension/attachment gate.",
+  "last_action": "Corrected the failed Run 125 BOTTOM-counter support choreography by sliding the complete two-hand support silhouette 0.10 local units toward the habaki/tsuba at peak follow-through instead of farther toward the pommel. This keeps both hands on the existing handle axis while opening the projected blade lane. Also hardened the existing Boss reduced-motion browser harness to observe its real 1150 ms banner and 900 ms atmosphere cleanup conditions within bounded CI scheduling tolerances rather than sampling one fixed instant.",
+  "last_commit": "1c64358b9fda97d255e83a4e88e4e8fd8b480087",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 126 must pass npm test plus the complete browser suite, including the unchanged 320x568 player-grip 24 px blade-extension/attachment gate and Boss event-stream gate.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "bottom_counter_support_separation_repair_pending_exact_head",
-    "last_observed_head": "3c8bb36e8f348b4196d973c931664a4d17a541ee",
-    "incoming_ci_run": 33878106004,
-    "incoming_ci_result": "failure_player_grip_bottom_counter_support_obscures_blade_extension",
+    "status": "bottom_counter_projected_support_lane_repair_pending_exact_head",
+    "last_observed_head": "1c64358b9fda97d255e83a4e88e4e8fd8b480087",
+    "incoming_ci_run": 33883915264,
+    "incoming_ci_result": "failure_player_grip_bottom_blade_extension_on_first_attempt_then_boss_browser_integration_on_bounded_retry",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "project enumeration again returns no projects; GitHub exact-head Vercel status is the authoritative fallback",
+    "direct_vercel_connector": "project enumeration remains unavailable; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 124 HEAD 3c8bb36 passes npm test 144/144 and exact-head Vercel. Actions CI #170 / run 33878106004 confirms the BOTTOM counter blade now intersects the 320x568 viewport but the dedicated player-grip gate still fails because the two-hand support silhouette obscures the required projected blade extension. Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head review classifies this as actionable P1 and requires relative BOTTOM-counter choreography rather than another whole-rig translation or weaker threshold. Run 125 therefore keeps the accepted TOP/BOTTOM framing and trails all six support parts 0.06 local Y toward the pommel only during BOTTOM counter pulse, preserving hand-to-handle alignment, direction/timing/damage authority and neutral return."
+    "note": "Incoming Run 125 HEAD 1c64358 passes npm test 145/145 and exact-head Vercel, but it is not accepted. CI #171 attempt 1 passes the broad browser smoke then fails the unchanged dedicated 320x568 BOTTOM blade-extension gate; the single bounded retry fails earlier in the Boss browser integration. Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head Second Hourly review classifies the unresolved BOTTOM presentation/acceptance state as actionable P1. Source/contract inspection shows the Run 125 -0.06 local-Y catch-back moved all support farther toward the pommel even though the BOTTOM rig is rotated through follow-through, so Run 126 reverses that relative handle-space motion: all six support parts advance +0.10 local Y toward the habaki/tsuba only during the BOTTOM counter pulse. This preserves the existing whole-rig cut path, hand-to-handle radial attachment, direction/timing/damage authority and neutral return. The Boss harness now polls the real cleanup state under explicit upper bounds to remove fixed-instant CI jitter without changing production timers or weakening its pass conditions."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,7 +66,7 @@
   },
   "next_candidates": [
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP-parry and BOTTOM-counter portrait-framing repairs; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
+    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview after the TOP-parry and BOTTOM-counter portrait-framing/support-lane repairs; dedicated 320x568 PlayCanvas acceptance protects direction, handle alignment, projected support/handle/blade visibility and neutral return, so refine only concrete remaining visual obstruction/detachment",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
