@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 112,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Run 111 review P2 by making 戰策回顧 part of the durable Current Baseline/Regression Checklist and extending the existing true 320x568 今日陣 browser gate to assert the exact accepted route/effect text, recap bounds inside the challenge result surface, and clean retry/full-campaign lifecycle. No combat, balance, persistence, identifier, analytics or network behavior changed.",
-  "last_commit": "f21fa8f859641d8d6b526ebaadc0353cb5ee0315",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 112 must prove the new 戰策回顧 regression gate itself passes together with all existing challenge/今日陣 and full browser regressions.",
+  "run_number": 113,
+  "last_action_type": "FEATURE",
+  "last_action": "Added presentation-only attack tempo readability derived from each exact current attack's authoritative telegraph/strike timing: measured cuts settle into a deeper load, standard cuts remain neutral, quick cuts receive a bounded snap/forward real-blade read accent, and heavy attacks remain solely owned by the established heavy-weight pass. Combat phase durations, damage, parry/Perfect/STEP, feint direction authority and Sword-to-HandR grip are unchanged.",
+  "last_commit": "02ba1aa70ba47383efeee02e396801ba766fb5ab",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 113 must prove the new 320x568 real-PlayCanvas measured/standard/quick/heavy rhythm gate together with all existing browser regressions.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "challenge_tactic_recap_regression_gate_pending_exact_head",
-    "last_observed_head": "f21fa8f859641d8d6b526ebaadc0353cb5ee0315",
-    "incoming_ci_run": 33821954766,
+    "status": "attack_rhythm_renderer_gate_pending_exact_head",
+    "last_observed_head": "02ba1aa70ba47383efeee02e396801ba766fb5ab",
+    "incoming_ci_run": 33825746502,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 111 HEAD f21fa8f passed Actions CI #157 / run 33821954766 and exact-head GitHub Vercel status. The latest exact-head All Repos review identified one actionable P2: 戰策回顧 was not yet recorded in the durable baseline/checklist and the 320x568 今日陣 browser gate did not assert its rendered text, bounds or clear lifecycle. Run 112 is a blocker repair only; feature work is prohibited until its exact-head acceptance returns green."
+    "note": "Incoming Run 112 HEAD 02ba1aa passed Actions CI #158 / run 33825746502 and exact-head GitHub Vercel status. Latest exact-head review is clean with no unresolved P0/P1/P2 and no inline review threads. Run 113 addresses the owner's unresolved fast/slow blade-read feedback through renderer-only tempo language without changing combat timing or the deliberately direct authored feint-track switch."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect Guard + four authored cuts at normal speed and refine only concrete blade/body continuity defects",
+    "ACCEPTANCE: inspect Guard + four authored cuts at normal speed together with measured/standard/quick tempo presentation; refine only concrete blade/body continuity or feint-read defects",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"

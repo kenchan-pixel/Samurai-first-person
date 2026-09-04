@@ -103,3 +103,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Source/lifecycle reasoning is complete in this execution surface; no local browser checkout is available.
 - Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 112 is accepted. The PR run comment records the resulting SHA, reviewer disposition and receipts; no second bookkeeping commit is permitted.
+
+## Run 113 — Existing-timing attack rhythm readability
+
+**Date:** 2026-09-04  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `02ba1aa70ba47383efeee02e396801ba766fb5ab`.
+- Exact-head Actions CI #158 / run `33825746502` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success** and Preview feedback remains at zero unresolved items.
+- Direct Vercel project enumeration still returns zero projects for the recorded team, so the exact-head GitHub `Vercel` status remains the authoritative deployment fallback.
+- Latest exact-head review is clean with no actionable P0/P1/P2 and there are no inline review threads. Draft PR #1 remains open/Draft/unmerged; `main` remains untouched.
+- Candidate scoring: (1) existing-timing **measured / standard / quick / heavy** blade rhythm presentation **23/25** (visible 5, goal 5, novelty 4, confidence 4, safety 5); (2) direct authored feint-transition interpolation **19/25** because the historical stale-pose/grip path makes it materially riskier; (3) another practice/onboarding route **19/25** because difficulty still lacks repeated evidence. Candidate 1 wins and directly addresses the owner's unresolved fast/slow blade-read feedback without changing balance.
+
+### Implementation
+
+- Added `attack-rhythm.js`, a bounded presentation adapter that reads the exact current attack's already-authoritative `telegraphMs` / `strikeMs` through a snapshot-only observation seam. It classifies non-heavy attacks as **measured**, **standard** or **quick**; existing heavy attacks stay in the dedicated heavy family.
+- Measured cuts use a deeper held whole-body load and modest real-blade trail emphasis. Quick cuts use a smaller preload followed by a sharper bounded root drive and stronger real-blade read accent. Standard cuts remain neutral, while heavy cuts receive zero rhythm offsets so the existing heavy-weight adapter stays the sole heavy authority.
+- The adapter never rewrites CombatEngine phase durations, damage, parry/Perfect/STEP windows, direction/feint authority, attack definitions, HandR/Sword joints or normal authored `Attack*` track selection. The deliberately direct feint track switch is unchanged this run because changing it without concrete same-draw evidence would re-open the prior stale-pose risk.
+- Added deterministic Node coverage plus a focused true 320×568 PlayCanvas browser gate proving measured → standard → quick → heavy coexistence, exact timing metadata observation, unchanged authored `AttackTop`, Sword→HandR grip lock, real-blade trail continuity, heavy-pass non-duplication and unchanged combat timing authority.
+
+### Verification boundary
+
+- Source syntax and pure rhythm math were checked locally; the full repository checkout/browser runtime is not available in this execution surface.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`, including the new 320×568 rhythm gate) and exact-head Vercel Preview are required before Run 113 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.

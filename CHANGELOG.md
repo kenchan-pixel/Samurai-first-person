@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.38.0-evolution — Existing-timing attack rhythm readability
+
+- Added a presentation-only **measured / standard / quick / heavy** rhythm layer derived from each exact current attack's existing authoritative telegraph/strike timing. Slow non-heavy cuts settle into a deeper held load; mid-tempo cuts remain neutral; genuinely quick cuts use a bounded forward snap and stronger real-blade read accent.
+- Existing heavy attacks remain solely owned by the established heavy-weight pass. Combat phase durations, damage, parry/Perfect/STEP rules, final/feint direction authority, authored `Attack*` selection and the fixed Sword→HandR grip are unchanged.
+- Added deterministic timing/profile/bounded-motion coverage plus a focused true 320×568 PlayCanvas gate proving measured → standard → quick → heavy coexistence, exact timing observation, authored grip/read-trail continuity and heavy-pass non-duplication.
+
 ## 0.37.0-evolution — Same-opponent practice progress
 
 - Added a session-only **修行進度** row to direct-practice result analysis. The first completion prompts one repeat; a repeat against the same practice route compares authoritative four-direction defense rate, hits taken and manual-counter conversion with the immediately previous attempt.
