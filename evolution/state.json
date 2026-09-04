@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 117,
+  "run_number": 118,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Run 116 renderer acceptance deadlock without changing production gameplay: the 320x568 PlayCanvas smoke no longer manually calls the running pc.Application.update(). It now advances only the authored AnimComponentLayer through the existing 55-70 ms Guard-to-Attack and 50 ms Ronin feint transitions, while retaining the real final-direction, spatial, grip, blade-path and combat-timing assertions.",
-  "last_commit": "0832139154cdd6ecf1940019978f9e5a63f372d6",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 117 must restore the complete 320x568 browser suite without relaxing the 20 s process timeout, lateral thresholds, Ronin feint timing, Sword-to-HandR grip or blade-path acceptance.",
+  "last_action": "Repaired the remaining Run 117 lateral renderer acceptance false-negative without changing production gameplay: clean per-direction samples still begin from authored Guard and retain the same wind-side, full-travel, player-facing-plane and Sword-to-HandR grip contracts, but the complete lateral/bottom cut is now sampled at the authored contact point (68% of the authoritative strike) instead of the earlier pre-contact pose that the old contaminated harness had accidentally treated as full travel.",
+  "last_commit": "08b61512f1dc44eb9ff173627013fd717d15807f",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 118 must restore the complete 320x568 browser suite while retaining RIGHT < -0.700 / LEFT > +0.700 wind-up, >=0.20 lateral travel, Bottom rise, Sword-to-HandR grip, blade-plane crossing and the 50 ms real Ronin feint contract.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "feint_animation_layer_settle_repair_pending_exact_head",
-    "last_observed_head": "0832139154cdd6ecf1940019978f9e5a63f372d6",
-    "incoming_ci_run": 33840791996,
+    "status": "lateral_authored_contact_sampling_repair_pending_exact_head",
+    "last_observed_head": "08b61512f1dc44eb9ff173627013fd717d15807f",
+    "incoming_ci_run": 33844746928,
     "incoming_ci_result": "failure",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 116 HEAD 0832139 passed npm test 135/135 and exact-head Vercel but failed Actions CI #162 / run 33840791996 because /?browser-smoke=renderer-motion hit the unchanged 20 s headless timeout before emitting a DOM receipt. The latest same-head Second Hourly review classifies this as P1 and identifies repeated manual view.impl.app.update(...) calls as the non-production double-drive path. Run 117 keeps the real Ronin lifecycle and all established spatial/grip/timing thresholds, removes whole-application manual stepping, and uses the focused PlayCanvas AnimComponentLayer update seam solely inside the browser acceptance module to settle the existing authored transitions. Inline review threads remain empty."
+    "note": "Incoming Run 117 HEAD 08b6151 passes npm test 135/135 and exact-head Vercel, and its 320x568 PlayCanvas smoke now reaches the real directional assertions. The same-head review classifies the remaining red gate as P1: clean wind-ups are correct (RIGHT x=-0.851, LEFT x=1.258) but the retained >=0.20 RIGHT travel assertion is evaluated at 2580 ms. For Ashigaru first strike that is 150/330 ms = 45.5% strike, mapped by authoredAttackProgress() to about 0.567 authored progress, before the lateral contact key at 0.68. Run 118 keeps production runtime and every spatial/grip/plane threshold unchanged, derives strike samples from the authoritative phase start/strikeMs, and measures complete lateral/bottom travel at 68% strike while retaining early/mid path samples. The real Ronin feint sample already occurs at 175/250 ms = 70% strike and remains unchanged. Inline review threads are empty."
   },
   "external_deployment_recovery": {
     "last_incident": {

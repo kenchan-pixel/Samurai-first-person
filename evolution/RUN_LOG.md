@@ -155,3 +155,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The repair deliberately leaves the existing 20 s browser process timeout, 320×568 viewport, lateral thresholds, feint timing and blade/grip assertions unchanged. The resulting exact HEAD must pass `npm test` plus the complete `npm run test:browser` suite and exact-head Vercel before further feature work.
 - The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.
+
+## Run 118 — Lateral authored-contact acceptance repair
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `08b61512f1dc44eb9ff173627013fd717d15807f`.
+- Exact-head Actions CI #163 / run `33844746928` is terminal **failure**: `npm test` is **135/135 green**, while `npm run test:browser` reaches the real PlayCanvas directional gate and fails only the retained RIGHT full-travel assertion. Exact-head GitHub `Vercel` status is terminal **success**.
+- The clean 320×568 wind-up evidence is now valid (`RIGHT x=-0.851`, `LEFT x=1.258`), Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head Second Hourly review classifies the remaining red directional acceptance as **P1**.
+- Source inspection identifies the acceptance seam rather than production motion as the concrete defect: the failed RIGHT sample is at 2580 ms, only 150/330 ms (45.5%) into the Ashigaru strike. `authoredAttackProgress()` maps that to about 0.567 authored progress, before the deterministic lateral contact key at 0.68. The earlier contaminated harness had masked this pre-contact/full-travel mismatch. The real Ronin feint gate already samples its final strike at 175/250 ms (70%), so it is already aligned with authored contact.
+- Under the exact-head fence, feature work remains prohibited; this run is limited to repairing the false-negative acceptance sampling without changing the game.
+
+### Implementation
+
+- Kept clean per-direction Guard setup and the Run 117 AnimComponentLayer-only settling path intact; no whole-app manual update was reintroduced.
+- `sampleDirectionalCut()` now derives the strike start and duration from the authoritative CombatEngine state, retains early/mid renders for real trail/path accumulation, and takes the full RIGHT/LEFT/BOTTOM travel sample at **68% of the real strike**, which maps to the authored contact key instead of the former pre-contact pose.
+- Preserved every player-visible acceptance threshold: RIGHT wind-up remains `< -0.700`, LEFT remains `> +0.700`, lateral full travel remains `>=0.20`, Bottom rise remains `>0.35`, all three cuts must cross the player-facing plane, and Sword→HandR orientation lock remains `<0.25°`. Added a contact-travel diagnostic so any future failure reports the real deltas instead of only the assertion label.
+- Production runtime source, authored animation pack, 50 ms Ronin feint crossfade, attack timings, damage, parry/Perfect/STEP windows, direction authority, persistence, privacy and networking are unchanged.
+
+### Verification boundary
+
+- The modified acceptance path is deliberately semantic rather than a threshold relaxation: it measures complete cut travel at authored contact while retaining the same spatial limits. This execution surface has no local checkout, so the resulting exact HEAD must pass `npm test` plus the complete `npm run test:browser` suite and exact-head Vercel before further feature work.
+- The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.

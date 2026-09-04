@@ -165,6 +165,7 @@ try {
   };
 
   const DIRECTION_SETTLE_SECONDS = 0.07;
+  const DIRECTION_CONTACT_STRIKE_PROGRESS = 0.68;
   const sampleDirectionalCut = (direction) => {
     const sampleEngine = new CombatEngine();
     sampleEngine.start(0);
@@ -179,10 +180,22 @@ try {
     settleAuthoredLayer(DIRECTION_SETTLE_SECONDS, `${direction} Guard-to-attack`);
     const windPose = render(sampleEngine, 2150, 0, Direction.TOP, DIRECTION_INDEX[direction]);
 
-    sampleEngine.update(2430);
-    const strikeEarlyPose = render(sampleEngine, 2470, 0, Direction.TOP, DIRECTION_INDEX[direction]);
-    render(sampleEngine, 2525, 0, Direction.TOP, DIRECTION_INDEX[direction]);
-    const strikePose = render(sampleEngine, 2580, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    // Run 117 revealed that the old shared 2580 ms sample is only ~45% through this
+    // Ashigaru strike. Under authoredAttackProgress() that is ~0.57 authored progress,
+    // before the deterministic lateral/bottom contact key at 0.68. Sample the unchanged
+    // real strike at its authored contact point instead of treating a pre-contact pose as
+    // full travel. Early/mid samples remain so the real trail/path still accumulates.
+    const strikeStartsAt = sampleEngine.phaseEndsAt;
+    sampleEngine.update(strikeStartsAt);
+    const strikeMs = Number(sampleEngine.currentAttack?.strikeMs);
+    assert(Number.isFinite(strikeMs) && strikeMs > 0, `${direction} strike timing was unavailable`);
+    const strikeEarlyAt = strikeStartsAt + Math.round(strikeMs * 0.12);
+    const strikeMidAt = strikeStartsAt + Math.round(strikeMs * 0.45);
+    const strikeContactAt = strikeStartsAt + Math.round(strikeMs * DIRECTION_CONTACT_STRIKE_PROGRESS);
+    const strikeEarlyPose = render(sampleEngine, strikeEarlyAt, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    render(sampleEngine, strikeMidAt, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    const strikePose = render(sampleEngine, strikeContactAt, 0, Direction.TOP, DIRECTION_INDEX[direction]);
+    assert(strikePose.phase === 'strike', `${direction} contact sample escaped the authoritative strike window`);
     return { wind: windPose, strikeEarly: strikeEarlyPose, strike: strikePose };
   };
 
@@ -242,11 +255,13 @@ try {
   const strikeRight = rightCut.strike;
   const strikeLeft = leftCut.strike;
   const strikeBottom = bottomCut.strike;
+  const lateralTravelDiagnostic = `rightDelta=${(strikeRight.bladeTipX - windRight.bladeTipX).toFixed(3)}, leftDelta=${(strikeLeft.bladeTipX - windLeft.bladeTipX).toFixed(3)}, bottomDelta=${(strikeBottom.bladeTipY - windBottom.bladeTipY).toFixed(3)}, contact=${Math.round(DIRECTION_CONTACT_STRIKE_PROGRESS * 100)}%`;
+  root.dataset.rendererLateralContactTravel = lateralTravelDiagnostic;
   assert(strikeRight.bladeCrossedPlane && strikeLeft.bladeCrossedPlane && strikeBottom.bladeCrossedPlane, 'One or more directional strikes failed to cross the player-facing parry plane');
   assert([strikeRight, strikeLeft, strikeBottom].every((pose) => pose.bladeGripLocked && pose.bladeOrientationDeltaDeg < 0.25), 'One or more directional strikes rotated the blade away from the authored HandR grip');
-  assert(strikeRight.bladeTipX > windRight.bladeTipX + 0.20, 'RIGHT did not travel toward the player screen-right from its left-side wind-up');
-  assert(strikeLeft.bladeTipX < windLeft.bladeTipX - 0.20, 'LEFT did not travel toward the player screen-left from its right-side wind-up');
-  assert(strikeBottom.bladeTipY > windBottom.bladeTipY + 0.35, 'Bottom strike did not rise through its player-facing cut path');
+  assert(strikeRight.bladeTipX > windRight.bladeTipX + 0.20, `RIGHT did not travel toward the player screen-right from its left-side wind-up (${lateralTravelDiagnostic})`);
+  assert(strikeLeft.bladeTipX < windLeft.bladeTipX - 0.20, `LEFT did not travel toward the player screen-left from its right-side wind-up (${lateralTravelDiagnostic})`);
+  assert(strikeBottom.bladeTipY > windBottom.bladeTipY + 0.35, `Bottom strike did not rise through its player-facing cut path (${lateralTravelDiagnostic})`);
 
   render(engine, 2580, 0, Direction.TOP, DIRECTION_INDEX[Direction.TOP]);
   const parry = engine.attemptParry(Direction.TOP, 2580);
