@@ -3,6 +3,7 @@ const ATTACK_URL = '/assets/samurai-attacks-v1.glb';
 export const AUTHORED_GUARD_CLIP = 'Guard';
 export const AUTHORED_ATTACK_CLIPS = Object.freeze(['AttackTop', 'AttackRight', 'AttackBottom', 'AttackLeft']);
 export const AUTHORED_PACK_CLIPS = Object.freeze([AUTHORED_GUARD_CLIP, ...AUTHORED_ATTACK_CLIPS]);
+export const AUTHORED_FEINT_BLEND_SECONDS = 0.05;
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
 const phaseClip = (phase) => phase === 'telegraph' ? 'Windup'
@@ -25,7 +26,7 @@ export function authoredAttackTransitionSeconds(phase, previousClip, nextClip) {
     && previousClip !== nextClip
     && AUTHORED_ATTACK_CLIPS.includes(previousClip)
     && AUTHORED_ATTACK_CLIPS.includes(nextClip);
-  if (directionalTelegraphSwitch) return 0;
+  if (directionalTelegraphSwitch) return AUTHORED_FEINT_BLEND_SECONDS;
   if (nextClip === AUTHORED_GUARD_CLIP) return 0;
   return phase === 'telegraph' ? 0.055 : 0.025;
 }
@@ -76,6 +77,7 @@ function loadAttackPack(view, baseCharacterReady) {
         document.documentElement.dataset.authoredAttackPack = 'guard-four-direction-v2';
         document.documentElement.dataset.authoredAttackClips = AUTHORED_PACK_CLIPS.join(',');
         document.documentElement.dataset.authoredGuard = 'player-facing-tip-v1';
+        document.documentElement.dataset.authoredFeintTransition = 'crossfade-50ms-v1';
         resolve(true);
       } catch (setupError) {
         console.warn('Authored directional attack pack failed to bind; keeping base skeletal clips.', setupError);
@@ -141,9 +143,12 @@ export function installAuthoredEnemyAttacks(view) {
       const previousClip = AUTHORED_PACK_CLIPS.includes(layer.activeState)
         ? layer.activeState
         : view.authoredAttackActiveClip;
-      // Telegraph feints must commit immediately to the new authored cut. Guard entry
-      // is also immediate because every Attack* recovery ends on the exact Guard target;
-      // Guard -> Attack* retains the established short initial anticipation blend.
+      // A feint still commits the gameplay/read direction immediately, but the full rig
+      // now cross-fades directly from the old authored Attack* to the final Attack* for
+      // 50 ms at the same normalized authored progress. This removes the hard pose snap
+      // without adding a timing clock, delaying the final direction, rotating Sword/HandR,
+      // or routing through the generic Windup state. Guard entry remains immediate because
+      // every Attack* recovery ends on the exact Guard target.
       const blend = authoredAttackTransitionSeconds(phase, previousClip, clip);
       layer.transition(clip, blend, progress);
       view.authoredAttackActiveClip = clip;

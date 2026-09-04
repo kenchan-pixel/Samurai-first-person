@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 113,
+  "run_number": 114,
   "last_action_type": "FEATURE",
-  "last_action": "Added presentation-only attack tempo readability derived from each exact current attack's authoritative telegraph/strike timing: measured cuts settle into a deeper load, standard cuts remain neutral, quick cuts receive a bounded snap/forward real-blade read accent, and heavy attacks remain solely owned by the established heavy-weight pass. Combat phase durations, damage, parry/Perfect/STEP, feint direction authority and Sword-to-HandR grip are unchanged.",
-  "last_commit": "02ba1aa70ba47383efeee02e396801ba766fb5ab",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 113 must prove the new 320x568 real-PlayCanvas measured/standard/quick/heavy rhythm gate together with all existing browser regressions.",
+  "last_action": "Replaced the authored mid-telegraph directional hard cut used by feints with a bounded 50 ms full-rig Attack*-to-Attack* crossfade at the same normalized authored progress. Gameplay/final direction still commits immediately; CombatEngine timing, damage, parry/Perfect/STEP windows, attack definitions, generic Windup isolation and Sword-to-HandR grip authority are unchanged.",
+  "last_commit": "d16d4c8663695d51c8d2ff924346c257d0ed6c05",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 114 must preserve the existing real PlayCanvas authored-direction switch, grip/trajectory, attack-rhythm and full browser regression gates while the new deterministic feint-crossfade contract passes.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "attack_rhythm_renderer_gate_pending_exact_head",
-    "last_observed_head": "02ba1aa70ba47383efeee02e396801ba766fb5ab",
-    "incoming_ci_run": 33825746502,
+    "status": "authored_feint_crossfade_pending_exact_head",
+    "last_observed_head": "d16d4c8663695d51c8d2ff924346c257d0ed6c05",
+    "incoming_ci_run": 33830279572,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "list_projects returned zero projects; GitHub exact-head Vercel status is the authoritative fallback",
+    "direct_vercel_connector": "get_project returned 404 for the recorded project/team IDs; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 112 HEAD 02ba1aa passed Actions CI #158 / run 33825746502 and exact-head GitHub Vercel status. Latest exact-head review is clean with no unresolved P0/P1/P2 and no inline review threads. Run 113 addresses the owner's unresolved fast/slow blade-read feedback through renderer-only tempo language without changing combat timing or the deliberately direct authored feint-track switch."
+    "note": "Incoming Run 113 HEAD d16d4c8 passed Actions CI #159 / run 33830279572 and exact-head GitHub Vercel status. Latest exact-head All Repos review reports no actionable P0/P1/P2 and there are no inline review threads. Run 114 addresses the owner's remaining abrupt feint/變刀 presentation feedback with a bounded authored full-rig crossfade rather than runtime joint overrides or combat-timing changes."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect Guard + four authored cuts at normal speed together with measured/standard/quick tempo presentation; refine only concrete blade/body continuity or feint-read defects",
+    "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + the bounded authored feint crossfade at normal speed; refine only concrete body/blade continuity defects",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"

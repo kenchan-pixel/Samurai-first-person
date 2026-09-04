@@ -41,90 +41,42 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Run 099: refined deterministic AttackTop/AttackBottom into connected cross-body vertical cuts while preserving combat timing and fixed Sword→HandR grip.
 - Run 100: explicit result 分享 through Web Share/clipboard with no account, persistence, analytics or background network request.
 
-## Runs 101–110 — Practice evidence, Closed Beta local readiness and hardening
+## Runs 101–113 — Practice evidence, Closed Beta readiness and combat-read refinement
 
 - Run 101: added session-only 修行進度 comparing repeated same-opponent practice from authoritative defense/hit/manual-counter outcomes.
-- Run 102: repaired practice-progress DOM marker ownership after CI exposed style/result-row selector collision; exact-head CI/Vercel returned green.
-- Run 103: added explicit local/export-only 體驗意見 / 錯誤回報 and established `docs/CLOSED_BETA_V0_5_BASELINE.md`; remote ingestion/accounts/leaderboard/telemetry remain gated.
-- Run 104: added start-only 封測資訊 guide with the duel → repeated practice → explicit 回報 loop and no-account/no-auto-upload/no-cloud-leaderboard/no-background-telemetry disclosure.
+- Run 102: repaired practice-progress DOM marker ownership after CI exposed a style/result-row selector collision.
+- Run 103: added explicit local/export-only 體驗意見 / 錯誤回報 and established the approved Closed Beta v0.5 local/export-only boundary.
+- Run 104: added start-only 封測資訊 guide with the duel → repeated practice → explicit 回報 loop.
 - Run 105: added read-only 本機戰績 inside that guide using only established campaign/challenge local best records.
-- Run 106: repaired storage-denied startup by making `localStorage` acquisition lazy/fail-safe and proving the 320×568 guide remains usable when access throws `SecurityError`.
-- Run 107: extended 修行進度 with an observed weak-direction target and repeat-attempt tracking without changing combat balance or collecting remote data.
-- Run 108: added session-only 封測 0/3 progress for terminal duel → repeated practice → successful explicit feedback export.
-- Run 109: repaired false checklist bootstrap by requiring a genuine hidden→visible terminal transition rather than sampling a pre-visible result modal.
-- Run 110: repaired a DOM-ownership collision where the progress selector could bind `<html>` and replace the app. Exact HEAD `2e32b27d73c3c6e555a8c3d7745b7d6d439ad7ac` passed Actions CI #156 / run `33817524748`, exact-head Vercel was green, and the latest Second Hourly review reported no actionable P0/P1/P2 findings.
+- Run 106: repaired storage-denied startup so the guide/game stay usable when `localStorage` access throws.
+- Run 107: extended 修行進度 with an observed weak-direction target and repeat tracking without balance/data changes.
+- Runs 108–110: added session-only 封測 0/3 progress, repaired false terminal bootstrap, then fixed a DOM ownership collision that could replace the app root.
+- Run 111: added challenge/今日陣 terminal 戰策回顧 for accepted Waves 2/4/6 choices and direct HP/score effects.
+- Run 112: repaired the cumulative baseline/browser acceptance gap for 戰策回顧; exact route/effect text, bounds and retry/campaign clearing are now covered at 320×568.
+- Run 113: added presentation-only measured / standard / quick / heavy attack-tempo readability from each exact current attack's existing telegraph/strike timing. Exact HEAD `d16d4c8663695d51c8d2ff924346c257d0ed6c05` passed Actions CI #159 / run `33830279572`, exact-head GitHub `Vercel` status was success, and the latest exact-head All Repos review reported no actionable P0/P1/P2 findings.
 
-## Run 111 — Challenge 戰策回顧
-
-**Date:** 2026-09-04  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `2e32b27d73c3c6e555a8c3d7745b7d6d439ad7ac`.
-- Exact-head Actions CI #156 / run `33817524748` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success**.
-- Latest exact-head Second Hourly review reports **no actionable P0/P1/P2 finding** and there are no inline review threads. Draft PR #1 remains open/Draft/unmerged; `main` remains untouched.
-- Candidate scoring: challenge **戰策回顧** **23/25** (visible impact 4, goal 5, novelty 4, confidence 5, safety 5); multi-attempt practice session summary **21/25**; Closed Beta export/session-summary extension **21/25**. 戰策回顧 wins because the existing Waves 2/4/6 decisions currently disappear at terminal, while a compact local recap directly improves replay learning without another balance or data-collection change.
-
-### Implementation
-
-- Accepted **整息 / 血誓** decisions now create a bounded active-run history containing only checkpoint, choice and the already-authoritative direct HP/score delta. The history resets on every start and is never persisted.
-- Challenge/今日陣 terminal events now carry a validated summary of those accepted checkpoints. The result strip renders one compact **戰策** line such as `2誓 · 4息 · 6誓 · +700分 · 生命-1`, letting the player review the route and its direct cost/reward beside the existing run result.
-- Duplicate/out-of-range checkpoint records are ignored by the pure summary seam; retry/campaign start clears the visible recap so stale choices cannot leak into the next run.
-- Existing 戰前抉擇 timing, +1 HP / -1 HP +350 rules, enemy definitions, combat timing/damage, momentum, PB splits, challenge best schema, campaign/practice state, storage keys, identifiers, analytics and network behaviour are unchanged.
-- Deterministic tests cover the three-checkpoint summary/format, direct effect aggregation, duplicate/out-of-range filtering and terminal-event attachment. Existing 320×568 challenge/今日陣 browser gates remain the acceptance fence for terminal fit and full composed lifecycle.
-
-### Verification boundary
-
-- Source/lifecycle reasoning is complete in this execution surface; no local browser checkout is available.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 111 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.
-
-## Run 112 — 戰策回顧 baseline/browser acceptance repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `f21fa8f859641d8d6b526ebaadc0353cb5ee0315`.
-- Exact-head Actions CI #157 / run `33821954766` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success** and Preview feedback reports zero unresolved items.
-- The direct Vercel connector still enumerates zero projects for the recorded team, so the exact-head GitHub `Vercel` status is the authoritative deployment fallback for this run.
-- The latest exact-head All Repos review identifies one actionable P2: Run 111's player-visible **戰策回顧** was not recorded in `CURRENT_BASELINE.md` / `REGRESSION_CHECKLIST.md`, and the existing 320×568 今日陣 browser gate did not assert the recap's rendered text, result bounds or retry/campaign clear lifecycle. There are no inline review threads.
-- This is a material cumulative-baseline/acceptance gap, so it blocks feature selection under the review rules. Run 112 is `BLOCKER_FIX` only.
-
-### Implementation
-
-- Reconciled `CURRENT_BASELINE.md` and `REGRESSION_CHECKLIST.md` so **戰策回顧** is explicitly durable: accepted Waves 2/4/6 choices only, direct authoritative HP/score effect only, active-run only, in-bounds terminal presentation, and clean retry/full-campaign reset with no persistence/network authority.
-- Extended the existing true 320×568 今日陣/challenge browser harness rather than creating another broad suite. The deterministic `2誓 · 4息 · 6誓` route must visibly render `戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1`, keep the recap rectangle inside both the challenge result surface and viewport, then clear text/root receipts on retry and full-campaign handoff.
-- Updated the existing browser-smoke receipt list so CI fails closed if any recap terminal/bounds/reset marker is missing.
-- No gameplay implementation, combat timing/damage/parry/Perfect/STEP rule, tactical reward value, challenge-best schema, storage key, identifier, analytics, backend or network behaviour changed.
-
-### Verification boundary
-
-- Source/lifecycle reasoning is complete in this execution surface; no local browser checkout is available.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 112 is accepted. The PR run comment records the resulting SHA, reviewer disposition and receipts; no second bookkeeping commit is permitted.
-
-## Run 113 — Existing-timing attack rhythm readability
+## Run 114 — Authored feint redirection continuity
 
 **Date:** 2026-09-04  
 **Action type:** FEATURE
 
 ### Preflight
 
-- Incoming exact HEAD: `02ba1aa70ba47383efeee02e396801ba766fb5ab`.
-- Exact-head Actions CI #158 / run `33825746502` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success** and Preview feedback remains at zero unresolved items.
-- Direct Vercel project enumeration still returns zero projects for the recorded team, so the exact-head GitHub `Vercel` status remains the authoritative deployment fallback.
-- Latest exact-head review is clean with no actionable P0/P1/P2 and there are no inline review threads. Draft PR #1 remains open/Draft/unmerged; `main` remains untouched.
-- Candidate scoring: (1) existing-timing **measured / standard / quick / heavy** blade rhythm presentation **23/25** (visible 5, goal 5, novelty 4, confidence 4, safety 5); (2) direct authored feint-transition interpolation **19/25** because the historical stale-pose/grip path makes it materially riskier; (3) another practice/onboarding route **19/25** because difficulty still lacks repeated evidence. Candidate 1 wins and directly addresses the owner's unresolved fast/slow blade-read feedback without changing balance.
+- Incoming exact HEAD: `d16d4c8663695d51c8d2ff924346c257d0ed6c05`.
+- Exact-head Actions CI #159 / run `33830279572` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success**. The direct Vercel connector still cannot resolve the recorded imported project (`get_project` returned 404), so the GitHub status remains the authoritative deployment fallback.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest exact-head All Repos review says **No actionable P0/P1/P2 findings**.
+- Owner feedback still identifies abrupt **變刀 / feint** presentation as unresolved. This is stronger evidence than the backlog's prior caution against speculative interpolation, so a bounded authored-track repair is justified without reopening combat balance.
+- Candidate scoring: (1) authored feint redirection continuity **22/25** (visible impact 5, goal 5, novelty 4, confidence 4, safety 4); (2) further Top/Bottom choreography refinement **19/25** because Run 099 already repaired the known deterministic path and no new concrete defect is observed; (3) difficulty tuning **18/25** because repository SOT still requires repeatable practice evidence before changing combat pressure. Candidate 1 wins.
 
 ### Implementation
 
-- Added `attack-rhythm.js`, a bounded presentation adapter that reads the exact current attack's already-authoritative `telegraphMs` / `strikeMs` through a snapshot-only observation seam. It classifies non-heavy attacks as **measured**, **standard** or **quick**; existing heavy attacks stay in the dedicated heavy family.
-- Measured cuts use a deeper held whole-body load and modest real-blade trail emphasis. Quick cuts use a smaller preload followed by a sharper bounded root drive and stronger real-blade read accent. Standard cuts remain neutral, while heavy cuts receive zero rhythm offsets so the existing heavy-weight adapter stays the sole heavy authority.
-- The adapter never rewrites CombatEngine phase durations, damage, parry/Perfect/STEP windows, direction/feint authority, attack definitions, HandR/Sword joints or normal authored `Attack*` track selection. The deliberately direct feint track switch is unchanged this run because changing it without concrete same-draw evidence would re-open the prior stale-pose risk.
-- Added deterministic Node coverage plus a focused true 320×568 PlayCanvas browser gate proving measured → standard → quick → heavy coexistence, exact timing metadata observation, unchanged authored `AttackTop`, Sword→HandR grip lock, real-blade trail continuity, heavy-pass non-duplication and unchanged combat timing authority.
+- Replaced the mid-telegraph authored `Attack*` → `Attack*` hard cut with a bounded **50 ms full-rig crossfade** using the existing PlayCanvas animation-layer transition API.
+- The final gameplay/read direction still changes immediately when CombatEngine resolves the feint. The destination authored clip begins at the **same normalized authored progress**, so the crossfade smooths body/arms/katana continuity without adding a second clock, delaying the final direction or rewinding the cut.
+- The transition stays directly between authored directional tracks: no generic `Windup` contamination, no per-frame Chest/arm/HandR overrides, no runtime Sword rotation, and no new asset/downloaded motion.
+- Added deterministic coverage for the feint-specific 50 ms transition while preserving the established Guard→attack and non-telegraph transition durations. The existing true 320×568 PlayCanvas renderer/browser contract remains the runtime acceptance fence for actual directional track switching, authored grip/trajectory and the cumulative combat baseline.
+- CombatEngine timing, attack definitions, telegraph/strike durations, damage, parry/Perfect/STEP windows, late-telegraph guard buffer, feint/final-direction authority, attack-tempo classification, heavy weighting, persistence/privacy and networking are unchanged.
 
 ### Verification boundary
 
-- Source syntax and pure rhythm math were checked locally; the full repository checkout/browser runtime is not available in this execution surface.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`, including the new 320×568 rhythm gate) and exact-head Vercel Preview are required before Run 113 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.
+- Incoming exact-head CI/Vercel/review gates were green and source-level transition semantics were inspected before writing the commit; this execution surface has no local repository checkout for a pre-commit browser run.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 114 is accepted. The PR run comment records the resulting SHA and post-commit receipts; no second bookkeeping commit is permitted.
