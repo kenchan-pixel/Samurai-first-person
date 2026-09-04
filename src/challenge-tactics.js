@@ -20,6 +20,7 @@ function stateFor(engine) {
       lastNow: 0,
       choicesMade: 0,
       lastChoice: null,
+      history: [],
     };
     states.set(engine, state);
   }
@@ -81,6 +82,51 @@ export function resolveChallengeTactic({
   };
 }
 
+export function summariseChallengeTactics(history = []) {
+  const byCheckpoint = new Map();
+  for (const item of Array.isArray(history) ? history : []) {
+    const checkpoint = Math.floor(Number(item?.checkpoint) || 0);
+    const choice = item?.choice;
+    if (!CHALLENGE_TACTIC_CHECKPOINTS.includes(checkpoint)) continue;
+    if (choice !== 'recover' && choice !== 'blood-vow') continue;
+    if (byCheckpoint.has(checkpoint)) continue;
+    const rawHpDelta = Math.round(Number(item?.hpDelta) || 0);
+    byCheckpoint.set(checkpoint, {
+      checkpoint,
+      choice,
+      hpDelta: choice === 'recover' ? Math.max(0, Math.min(1, rawHpDelta)) : -1,
+      scoreDelta: choice === 'blood-vow' ? CHALLENGE_TACTIC_SCORE_BONUS : 0,
+    });
+  }
+
+  const records = [...byCheckpoint.values()].sort((a, b) => a.checkpoint - b.checkpoint);
+  return {
+    choices: records.length,
+    recoveries: records.filter((record) => record.choice === 'recover').length,
+    bloodVows: records.filter((record) => record.choice === 'blood-vow').length,
+    hpDelta: records.reduce((total, record) => total + record.hpDelta, 0),
+    scoreDelta: records.reduce((total, record) => total + record.scoreDelta, 0),
+    checkpoints: records.map(({ checkpoint, choice }) => ({ checkpoint, choice })),
+  };
+}
+
+export function formatChallengeTacticRecap(summary = {}) {
+  const checkpoints = Array.isArray(summary?.checkpoints) ? summary.checkpoints : [];
+  if ((Number(summary?.choices) || 0) <= 0 || checkpoints.length === 0) return '';
+  const route = checkpoints
+    .filter((item) => CHALLENGE_TACTIC_CHECKPOINTS.includes(Number(item?.checkpoint)))
+    .map((item) => `${Number(item.checkpoint)}${item.choice === 'blood-vow' ? '誓' : '息'}`)
+    .join(' · ');
+  if (!route) return '';
+
+  const effects = [];
+  const scoreDelta = Math.max(0, Math.round(Number(summary?.scoreDelta) || 0));
+  const hpDelta = Math.round(Number(summary?.hpDelta) || 0);
+  if (scoreDelta > 0) effects.push(`+${scoreDelta}分`);
+  if (hpDelta !== 0) effects.push(`生命${hpDelta > 0 ? '+' : ''}${hpDelta}`);
+  return ['戰策', route, ...effects].join(' · ');
+}
+
 function ensureStyles() {
   if (typeof document === 'undefined' || document.querySelector('style[data-challenge-tactics]')) return;
   const style = document.createElement('style');
@@ -125,11 +171,15 @@ function ensureStyles() {
     .challenge-tactic__choice--risk{border-color:rgba(209,88,70,.42);background:rgba(112,38,30,.18)}
     .challenge-tactic__choice:disabled{opacity:.36}
     .challenge-tactic__hint{margin:9px 0 0;color:rgba(244,232,210,.48);font-size:8px;line-height:1.3;text-align:center}
+    .challenge-result.challenge-result--tactic-recap{flex-wrap:wrap}
+    .challenge-tactic-recap{flex:0 0 100%;margin-top:-2px;color:rgba(241,213,159,.68);font-size:8.5px;line-height:1.15;text-align:left;letter-spacing:.02em}
+    .challenge-tactic-recap[hidden]{display:none}
     @media(max-width:360px) and (max-height:620px){
       .challenge-tactic{padding-top:calc(var(--safe-top) + 48px);padding-bottom:calc(var(--safe-bottom) + 12px)}
       .challenge-tactic__card{padding:11px}
       .challenge-tactic__card h3{font-size:18px}
       .challenge-tactic__choice{min-height:52px;padding:7px 6px}
+      .challenge-tactic-recap{font-size:8px;line-height:1.08}
     }
   `;
   document.head.append(style);
@@ -172,6 +222,51 @@ function ensureUi() {
   const challengeCopy = document.querySelector('#challenge-button small');
   if (challengeCopy) challengeCopy.textContent = '八關 · 聚氣＋抉擇';
   return panel;
+}
+
+function ensureRecapUi() {
+  if (typeof document === 'undefined') return null;
+  const result = document.querySelector('#challenge-result');
+  if (!result) return null;
+  let node = result.querySelector('[data-challenge-tactic-recap]');
+  if (!node) {
+    node = document.createElement('small');
+    node.className = 'challenge-tactic-recap';
+    node.dataset.challengeTacticRecap = 'true';
+    node.hidden = true;
+    result.append(node);
+  }
+  return { result, node };
+}
+
+function clearTacticRecap() {
+  if (typeof document === 'undefined') return;
+  const ui = ensureRecapUi();
+  if (ui) {
+    ui.node.hidden = true;
+    ui.node.textContent = '';
+    ui.result.classList.remove('challenge-result--tactic-recap');
+  }
+  const root = document.documentElement;
+  root.dataset.challengeTacticRecap = '';
+  root.dataset.challengeTacticRecapChoices = '0';
+}
+
+function renderTacticRecap(summary) {
+  if (typeof document === 'undefined') return;
+  const text = formatChallengeTacticRecap(summary);
+  if (!text) {
+    clearTacticRecap();
+    return;
+  }
+  const ui = ensureRecapUi();
+  if (!ui) return;
+  ui.node.textContent = text;
+  ui.node.hidden = false;
+  ui.result.classList.add('challenge-result--tactic-recap');
+  const root = document.documentElement;
+  root.dataset.challengeTacticRecap = text;
+  root.dataset.challengeTacticRecapChoices = String(Math.max(0, Number(summary?.choices) || 0));
 }
 
 function renderHidden(state = null) {
@@ -238,6 +333,12 @@ export function chooseChallengeTactic(engine, choice) {
   state.resumePending = true;
   state.choicesMade += 1;
   state.lastChoice = resolved.choice;
+  state.history.push({
+    checkpoint: state.checkpoint,
+    choice: resolved.choice,
+    hpDelta: resolved.hpDelta,
+    scoreDelta: resolved.scoreDelta,
+  });
   if (pendingEngine === engine) pendingEngine = null;
   renderHidden(state);
 
@@ -282,8 +383,10 @@ export function installChallengeTactics(Engine = CombatEngine) {
     state.lastNow = Number.isFinite(now) ? now : 0;
     state.choicesMade = 0;
     state.lastChoice = null;
+    state.history = [];
     if (pendingEngine === this) pendingEngine = null;
     renderHidden(state);
+    clearTacticRecap();
     if (typeof document !== 'undefined') {
       document.documentElement.dataset.challengeTacticChoices = '0';
       document.documentElement.dataset.challengeTacticLast = '';
@@ -310,13 +413,15 @@ export function installChallengeTactics(Engine = CombatEngine) {
     const active = Boolean(this[CHALLENGE_ACTIVE]);
 
     if (!active) {
-      if (state.active || state.pending || state.resumePending) {
+      if (state.active || state.pending || state.resumePending || state.history.length > 0) {
         state.active = false;
         state.pending = false;
         state.resumePending = false;
         state.remainingMs = 0;
+        state.history = [];
         if (pendingEngine === this) pendingEngine = null;
         renderHidden(state);
+        clearTacticRecap();
       }
       return events;
     }
@@ -332,16 +437,22 @@ export function installChallengeTactics(Engine = CombatEngine) {
         state.remainingMs = 0;
         if (pendingEngine === this) pendingEngine = null;
         renderHidden(state);
+        const summary = summariseChallengeTactics(state.history);
         event.detail = {
           ...(event.detail || {}),
           challengeTacticChoices: state.choicesMade,
+          challengeTacticSummary: summary,
         };
+        if (typeof document !== 'undefined') {
+          queueMicrotask(() => renderTacticRecap(summary));
+        }
       }
     }
     return events;
   };
 
   ensureUi();
+  clearTacticRecap();
 }
 
 if (typeof document !== 'undefined') installChallengeTactics();

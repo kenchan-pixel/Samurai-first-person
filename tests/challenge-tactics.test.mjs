@@ -9,8 +9,10 @@ import {
   CHALLENGE_TACTIC_CHECKPOINTS,
   CHALLENGE_TACTIC_SCORE_BONUS,
   chooseChallengeTactic,
+  formatChallengeTacticRecap,
   installChallengeTactics,
   resolveChallengeTactic,
+  summariseChallengeTactics,
 } from '../src/challenge-tactics.js';
 
 test('challenge tactic checkpoints stay bounded to three between-wave decisions', () => {
@@ -49,7 +51,32 @@ test('血誓 trades exactly one HP for bounded challenge score and never consume
   });
 });
 
-test('installed tactic adapter freezes decision time and restores campaign untouched', () => {
+test('戰策回顧 summarises only accepted bounded checkpoints and their direct effects', () => {
+  const summary = summariseChallengeTactics([
+    { checkpoint: 2, choice: 'blood-vow', hpDelta: -1, scoreDelta: 350 },
+    { checkpoint: 4, choice: 'recover', hpDelta: 1, scoreDelta: 0 },
+    { checkpoint: 6, choice: 'blood-vow', hpDelta: -1, scoreDelta: 350 },
+    { checkpoint: 6, choice: 'recover', hpDelta: 1, scoreDelta: 0 },
+    { checkpoint: 9, choice: 'blood-vow', hpDelta: -1, scoreDelta: 350 },
+  ]);
+
+  assert.deepEqual(summary, {
+    choices: 3,
+    recoveries: 1,
+    bloodVows: 2,
+    hpDelta: -1,
+    scoreDelta: CHALLENGE_TACTIC_SCORE_BONUS * 2,
+    checkpoints: [
+      { checkpoint: 2, choice: 'blood-vow' },
+      { checkpoint: 4, choice: 'recover' },
+      { checkpoint: 6, choice: 'blood-vow' },
+    ],
+  });
+  assert.equal(formatChallengeTacticRecap(summary), '戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1');
+  assert.equal(formatChallengeTacticRecap(summariseChallengeTactics([])), '');
+});
+
+test('installed tactic adapter freezes decision time, attaches terminal recap and restores campaign untouched', () => {
   installChallengeMode(CombatEngine);
   installChallengeMomentum(CombatEngine);
   installChallengeTactics(CombatEngine);
@@ -92,6 +119,21 @@ test('installed tactic adapter freezes decision time and restores campaign untou
   assert.equal(engine.phaseEndsAt, 12000, 'the next opponent still receives the full 1550ms intro');
   engine.update(11999);
   assert.equal(engine.phase, 'stage-intro', 'the next telegraph cannot be fast-forwarded by decision time');
+
+  engine.phase = 'defeat';
+  engine.phaseStartedAt = 12000;
+  engine.phaseEndsAt = Infinity;
+  engine.events.push({ type: 'defeat', detail: { score: engine.score } });
+  const terminal = engine.drainEvents().find((event) => event.type === 'defeat');
+  assert.equal(terminal?.detail?.challengeTacticChoices, 1);
+  assert.deepEqual(terminal?.detail?.challengeTacticSummary, {
+    choices: 1,
+    recoveries: 0,
+    bloodVows: 1,
+    hpDelta: -1,
+    scoreDelta: CHALLENGE_TACTIC_SCORE_BONUS,
+    checkpoints: [{ checkpoint: 2, choice: 'blood-vow' }],
+  });
 
   requestChallenge(false);
   engine.start(13000);

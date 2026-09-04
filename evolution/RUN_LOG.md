@@ -41,135 +41,40 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Run 099: refined deterministic AttackTop/AttackBottom into connected cross-body vertical cuts while preserving combat timing and fixed Sword→HandR grip.
 - Run 100: explicit result 分享 through Web Share/clipboard with no account, persistence, analytics or background network request.
 
-## Runs 101–105 — Practice evidence and Closed Beta local-only readiness
+## Runs 101–110 — Practice evidence, Closed Beta local readiness and hardening
 
 - Run 101: added session-only 修行進度 comparing repeated same-opponent practice from authoritative defense/hit/manual-counter outcomes.
 - Run 102: repaired practice-progress DOM marker ownership after CI exposed style/result-row selector collision; exact-head CI/Vercel returned green.
 - Run 103: added explicit local/export-only 體驗意見 / 錯誤回報 and established `docs/CLOSED_BETA_V0_5_BASELINE.md`; remote ingestion/accounts/leaderboard/telemetry remain gated.
-- Run 104: added start-only 封測資訊 / Closed Beta v0.5 tester guide with the duel → repeated practice → explicit 回報 loop and no-account/no-auto-upload/no-cloud-leaderboard/no-background-telemetry disclosure.
-- Run 105: added read-only 本機戰績 inside the existing guide using only the established campaign mastery best and challenge best; exact-head `9c707774302987ee81ec74514d2e4e96efac4eee` passed CI #151 / run `33790869499` and Vercel.
+- Run 104: added start-only 封測資訊 guide with the duel → repeated practice → explicit 回報 loop and no-account/no-auto-upload/no-cloud-leaderboard/no-background-telemetry disclosure.
+- Run 105: added read-only 本機戰績 inside that guide using only established campaign/challenge local best records.
+- Run 106: repaired storage-denied startup by making `localStorage` acquisition lazy/fail-safe and proving the 320×568 guide remains usable when access throws `SecurityError`.
+- Run 107: extended 修行進度 with an observed weak-direction target and repeat-attempt tracking without changing combat balance or collecting remote data.
+- Run 108: added session-only 封測 0/3 progress for terminal duel → repeated practice → successful explicit feedback export.
+- Run 109: repaired false checklist bootstrap by requiring a genuine hidden→visible terminal transition rather than sampling a pre-visible result modal.
+- Run 110: repaired a DOM-ownership collision where the progress selector could bind `<html>` and replace the app. Exact HEAD `2e32b27d73c3c6e555a8c3d7745b7d6d439ad7ac` passed Actions CI #156 / run `33817524748`, exact-head Vercel was green, and the latest Second Hourly review reported no actionable P0/P1/P2 findings.
 
-## Run 106 — Denied-storage startup repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `9c707774302987ee81ec74514d2e4e96efac4eee`.
-- Exact-head Actions CI #151 / run `33790869499` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**.
-- Draft PR #1 remains open/Draft/unmerged and `main` remains untouched.
-- The latest exact-head Second Hourly review identified one actionable P2: `src/local-records.js` evaluated `globalThis.localStorage` in default parameters, so a browser whose `localStorage` property getter throws `SecurityError` could abort module initialization before the existing read fallback ran.
-- Because that failure can break the imported mastery/startup path and violates the established storage-disabled non-fatal baseline, it is a blocking runtime/playability regression. New feature work is prohibited this run.
-
-### Implementation
-
-- Removed eager `localStorage` default-parameter evaluation from both `readLocalPersonalRecords()` and `installLocalPersonalRecords()`.
-- Added one lazy guarded resolver: omitted storage now acquires `globalThis.localStorage` only inside `try/catch`; property-access denial degrades to `null`, while explicitly injected storage objects or `null` remain authoritative. Existing `getItem`/JSON failures remain caught by the read path.
-- Extended the true 320×568 local-record browser harness. It first proves normal seeded campaign/challenge records, then replaces `window.localStorage` with a getter that throws `SecurityError`, freshly imports the module, and requires the same Closed Beta guide to remain open/usable while both records degrade to “未有紀錄” and the Start control remains usable.
-- Added a deterministic source regression forbidding the unsafe `storage = globalThis.localStorage` default-parameter pattern while retaining the existing no-write/no-network guard.
-- No combat timing, damage, parry/Perfect/STEP rules, scoring, renderer, record schema, storage write, identifier, analytics, backend or network behaviour changed.
-
-### Verification boundary
-
-- Source/lifecycle reasoning is complete in this execution surface; there is no local repository/browser checkout.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
-
-## Run 107 — Weak-direction practice coaching
+## Run 111 — Challenge 戰策回顧
 
 **Date:** 2026-09-04  
 **Action type:** FEATURE
 
 ### Preflight
 
-- Incoming exact HEAD: `e970bcecdb14fd15c0ddb228de72239650192388`.
-- Exact-head Actions CI #152 / run `33796622617` is terminal **success**; exact-head GitHub `Vercel` status is terminal **success** with Preview deployed.
-- Latest qualifying exact-head review reports **no actionable P0/P1/P2 finding**, and PR #1 has no inline review threads.
-- Draft PR #1 remains open/Draft/unmerged and `main` remains untouched.
-- Candidate scoring: weak-direction same-opponent coaching **22/25** (impact 4, goal 5, novelty 4, confidence 4, safety 5); local beta test-session summary **18/25**; challenge post-run tactic summary **17/25**. The practice slice wins because it turns existing authoritative evidence into a concrete repeat-play loop without changing balance or adding data collection.
+- Incoming exact HEAD: `2e32b27d73c3c6e555a8c3d7745b7d6d439ad7ac`.
+- Exact-head Actions CI #156 / run `33817524748` is terminal **success**; exact-head GitHub `Vercel` commit status is terminal **success**.
+- Latest exact-head Second Hourly review reports **no actionable P0/P1/P2 finding** and there are no inline review threads. Draft PR #1 remains open/Draft/unmerged; `main` remains untouched.
+- Candidate scoring: challenge **戰策回顧** **23/25** (visible impact 4, goal 5, novelty 4, confidence 5, safety 5); multi-attempt practice session summary **21/25**; Closed Beta export/session-summary extension **21/25**. 戰策回顧 wins because the existing Waves 2/4/6 decisions currently disappear at terminal, while a compact local recap directly improves replay learning without another balance or data-collection change.
 
 ### Implementation
 
-- Extended direct-practice **修行進度** snapshots with the existing authoritative four-direction analysis. Only directions actually faced in the duel can become a coaching target; unseen directions are never treated as misses.
-- First completion now adds one compact result-only **下局目標** line naming the weakest observed direction, its defense rate and defended/faced count.
-- A same-opponent repeat tracks the prior weak direction against the new attempt, reports the delta when that direction reappears, then selects the next weakest observed direction. If every direction encountered in the repeat was defended, the coach acknowledges the clean observed set and suggests tightening Perfect timing instead of inventing a weakness.
-- Coaching remains session-only and route-isolated, shares the existing result card, and clears with campaign/challenge results. No combat timing/damage/parry/Perfect/STEP/scoring, persistence key, account/identifier, analytics, backend or network behaviour changed.
-- Extended unit coverage plus the existing true 320×568 run-analysis browser gate to prove first-target derivation, prior-weak-direction tracking, clean-observed-set handling, result layout and campaign isolation.
-- Reconciled the Closed Beta v0.5 SOT so this bounded local/result-only coaching is explicit and remote-data gates remain unchanged.
+- Accepted **整息 / 血誓** decisions now create a bounded active-run history containing only checkpoint, choice and the already-authoritative direct HP/score delta. The history resets on every start and is never persisted.
+- Challenge/今日陣 terminal events now carry a validated summary of those accepted checkpoints. The result strip renders one compact **戰策** line such as `2誓 · 4息 · 6誓 · +700分 · 生命-1`, letting the player review the route and its direct cost/reward beside the existing run result.
+- Duplicate/out-of-range checkpoint records are ignored by the pure summary seam; retry/campaign start clears the visible recap so stale choices cannot leak into the next run.
+- Existing 戰前抉擇 timing, +1 HP / -1 HP +350 rules, enemy definitions, combat timing/damage, momentum, PB splits, challenge best schema, campaign/practice state, storage keys, identifiers, analytics and network behaviour are unchanged.
+- Deterministic tests cover the three-checkpoint summary/format, direct effect aggregation, duplicate/out-of-range filtering and terminal-event attachment. Existing 320×568 challenge/今日陣 browser gates remain the acceptance fence for terminal fit and full composed lifecycle.
 
 ### Verification boundary
 
-- Source/syntax reasoning is complete in this execution surface; there is no local repository/browser checkout.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
-
-## Run 108 — Session-only Closed Beta checklist
-
-**Date:** 2026-09-04  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `a1b6c68c220228e498e4e87b95fd88b94b6b7c0e`.
-- Exact-head Actions CI #153 / run `33802633346` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**.
-- Latest qualifying exact-head Second Hourly review reports **no actionable P0–P2 finding**; PR #1 has no inline review comments/threads. Draft PR remains open/Draft/unmerged and `main` remains untouched.
-- Candidate scoring: session-only Closed Beta checklist **22/25** (impact 4, goal 5, novelty 4, confidence 4, safety 5); repeated-practice evidence helper **20/25**; challenge tactic result recap **19/25**. The beta checklist wins because it turns the already-approved three-step test guide into one complete player-visible test loop without another gameplay balance change or remote data surface.
-
-### Implementation
-
-- The existing start-only Closed Beta guide now shows **本次封測 0/3** and a visible completion state for the three already-approved tester steps.
-- A real terminal result advances the duel step; the existing same-route `修行進度` comparison advances the repeat-practice step; only a successfully shared/copied feedback or bug report advances the report step. Cancelled/unavailable export does not count.
-- Completion is deliberately session-only: page refresh resets it. The feature observes existing authoritative UI state only and creates no storage key, tester ID, analytics event, network request, gameplay reward, unlock or balance change.
-- Extended the existing 320×568 Closed Beta/local-record browser gate to prove 0/3 → 1/3 → 2/3, cancellation staying at 2/3, successful local export reaching 3/3, completed-row/button presentation remaining in bounds, and storage-denied startup remaining non-fatal.
-- Reconciled `docs/CLOSED_BETA_V0_5_BASELINE.md` so the session-only completion contract and remote-data gate are explicit.
-
-### Verification boundary
-
-- Source/syntax reasoning is complete in this execution surface; there is no local repository/browser checkout.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
-
-## Run 109 — Session-checklist transition repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `bf030e63a35a65f028d140d1c95884892252f910`.
-- Exact-head Actions CI #154 / run `33808331453` is terminal **failure**: `npm test` passed 127/127, but required `npm run test:browser` failed. Exact-head GitHub `Vercel` status is terminal **success**, and Vercel reports zero unresolved Preview feedback.
-- The latest exact-head All Repos review identifies one actionable P2: the Closed Beta observer immediately sampled a pre-existing `#result-screen.modal--visible` and falsely recorded the duel step before any new terminal transition. There are no inline review comments/threads.
-- Draft PR #1 remains open/Draft/unmerged and `main` remains untouched. Because the exact current HEAD fails the browser baseline, this run is mandatory `BLOCKER_FIX`; feature work is prohibited.
-
-### Implementation
-
-- Replaced state-snapshot bootstrap with transition-sensitive observation. The tracker snapshots result visibility only as its initial baseline and records the duel step solely on a later **hidden → visible** `#result-screen` class transition.
-- Practice-comparison and successful feedback/export receipts are likewise consumed only from post-install attribute mutations; stale/pre-existing DOM markers are not backfilled into the current session checklist.
-- Strengthened the true 320×568 Closed Beta/local-record browser gate by intentionally starting with the result modal already visible. It must remain at 0/3 after observer installation, remain 0/3 when that stale modal hides, then reach 1/3 only after a genuine later hidden→visible result transition before continuing through the existing 2/3 comparison, cancelled-feedback rejection, 3/3 copied-feedback completion and denied-storage fallback.
-- No combat timing, damage, parry/Perfect/STEP rules, scoring, renderer, record schema, persistence key, identifier, analytics, backend or network behaviour changed.
-
-### Verification boundary
-
-- Source/lifecycle reasoning is complete in this execution surface; there is no local repository/browser checkout.
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are the authoritative post-commit acceptance gates. The PR run comment records the new SHA and final receipts; no second bookkeeping commit is permitted.
-
-## Run 110 — Beta progress DOM-ownership repair
-
-**Date:** 2026-09-04  
-**Action type:** BLOCKER_FIX
-
-### Preflight
-
-- Incoming exact HEAD: `a3d765dd95faf955e9d218ab5c0f66a064ee9fcb`.
-- Exact-head Actions CI #155 / run `33813147207` is terminal **failure**. Both the original job and one diagnostic rerun passed `npm test` 127/127, then failed the required mastery browser gate with the same deterministic receipt: `data-ronin-practice-controls="false"`, `data-ronin-practice-integration="false"`, `data-mastery-integration="fail"`.
-- The failure DOM is decisive: `<html>` retains runtime receipts but its children are gone and its only text is `本次封測 1/3`. The new checklist root receipt `data-beta-readiness-progress` shares the same selector as the visible progress label; after the first render the root itself becomes the first `[data-beta-readiness-progress]` match, so the next update writes `textContent` to `<html>` and destroys the live app DOM.
-- Latest exact-head review therefore remains a blocking P1 until the full browser baseline is restored. PR #1 has no inline review comments/threads; Vercel exact-head status is **success**; Draft PR remains open/Draft/unmerged and `main` remains untouched. Feature work is prohibited.
-
-### Implementation
-
-- Scoped the visible checklist progress-label lookup to `#beta-readiness-panel [data-beta-readiness-progress]`. The root continues to expose its machine-readable `data-beta-readiness-progress` receipt, but can no longer be selected as the UI text node.
-- Strengthened the existing true 320×568 Closed Beta/local-record browser gate with an explicit DOM-ownership assertion. Through the genuine 1/3 terminal transition, 2/3 same-opponent comparison, 3/3 copied-feedback completion and denied-storage fallback, `document.body`, Start, result screen, guide button and guide panel must all remain attached to the live document.
-- This keeps Run 109's hidden→visible transition semantics intact and does not weaken/skip the mastery browser assertions.
-- No combat timing, damage, parry/Perfect/STEP rules, scoring, renderer, record schema, storage key, identifier, analytics, backend or network behaviour changed.
-
-### Verification boundary
-
-- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 110 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.
+- Source/lifecycle reasoning is complete in this execution surface; no local browser checkout is available.
+- Exact-head GitHub CI (`npm test` + full `npm run test:browser`) and exact-head Vercel Preview are required before Run 111 is accepted. The PR run comment records the resulting SHA and receipts; no second bookkeeping commit is permitted.
