@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 124,
+  "run_number": 125,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the Run 123 first-person BOTTOM-counter presentation blocker by extending the existing pulse-shaped whole-PlayerSwordRig portrait framing correction to BOTTOM counter follow-through. At peak action the complete rig moves -0.30 local X and +0.10 local Y, keeping blade, handle and both support hands together while preserving direction, timing, attachment and neutral return; the accepted TOP parry correction remains unchanged.",
-  "last_commit": "6b062dda5e4dea27704e319e39b0ee25e111af88",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 124 must pass npm test plus the complete browser suite, especially the dedicated player-grip PlayCanvas projection/attachment gate, without weakening any viewport, blade-read, handle-axis or neutral-return threshold.",
+  "last_action": "Repaired the remaining Run 124 BOTTOM-counter blade-read blocker by trailing the complete two-hand support silhouette 0.06 local units toward the pommel only during BOTTOM counter follow-through, while retaining the accepted whole-rig portrait framing. The player katana keeps its authoritative cut path; hands, cuffs and forearms move together along the handle axis and return to the established neutral pose.",
+  "last_commit": "3c8bb36e8f348b4196d973c931664a4d17a541ee",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 125 must pass npm test plus the complete browser suite, especially the unchanged dedicated 320x568 player-grip blade-extension/attachment gate.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "bottom_counter_framing_repair_pending_exact_head",
-    "last_observed_head": "6b062dda5e4dea27704e319e39b0ee25e111af88",
-    "incoming_ci_run": 33872969506,
-    "incoming_ci_result": "failure_player_grip_bottom_counter_blade_outside_viewport",
+    "status": "bottom_counter_support_separation_repair_pending_exact_head",
+    "last_observed_head": "3c8bb36e8f348b4196d973c931664a4d17a541ee",
+    "incoming_ci_run": 33878106004,
+    "incoming_ci_result": "failure_player_grip_bottom_counter_support_obscures_blade_extension",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "project enumeration still returns no projects; GitHub exact-head Vercel status is the authoritative fallback",
+    "direct_vercel_connector": "project enumeration again returns no projects; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 123 HEAD 6b062dd passes npm test 143/143 and exact-head Vercel, and its TOP whole-rig framing repair advances the dedicated player-grip gate beyond the prior handle failure. Actions CI #169 / run 33872969506 then fails because the real BOTTOM counter PlayerBlade has no geometry intersecting the required 320x568 viewport. Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head review treats the BOTTOM counter framing defect as actionable P1 and requires the real blade, handle and two-hand support to remain meaningfully in-frame without weakening attachment/direction/timing/neutral-return assertions. Run 124 therefore remains BLOCKER_FIX and applies one shared pulse-shaped whole-rig camera-local framing policy: the accepted TOP parry left shift stays unchanged, while BOTTOM counter gains a bounded left/up correction that is zero at action endpoints."
+    "note": "Incoming Run 124 HEAD 3c8bb36 passes npm test 144/144 and exact-head Vercel. Actions CI #170 / run 33878106004 confirms the BOTTOM counter blade now intersects the 320x568 viewport but the dedicated player-grip gate still fails because the two-hand support silhouette obscures the required projected blade extension. Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. The latest same-head review classifies this as actionable P1 and requires relative BOTTOM-counter choreography rather than another whole-rig translation or weaker threshold. Run 125 therefore keeps the accepted TOP/BOTTOM framing and trails all six support parts 0.06 local Y toward the pommel only during BOTTOM counter pulse, preserving hand-to-handle alignment, direction/timing/damage authority and neutral return."
   },
   "external_deployment_recovery": {
     "last_incident": {

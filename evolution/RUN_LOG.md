@@ -159,3 +159,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially the dedicated player-grip projection/attachment process, and exact-head Vercel status are required before Run 124 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 125 — Separate BOTTOM counter support from the blade read
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `3c8bb36e8f348b4196d973c931664a4d17a541ee`.
+- Exact-head Actions CI #170 / run `33878106004` is terminal **failure**. `npm test` passes **144/144** and the broad PlayCanvas renderer smoke passes; the dedicated `?browser-smoke=player-grip` gate now confirms the BOTTOM counter blade is in-frame but fails the unchanged 24 px projected blade-extension requirement because the support silhouette still covers the cut.
+- Exact-head GitHub `Vercel` status is terminal **success**. Direct Vercel project enumeration again returns no projects, so the GitHub exact-head status remains the authoritative deployment signal.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty. The latest same-head Second Hourly review reports one actionable **P1** matching the failed gate and no additional actionable P0/P1/P2. Feature work is prohibited.
+
+### Blocker repair
+
+- Kept the accepted Run 123/124 whole-rig portrait framing unchanged. BOTTOM counter now adds one bounded support-only catch-back: all six visible support parts trail `-0.06` local Y along the katana handle axis at peak action and return with the shared pulse.
+- The authoritative `PlayerSwordRig` still owns the BOTTOM cut orientation/path. The new relative support motion does not rotate or steer `PlayerBlade`, alter the counter direction, or move hands independently from the handle-axis choreography; hands, cuffs and forearms trail together toward the pommel so the rising blade can remain visible through follow-through.
+- Added deterministic scope/budget coverage proving the extra trail applies only to BOTTOM counter, gives every support part meaningful separation, keeps the tightest left forearm inside the established `-0.68` local-Y renderer budget, leaves RIGHT counter unchanged and still returns to the exact neutral pose.
+- Existing real 320×568 viewport, 24 px blade-extension, hand-to-handle-axis, hand-spacing, direction, neutral-return and transform thresholds are unchanged. No input, combat timing, damage, posture, Perfect/STEP, reach, scoring, persistence, privacy, enemy animation or network behaviour changed.
+
+### Verification boundary
+
+- The focused pure pose test passes locally in isolation (7/7). Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, especially the unchanged dedicated player-grip projection/attachment gate, and exact-head Vercel status are required before Run 125 is accepted.
+- The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.

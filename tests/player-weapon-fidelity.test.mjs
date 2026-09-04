@@ -77,6 +77,22 @@ test('portrait framing is pulse-shaped and limited to top parry and bottom count
   assert.ok(Math.abs(playerWeaponPose(3, 2, 1).rigFramingOffset[1]) < 1e-12);
 });
 
+test('bottom counter trails the two-hand support toward the pommel to preserve blade read', () => {
+  const bottomCounter = playerWeaponPose(3, 2, mid);
+  const rightCounter = playerWeaponPose(3, 1, mid);
+
+  for (const key of ['forearmRPosition', 'forearmLPosition', 'handRPosition', 'handLPosition', 'cuffRPosition', 'cuffLPosition']) {
+    assert.ok(
+      bottomCounter[key][1] < PLAYER_WEAPON_BASE_POSE[key][1] - 0.07,
+      `${key} did not trail far enough behind the BOTTOM counter blade`,
+    );
+  }
+  assert.equal(rightCounter.handRPosition[1], PLAYER_WEAPON_BASE_POSE.handRPosition[1]);
+  assert.equal(rightCounter.handLPosition[1], PLAYER_WEAPON_BASE_POSE.handLPosition[1]);
+  assert.ok(bottomCounter.forearmLPosition[1] >= -0.68);
+  assertFiniteBoundedPose(bottomCounter);
+});
+
 test('all four directions return cleanly to the base grip at action completion', () => {
   for (let direction = 0; direction < 4; direction += 1) {
     const pose = playerWeaponPose(1, direction, 1);
