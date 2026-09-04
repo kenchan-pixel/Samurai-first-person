@@ -69,3 +69,25 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Incoming exact-head CI/Vercel/review gates were green. The connector execution surface has no local repository checkout, so exact-head GitHub Actions `npm test` + complete `npm run test:browser` and exact-head Vercel are required after the single branch commit before Run 120 is accepted.
 - No second bookkeeping commit is permitted; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 121 — Real PlayCanvas acceptance for directional first-person grip
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `52137540794694c8e7900cef66d54ce5cfedd78f`.
+- Exact-head Actions CI #166 / run `33859405982` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**. Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty.
+- The latest same-head Second Hourly review reports one actionable **P2**: Run 120's player-visible two-hand brace is covered by pure pose tests but not by a focused real 320×568 PlayCanvas/mobile integration gate. Because the risk is visible hand/forearm detachment, obstruction or runaway local transforms, feature work is prohibited until this acceptance gap is repaired.
+
+### Blocker repair
+
+- Extended the existing `?browser-smoke=renderer-motion` path rather than adding a separate broad suite. After the established renderer contract passes, it now runs a focused `player-grip-renderer-contract-smoke.js` sub-contract on the same 320×568 production PlayCanvas stack; any import/runtime/sub-contract failure flips the authoritative renderer-motion result to fail.
+- The sub-contract drives real `CombatEngine` normal parries in TOP/RIGHT/BOTTOM/LEFT, one real Perfect Parry, one accepted opposite-direction counter and neutral cleanup. It samples the actual live `PlayerForearmR/L`, `PlayerHandR/L` and `PlayerCuffR/L` transforms parented to `PlayerSwordRig`, verifies Top/Bottom and Right/Left separation, Perfect-strength identity, compact hand spacing, bounded local position/rotation budgets and exact return to the authored neutral pose.
+- No production combat, player animation values, input mapping, timing, damage, posture, STEP, scoring, persistence, privacy or network behaviour changed. This run only makes the existing player-visible Run 120 slice fail closed when its real renderer integration is broken.
+- State and this run log are updated in the same blocker-fix tree; no product baseline rule changes because player behaviour is unchanged.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser` and exact-head Vercel status are required before Run 121 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.

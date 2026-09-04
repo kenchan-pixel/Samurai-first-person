@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 120,
-  "last_action_type": "FEATURE",
-  "last_action": "Upgraded the first-person player katana from a direction-neutral foreground hand/forearm pulse to a bounded four-direction two-hand brace: Top raises the support silhouette, Bottom lowers it, Right/Left mirror compact lateral support, Perfect Parry strengthens the same brace, and counters retain bounded attack follow-through without changing the authoritative whole-rig blade motion, input, timing, damage, posture, STEP or direction semantics.",
-  "last_commit": "d0a4e5b93ed3dcdfe5190e69ee2ce003915de37e",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 120 must pass the complete Node/browser suite with the new deterministic four-direction first-person grip contract while preserving the existing 320x568 PlayCanvas renderer, blade-read, input and regression gates.",
+  "run_number": 121,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Closed the current-head Run 120 P2 acceptance gap by extending the existing 320x568 renderer-motion browser gate with a real PlayCanvas first-person grip sub-contract. It drives normal parries in Top/Right/Bottom/Left plus Perfect Parry, opposite-direction counter and neutral cleanup, then samples the live hands/forearms/cuffs on PlayerSwordRig to prove directional separation, compact attachment and bounded transforms without changing combat or presentation behaviour.",
+  "last_commit": "52137540794694c8e7900cef66d54ce5cfedd78f",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 121 must pass npm test plus the complete browser suite, including the newly chained directional first-person grip PlayCanvas sub-contract.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "directional_first_person_grip_pending_exact_head",
-    "last_observed_head": "d0a4e5b93ed3dcdfe5190e69ee2ce003915de37e",
-    "incoming_ci_run": 33853876903,
+    "status": "directional_first_person_grip_real_renderer_gate_pending_exact_head",
+    "last_observed_head": "52137540794694c8e7900cef66d54ce5cfedd78f",
+    "incoming_ci_run": 33859405982,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 119 HEAD d0a4e5b passes Actions CI #165 / run 33853876903 with npm test plus the complete browser suite, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review threads are empty, and the same-head All Repos review reports no actionable P0/P1/P2 finding. Candidate scoring selected directional first-person two-hand bracing over difficulty/challenge tuning because the current player-weapon adapter already receives direction but did not use it, while SOT explicitly prioritizes first-person grip readability and requires repeated evidence before balance changes."
+    "note": "Incoming Run 120 HEAD 5213754 passes Actions CI #166 / run 33859405982 and exact-head GitHub Vercel status is success. Draft PR #1 is open/Draft/unmerged, main is untouched and inline review threads are empty. The same-head Second Hourly review found one actionable P2: the new direction-aware first-person support brace lacked focused real PlayCanvas/mobile integration evidence. Run 121 is therefore a blocker repair, not feature work, and chains that focused acceptance into the existing renderer-motion gate."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,7 +66,7 @@
   },
   "next_candidates": [
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: inspect the new directional first-person two-hand brace at 320x568 and refine only if foreground hands/forearms obscure enemy blade reads or detach visually from the katana",
+    "ACCEPTANCE: inspect the direction-aware first-person two-hand brace on exact Preview; automated 320x568 live-rig attachment/bounds are now protected, so refine only subjective blade-read obstruction or apparent visual detachment",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"

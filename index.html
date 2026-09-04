@@ -110,7 +110,19 @@
   <script type="module">
     const smoke = new URLSearchParams(location.search).get('browser-smoke');
     if (smoke === 'renderer-motion') {
-      import('./src/renderer-contract-smoke.js');
+      try {
+        await import('./src/renderer-contract-smoke.js');
+        if (document.documentElement.dataset.rendererMotionIntegration === 'pass') {
+          await import('./src/player-grip-renderer-contract-smoke.js');
+          if (document.documentElement.dataset.playerGripRendererIntegration !== 'pass') {
+            throw new Error('Directional player-grip renderer sub-contract did not pass');
+          }
+        }
+      } catch (error) {
+        document.documentElement.dataset.rendererMotionIntegration = 'fail';
+        document.documentElement.dataset.playerGripRendererIntegration = 'fail';
+        document.documentElement.dataset.playerGripRendererError = String(error?.message || error).slice(0, 180);
+      }
     } else if (smoke === 'heavy-attack') {
       import('./src/heavy-attack-renderer-contract-smoke.js');
     } else if (smoke === 'attack-rhythm') {
