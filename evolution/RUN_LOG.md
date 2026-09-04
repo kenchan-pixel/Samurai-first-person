@@ -180,3 +180,29 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The modified acceptance path is deliberately semantic rather than a threshold relaxation: it measures complete cut travel at authored contact while retaining the same spatial limits. This execution surface has no local checkout, so the resulting exact HEAD must pass `npm test` plus the complete `npm run test:browser` suite and exact-head Vercel before further feature work.
 - The Draft-PR run comment is the authoritative post-commit verification receipt; no second bookkeeping commit is permitted.
+
+## Run 119 — Perfect technique identity
+
+**Date:** 2026-09-04  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `c6564c3ec2543cea1779ea9d081dac55f9ab9eef`.
+- Exact-head Actions CI #164 / run `33849468816` is terminal **success** and exact-head GitHub `Vercel` status is terminal **success**. The direct Vercel project enumeration remains unavailable, so GitHub's exact-head Vercel status is the authoritative deployment signal.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest same-head All Repos review reports **No actionable P0/P1/P2 finding**. Run 118 therefore closes the blocker fence and feature work is allowed.
+- Candidate scoring: (1) **Perfect Parry / Perfect STEP technique identity** **23/25** (visible impact 4, goal alignment 5, novelty 4, confidence 5, safety 5); (2) first-person grip embellishment **18/25** (impact 4, goal 4, novelty 3, confidence 3, safety 4) because extra foreground motion can obstruct blade reads; (3) opponent difficulty tuning **15/25** (impact 5, goal 5, novelty 3, confidence 1, safety 1) because repository SOT still requires repeated practice evidence before changing pressure. Candidate 1 wins and also closes the explicit Perfect-technique clarity backlog item without reopening renderer motion after four consecutive acceptance repairs.
+
+### Implementation
+
+- Added `src/perfect-technique-cue.js` after the existing Perfect Parry / Perfect STEP adapters. It observes only the already-drained authoritative events and reuses the established `#combat-action-cue`; it adds no combat state, persistence, network call, timer or new persistent HUD element.
+- Perfect Parry now finishes as `PERFECT PARRY · 正面截刀 · 敵勢大增 · 自動返刀` with a cool clash/`破` visual identity. The mapped automatic riposte counter is deliberately ignored so it cannot immediately overwrite that technique identity.
+- Perfect STEP now finishes as `PERFECT STEP · 側身避刃 · 無敵勢 · 仲可掃屏` with a green lateral/`閃` identity. Existing Blood Moon/defeat close-opening cases receive truthful terminal copy and do not advertise the unavailable follow-up swipe.
+- Normal parry/counter, damage, posture, scoring, Perfect/STEP windows, spacing/reach, direction semantics and input ownership are unchanged. Reduced-motion suppresses the decorative STEP streak while preserving the static cue identity.
+- Added deterministic event/copy/no-duplicate tests and a focused true **320×568** browser harness using the production onboarding action-cue surface. It requires distinct parry/STEP visual signatures, truthful posture wording, in-viewport bounds and `pointer-events:none`. The harness is appended to the full `npm run test:browser` chain.
+- Updated Current Baseline, regression checklist, changelog, backlog, state and this run log inside the same implementation tree.
+
+### Verification boundary
+
+- New module/test/smoke source passed isolated syntax checks, and the pure cue-profile logic passed a local stubbed Node test before the Git commit. This environment cannot execute the repository's complete dependency/browser suite before the branch update.
+- The resulting exact HEAD must pass GitHub Actions `npm test` plus the complete `npm run test:browser` chain (including the new 320×568 technique gate) and exact-head Vercel before Run 119 is accepted. The PR run comment is the authoritative post-commit receipt; no second bookkeeping commit is permitted.

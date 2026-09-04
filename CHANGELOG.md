@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.39.0-evolution — Perfect technique identity
+
+- Reused the existing transient combat action-cue surface to give **Perfect Parry** and **Perfect STEP** visibly different technique identities after the authoritative event adapters resolve. Perfect Parry now keeps a cool clash/`破` treatment with explicit enemy-posture language; Perfect STEP keeps a green lateral/`閃` treatment with explicit no-posture/spacing language.
+- The cue adapter changes no combat state or timing and adds no second timer. Normal parry/counter remain unchanged, the Perfect Parry auto-riposte counter cannot overwrite the Perfect Parry identity, and Perfect STEP Blood Moon/defeat variants do not advertise an unavailable follow-up swipe.
+- Added deterministic event/copy/no-duplicate coverage plus a focused 320×568 production-action-cue browser gate proving distinct visual signatures, viewport bounds and pointer transparency.
+
 ## 0.38.0-evolution — Existing-timing attack rhythm readability
 
 - Added a presentation-only **measured / standard / quick / heavy** rhythm layer derived from each exact current attack's existing authoritative telegraph/strike timing. Slow non-heavy cuts settle into a deeper held load; mid-tempo cuts remain neutral; genuinely quick cuts use a bounded forward snap and stronger real-blade read accent.

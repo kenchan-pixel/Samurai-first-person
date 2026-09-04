@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 118,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Repaired the remaining Run 117 lateral renderer acceptance false-negative without changing production gameplay: clean per-direction samples still begin from authored Guard and retain the same wind-side, full-travel, player-facing-plane and Sword-to-HandR grip contracts, but the complete lateral/bottom cut is now sampled at the authored contact point (68% of the authoritative strike) instead of the earlier pre-contact pose that the old contaminated harness had accidentally treated as full travel.",
-  "last_commit": "08b61512f1dc44eb9ff173627013fd717d15807f",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 118 must restore the complete 320x568 browser suite while retaining RIGHT < -0.700 / LEFT > +0.700 wind-up, >=0.20 lateral travel, Bottom rise, Sword-to-HandR grip, blade-plane crossing and the 50 ms real Ronin feint contract.",
+  "run_number": 119,
+  "last_action_type": "FEATURE",
+  "last_action": "Added a presentation-only Perfect technique identity pass on the existing transient combat action cue: authoritative Perfect Parry now finishes as a cool clash/破 cue with explicit enemy-posture language, while authoritative Perfect STEP finishes as a green lateral/閃 cue with explicit no-posture/spacing language; normal parry/counter stay unchanged and the Perfect Parry auto-riposte counter cannot overwrite the Perfect Parry identity.",
+  "last_commit": "c6564c3ec2543cea1779ea9d081dac55f9ab9eef",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required before further work. Run 119 must pass the complete Node/browser suite, including the new 320x568 Perfect Parry/Perfect STEP cue identity, viewport and pointer-transparency gate, without changing combat rewards, timing or input.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "lateral_authored_contact_sampling_repair_pending_exact_head",
-    "last_observed_head": "08b61512f1dc44eb9ff173627013fd717d15807f",
-    "incoming_ci_run": 33844746928,
-    "incoming_ci_result": "failure",
+    "status": "perfect_technique_identity_pending_exact_head",
+    "last_observed_head": "c6564c3ec2543cea1779ea9d081dac55f9ab9eef",
+    "incoming_ci_run": 33849468816,
+    "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "get_project remains unavailable for the recorded project/team IDs; GitHub exact-head Vercel status is the authoritative fallback",
     "owner_preview_reachability": "supplemental; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Incoming Run 117 HEAD 08b6151 passes npm test 135/135 and exact-head Vercel, and its 320x568 PlayCanvas smoke now reaches the real directional assertions. The same-head review classifies the remaining red gate as P1: clean wind-ups are correct (RIGHT x=-0.851, LEFT x=1.258) but the retained >=0.20 RIGHT travel assertion is evaluated at 2580 ms. For Ashigaru first strike that is 150/330 ms = 45.5% strike, mapped by authoredAttackProgress() to about 0.567 authored progress, before the lateral contact key at 0.68. Run 118 keeps production runtime and every spatial/grip/plane threshold unchanged, derives strike samples from the authoritative phase start/strikeMs, and measures complete lateral/bottom travel at 68% strike while retaining early/mid path samples. The real Ronin feint sample already occurs at 175/250 ms = 70% strike and remains unchanged. Inline review threads are empty."
+    "note": "Incoming Run 118 HEAD c6564c3 passes Actions CI #164 / run 33849468816 with npm test plus the complete browser suite, and exact-head GitHub Vercel status is success. Draft PR #1 remains open/Draft/unmerged, main remains untouched, inline review threads are empty, and the latest same-head All Repos review reports no actionable P0/P1/P2 finding. With the delivery fence clean, Run 119 selects the outstanding Perfect Parry versus Perfect STEP clarity candidate: it reuses the existing action-cue lifecycle after all authoritative event adapters resolve, adds no second timer or combat state, and adds deterministic plus true 320x568 acceptance for distinct reward language/style, bounds and pointer transparency."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,9 +65,10 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + the bounded authored feint crossfade at normal speed; refine only concrete body/blade continuity defects",
+    "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
+    "ACCEPTANCE: keep Perfect Parry/Perfect STEP transient identities truthful and non-overlapping; refine only from concrete runtime evidence",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }
