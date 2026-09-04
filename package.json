@@ -8,7 +8,7 @@
     "dev": "vite --host 0.0.0.0 --port 4173",
     "build": "vite build",
     "test": "node --test",
-    "test:browser": "node scripts/browser-smoke.mjs && node scripts/heavy-attack-browser-smoke.mjs && node scripts/attack-rhythm-browser-smoke.mjs && node scripts/daily-challenge-browser-smoke.mjs && node scripts/training-recommendation-browser-smoke.mjs && node scripts/practice-production-browser-smoke.mjs && node scripts/run-analysis-direction-browser-smoke.mjs && node scripts/result-share-browser-smoke.mjs && node scripts/perfect-technique-browser-smoke.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs && node scripts/player-grip-browser-smoke.mjs && node scripts/heavy-attack-browser-smoke.mjs && node scripts/attack-rhythm-browser-smoke.mjs && node scripts/daily-challenge-browser-smoke.mjs && node scripts/training-recommendation-browser-smoke.mjs && node scripts/practice-production-browser-smoke.mjs && node scripts/run-analysis-direction-browser-smoke.mjs && node scripts/result-share-browser-smoke.mjs && node scripts/perfect-technique-browser-smoke.mjs",
     "serve": "vite --host 0.0.0.0 --port 4173",
     "preview": "vite preview --host 0.0.0.0 --port 4173"
   },

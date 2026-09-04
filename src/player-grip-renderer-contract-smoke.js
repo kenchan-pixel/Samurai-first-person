@@ -18,6 +18,8 @@ Object.assign(canvas.style, {
 });
 document.body.append(canvas);
 
+const VIEWPORT_WIDTH = 320;
+const VIEWPORT_HEIGHT = 568;
 const DIRECTION_INDEX = Object.freeze({
   [Direction.TOP]: 0,
   [Direction.RIGHT]: 1,
@@ -74,6 +76,78 @@ function finite3(point) {
   return Number.isFinite(point.x) && Number.isFinite(point.y) && Number.isFinite(point.z);
 }
 
+function pointToSegmentMetric(point, start, end) {
+  const ab = {
+    x: end.x - start.x,
+    y: end.y - start.y,
+    z: end.z - start.z,
+  };
+  const ap = {
+    x: point.x - start.x,
+    y: point.y - start.y,
+    z: point.z - start.z,
+  };
+  const denominator = ab.x * ab.x + ab.y * ab.y + ab.z * ab.z;
+  const rawT = denominator > 0
+    ? (ap.x * ab.x + ap.y * ab.y + ap.z * ab.z) / denominator
+    : 0;
+  const t = Math.max(0, Math.min(1, rawT));
+  const closest = {
+    x: start.x + ab.x * t,
+    y: start.y + ab.y * t,
+    z: start.z + ab.z * t,
+  };
+  return { distance: lengthBetween(point, closest), rawT };
+}
+
+function screenBoundsForEntity(entity, label) {
+  const meshInstances = entity?.render?.meshInstances || [];
+  assert(meshInstances.length > 0, `${label} has no live render mesh for viewport verification`);
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const meshInstance of meshInstances) {
+    const aabb = meshInstance?.aabb;
+    assert(aabb?.getMin && aabb?.getMax, `${label} has no live world AABB`);
+    const min = aabb.getMin();
+    const max = aabb.getMax();
+    for (const x of [min.x, max.x]) {
+      for (const y of [min.y, max.y]) {
+        for (const z of [min.z, max.z]) {
+          const world = min.clone();
+          world.x = x;
+          world.y = y;
+          world.z = z;
+          const screen = view.impl.camera.camera.worldToScreen(world);
+          assert(Number.isFinite(screen?.x) && Number.isFinite(screen?.y), `${label} projected a non-finite screen point`);
+          minX = Math.min(minX, screen.x);
+          minY = Math.min(minY, screen.y);
+          maxX = Math.max(maxX, screen.x);
+          maxY = Math.max(maxY, screen.y);
+        }
+      }
+    }
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+function unionBounds(bounds) {
+  return bounds.reduce((combined, current) => ({
+    minX: Math.min(combined.minX, current.minX),
+    minY: Math.min(combined.minY, current.minY),
+    maxX: Math.max(combined.maxX, current.maxX),
+    maxY: Math.max(combined.maxY, current.maxY),
+  }), { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
+}
+
+function intersectsViewport(bounds) {
+  return bounds.maxX >= 0
+    && bounds.minX <= VIEWPORT_WIDTH
+    && bounds.maxY >= 0
+    && bounds.minY <= VIEWPORT_HEIGHT;
+}
+
 function snapshotSupport() {
   const impl = view.impl;
   const parts = {};
@@ -85,11 +159,32 @@ function snapshotSupport() {
       parent: entity?.parent?.name || '',
     };
   }
+
+  const playerGrip = impl.playerRig?.findByName?.('PlayerGrip');
+  const playerBlade = impl.playerRig?.findByName?.('PlayerBlade');
+  const pommelWorld = xyz(impl.playerPommel?.getPosition?.());
+  const habakiWorld = xyz(impl.playerHabaki?.getPosition?.());
+  const handRMetric = pointToSegmentMetric(xyz(impl.playerHandR?.getPosition?.()), pommelWorld, habakiWorld);
+  const handLMetric = pointToSegmentMetric(xyz(impl.playerHandL?.getPosition?.()), pommelWorld, habakiWorld);
+  const supportProjection = unionBounds(SUPPORT_PARTS.map(([key, property]) => screenBoundsForEntity(impl[property], key)));
+  const handleProjection = unionBounds([
+    screenBoundsForEntity(playerGrip, 'PlayerGrip'),
+    screenBoundsForEntity(impl.playerPommel, 'PlayerPommel'),
+    screenBoundsForEntity(impl.playerHabaki, 'PlayerHabaki'),
+  ]);
+  const bladeProjection = screenBoundsForEntity(playerBlade, 'PlayerBlade');
+
   return {
     action: Number(impl.playerAction) || 0,
     direction: Number(impl.playerDirection) || 0,
     parts,
     rigEuler: xyz(impl.playerRig?.getLocalEulerAngles?.()),
+    attachment: { handR: handRMetric, handL: handLMetric },
+    projection: {
+      support: supportProjection,
+      handle: handleProjection,
+      blade: bladeProjection,
+    },
   };
 }
 
@@ -142,6 +237,20 @@ function assertCompactSupport(pose, label) {
   }
   const handGap = lengthBetween(pose.parts.handR.position, pose.parts.handL.position);
   assert(handGap >= 0.12 && handGap <= 0.38, `${label} support hands separated from the compact two-hand grip budget (${handGap.toFixed(3)})`);
+
+  for (const hand of ['handR', 'handL']) {
+    const metric = pose.attachment[hand];
+    assert(metric.distance <= 0.17, `${label} ${hand} drifted away from the live pommel→habaki grip axis (${metric.distance.toFixed(3)})`);
+    assert(metric.rawT >= -0.15 && metric.rawT <= 1.08, `${label} ${hand} escaped the live handle length (${metric.rawT.toFixed(3)})`);
+  }
+
+  assert(intersectsViewport(pose.projection.support), `${label} support silhouette has no geometry intersecting the 320x568 viewport`);
+  assert(intersectsViewport(pose.projection.handle), `${label} live handle has no geometry intersecting the 320x568 viewport`);
+  assert(intersectsViewport(pose.projection.blade), `${label} live player blade has no geometry intersecting the 320x568 viewport`);
+  assert(
+    pose.projection.blade.minY < pose.projection.support.minY - 24,
+    `${label} support silhouette obscured the blade's projected readable extension`,
+  );
 }
 
 function assertNeutral(pose, label) {
@@ -174,7 +283,8 @@ function sampleNormalParry(direction, startAt) {
 }
 
 try {
-  assert(canvas.width === 320 && canvas.height === 568, 'Player-grip renderer contract canvas was not 320x568');
+  assert(innerWidth === VIEWPORT_WIDTH && innerHeight === VIEWPORT_HEIGHT, `Player-grip renderer gate requires 320x568 viewport, got ${innerWidth}x${innerHeight}`);
+  assert(canvas.width === VIEWPORT_WIDTH && canvas.height === VIEWPORT_HEIGHT, 'Player-grip renderer contract canvas was not 320x568');
   view = new View(canvas);
   assert(view.backend === 'playcanvas', 'Player-grip renderer contract did not stay on PlayCanvas');
   const impl = view.impl;
@@ -182,6 +292,8 @@ try {
   assert(impl.playerRig?.name === 'PlayerSwordRig', 'Authoritative player weapon rig was unavailable');
   for (const [, property] of SUPPORT_PARTS) assert(impl[property]?.parent === impl.playerRig, `${property} was not directly parented to PlayerSwordRig`);
   assert(impl.playerHabaki?.parent === impl.playerRig && impl.playerPommel?.parent === impl.playerRig, 'Katana grip reference parts were not attached to PlayerSwordRig');
+  assert(impl.playerRig.findByName('PlayerGrip')?.parent === impl.playerRig, 'PlayerGrip was not attached to PlayerSwordRig');
+  assert(impl.playerRig.findByName('PlayerBlade')?.parent === impl.playerRig, 'PlayerBlade was not attached to PlayerSwordRig');
 
   const neutralEngine = new CombatEngine();
   const neutral = draw(neutralEngine, 0, 0, Direction.TOP);
@@ -231,12 +343,12 @@ try {
   root.dataset.playerGripRendererViewport = '320x568';
   root.dataset.playerGripRendererDirections = 'top,right,bottom,left';
   root.dataset.playerGripRendererActions = 'normal,perfect,counter,neutral';
-  root.dataset.playerGripRendererAttachment = 'player-rig-bounded-v1';
+  root.dataset.playerGripRendererAttachment = 'pommel-habaki-axis-v2';
+  root.dataset.playerGripRendererVisibility = 'support-handle-blade-projected-v1';
 } catch (error) {
   console.error('Player-grip renderer contract smoke failed', error);
   root.dataset.playerGripRendererIntegration = 'fail';
   root.dataset.playerGripRendererError = String(error?.message || error).slice(0, 180);
-  root.dataset.rendererMotionIntegration = 'fail';
 } finally {
   try { view?.impl?.app?.destroy?.(); } catch {}
   canvas.remove();

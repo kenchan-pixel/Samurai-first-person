@@ -91,3 +91,25 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - Exact-head post-commit Actions `npm test` + complete `npm run test:browser` and exact-head Vercel status are required before Run 121 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
+
+## Run 122 — Isolate and strengthen first-person grip acceptance
+
+**Date:** 2026-09-04  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `0300c3f48dad51773ba87943cbbab6b52022ff52`.
+- Exact-head Actions CI #167 / run `33863727134` is terminal **failure**: `npm test` passes **143/143**, then `npm run test:browser` times out on `/?browser-smoke=renderer-motion` before the renderer/grip document can emit a pass/fail receipt. Exact-head GitHub `Vercel` status is terminal **success**.
+- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched and inline review threads are empty. The latest same-head Second Hourly review identifies two actionable findings: **P1** the new sequential second PlayCanvas app in the renderer-motion document is the concrete lifecycle seam causing acceptance to fail; **P2** same-parent/bounded transforms alone do not prove hand alignment to the live katana handle or projected 320×568 blade-read visibility. Feature work is prohibited.
+
+### Blocker repair
+
+- Restored `?browser-smoke=renderer-motion` to the established renderer contract only. The player-grip contract now has its own `?browser-smoke=player-grip` route and its own CDP mobile browser process in `npm run test:browser`, matching the already-proven focused heavy/rhythm gate pattern. One browser document no longer serially creates/destroys the renderer contract app and then another full grip `View`.
+- Strengthened the live PlayCanvas grip contract without lowering any Run 121 threshold. Every normal four-direction parry plus Perfect Parry/counter still proves directional separation, bounded local transforms, compact two-hand spacing and neutral return. It now additionally measures each live hand against the world-space `PlayerPommel → PlayerHabaki` handle axis and fails on radial/longitudinal drift.
+- Added real camera projection from live render AABBs at the required 320×568 viewport. The gate requires support, handle and player-blade geometry to intersect the viewport and requires the projected blade to retain readable extension beyond the support silhouette, providing a basic fail-closed visibility/occlusion sanity check while leaving subjective polish to Preview inspection.
+- No production combat/presentation values, input, timing, damage, posture, STEP, scoring, persistence, privacy or network behaviour changed; this run only repairs and strengthens acceptance infrastructure for the existing Run 120 slice.
+
+### Verification boundary
+
+- Exact-head post-commit Actions `npm test` + complete `npm run test:browser`, including the dedicated player-grip process, and exact-head Vercel status are required before Run 122 is accepted. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit receipt.
