@@ -3,14 +3,6 @@ const REPORT_BUTTON_ID = 'result-feedback-button';
 const PANEL_ID = 'result-feedback-panel';
 const STATUS_ID = 'result-feedback-status';
 const NOTE_LIMIT = 800;
-const FEEDBACK_TOPICS = Object.freeze({
-  blade: '刀路',
-  parry: '格擋',
-  step: 'STEP',
-  visual: '畫面',
-  difficulty: '難度',
-  other: '其他',
-});
 
 function compactText(value) {
   return String(value ?? '').replace(/\s+/g, ' ').trim();
@@ -36,13 +28,8 @@ function cleanUrl(value) {
   }
 }
 
-function feedbackTopicLabel(value) {
-  return FEEDBACK_TOPICS[compactText(value)] || '';
-}
-
 export function buildBetaFeedbackPayload({
   kind = 'feedback',
-  topic = '',
   note = '',
   eyebrow = '',
   title = '',
@@ -52,7 +39,6 @@ export function buildBetaFeedbackPayload({
   url = '',
 } = {}) {
   const reportKind = kind === 'bug' ? '錯誤回報' : '體驗意見';
-  const topicLabel = feedbackTopicLabel(topic);
   const resultTitle = compactText(title) || '決鬥結果';
   const resultEyebrow = compactText(eyebrow);
   const resultSummary = compactText(summary);
@@ -61,7 +47,6 @@ export function buildBetaFeedbackPayload({
   const playerNote = compactNote(note);
   const lines = [`刃返 Closed Beta｜${reportKind}`, `結果：${resultTitle}`];
 
-  if (topicLabel) lines.push(`範圍：${topicLabel}`);
   if (resultEyebrow && !resultEyebrow.includes(resultTitle)) lines.push(`模式：${resultEyebrow}`);
   if (progress) lines.push(`進度：${progress}`);
   if (resultScore) lines.push(`得分：${resultScore}`);
@@ -76,14 +61,13 @@ export function buildBetaFeedbackPayload({
 }
 
 export function collectBetaFeedbackPayload(
-  { kind = 'feedback', topic = '', note = '' } = {},
+  { kind = 'feedback', note = '' } = {},
   documentRef = globalThis.document,
   locationRef = globalThis.location,
 ) {
   const text = (selector) => compactText(documentRef?.querySelector?.(selector)?.textContent);
   return buildBetaFeedbackPayload({
     kind,
-    topic,
     note,
     eyebrow: text('#result-eyebrow'),
     title: text('#result-title'),
@@ -169,16 +153,11 @@ function ensureStyles(documentRef) {
     .result-feedback-panel h3{margin:0;font-size:18px;letter-spacing:.04em}
     .result-feedback-panel p{margin:0;font-size:12px;line-height:1.5;color:rgba(245,234,216,.76)}
     .result-feedback-kinds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .result-feedback-topic-label{font-size:11px!important;color:rgba(245,234,216,.62)!important}
-    .result-feedback-topics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-    .result-feedback-kind,.result-feedback-topic,.result-feedback-close,.result-feedback-send{
+    .result-feedback-kind,.result-feedback-close,.result-feedback-send{
       min-height:44px;border:1px solid rgba(239,196,129,.25);border-radius:10px;background:rgba(255,255,255,.05);
       color:#f5ead8;font:inherit;font-weight:800;cursor:pointer;
     }
-    .result-feedback-topic{padding:0 4px;font-size:12px}
-    .result-feedback-kind[aria-pressed="true"],.result-feedback-topic[aria-pressed="true"]{
-      border-color:rgba(228,182,107,.75);background:rgba(228,182,107,.14);color:#f1d59f;
-    }
+    .result-feedback-kind[aria-pressed="true"]{border-color:rgba(228,182,107,.75);background:rgba(228,182,107,.14);color:#f1d59f}
     .result-feedback-panel textarea{
       width:100%;min-height:96px;max-height:150px;box-sizing:border-box;resize:vertical;padding:10px 11px;
       border:1px solid rgba(239,196,129,.22);border-radius:10px;background:rgba(255,255,255,.055);color:#fff;
@@ -214,7 +193,6 @@ function ensureUi(documentRef) {
     panel.className = 'result-feedback-panel';
     panel.hidden = true;
     panel.dataset.feedbackKind = 'feedback';
-    panel.dataset.feedbackTopic = '';
     panel.setAttribute('aria-label', 'Closed Beta 回報');
     panel.innerHTML = `
       <h3>Closed Beta 回報</h3>
@@ -222,10 +200,6 @@ function ensureUi(documentRef) {
       <div class="result-feedback-kinds" role="group" aria-label="回報類型">
         <button class="result-feedback-kind" type="button" data-feedback-kind="feedback" aria-pressed="true">體驗意見</button>
         <button class="result-feedback-kind" type="button" data-feedback-kind="bug" aria-pressed="false">錯誤回報</button>
-      </div>
-      <p class="result-feedback-topic-label">主要係邊一部分？可選一項，方便快速分類。</p>
-      <div class="result-feedback-topics" role="group" aria-label="回報範圍">
-        ${Object.entries(FEEDBACK_TOPICS).map(([key, label]) => `<button class="result-feedback-topic" type="button" data-feedback-topic="${key}" aria-pressed="false">${label}</button>`).join('')}
       </div>
       <textarea maxlength="${NOTE_LIMIT}" data-feedback-note placeholder="發生咩事？邊一段最難用／最唔自然？"></textarea>
       <div id="${STATUS_ID}" class="result-feedback-status" role="status" aria-live="polite"></div>
@@ -241,7 +215,6 @@ function ensureUi(documentRef) {
     button,
     panel,
     kinds: [...panel.querySelectorAll('[data-feedback-kind]')],
-    topics: [...panel.querySelectorAll('[data-feedback-topic]')],
     note: panel.querySelector('[data-feedback-note]'),
     send: panel.querySelector('[data-feedback-send]'),
     close: panel.querySelector('[data-feedback-close]'),
@@ -254,14 +227,6 @@ function setKind(ui, kind) {
   ui.panel.dataset.feedbackKind = nextKind;
   for (const button of ui.kinds) {
     button.setAttribute('aria-pressed', button.dataset.feedbackKind === nextKind ? 'true' : 'false');
-  }
-}
-
-function setTopic(ui, topic) {
-  const nextTopic = FEEDBACK_TOPICS[topic] ? topic : '';
-  ui.panel.dataset.feedbackTopic = nextTopic;
-  for (const button of ui.topics) {
-    button.setAttribute('aria-pressed', button.dataset.feedbackTopic === nextTopic ? 'true' : 'false');
   }
 }
 
@@ -282,12 +247,6 @@ function install() {
   for (const kindButton of ui.kinds) {
     kindButton.addEventListener('click', () => setKind(ui, kindButton.dataset.feedbackKind));
   }
-  for (const topicButton of ui.topics) {
-    topicButton.addEventListener('click', () => {
-      const topic = topicButton.dataset.feedbackTopic;
-      setTopic(ui, ui.panel.dataset.feedbackTopic === topic ? '' : topic);
-    });
-  }
 
   ui.send?.addEventListener('click', async () => {
     if (ui.send.disabled) return;
@@ -295,7 +254,6 @@ function install() {
     ui.status.textContent = '';
     const payload = collectBetaFeedbackPayload({
       kind: ui.panel.dataset.feedbackKind,
-      topic: ui.panel.dataset.feedbackTopic,
       note: ui.note?.value || '',
     }, document, location);
     const result = await deliverBetaFeedback(payload);

@@ -9,7 +9,6 @@ import {
 test('buildBetaFeedbackPayload makes a structured bug report from visible result data and strips query/hash', () => {
   const payload = buildBetaFeedbackPayload({
     kind: 'bug',
-    topic: 'step',
     note: '下段 STEP 附近有時按唔到',
     eyebrow: 'ONI PRACTICE · MASTERY 82',
     title: 'A 級 · 修行完成',
@@ -20,17 +19,10 @@ test('buildBetaFeedbackPayload makes a structured bug report from visible result
 
   assert.equal(payload.title, 'Blade Reversal｜刃返｜錯誤回報');
   assert.match(payload.text, /錯誤回報/);
-  assert.match(payload.text, /範圍：STEP/);
   assert.match(payload.text, /A 級 · 修行完成/);
   assert.match(payload.text, /得分：002400/);
   assert.match(payload.text, /下段 STEP 附近有時按唔到/);
   assert.equal(payload.url, 'https://example.test/');
-});
-
-test('feedback topic is opt-in and unknown values are omitted', () => {
-  assert.doesNotMatch(buildBetaFeedbackPayload({ topic: '' }).text, /範圍：/);
-  assert.doesNotMatch(buildBetaFeedbackPayload({ topic: 'network' }).text, /範圍：/);
-  assert.match(buildBetaFeedbackPayload({ topic: 'blade' }).text, /範圍：刀路/);
 });
 
 test('feedback notes are bounded before export', () => {
@@ -81,9 +73,8 @@ test('deliverBetaFeedback falls back to local clipboard and cancellation remains
   assert.equal(cancellationCopied, false);
 });
 
-test('feedback module has no automatic upload transport or persistence', async () => {
+test('feedback module has no automatic upload transport', async () => {
   const source = await readFile(new URL('../src/result-feedback.js', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /\bfetch\s*\(/);
   assert.doesNotMatch(source, /XMLHttpRequest|sendBeacon|WebSocket/);
-  assert.doesNotMatch(source, /localStorage|sessionStorage/);
 });

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 134,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD ef144507f28fc744aabd0fb41196f3db225f8366 is fully green: Actions CI #179 succeeds through Node + complete browser acceptance including the true 320x568 player-grip gate, exact-head GitHub Vercel status succeeds, inline review threads are empty, and the latest same-head review reports no actionable P0-P2 findings. Run 134 selects the highest-scoring bounded Closed Beta slice from three materially different candidates: structured local/export-only feedback triage. The existing result 回報 panel now offers one optional, single-select issue area (刀路 / 格擋 / STEP / 畫面 / 難度 / 其他); the chosen area is added to the explicit Web Share/clipboard report as 範圍 and can be toggled off. No account, storage, analytics, background upload, network transport, combat rule or result authority is added.",
-  "last_commit": "ef144507f28fc744aabd0fb41196f3db225f8366",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete browser suite must retain the existing 320x568 result-actions layout/privacy/export gate so the new >=44 px topic controls stay bounded inside the scrollable feedback panel without obscuring terminal flow; all combat, player-grip and delivery gates must remain green.",
+  "run_number": 135,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD b07d8787c864fb452ed47c4a5d0adca4d98a4731 is green in Actions CI #180 and exact-head GitHub Vercel status, but the latest same-head All Repos review identifies two actionable P2 findings in Run 134: the exported optional 範圍 field exceeds the owner-approved Closed Beta feedback payload contract, and the browser gate does not exercise the new topic-chip interaction. Because the first finding is a release-contract/SOT correctness issue and there is no separate owner approval to expand the payload, Run 135 removes the unapproved topic chips/export and restores src/result-feedback.js plus its focused tests exactly to the previously accepted ef14450 feedback implementation. This simultaneously removes the unverified interaction seam while preserving explicit 體驗意見/錯誤回報, typed note, visible result context, clean URL, Web Share/clipboard fallback, privacy copy and all no-storage/no-background-upload boundaries.",
+  "last_commit": "b07d8787c864fb452ed47c4a5d0adca4d98a4731",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The full Node + browser suite must remain green and the existing 320x568 result-feedback path must still fit, export only the approved payload fields and retain the no-automatic-upload disclosure. No new feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "structured_feedback_topic_pending_exact_head",
-    "last_observed_head": "ef144507f28fc744aabd0fb41196f3db225f8366",
-    "incoming_ci_run": 33925730386,
-    "incoming_ci_result": "success_node_and_complete_browser_including_player_grip",
+    "status": "feedback_contract_repair_pending_exact_head",
+    "last_observed_head": "b07d8787c864fb452ed47c4a5d0adca4d98a4731",
+    "incoming_ci_run": 33929779117,
+    "incoming_ci_result": "success_node_and_complete_browser",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "403 list_deployments for the known project/team; GitHub exact-head Vercel status is the authoritative fallback",
+    "direct_vercel_connector": "not required for this run; exact-head GitHub Vercel status is authoritative fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 133 cleared the long BOTTOM-parry viewport blocker and exact HEAD ef14450 is green across CI #179, the full real-renderer 320x568 player-grip gate and GitHub Vercel status; latest same-head review reports no actionable P0-P2. Run 134 therefore returns to feature work. Candidate scoring (impact/alignment/novelty/confidence/safety, /25): structured Closed Beta feedback topic triage 4/5/4/5/5=23; repeat-practice directional coaching expansion 4/5/3/4/5=21; challenge tactical/PB retrospective clarity 4/4/4/4/4=20. The selected slice adds only optional explicit topic classification inside the existing local Web Share/clipboard feedback path. Focused Node tests pass 6/6 before commit; exact-head CI/Vercel and the existing 320x568 result-actions browser gate remain authoritative post-commit evidence."
+    "note": "Exact incoming HEAD b07d878 is fully deployed and CI-green, but same-head review 5118902876 finds Run 134 exceeded the approved Closed Beta payload contract by exporting 範圍 and did not add real-browser coverage for the new topic controls. The repair chooses the fail-closed product-contract path: revert only src/result-feedback.js and tests/result-feedback.test.mjs to accepted ef14450 behavior rather than silently broadening the approved SOT. Existing browser coverage already protects that restored feedback panel/export path; all cumulative combat/player-grip gates remain authoritative post-commit."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -68,7 +68,7 @@
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
-    "ACCEPTANCE: exercise the new optional Closed Beta feedback 範圍 chips on the exact Preview and refine only concrete 320x568 readability/touch defects",
+    "FEATURE: continue Closed Beta release prep only within the currently approved explicit feedback payload; any extra exported structured field requires owner-approved SOT expansion first",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

@@ -1,119 +1,60 @@
 # Evolution Run Log
 
-This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Preview links remain in Git history and Draft PR #1. Historical long-form entries are compacted after acceptance; no product rule is removed from `docs/CURRENT_BASELINE.md` or `docs/REGRESSION_CHECKLIST.md`.
+This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Preview links remain in Git history and Draft PR #1. Historical implementation details are protected by `docs/CURRENT_BASELINE.md` and `docs/REGRESSION_CHECKLIST.md`.
 
 ## Runs 000–020 — Core systems and renderer evolution
 
-- Run 000 baseline: mobile-first first-person duel, directional parry/swipe combat, three enemies, progression, tests and SOT.
-- Runs 001–003: exact-head CI/Vercel fence, readable combat motion and renderer/WebGL correctness/browser smoke.
-- Runs 004–010: posture/guard break, mastery/local best, Crimson Shogun and Guided Duel with integration/reduced-motion repairs.
-- Runs 011–020: spacing/STEP, impact choreography, wider framing, elapsed-time four-beat motion, dropped-frame recovery, PlayCanvas production renderer and real combat-motion browser contract.
+- Mobile-first first-person duel baseline, exact-head delivery fence, readable combat motion, posture/guard break, mastery, Crimson Shogun, Guided Duel, STEP/spacing, impact choreography and PlayCanvas production renderer.
 
-## Runs 021–042 — Skinned character, mobile combat and practice
+## Runs 021–042 — Skinned character, directional combat and practice
 
-- Runs 021–025: local 19-joint skinned samurai GLB, animation binding, directional body reads and four stage silhouettes.
-- Runs 026–029: physical-phone readability repair, real four-direction blade-tip paths, Perfect Parry riposte and Blood Moon integrity.
-- Runs 030–034: phone-first guide/Ronin lesson, exact-head clarity repairs, Perfect STEP and phase-priority repair.
-- Runs 035–038: first-person two-hand grip, local post-run analysis and denominator/damage repairs.
-- Runs 039–042: repeatable Ronin/Shogun practice, practice browser verification and optional 刀路清晰.
+- Local skinned samurai, stage silhouettes, real four-direction blade-tip paths, Perfect Parry/STEP, two-hand first-person grip, run analysis, direct practice and optional 刀路清晰.
 
-## Runs 043–064 — Combat UX, animation repair and timing assist
+## Runs 043–064 — Combat UX and authored animation pipeline
 
-- Runs 043–051: mobile Combat UX simplification, true Pause clock, production-browser hardening, Shogun signature motion and top-right Pause restoration.
-- Run 052 rejected after physical-phone evidence exposed collapsed body/arm/blade hierarchy; Run 053 restored the usable animation baseline; Run 054 removed mistaken mandatory-human-test HOLD semantics.
-- Runs 055–061: authored AttackTop/Right/Bottom/Left, continuous Attack* playback, fixed HandR/Sword hierarchy, lateral-read repair, same-draw pose evaluation and bounded forward commitment.
-- Runs 062–064: optional 節拍提示 plus disabled-path DOM-idle and deterministic browser-harness repair.
+- Mobile Combat UX/Pause hardening, Shogun signature presentation, rejected broken runtime-joint override and recovery, authored Guard + four Attack* tracks, fixed Sword→HandR hierarchy, player-facing directional reads and optional 節拍提示 with deterministic browser verification.
 
-## Runs 065–100 — Blade semantics, delivery recovery, handedness, challenge, dojo and owner repairs
+## Runs 065–100 — Delivery recovery, challenge, dojo and Closed Beta share
 
-- Runs 065–069: player-facing Guard/directional cut semantics, semantic SOT smoke, actual-Sword afterimages and reduced-motion cleanup.
-- Runs 070–074: bounded Vercel recovery, architecture reconciliation, persistent STEP handedness, safe-area repair and 320×568 coverage.
-- Runs 075–089: eight-duel challenge, 氣勢/不屈, 今日陣, tactical choice, 宿敵步速, Oni/Blood Moon practice and 師範弱點再練.
-- Runs 090–093: production practice orchestration, 四向防守 and normal-practice capture repair.
-- Runs 094–098: heavy-attack presentation/acceptance, exact-head build receipt recovery, Bottom/STEP repair and bounded 60–110 ms near-contact normal-parry buffer.
-- Run 099: connected authored Top/Bottom vertical katana choreography with fixed Sword→HandR grip.
-- Run 100: explicit local result 分享 through Web Share/clipboard with no account, persistence, analytics or background network request.
+- Player-screen RIGHT/LEFT semantics, actual-Sword afterimages, bounded Vercel recovery, handed STEP preference, eight-duel challenge, 氣勢/不屈, 今日陣, 戰前抉擇, 宿敵步速, Oni/Blood Moon practice, 四向防守, heavy-attack presentation, exact-head build receipt, late-telegraph parry buffer and explicit local result 分享 via Web Share/clipboard.
 
 ## Runs 101–119 — Closed Beta readiness and combat-read refinement
 
-- Runs 101–107: session-only 修行進度, DOM ownership repair, local/export-only feedback, 封測資訊, local records, storage-denied startup and weak-direction repeat coaching.
-- Runs 108–112: session-only 封測 0/3 progress, terminal/bootstrap/DOM ownership repairs and challenge/今日陣 戰策回顧 with cumulative 320×568 acceptance.
-- Run 113: presentation-only measured / standard / quick / heavy attack-tempo readability from unchanged authoritative timing; exact-head CI/Vercel passed.
-- Runs 114–118: replaced abrupt Ronin mid-telegraph hard cuts with a bounded 50 ms authored full-rig crossfade, then repaired stale/contaminated real-renderer acceptance without relaxing blade/grip/travel thresholds or changing combat timing.
-- Run 119: added separate transient Perfect Parry `破` / Perfect STEP `閃` identities; exact-head CI/Vercel and same-head review passed.
+- Session-only 修行進度, explicit local/export-only feedback, 封測資訊 and 0/3 tester guide, local-record summary, weak-direction repeat coaching, 戰策回顧, measured/standard/quick attack-tempo presentation, accepted 50 ms Ronin authored feint crossfade and distinct Perfect Parry `破` / Perfect STEP `閃` identities.
 
-## Runs 120–126 — Direction-aware first-person grip and acceptance hardening
+## Runs 120–133 — Direction-aware first-person grip acceptance
 
-- Run 120 added a bounded four-direction first-person two-hand support brace layered on the authoritative katana action path.
-- Runs 121–122 added then isolated a dedicated real 320×568 PlayCanvas player-grip browser process, enforcing bounded support transforms, hand spacing, pommel→habaki hand-axis attachment, support/handle/blade viewport intersection, projected blade extension and neutral return.
-- Runs 123–124 repaired concrete TOP parry and BOTTOM-counter portrait framing by moving the complete `PlayerSwordRig`, preserving blade/handle/support attachment.
-- Runs 125–126 investigated BOTTOM-counter support/blade occlusion and hardened the Boss browser timing harness; those support-only counter experiments were superseded by Run 127's authoritative blade-path correction.
+- Added a four-direction two-hand support brace and a dedicated real 320×568 PlayCanvas grip gate covering support/handle/blade visibility, pommel→habaki attachment, projected blade extension and neutral return.
+- Repaired TOP, RIGHT and BOTTOM portrait framing; corrected BOTTOM counter to a true rising cut; then cleared the remaining BOTTOM-parry blade occlusion with a support-only forearm tuck/splay while preserving blade path and combat rules.
+- Run 133 exact HEAD `ef144507f28fc744aabd0fb41196f3db225f8366` passed CI #179, full browser acceptance and exact-head Vercel.
 
-## Runs 127–132 — Portrait grip blocker sequence
+## Run 134 — Structured Closed Beta feedback triage
 
-- Run 127 corrected the authoritative BOTTOM counter from the generic `+92°` sweep to a BOTTOM-specific `-92°` rising cut.
-- Run 128 added bounded complete-rig portrait framing for RIGHT parry after the 320×568 gate exposed an off-screen player blade.
-- Run 129 added BOTTOM normal/Perfect whole-rig `-0.52/+0.10` portrait framing and a bounded roll so support, handle and blade re-entered the viewport.
-- Run 130 refined only the BOTTOM whole-rig roll to `-26°` (~77° peak), preserving all existing combat and 24 px blade-extension thresholds.
-- Run 131 added a pulse-shaped `-0.10` local-X tuck to the dominant/right forearm, hand and cuff only, leaving the blade and left support untouched; exact-head Node acceptance exposed a non-zero `Math.sin(Math.PI)` endpoint residue.
-- Run 132 made action endpoints exactly neutral by returning a zero player-support pulse at `p <= 0` / `p >= 1`. Exact HEAD `1105daf4277239770606692c985f0ed5fe91505c` passes **146/146 Node tests** and the broad browser smoke, but Actions CI #178 / run `33921404599` still fails the unchanged dedicated 320×568 normal-BOTTOM blade-read gate because the support silhouette obscures the required **>24 px** projected blade extension. Exact-head Vercel is successful.
+**Action type:** FEATURE
 
-## Run 133 — Clear the BOTTOM parry blade lane with a relative forearm brace
+- Added optional `刀路 / 格擋 / STEP / 畫面 / 難度 / 其他` topic chips to the result 回報 panel and exported a selected topic as `範圍：…` through the existing player-triggered Web Share/clipboard path.
+- Exact HEAD `b07d8787c864fb452ed47c4a5d0adca4d98a4731` passed CI #180 and exact-head Vercel.
+- Same-head All Repos review `5118902876` then identified two actionable P2 findings: the extra exported `範圍` field is outside the approved Closed Beta feedback payload contract, and the new topic interaction is not specifically covered by the real 320×568 browser gate.
+
+## Run 135 — Restore the approved Closed Beta feedback contract
 
 **Date:** 2026-09-05  
 **Action type:** BLOCKER_FIX
 
 ### Preflight
 
-- Incoming exact HEAD: `1105daf4277239770606692c985f0ed5fe91505c`.
-- Exact-head Actions CI #178 / run `33921404599` is terminal **failure** after `npm test` passes 146/146 and broad browser smoke succeeds; the dedicated true-320×568 player-grip process fails at normal BOTTOM Parry because support geometry still obscures the unchanged >24 px blade-extension contract. Exact-head GitHub `Vercel` status is terminal **success** and Preview feedback reports zero unresolved items.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, and inline review threads are empty. The latest same-head All Repos review identifies this one actionable P1 and no additional P0/P1/P2.
-- Feature work is prohibited. The repair must preserve BOTTOM direction semantics, pommel→habaki attachment, support/handle/blade viewport intersection, the >24 px blade-read threshold, exact neutral return and all combat timing/input/damage/Perfect/STEP rules.
+- Incoming exact HEAD: `b07d8787c864fb452ed47c4a5d0adca4d98a4731`.
+- Exact-head Actions CI #180 / run `33929779117` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty.
+- Latest same-head review has no P0/P1 but two actionable P2 findings. The payload-contract mismatch is treated as blocking because it is a product/SOT correctness issue in the approved Closed Beta release boundary. There is no owner-approved SOT expansion authorising an additional exported structured field.
 
-### Blocker repair
+### Repair
 
-- Stopped relying on further complete-rig roll/framing changes. The accepted BOTTOM `-0.52/+0.10` framing and `-26°` whole-rig roll remain unchanged.
-- Strengthened only the dominant/right BOTTOM-parry support tuck from `-0.10` to `-0.14` local X so the hand/cuff/forearm stay near the handle but sit farther out of the blade lane.
-- Added a pulse-shaped BOTTOM-only `+28°` local roll to the long right forearm. At peak normal BOTTOM parry that changes the forearm's local Z rotation from about `-30°` to about `-2°`, making the forearm splay across the grip instead of projecting vertically through the blade while the actual katana and left support remain untouched.
-- Focused pose coverage now pins both the stronger dominant-support tuck and the BOTTOM forearm splay, while retaining exact endpoint-neutral, transform-bound and existing framing assertions. No acceptance threshold is reduced.
-
-### Verification boundary
-
-- Exact-head post-commit GitHub Actions `npm test` + complete `npm run test:browser` are required. The unchanged dedicated 320×568 player-grip gate must clear normal and Perfect BOTTOM support/handle/blade visibility, >24 px blade extension, hand-axis attachment, all four directions, BOTTOM rising counter and exact neutral return.
-- Exact-head Vercel success is also required. The one-commit rule prohibits a second bookkeeping commit; the Draft-PR run comment is the authoritative post-commit verification receipt.
-
-## Run 134 — Structured Closed Beta feedback triage
-
-**Date:** 2026-09-05  
-**Action type:** FEATURE
-
-### Preflight
-
-- Incoming exact HEAD: `ef144507f28fc744aabd0fb41196f3db225f8366`.
-- Exact-head Actions CI #179 / run `33925730386` is terminal **success** through `npm test` and the complete browser suite, including the true 320×568 player-grip gate that cleared the prior BOTTOM-parry blocker. Exact-head GitHub `Vercel` status is terminal **success** and Preview feedback reports zero unresolved items.
-- Draft PR #1 remains open/Draft/unmerged, `main` remains untouched, inline review threads are empty, and the latest exact-head review reports no actionable P0–P2 findings.
-- No delivery/runtime/regression blocker remains, so feature selection is allowed.
-
-### Candidate selection
-
-Scored impact / product-goal alignment / novelty / confidence / safety, each out of 5:
-
-- Structured Closed Beta feedback topic triage — **23/25** (`4/5/4/5/5`).
-- Repeat-practice directional coaching expansion — **21/25** (`4/5/3/4/5`).
-- Challenge tactical/PB retrospective clarity — **20/25** (`4/4/4/4/4`).
-
-Selected the feedback slice because Closed Beta release preparation is already approved, it creates a new player-visible workflow without changing combat balance, and it improves the usefulness of explicit tester reports while remaining fully local/export-only.
-
-### Implementation
-
-- The existing result-screen **回報** panel now offers six ≥44 px optional topic chips: **刀路 / 格擋 / STEP / 畫面 / 難度 / 其他**.
-- Topic selection is single-select and reversible; leaving every chip unselected preserves the previous report format.
-- When selected, the explicit Web Share/clipboard payload adds one `範圍：…` line before the existing mode/progress/score/summary/player-note context.
-- The topic is run-time UI state only. No `localStorage`, `sessionStorage`, account, identifier, analytics, fetch/XHR/beacon/WebSocket, remote feedback endpoint or gameplay authority is added.
-- Existing feedback privacy copy, share cancellation, clipboard fallback, clean URL, 800-character note bound and scrollable 320×568 panel remain intact.
+- Reverted only `src/result-feedback.js` and `tests/result-feedback.test.mjs` to the previously accepted Run 133 feedback implementation from `ef144507f28fc744aabd0fb41196f3db225f8366`.
+- Removed the unapproved topic chips, topic UI state and exported `範圍` line. This also removes the browser-coverage gap specific to that interaction rather than weakening the acceptance gate.
+- Preserved the approved feedback contract: explicit 體驗意見 / 錯誤回報, player-typed note, already-visible result/mode/progress/score/summary, clean query/hash-free URL, native Web Share with clipboard fallback, cancellation as no-op, privacy disclosure and no account/persistence/analytics/background upload/network endpoint.
+- No combat, renderer, input, balance, local-best schema or deployment code changed.
 
 ### Verification boundary
 
-- Focused pre-commit Node acceptance for `result-feedback` passes **6/6**, including topic opt-in/unknown-value fail-closed behavior, note bounding, Web Share/clipboard behavior, and explicit assertions that the module contains no automatic upload transport or persistence.
-- Exact-head post-commit Actions `npm test` + complete `npm run test:browser` are required. The existing 320×568 result-actions browser gate must still prove the feedback control/panel fits the viewport, retains privacy disclosure/local export and closes cleanly; all combat/player-grip regression gates remain authoritative.
-- Exact-head Vercel success is also required. Per the one-commit rule, the Draft-PR run comment is the authoritative post-commit verification receipt.
+- The restored source/test pair is byte-for-byte the previously accepted `ef14450` implementation that passed the full Node/browser suite before Run 134. No acceptance threshold is changed.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are still mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.
