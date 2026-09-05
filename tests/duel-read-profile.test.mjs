@@ -6,6 +6,7 @@ import {
   DUEL_READ_PROFILES,
   duelPracticeFocusForStageStart,
   duelReadProfileForEnemy,
+  duelReadProfileSuppressedForRun,
 } from '../src/duel-read-profile.js';
 import {
   buildPracticeFocusCoach,
@@ -99,6 +100,16 @@ test('all-observed-clean practice never claims four directions when some directi
   assert.match(focus?.text || '', /Perfect/);
 });
 
+test('challenge suppression follows authoritative engine state before the DOM mirror catches up', () => {
+  const challengeActive = Symbol.for('blade-reversal.challenge-active-v1');
+  const staleRoot = { dataset: { challengeActive: 'false' } };
+  const challengeEngine = { [challengeActive]: true };
+
+  assert.equal(duelReadProfileSuppressedForRun(challengeEngine, staleRoot), true);
+  assert.equal(duelReadProfileSuppressedForRun({}, { dataset: { challengeActive: 'true' } }), true);
+  assert.equal(duelReadProfileSuppressedForRun({}, staleRoot), false);
+});
+
 test('duel read profile stays presentation-only with no storage or network transport', async () => {
   const source = await readFile(new URL('../src/duel-read-profile.js', import.meta.url), 'utf8');
   for (const forbidden of ['localStorage', 'sessionStorage', 'indexedDB', 'fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket']) {
@@ -106,6 +117,7 @@ test('duel read profile stays presentation-only with no storage or network trans
   }
   assert.match(source, /event\.type === 'stage-start'/);
   assert.match(source, /event\.type === 'telegraph'/);
+  assert.match(source, /CHALLENGE_ACTIVE/);
   assert.match(source, /challengeActive === 'true'/);
   assert.match(source, /practiceProgressRoute/);
 });

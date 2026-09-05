@@ -1,6 +1,7 @@
 import { CombatEngine } from './game-core.js';
 
 const installed = Symbol.for('blade-reversal.duel-read-profile-v1');
+const CHALLENGE_ACTIVE = Symbol.for('blade-reversal.challenge-active-v1');
 const PRACTICE_DIRECTION_LABELS = Object.freeze({
   top: '上方',
   right: '右方',
@@ -83,6 +84,10 @@ export function duelPracticeFocusForStageStart(detail = {}, root = globalThis.do
     label,
     text: `今局修行 · ${label} · 先守穩再反擊`,
   });
+}
+
+export function duelReadProfileSuppressedForRun(engine, root = globalThis.document?.documentElement) {
+  return engine?.[CHALLENGE_ACTIVE] === true || root?.dataset?.challengeActive === 'true';
 }
 
 function ensureStyles(documentRef) {
@@ -187,7 +192,12 @@ export function installDuelReadProfile(Engine = CombatEngine, documentRef = glob
 
   Engine.prototype.drainEvents = function duelReadProfileDrainEvents() {
     const events = originalDrainEvents.call(this);
+    const challengeRun = duelReadProfileSuppressedForRun(this, documentRef.documentElement);
     for (const event of events) {
+      if (challengeRun && (event.type === 'stage-start' || event.type === 'boss-phase')) {
+        hideProfile(documentRef);
+        continue;
+      }
       if (event.type === 'stage-start') {
         renderDuelReadProfile(
           duelReadProfileForEnemy(event.detail?.enemyId),

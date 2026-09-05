@@ -217,3 +217,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The feature reuses the already accepted result-only coaching row and leaves all gameplay authority untouched. Repository-authoritative verification remains exact-head Actions after the single final commit.
 - Post-commit `npm test`, complete `npm run test:browser` including the existing run-analysis direction browser smoke, and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 143 — Bind 敵式 suppression to authoritative challenge state
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `ae45398a90df3c0bb810c2f031fc5613b54791a1`.
+- Exact-head GitHub `Vercel` status is terminal success and Preview feedback reports 0 unresolved items, but Actions CI #188 / run `33952626204` failed twice on the existing production `連戰試煉` quietness gate while `npm test` stayed green. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review comments are empty.
+- The repeated failure is `Production challenge route exposed the duel-read stage-intro card`. Under the exact-head priority fence this is a delivery/runtime blocker, so no feature candidate is eligible this run.
+
+### Repair
+
+- Kept the campaign/direct-practice 敵式 card, copy, layout, timing and practice coaching unchanged.
+- The duel-read adapter now treats the CombatEngine `Symbol.for('blade-reversal.challenge-active-v1')` flag as authoritative for challenge/今日陣 suppression and retains the existing DOM `data-challenge-active` check only as a presentation fallback. Because challenge-mode sets the engine flag before entering the underlying start flow, a stage-start/boss-phase event cannot expose the card during startup ordering while the DOM mirror is still stale.
+- Added a focused unit regression proving challenge suppression remains true when the authoritative engine flag is true but the DOM mirror still says false. The existing real 320×568 production browser gate is not weakened and must continue proving both `連戰試煉` and `今日陣` remain quiet.
+- No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, CSS, persistence, identifier, analytics or network authority changed.
+
+### Verification boundary
+
+- This repair changes only which already-existing challenge state the presentation adapter trusts; it does not alter challenge rules or the player-facing campaign/practice feature.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 142,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 7a888d8c7460852a0ee62f83575d216161745b57 is terminal green: Actions CI #187 / run 33949747390 succeeded, exact-head GitHub Vercel status succeeded, Draft PR #1 remains open/Draft/unmerged, inline review threads are empty, the latest exact-head review reports no actionable P0-P2 finding, and the latest PR receipt/Vercel bot status contains no unresolved human blocker. With delivery and review gates clear, Run 142 selects the highest-scoring bounded player-visible slice: close the session-only same-opponent practice objective loop by explicitly grading the directional target that was carried into the retry. The result coaching now labels that prior target as 達成 / 進步 / 持平 / 回落, or 今局未再遇到, using only authoritative observed directional defense. It never invents a directional verdict after an all-observed-clean run because that prior intro challenged Perfect rather than a direction and the practice snapshot does not track Perfect timing. The existing next-run focus remains in the same compact result-only coaching row. No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, storage, identifier, analytics or network authority changes.",
-  "last_commit": "7a888d8c7460852a0ee62f83575d216161745b57",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove the new prior-target verdict is truthful, session/route isolated, in-bounds at 320x568, and leaves the cumulative mobile/combat baseline green. No additional feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 143,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD ae45398a90df3c0bb810c2f031fc5613b54791a1 is not terminal green: Actions CI #188 / run 33952626204 failed twice in the existing production challenge-route 敵式 suppression gate while npm test stayed green; exact-head GitHub Vercel status is success, Draft PR #1 remains open/Draft/unmerged, main is untouched, inline review comments are empty, and Preview feedback reports 0 unresolved items. Run 143 therefore repairs the blocking delivery regression before any feature work. The duel-read adapter now suppresses stage-start/boss-phase profile rendering from the authoritative CombatEngine challenge symbol as well as the DOM mirror, so challenge/今日陣 cannot expose the campaign/direct-practice 敵式 card during startup ordering before data-challenge-active catches up. A focused unit regression proves authoritative challenge state wins even when the DOM mirror is still false. No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, persistence, identifier, analytics or network authority changes.",
+  "last_commit": "ae45398a90df3c0bb810c2f031fc5613b54791a1",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove production challenge and 今日陣 remain quiet while campaign/direct-practice 敵式, practice target verdicts and the cumulative 320x568 baseline stay green. No additional feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,18 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "practice_target_verdict_pending_exact_head",
-    "last_observed_head": "7a888d8c7460852a0ee62f83575d216161745b57",
-    "incoming_ci_run": 33949747390,
-    "incoming_ci_result": "success",
+    "status": "challenge_duel_read_authority_fix_pending_exact_head",
+    "last_observed_head": "ae45398a90df3c0bb810c2f031fc5613b54791a1",
+    "incoming_ci_run": 33952626204,
+    "incoming_ci_result": "failure",
+    "incoming_ci_failure": "Production challenge route exposed the duel-read stage-intro card on both exact-SHA attempts",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "project enumeration is unavailable in this runtime; exact-head GitHub Vercel status is the canonical fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 141 exact HEAD 7a888d8c is fully green and the latest exact-head review reports no actionable P0-P2 issue, so feature selection is allowed. Candidate scoring: explicit prior practice-target verdict 24/25 (impact 5, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 20/25; challenge pre-wave target cue 18/25. Run 142 chooses the first because Run 140 already shows the next same-route weak direction before the duel while the result still reports only a raw percentage delta. The new verdict closes that loop without adding a new surface, persistence or gameplay authority. It grades only the prior directional target that was actually shown, publishes deterministic target state/direction for browser acceptance, and deliberately emits no directional verdict when the prior all-observed-clean intro challenged Perfect. Post-commit full Node/browser CI and exact-head Vercel are mandatory; the PR run comment is authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 142 exact HEAD ae45398a is Vercel-green but browser-CI-red, so the strict priority gate requires BLOCKER_FIX. The repeated failure is isolated to the production challenge-route 敵式 quietness contract. Existing suppression reads only document.documentElement.dataset.challengeActive, while challenge-mode publishes the authoritative Symbol.for('blade-reversal.challenge-active-v1') on CombatEngine before its DOM presentation mirror. Run 143 makes the duel-read drain adapter honor that authoritative engine state first and retains the DOM check as a presentation fallback. The existing production browser gate remains unchanged and fail-closed; post-commit full Node/browser CI and exact-head Vercel are mandatory, with the PR run comment authoritative for resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
