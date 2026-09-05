@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 137,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 1ff1e9bdab859435141fc8cbb4e00daabaffdca6 is terminal green in Actions CI #182 and exact-head GitHub Vercel status, with zero inline review threads, zero unresolved Preview feedback, and latest exact-head review 5119189042 reporting no actionable P0/P1/P2. With the delivery fence clear, Run 137 scored three player-visible candidates: opponent stage-intro read profiles 23/25, challenge-only post-wave threat forecast 19/25, and Perfect-technique streak feedback 18/25. The selected slice adds a bounded campaign/direct-practice 敵式 card during stage-intro for Ashigaru, Ronin, Oni, Shogun and direct Blood Moon, giving one truthful tell plus one response cue and clearing before the first telegraph. Challenge/今日陣 remain quiet to avoid stacking with their existing intro surfaces. The adapter observes only existing CombatEngine events, owns no input, storage, network, timing, damage, score or renderer authority, and adds focused Node plus real 320x568 browser acceptance.",
-  "last_commit": "1ff1e9bdab859435141fc8cbb4e00daabaffdca6",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The new focused browser gate must prove all four campaign archetypes plus direct Blood Moon render in bounds and pointer-transparent at 320x568, clear before telegraph, and stay suppressed in challenge/今日陣. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 138,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD ef790c7e5b87a804d331beed97568d3518ce5a64 is terminal green in Actions CI #183 and exact-head GitHub Vercel status, with Draft PR #1 still open/Draft and no inline review comments. Latest exact-head review 5119499034 has no P0/P1 but one actionable P2: Run 137's player-visible 敵式 stage-intro card was browser-tested only in an isolated harness, so the acceptance gate did not prove safe composition with the real 320x568 production HUD/prompt or production challenge/今日陣 suppression. Run 138 keeps runtime/gameplay unchanged and extends the existing production Combat UX contract to verify a real campaign stage-intro renders the Ashigaru 敵式 card in bounds, pointer-transparent, clear of the visible HUD/Pause surface, with the production combat prompt confirmed non-visible under the current Combat UX contract; it must clear on the first real telegraph. The same production route then launches real 連戰試煉 and 今日陣 entries and proves the card remains suppressed. No attack timing, damage, posture, parry/Perfect/STEP, score, renderer, persistence, privacy or network behavior changes.",
+  "last_commit": "ef790c7e5b87a804d331beed97568d3518ce5a64",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The strengthened production Combat UX gate must pass at 320x568 for real campaign stage-intro composition, first-telegraph cleanup, and real challenge/今日陣 suppression. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "duel_read_profile_pending_exact_head",
-    "last_observed_head": "1ff1e9bdab859435141fc8cbb4e00daabaffdca6",
-    "incoming_ci_run": 33935947767,
+    "status": "duel_read_production_composition_pending_exact_head",
+    "last_observed_head": "ef790c7e5b87a804d331beed97568d3518ce5a64",
+    "incoming_ci_run": 33939625243,
     "incoming_ci_result": "success_node_and_complete_browser",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Exact incoming HEAD 1ff1e9b is fully deployed and CI-green; latest exact-head review has no actionable P0/P1/P2. Run 137 introduces only a stage-intro presentation adapter and focused browser gate. Post-commit full Node/browser CI and exact-head Vercel remain mandatory; PR run comment is authoritative for resulting SHA/status under the one-commit rule."
+    "note": "Exact incoming HEAD ef790c7 is fully deployed and CI-green. Review 5119499034 identifies only a production-composition acceptance blind spot, not a confirmed runtime overlap. Run 138 repairs that blocker by extending the existing real-app Combat UX smoke; runtime behavior and acceptance thresholds remain unchanged. Post-commit full Node/browser CI and exact-head Vercel remain mandatory; the PR run comment is authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect the new stage-intro 敵式 card on campaign/direct-practice Preview; it must improve opponent distinction without lingering into telegraph or competing with blade reads",
+    "ACCEPTANCE: inspect the new stage-intro 敵式 card on campaign/direct-practice Preview; refine only if exact production evidence shows overlap, repetition or inaccurate opponent guidance",
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",

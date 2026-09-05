@@ -91,6 +91,92 @@ function rectFitsSafeViewport(rect, safeBounds) {
   );
 }
 
+function rectsOverlap(a, b) {
+  if (!a || !b || a.width <= 0 || a.height <= 0 || b.width <= 0 || b.height <= 0) return false;
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
+function rectSummary(rect) {
+  if (!rect) return 'none';
+  return [rect.left, rect.top, rect.right, rect.bottom].map((value) => Math.round(value)).join(',');
+}
+
+async function verifyCampaignDuelReadProfile() {
+  const card = document.querySelector('#duel-read-profile');
+  const hud = document.querySelector('.hud');
+  const prompt = document.querySelector('#combat-prompt');
+  const pauseButton = document.querySelector('#pause-button');
+  if (!card || !hud || !prompt || !pauseButton) return false;
+
+  const visible = await waitFor(() =>
+    root.dataset.combatPhase === 'stage-intro' &&
+    root.dataset.duelReadProfileState === 'visible' &&
+    root.dataset.duelReadProfile === 'ashigaru' &&
+    !card.hidden,
+  520);
+  if (!visible) return false;
+
+  const cardRect = card.getBoundingClientRect();
+  const hudRect = hud.getBoundingClientRect();
+  const promptRect = prompt.getBoundingClientRect();
+  const pauseRect = pauseButton.getBoundingClientRect();
+  const cardStyle = getComputedStyle(card);
+  const promptStyle = getComputedStyle(prompt);
+  const centerTarget = document.elementFromPoint(
+    (cardRect.left + cardRect.right) / 2,
+    (cardRect.top + cardRect.bottom) / 2,
+  );
+  const compositionSafe = Boolean(
+    cardRect.width > 0 &&
+    cardRect.height > 0 &&
+    cardRect.left >= -0.5 &&
+    cardRect.top >= -0.5 &&
+    cardRect.right <= window.innerWidth + 0.5 &&
+    cardRect.bottom <= window.innerHeight + 0.5 &&
+    cardStyle.pointerEvents === 'none' &&
+    centerTarget !== card &&
+    !rectsOverlap(cardRect, hudRect) &&
+    !rectsOverlap(cardRect, pauseRect) &&
+    (promptStyle.display === 'none' || promptRect.width === 0 || promptRect.height === 0)
+  );
+  root.dataset.combatUxDuelReadCardRect = rectSummary(cardRect);
+  root.dataset.combatUxDuelReadHudRect = rectSummary(hudRect);
+  root.dataset.combatUxDuelReadPauseRect = rectSummary(pauseRect);
+  root.dataset.combatUxDuelReadPromptDisplay = promptStyle.display;
+  root.dataset.combatUxDuelReadCenterTarget = describeTarget(centerTarget);
+  mark('combatUxDuelReadIntroComposition', compositionSafe);
+
+  const clearsBeforeTelegraph = await waitFor(() =>
+    root.dataset.combatPhase === 'telegraph' &&
+    root.dataset.duelReadProfileState === 'hidden' &&
+    card.hidden,
+  1750);
+  mark('combatUxDuelReadClearsBeforeTelegraph', clearsBeforeTelegraph);
+  return compositionSafe && clearsBeforeTelegraph;
+}
+
+async function verifyChallengeDuelReadQuiet({ button, expectedDaily = false, pauseButton, pauseHome }) {
+  const card = document.querySelector('#duel-read-profile');
+  if (!button || !card || !pauseButton || !pauseHome) return false;
+  button.click();
+  const started = await waitFor(() =>
+    root.dataset.challengeActive === 'true' &&
+    root.dataset.combatPhase === 'stage-intro' &&
+    (!expectedDaily || root.dataset.dailyChallengeActive === 'true'),
+  720);
+  const quiet = Boolean(
+    started &&
+    card.hidden &&
+    root.dataset.duelReadProfileState !== 'visible'
+  );
+  if (!started) return false;
+  pauseButton.click();
+  await sleep(20);
+  pauseHome.click();
+  await sleep(40);
+  return quiet && document.querySelector('#start-screen')?.classList.contains('modal--visible');
+}
+
 async function verifyProductionParry(canvas, rect, direction, x, y, pointerId, diagnosticKey) {
   const hitTarget = document.elementFromPoint(x, y);
   root.dataset[diagnosticKey] = describeTarget(hitTarget);
@@ -254,12 +340,17 @@ async function run() {
     root.dataset.startHandlerReady === 'true' &&
     root.dataset.combatUxReady === 'true' &&
     root.dataset.controlHandedness === 'persistent-v1' &&
+    root.dataset.duelReadProfileReady === 'true' &&
+    root.dataset.dailyChallengeReady === 'true' &&
     document.querySelector('#pause-button') &&
     document.querySelector('#combat-guide-sheet') &&
     document.querySelector('#control-hand-toggle') &&
     document.querySelector('#footwork-step') &&
     document.querySelector('#footwork-range') &&
-    document.querySelector('#footwork-feedback')
+    document.querySelector('#footwork-feedback') &&
+    document.querySelector('#challenge-button') &&
+    document.querySelector('#daily-challenge-button') &&
+    document.querySelector('#duel-read-profile')
   );
   if (!ready) {
     root.dataset.combatUxBrowser = 'fail-ready';
@@ -280,8 +371,10 @@ async function run() {
   const footworkStep = document.querySelector('#footwork-step');
   const footworkRange = document.querySelector('#footwork-range');
   const footworkFeedback = document.querySelector('#footwork-feedback');
+  const challengeButton = document.querySelector('#challenge-button');
+  const dailyChallengeButton = document.querySelector('#daily-challenge-button');
 
-  if (!canvas || !startButton || !pauseButton || !pauseScreen || !pauseResume || !pauseGuide || !pauseRestart || !pauseHome || !guideSheet || !guideClose || !controlToggle || !footworkStep || !footworkRange || !footworkFeedback) {
+  if (!canvas || !startButton || !pauseButton || !pauseScreen || !pauseResume || !pauseGuide || !pauseRestart || !pauseHome || !guideSheet || !guideClose || !controlToggle || !footworkStep || !footworkRange || !footworkFeedback || !challengeButton || !dailyChallengeButton) {
     root.dataset.combatUxBrowser = 'fail-controls';
     return;
   }
@@ -296,6 +389,11 @@ async function run() {
 
   canvas.setPointerCapture = () => {};
   const duelStarted = await startProductionDuel(startButton, pauseButton);
+  const duelReadSafe = duelStarted && await verifyCampaignDuelReadProfile();
+  if (!duelReadSafe) {
+    root.dataset.combatUxBrowser = 'fail-duel-read-profile';
+    return;
+  }
   const liveReady = duelStarted && await waitFor(() =>
     !pauseButton.hidden &&
     root.dataset.gamePaused === 'false' &&
@@ -459,6 +557,18 @@ async function run() {
   await sleep(40);
   mark('combatUxHome', document.querySelector('#start-screen')?.classList.contains('modal--visible') && pauseScreen.hidden && pauseButton.hidden);
 
+  mark('combatUxDuelReadChallengeQuiet', await verifyChallengeDuelReadQuiet({
+    button: challengeButton,
+    pauseButton,
+    pauseHome,
+  }));
+  mark('combatUxDuelReadDailyQuiet', await verifyChallengeDuelReadQuiet({
+    button: dailyChallengeButton,
+    expectedDaily: true,
+    pauseButton,
+    pauseHome,
+  }));
+
   const allPass = [
     'combatUxPortraitViewport',
     'combatUxBeginEntered',
@@ -479,6 +589,10 @@ async function run() {
     'combatUxResume',
     'combatUxRestart',
     'combatUxHome',
+    'combatUxDuelReadIntroComposition',
+    'combatUxDuelReadClearsBeforeTelegraph',
+    'combatUxDuelReadChallengeQuiet',
+    'combatUxDuelReadDailyQuiet',
   ].every((key) => root.dataset[key] === 'true');
 
   root.dataset.combatUxBrowser = allPass ? 'pass' : 'fail';

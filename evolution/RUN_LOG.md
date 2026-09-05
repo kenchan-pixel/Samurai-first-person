@@ -103,3 +103,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The new pure profile tests were syntax-checked and exercised in an isolated Node harness before the Git object was created; repository-authoritative verification remains exact-head Actions after the single final commit.
 - Post-commit `npm test`, complete `npm run test:browser` including `duel-read-profile-browser-smoke.mjs`, and exact-head Vercel success are mandatory. The PR run comment is the authoritative resulting-SHA receipt under the one-commit rule.
+
+## Run 138 — Production-route 敵式 composition acceptance
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `ef790c7e5b87a804d331beed97568d3518ce5a64`.
+- Exact-head Actions CI #183 / run `33939625243` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched and the inline PR comments endpoint is empty.
+- Latest exact-head review `5119499034` has no P0/P1 but one actionable P2: Run 137's new player-visible 敵式 card is proven only in its isolated browser harness, so the gate does not prove safe composition with the real production stage-intro HUD/prompt at 320×568 or real challenge/今日陣 suppression. This is treated as a blocker because it is a mobile clarity/playability acceptance gap on the just-delivered player-visible slice.
+
+### Repair
+
+- Kept the Run 137 runtime and copy unchanged; no CSS, timing, balance or interaction behavior is altered.
+- Extended the existing real-app `browser-smoke=combat-ux` contract. A real campaign start must now observe the Ashigaru 敵式 card during the actual 1.55 s stage-intro, prove it is in the 320×568 viewport, pointer-transparent, clear of the visible top HUD and Pause control, and prove the existing production combat prompt is non-visible under the current Combat UX contract rather than geometrically competing with the card.
+- The same production path must observe the first real telegraph with the card already hidden, then launch the real `連戰試煉` and `今日陣` controls and prove the card remains suppressed in both modes before returning home.
+- The focused Run 137 harness remains in place for all archetype/Blood Moon copy and event-specific coverage; this repair closes the missing production-composition seam instead of duplicating that focused matrix.
+
+### Verification boundary
+
+- No acceptance threshold is weakened and no gameplay/runtime product behavior changes. The strengthened production Combat UX smoke is expected to fail closed if the new card ever overlaps production chrome, blocks input, lingers into telegraph, or leaks into challenge/今日陣.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is the authoritative resulting-SHA receipt under the one-commit rule.
