@@ -135,6 +135,14 @@
         root.dataset.challengeTacticReflectionCount === '0';
     }
 
+    function retryFocusCleared(node) {
+      return node?.hidden === true &&
+        node.textContent === '' &&
+        !root.dataset.challengeRetryFocus &&
+        !root.dataset.challengeRetryFocusKind &&
+        !root.dataset.challengeRetryFocusStage;
+    }
+
     async function forceStageClear(stage, tacticChoice = null) {
       if (uiCombat.enemyIndex !== stage - 1) throw new Error(`expected stage ${stage}, got ${uiCombat.enemyIndex + 1}`);
       const enemyId = uiCombat.enemy?.id;
@@ -257,7 +265,8 @@
       const tacticPanel = document.querySelector('#challenge-tactic');
       const tacticRecap = challengeResult?.querySelector('[data-challenge-tactic-recap]');
       const tacticReflection = challengeResult?.querySelector('[data-challenge-tactic-reflection]');
-      if (!dailyButton || !campaignButton || !banner || !challengeResult || !tacticPanel || !tacticRecap || !tacticReflection) {
+      const tacticRetryFocus = challengeResult?.querySelector('[data-challenge-retry-focus]');
+      if (!dailyButton || !campaignButton || !banner || !challengeResult || !tacticPanel || !tacticRecap || !tacticReflection || !tacticRetryFocus) {
         throw new Error('daily/challenge/tactical player-facing controls were not installed');
       }
 
@@ -275,6 +284,7 @@
         root.dataset.challengeTacticPending === 'false' &&
         !root.dataset.challengeTacticScoutStage &&
         reflectionCleared(tacticReflection) &&
+        retryFocusCleared(tacticRetryFocus) &&
         entry.start.detail?.dailyChallenge === true &&
         entry.start.detail?.dailyChallengeKey === key &&
         banner.hidden === false &&
@@ -330,9 +340,11 @@
       const progress = document.querySelector('[data-challenge-progress]');
       const expectedTacticRecap = '戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1';
       const expectedTacticReflection = '戰策後果 · 2誓→3無傷 · 4息→5受擊1 · 6誓→7無傷';
+      const expectedRetryFocus = '再戰重點 · 第5陣 · 上局受擊1 · 先守穩';
       const resultRect = challengeResult.getBoundingClientRect();
       const recapRect = tacticRecap.getBoundingClientRect();
       const reflectionRect = tacticReflection.getBoundingClientRect();
+      const retryFocusRect = tacticRetryFocus.getBoundingClientRect();
       const tacticRecapOk =
         tacticRecap.hidden === false &&
         tacticRecap.textContent.trim() === expectedTacticRecap &&
@@ -372,10 +384,35 @@
       root.dataset.challengeTacticReflectionTerminal = String(tacticReflectionOk);
       if (!tacticReflectionOk) throw new Error('challenge tactic reflection did not truthfully bind choices to the immediate next waves');
 
+      const tacticRetryFocusOk =
+        tacticRetryFocus.hidden === false &&
+        tacticRetryFocus.textContent.trim() === expectedRetryFocus &&
+        root.dataset.challengeRetryFocus === expectedRetryFocus &&
+        root.dataset.challengeRetryFocusKind === 'hits' &&
+        root.dataset.challengeRetryFocusStage === '5' &&
+        restartButton.textContent === '再戰 · 第5陣守穩' &&
+        getComputedStyle(tacticRetryFocus).pointerEvents === 'none' &&
+        retryFocusRect.width > 0 &&
+        retryFocusRect.height > 0 &&
+        retryFocusRect.left >= resultRect.left - 0.5 &&
+        retryFocusRect.right <= resultRect.right + 0.5 &&
+        retryFocusRect.top >= resultRect.top - 0.5 &&
+        retryFocusRect.bottom <= resultRect.bottom + 0.5 &&
+        retryFocusRect.left >= -0.5 &&
+        retryFocusRect.right <= innerWidth + 0.5 &&
+        retryFocusRect.top >= -0.5 &&
+        retryFocusRect.bottom <= innerHeight + 0.5 &&
+        victory?.detail?.challengeRetryFocus?.kind === 'hits' &&
+        victory?.detail?.challengeRetryFocus?.nextStage === 5 &&
+        victory?.detail?.challengeRetryFocus?.hitEvents === 1;
+      root.dataset.challengeRetryFocusTerminal = String(tacticRetryFocusOk);
+      if (!tacticRetryFocusOk) throw new Error('challenge retry focus did not convert the observed next-wave outcome into a bounded truthful retry action');
+
       const terminalOk =
         stageTagsOk &&
         tacticRecapOk &&
         tacticReflectionOk &&
+        tacticRetryFocusOk &&
         tacticScoutOk &&
         victory?.detail?.challenge === true &&
         victory?.detail?.dailyChallenge === true &&
@@ -383,7 +420,7 @@
         victory?.detail?.challengeTacticChoices === 3 &&
         challengeResult.hidden === false &&
         campaignButton.hidden === false &&
-        restartButton.textContent === '再戰連陣' &&
+        restartButton.textContent === '再戰 · 第5陣守穩' &&
         Boolean(progress?.textContent.includes(`今日陣 ${shortDate(key)}`)) &&
         root.dataset.dailyChallengeActive === 'false' &&
         !root.dataset.dailyChallengeKey;
@@ -396,8 +433,10 @@
       const retryFormation = rosterSignature();
       const retryRecapCleared = recapCleared(tacticRecap);
       const retryReflectionCleared = reflectionCleared(tacticReflection);
+      const retryFocusReset = retryFocusCleared(tacticRetryFocus);
       root.dataset.challengeTacticRecapRetryCleared = String(retryRecapCleared);
       root.dataset.challengeTacticReflectionRetryCleared = String(retryReflectionCleared);
+      root.dataset.challengeRetryFocusRetryCleared = String(retryFocusReset);
       const retryOk =
         retryKey === key &&
         retryFormation === formation &&
@@ -408,6 +447,7 @@
         !root.dataset.challengeTacticScoutStage &&
         retryRecapCleared &&
         retryReflectionCleared &&
+        retryFocusReset &&
         retry.start.detail?.dailyChallenge === true &&
         retry.start.detail?.dailyChallengeKey === key &&
         banner.hidden === false;
@@ -425,8 +465,10 @@
       const campaign = drainExpectedStage(1, 'daily campaign handoff');
       const campaignRecapCleared = recapCleared(tacticRecap);
       const campaignReflectionCleared = reflectionCleared(tacticReflection);
+      const campaignRetryFocusCleared = retryFocusCleared(tacticRetryFocus);
       root.dataset.challengeTacticRecapCampaignCleared = String(campaignRecapCleared);
       root.dataset.challengeTacticReflectionCampaignCleared = String(campaignReflectionCleared);
+      root.dataset.challengeRetryFocusCampaignCleared = String(campaignRetryFocusCleared);
       const campaignOk =
         uiCombat.enemies.length === ENEMIES.length + 1 &&
         uiCombat[DAILY_CHALLENGE_ACTIVE] === false &&
@@ -439,6 +481,7 @@
         !root.dataset.challengeTacticScoutTags &&
         campaignRecapCleared &&
         campaignReflectionCleared &&
+        campaignRetryFocusCleared &&
         tacticPanel.hidden === true &&
         !root.dataset.dailyChallengeKey &&
         root.dataset.nextChallengeVariant === 'standard' &&
@@ -449,10 +492,10 @@
         banner.hidden === true;
       root.dataset.dailyChallengeCampaignHandoff = String(campaignOk);
       root.dataset.challengeTacticCampaignIsolation = String(campaignOk);
-      if (!campaignOk) throw new Error('今日陣/tactical scout/reflection state leaked into the restored four-stage campaign');
+      if (!campaignOk) throw new Error('今日陣/tactical scout/reflection/retry-focus state leaked into the restored four-stage campaign');
 
       root.dataset.dailyChallengeBrowserIntegration =
-        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk && tacticReflectionOk && tacticScoutOk ? 'pass' : 'fail';
+        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk && tacticReflectionOk && tacticRetryFocusOk && tacticScoutOk ? 'pass' : 'fail';
     } catch (error) {
       requestDailyChallenge(false);
       requestChallenge(false);

@@ -80,6 +80,69 @@ export function formatChallengeTacticReflection(summary = {}) {
   return tokens.length > 0 ? `戰策後果 · ${tokens.join(' · ')}` : '';
 }
 
+export function deriveChallengeRetryFocus(summary = {}) {
+  const outcomes = Array.isArray(summary?.outcomes) ? summary.outcomes : [];
+  if (outcomes.length === 0) return null;
+
+  const defeat = outcomes.find((item) => item?.result === 'defeat');
+  if (defeat) {
+    return {
+      kind: 'defeat',
+      nextStage: Math.max(1, Math.floor(Number(defeat.nextStage) || 1)),
+      hitEvents: Math.max(0, Math.floor(Number(defeat.hitEvents) || 0)),
+      resolved: outcomes.length,
+    };
+  }
+
+  const hitOutcome = outcomes
+    .filter((item) => Math.max(0, Math.floor(Number(item?.hitEvents) || 0)) > 0)
+    .sort((left, right) => {
+      const hitDelta = Math.max(0, Number(right?.hitEvents) || 0) - Math.max(0, Number(left?.hitEvents) || 0);
+      if (hitDelta !== 0) return hitDelta;
+      return Math.max(1, Number(left?.nextStage) || 1) - Math.max(1, Number(right?.nextStage) || 1);
+    })[0];
+
+  if (hitOutcome) {
+    return {
+      kind: 'hits',
+      nextStage: Math.max(1, Math.floor(Number(hitOutcome.nextStage) || 1)),
+      hitEvents: Math.max(1, Math.floor(Number(hitOutcome.hitEvents) || 1)),
+      resolved: outcomes.length,
+    };
+  }
+
+  return {
+    kind: 'clean',
+    nextStage: null,
+    hitEvents: 0,
+    resolved: outcomes.length,
+  };
+}
+
+export function formatChallengeRetryFocus(focus = null) {
+  if (!focus) return '';
+  if (focus.kind === 'defeat') {
+    return `再戰重點 · 第${focus.nextStage}陣 · 上局止步 · 先守穩`;
+  }
+  if (focus.kind === 'hits') {
+    return `再戰重點 · 第${focus.nextStage}陣 · 上局受擊${focus.hitEvents} · 先守穩`;
+  }
+  if (focus.kind === 'clean') {
+    return focus.resolved >= 3
+      ? '再戰重點 · 三段無傷 · 保持節奏'
+      : '再戰重點 · 已見路線無傷 · 保持節奏';
+  }
+  return '';
+}
+
+export function formatChallengeRetryButton(focus = null) {
+  if (!focus) return '再戰連陣';
+  if (focus.kind === 'defeat' || focus.kind === 'hits') return `再戰 · 第${focus.nextStage}陣守穩`;
+  if (focus.kind === 'clean' && focus.resolved >= 3) return '再戰 · 保持三段無傷';
+  if (focus.kind === 'clean') return '再戰 · 保持無傷';
+  return '再戰連陣';
+}
+
 function ensureUi() {
   if (typeof document === 'undefined') return null;
   if (!document.querySelector('style[data-challenge-tactic-reflection]')) {
@@ -87,9 +150,11 @@ function ensureUi() {
     style.dataset.challengeTacticReflection = 'true';
     style.textContent = `
       .challenge-result.challenge-result--tactic-reflection{flex-wrap:wrap}
-      .challenge-tactic-reflection{flex:0 0 100%;margin-top:-2px;color:rgba(220,231,206,.68);font-size:8.5px;line-height:1.15;text-align:left;letter-spacing:.02em;pointer-events:none}
-      .challenge-tactic-reflection[hidden]{display:none}
-      @media(max-width:360px) and (max-height:620px){.challenge-tactic-reflection{font-size:8px;line-height:1.08}}
+      .challenge-tactic-reflection,.challenge-tactic-retry-focus{flex:0 0 100%;color:rgba(220,231,206,.68);font-size:8.5px;line-height:1.15;text-align:left;letter-spacing:.02em;pointer-events:none}
+      .challenge-tactic-reflection{margin-top:-2px}
+      .challenge-tactic-retry-focus{margin-top:1px;color:rgba(241,213,159,.88);font-weight:700}
+      .challenge-tactic-reflection[hidden],.challenge-tactic-retry-focus[hidden]{display:none}
+      @media(max-width:360px) and (max-height:620px){.challenge-tactic-reflection,.challenge-tactic-retry-focus{font-size:8px;line-height:1.08}}
     `;
     document.head.append(style);
   }
@@ -103,7 +168,15 @@ function ensureUi() {
     node.hidden = true;
     result.append(node);
   }
-  return { result, node };
+  let focusNode = result.querySelector('[data-challenge-retry-focus]');
+  if (!focusNode) {
+    focusNode = document.createElement('small');
+    focusNode.className = 'challenge-tactic-retry-focus';
+    focusNode.dataset.challengeRetryFocus = 'true';
+    focusNode.hidden = true;
+    result.append(focusNode);
+  }
+  return { result, node, focusNode };
 }
 
 function clearUi() {
@@ -112,28 +185,42 @@ function clearUi() {
   if (ui) {
     ui.node.hidden = true;
     ui.node.textContent = '';
+    ui.focusNode.hidden = true;
+    ui.focusNode.textContent = '';
     ui.result.classList.remove('challenge-result--tactic-reflection');
   }
   const root = document.documentElement;
   root.dataset.challengeTacticReflection = '';
   root.dataset.challengeTacticReflectionCount = '0';
+  root.dataset.challengeRetryFocus = '';
+  root.dataset.challengeRetryFocusKind = '';
+  root.dataset.challengeRetryFocusStage = '';
 }
 
 function renderUi(summary) {
   if (typeof document === 'undefined') return;
   const text = formatChallengeTacticReflection(summary);
-  if (!text) {
+  const focus = deriveChallengeRetryFocus(summary);
+  const focusText = formatChallengeRetryFocus(focus);
+  if (!text && !focusText) {
     clearUi();
     return;
   }
   const ui = ensureUi();
   if (!ui) return;
   ui.node.textContent = text;
-  ui.node.hidden = false;
-  ui.result.classList.add('challenge-result--tactic-reflection');
+  ui.node.hidden = !text;
+  ui.focusNode.textContent = focusText;
+  ui.focusNode.hidden = !focusText;
+  ui.result.classList.toggle('challenge-result--tactic-reflection', Boolean(text || focusText));
   const root = document.documentElement;
   root.dataset.challengeTacticReflection = text;
-  root.dataset.challengeTacticReflectionCount = String(summary.resolved || 0);
+  root.dataset.challengeTacticReflectionCount = String(summary?.resolved || 0);
+  root.dataset.challengeRetryFocus = focusText;
+  root.dataset.challengeRetryFocusKind = focus?.kind || '';
+  root.dataset.challengeRetryFocusStage = focus?.nextStage ? String(focus.nextStage) : '';
+  const restartButton = document.querySelector('#restart-button');
+  if (restartButton && focusText) restartButton.textContent = formatChallengeRetryButton(focus);
 }
 
 export function installChallengeTacticReflection(Engine = CombatEngine) {
@@ -181,11 +268,13 @@ export function installChallengeTacticReflection(Engine = CombatEngine) {
       } else if (event.type === 'defeat') {
         settleNextWave(state, this.enemyIndex + 1, 'defeat');
         const summary = summariseChallengeTacticReflection(state.records);
-        event.detail = { ...(event.detail || {}), challengeTacticReflection: summary };
+        const retryFocus = deriveChallengeRetryFocus(summary);
+        event.detail = { ...(event.detail || {}), challengeTacticReflection: summary, challengeRetryFocus: retryFocus };
         queueMicrotask(() => renderUi(summary));
       } else if (event.type === 'victory') {
         const summary = summariseChallengeTacticReflection(state.records);
-        event.detail = { ...(event.detail || {}), challengeTacticReflection: summary };
+        const retryFocus = deriveChallengeRetryFocus(summary);
+        event.detail = { ...(event.detail || {}), challengeTacticReflection: summary, challengeRetryFocus: retryFocus };
         queueMicrotask(() => renderUi(summary));
       }
     }

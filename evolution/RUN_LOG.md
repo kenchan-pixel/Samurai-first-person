@@ -402,3 +402,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The new JavaScript, Node test, mastery import, browser runner and embedded browser-harness module were syntax-checked before Git object assembly. The authoritative full repository test/browser suite can run only after the single final commit in this tool surface.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 151 — Turn observed challenge outcomes into a retry focus
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `e4dd9284c4a12f2363603e3669126129efda156b`.
+- Exact-head Actions CI #196 / run `33975339405` is terminal success and exact-head GitHub `Vercel` status is success. Direct Vercel deployment enumeration remains unavailable in this runtime, so the repository-approved GitHub Vercel commit status is the canonical deployment signal. Draft PR #1 is open/Draft/unmerged; `main` is untouched; unresolved review threads are empty; latest exact-head review reports no actionable P0–P2 and Preview feedback reports 0 unresolved items.
+- Candidate scoring: **challenge retry focus from immediate post-tactic outcomes 24/25** (impact 5, goal 5, novelty 4, confidence 5, safety 5); bounded generic result key-moment recap 20/25; unverified combat-motion refinement 16/25. The first candidate wins because Run 149 already records truthful immediate Wave 3/5/7 outcomes, but the result still leaves the player to infer what to target on the next challenge attempt.
+
+### Feature
+
+- Challenge/今日陣 terminal results now derive one compact **再戰重點** from the existing `戰策後果` evidence. An actual immediate-next-wave defeat is prioritised first; otherwise the resolved Wave 3/5/7 with the highest observed `player-hit` count is selected (earlier stage wins ties); if every resolved post-choice wave was hitless, the prompt says to preserve the clean rhythm instead of inventing a weakness.
+- The existing retry button is retitled to the same target, for example `再戰 · 第5陣守穩`, so the terminal reflection now closes directly into a player action without adding live-combat HUD. The original `戰策後果` line remains unchanged and the new copy describes only what was observed, never claiming the preceding tactic caused the result.
+- The focus is session/terminal-only, clears on retry and full-campaign handoff, and creates no storage key, identifier, analytics or network path. HP, score, tactical reward, attack timing/damage, roster, parry/Perfect/STEP, renderer and input authority are unchanged.
+- Extended deterministic Node coverage for defeat/hit/clean priority and retry-button copy, and strengthened the existing composed 320×568 今日陣 browser gate to prove the real deterministic Wave-5 hit produces `再戰重點 · 第5陣 · 上局受擊1 · 先守穩`, keeps the new row inside the existing result strip with pointer events disabled, retitles the button, attaches truthful event detail, and clears all focus state on retry/full-campaign handoff.
+
+### Verification boundary
+
+- No existing browser gate or acceptance threshold is removed. The implementation reuses the established challenge terminal strip and existing retry control rather than introducing another combat-time surface.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
