@@ -1,7 +1,20 @@
 import { CombatEngine } from './game-core.js';
 
 const installed = Symbol.for('blade-reversal.run-analysis-v1');
+const CHALLENGE_ACTIVE = Symbol.for('blade-reversal.challenge-active-v1');
 const sessions = new WeakMap();
+
+export const RUN_ANALYSIS_MODE = Object.freeze({
+  CAMPAIGN: 'campaign',
+  PRACTICE: 'practice',
+  CHALLENGE: 'challenge',
+});
+
+export function resolveRunAnalysisMode({ challenge = false, dailyChallenge = false, practice = false } = {}) {
+  if (challenge || dailyChallenge) return RUN_ANALYSIS_MODE.CHALLENGE;
+  if (practice) return RUN_ANALYSIS_MODE.PRACTICE;
+  return RUN_ANALYSIS_MODE.CAMPAIGN;
+}
 
 const ENEMY_LABELS = Object.freeze({
   'ashigaru-scout': '足輕',
@@ -230,9 +243,13 @@ function perfectCount(stage) {
   return Math.max(0, Number(stage?.perfectParries) || 0) + Math.max(0, Number(stage?.perfectSteps) || 0);
 }
 
-export function buildRunKeyMoment(report, { practice = false } = {}) {
+export function buildRunKeyMoment(
+  report,
+  { mode = RUN_ANALYSIS_MODE.CAMPAIGN, practice = false } = {},
+) {
   const stages = Array.isArray(report?.stages) ? report.stages : [];
-  if (practice || !stages.length || stages.length > 4) return null;
+  const effectiveMode = practice ? RUN_ANALYSIS_MODE.PRACTICE : mode;
+  if (effectiveMode !== RUN_ANALYSIS_MODE.CAMPAIGN || !stages.length || stages.length > 4) return null;
 
   const stage = report?.won
     ? [...stages].sort((a, b) =>
@@ -417,12 +434,12 @@ function ensurePanel() {
   return panel;
 }
 
-function renderRunAnalysis(report, { practice = false } = {}) {
+function renderRunAnalysis(report, { mode = RUN_ANALYSIS_MODE.CAMPAIGN } = {}) {
   installStyles();
   const panel = ensurePanel();
   if (!panel) return;
   const advice = buildRunAdvice(report);
-  const keyMoment = buildRunKeyMoment(report, { practice });
+  const keyMoment = buildRunKeyMoment(report, { mode });
   const focus = panel.querySelector('[data-analysis-focus]');
   const grid = panel.querySelector('[data-analysis-grid]');
   const tip = panel.querySelector('[data-analysis-tip]');
@@ -508,8 +525,12 @@ export function installRunAnalysis(Engine = CombatEngine) {
           won: event.type === 'victory',
           score: event.detail?.score,
         });
-        const practice = Boolean(event.detail?.practice);
-        queueMicrotask(() => renderRunAnalysis(report, { practice }));
+        const mode = resolveRunAnalysisMode({
+          challenge: Boolean(this[CHALLENGE_ACTIVE] || event.detail?.challenge),
+          dailyChallenge: Boolean(event.detail?.dailyChallenge),
+          practice: Boolean(event.detail?.practice),
+        });
+        queueMicrotask(() => renderRunAnalysis(report, { mode }));
       }
     }
     return events;

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Run analysis mode isolation browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal">
+      <div class="modal__content">
+        <button id="start-button" class="primary-button" type="button">開始試煉</button>
+        <div id="practice-row" class="practice-row"></div>
+      </div>
+    </section>
+
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">敗北</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/mastery-overlay.js';
+    import { CombatEngine, Direction } from '../src/game-core.js';
+    import { CHALLENGE_ACTIVE, requestChallenge } from '../src/challenge-mode.js';
+    import {
+      DAILY_CHALLENGE_ACTIVE,
+      requestDailyChallenge,
+    } from '../src/daily-challenge.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+
+    async function flush() {
+      await Promise.resolve();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    function inBounds(node) {
+      const rect = node?.getBoundingClientRect();
+      return Boolean(rect) &&
+        rect.left >= -0.5 &&
+        rect.right <= window.innerWidth + 0.5 &&
+        rect.top >= -0.5 &&
+        rect.bottom <= window.innerHeight + 0.5;
+    }
+
+    function injectEarlyDefeat(combat, score) {
+      combat.events.push(
+        { type: 'strike', detail: { direction: Direction.TOP } },
+        { type: 'player-hit', detail: { direction: Direction.TOP, damage: 1 } },
+        { type: 'defeat', detail: { score, playerHp: 0 } },
+      );
+      combat.drainEvents();
+    }
+
+    function assertQuietKeyMoment(label) {
+      const panel = document.querySelector('#result-analysis');
+      const keyMoment = panel?.querySelector('.result-analysis__stage.is-key-moment');
+      const challengeResult = document.querySelector('#challenge-result');
+      const layoutPass = inBounds(document.querySelector('#result-content')) &&
+        inBounds(panel) &&
+        inBounds(challengeResult);
+      const quiet = Boolean(
+        panel && !panel.hidden &&
+        panel.querySelectorAll('.result-analysis__stage').length === 1 &&
+        !keyMoment &&
+        !root.dataset.runAnalysisKeyMomentStage
+      );
+      if (!quiet) {
+        throw new Error(`${label} leaked campaign key moment: ${panel?.textContent || 'missing analysis panel'}`);
+      }
+      if (!layoutPass) {
+        throw new Error(`${label} early terminal overflowed 320x568`);
+      }
+      return layoutPass;
+    }
+
+    try {
+      requestDailyChallenge(false);
+      requestChallenge(true);
+      const challenge = new CombatEngine();
+      challenge.start(0);
+      challenge.drainEvents();
+      if (!challenge[CHALLENGE_ACTIVE]) throw new Error('standard challenge did not enter authoritative challenge mode');
+      injectEarlyDefeat(challenge, 250);
+      await flush();
+      const challengeLayout = assertQuietKeyMoment('standard challenge wave-1 defeat');
+      root.dataset.runAnalysisModeChallengeEarly = 'pass';
+
+      requestDailyChallenge(true, '2026-09-06');
+      requestChallenge(true);
+      const daily = new CombatEngine();
+      daily.start(1000);
+      daily.drainEvents();
+      if (!daily[CHALLENGE_ACTIVE] || !daily[DAILY_CHALLENGE_ACTIVE]) {
+        throw new Error('今日陣 did not enter authoritative challenge/daily mode');
+      }
+      injectEarlyDefeat(daily, 260);
+      await flush();
+      const dailyLayout = assertQuietKeyMoment('今日陣 wave-1 defeat');
+      root.dataset.runAnalysisModeDailyEarly = 'pass';
+
+      requestDailyChallenge(false);
+      requestChallenge(false);
+      root.dataset.runAnalysisModeLayout = challengeLayout && dailyLayout ? 'pass' : 'fail';
+      root.dataset.runAnalysisModeBrowser = challengeLayout && dailyLayout ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.runAnalysisModeBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

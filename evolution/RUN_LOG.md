@@ -565,3 +565,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - Added deterministic Node coverage for winning-stage selection, defeat facts and practice/eight-wave omission.
 - Strengthened the existing true 320×568 run-analysis direction harness rather than creating a parallel gate: it must show an in-bounds `關鍵一刻 · 破勢1 · 完美1` campaign marker, clear it for the eight-stage terminal and direct practice, preserve all existing 四向防守/修行進度 assertions, then restore a campaign marker after practice isolation.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 158 — Bind 關鍵一刻 to explicit campaign mode
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `1b1b6d4b60c81b8defeacc692c703f61efb3ae95`.
+- Exact-head Actions CI #203 / run `33996463766` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; unresolved inline review threads are empty and Preview feedback reports 0 unresolved items.
+- The latest exact-head All Repos review identifies one actionable **P1**: Run 157 suppresses 關鍵一刻 only for direct practice or when more than four stage records exist, so a valid 連戰試煉 / 今日陣 defeat on Waves 1–4 can be misclassified as campaign and leak the campaign-only marker. Feature work is prohibited until this mode-isolation regression is repaired.
+
+### Repair
+
+- `src/run-analysis.js` now resolves an explicit terminal mode: `campaign`, `practice` or `challenge`. The authoritative `Symbol.for('blade-reversal.challenge-active-v1')` engine flag takes precedence, with terminal `challenge` / `dailyChallenge` detail retained as defensive fallback; direct-practice detail maps to practice only when challenge is not active.
+- 關鍵一刻 is now eligible only in explicit campaign mode. The existing >4-stage guard remains defense-in-depth, but challenge/今日陣 suppression no longer depends on how far the player reached.
+- Added deterministic Node coverage for mode priority and an early one-stage defeat, proving the same report can produce a campaign key moment while standard challenge and 今日陣 modes both return none.
+- Added a dedicated composed true-320×568 browser gate that starts the real standard challenge and 今日陣 adapters, ends each on Wave 1, and requires no `.is-key-moment` card or `data-run-analysis-key-moment-stage` plus an in-bounds result-analysis/challenge terminal surface. The gate is appended to the complete browser suite rather than replacing any existing acceptance path.
+- No combat timing, damage, posture, parry/Perfect/STEP, score, roster, renderer, input, persistence, identifier, analytics or network behavior changed.
+
+### Verification boundary
+
+- Modified/new JavaScript, the embedded browser module, JSON state and browser runner were syntax-checked locally before Git object assembly. Existing campaign key-moment and eight-wave/practice omission gates remain intact.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `run-analysis-mode-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
