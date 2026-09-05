@@ -496,3 +496,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Modified/new JavaScript and the new embedded browser harness were syntax-checked before assembling Git objects. Repository-authoritative verification remains exact-head Actions after the single final commit.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `challenge-mastery-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 155 — Make enemy posture readable through body language
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `0301e7b205f062022bf5a1a895d6c8dfeab0914b`.
+- Exact-head Actions CI #200 / run `33987624086` is terminal success with the complete Node/browser suite green and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; unresolved review threads are empty; Preview feedback reports 0 unresolved items; the latest exact-head review reports no actionable P0/P1/P2.
+- Candidate scoring: **enemy-posture body-language readability 23/25** (impact 5, goal 5, novelty 4, confidence 4, safety 5); bounded generic result key-moment recap 19/25; Closed Beta next-test action 18/25. The posture read wins because it strengthens the core read-the-opponent fantasy without another HUD surface, balance change or persistence path.
+
+### Feature
+
+- Added a presentation-only pressured-guard pass derived from the authoritative current enemy posture snapshot. During gap/recovery, accumulated posture gives the opponent a bounded whole-model retreat/lower/lean plus a small cadence sway; a true guard-break recovery reads stronger.
+- Telegraph and strike explicitly receive zero posture offsets, preserving authored cut direction, feint/final-direction readability and authoritative timing. The pass composes before blade-trajectory/afterimage sampling so downstream Sword→HandR/grip/tip evidence observes the final rendered pose.
+- No HP, score, timing, damage, posture value, parry/Perfect/STEP, roster, input, storage, identifier, analytics or network authority changed.
+- Added pure bounded/privacy regressions and a dedicated real 320×568 PlayCanvas browser gate proving neutral → high-pressure gap → telegraph suppression → stronger guard-break recovery with finite transforms and unchanged HandR/grip authority.
+
+### Verification boundary
+
+- The new helper/tests and browser harness scripts were syntax-checked before Git object assembly; the focused pure helper suite passed 5/5 locally. Full repository verification remains exact-head Actions after the single final commit.
+- Post-commit exact-head `npm test`, complete `npm run test:browser` including `enemy-posture-browser-smoke.mjs`, and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

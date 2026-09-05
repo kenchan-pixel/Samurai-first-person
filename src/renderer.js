@@ -5,6 +5,7 @@ import { installStageIdentity } from './stage-identity.js';
 import { installMobileCombatReadabilityView } from './mobile-combat-readability.js';
 import { installHeavyAttackWeight } from './heavy-attack-weight.js';
 import { installAttackRhythm } from './attack-rhythm.js';
+import { installEnemyPosturePresence } from './enemy-posture-presence.js';
 import { installBladeTrajectoryView } from './blade-trajectory.js';
 import { installEnemyBladeAfterimage } from './enemy-blade-afterimage.js';
 import { installMobileControlReadability } from './mobile-control-readability.js';
@@ -33,10 +34,12 @@ export class View {
         installPlayerWeaponFidelity(
           installEnemyBladeAfterimage(
             installBladeTrajectoryView(
-              installAttackRhythm(
-                installHeavyAttackWeight(
-                  installMobileCombatReadabilityView(
-                    installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+              installEnemyPosturePresence(
+                installAttackRhythm(
+                  installHeavyAttackWeight(
+                    installMobileCombatReadabilityView(
+                      installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+                    ),
                   ),
                 ),
               ),
@@ -61,9 +64,6 @@ export class View {
     const progressionStage = Number.isFinite(state.enemyIndex) ? state.enemyIndex : 0;
     const visualStage = enemyVisualStageIndex(state.enemy, progressionStage);
     if (visualStage === progressionStage) return this.impl.draw(state, ...args);
-
-    // Renderer-only projection: challenge/daily rematches keep their real progression
-    // index in CombatEngine, while presentation reuses the base enemy's authored look.
     const originalStage = state.enemyIndex;
     state.enemyIndex = visualStage;
     try {
