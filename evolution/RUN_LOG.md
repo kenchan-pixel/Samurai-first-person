@@ -355,3 +355,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold is weakened. This is a presentation startup-order repair against an already-approved cumulative baseline.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 149 — Reflect immediate post-tactic wave outcomes
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `9d384d63964bba478b9b3d526f0b93c64c91daf2`.
+- Exact-head Actions CI #194 / run `33969196873` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review comments are empty; Vercel Preview feedback reports 0 unresolved items; latest exact-head review `5121524967` reports no actionable P0/P1/P2.
+- Candidate scoring: **challenge checkpoint outcome reflection 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 22/25; Closed Beta next-test prompt 19/25. The first candidate wins because it closes the existing tactical decision → immediate consequence learning loop without changing balance, persistence or live-combat HUD density.
+
+### Feature
+
+- Added a compact terminal-only **戰策後果** line for accepted Waves 2/4/6 tactical choices. Each choice is bound only to its immediate following Wave 3/5/7 and reports authoritative `player-hit` event count plus clear/defeat outcome, for example `2誓→3無傷 · 4息→5受擊1 · 6誓→7無傷`.
+- The reflection reports what happened after the choice rather than claiming the tactic caused the result. Later waves cannot backfill or rewrite an earlier checkpoint outcome; a defeat in the immediate next wave is explicitly labelled as defeat.
+- Added `src/challenge-tactic-reflection.js` as a bounded session-only CombatEngine event adapter loaded after challenge tactics and before challenge rival. It does not alter HP, score, phase/timing, tactical rewards, roster/attacks, input, renderer, persistence, identifiers, analytics or network behavior.
+- Extended the existing composed 320×568 今日陣/challenge tactical harness with one deterministic authoritative-style Wave-5 `player-hit`, exact 戰策後果 copy, event summary, pointer transparency, result bounds and retry/full-campaign cleanup. Added deterministic pure/composed Node coverage plus no-storage/no-transport guards.
+
+### Verification boundary
+
+- The new JavaScript, Node test and embedded browser-harness module were syntax-checked before the Git objects were assembled. Existing browser-suite breadth and tactical reward/scout/recap assertions are preserved rather than replaced.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

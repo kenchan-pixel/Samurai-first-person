@@ -43,6 +43,7 @@
       CHALLENGE_TACTIC_SCORE_BONUS,
       describeChallengeThreat,
     } from '../src/challenge-tactics.js';
+    import '../src/challenge-tactic-reflection.js';
     import { CombatEngine, ENEMIES } from '../src/game-core.js';
     import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
 
@@ -127,6 +128,13 @@
         root.dataset.challengeTacticRecapChoices === '0';
     }
 
+    function reflectionCleared(node) {
+      return node?.hidden === true &&
+        node.textContent === '' &&
+        !root.dataset.challengeTacticReflection &&
+        root.dataset.challengeTacticReflectionCount === '0';
+    }
+
     async function forceStageClear(stage, tacticChoice = null) {
       if (uiCombat.enemyIndex !== stage - 1) throw new Error(`expected stage ${stage}, got ${uiCombat.enemyIndex + 1}`);
       const enemyId = uiCombat.enemy?.id;
@@ -135,6 +143,13 @@
       uiCombat.phase = 'stage-clear';
       uiCombat.phaseStartedAt = uiNow + 10;
       uiCombat.phaseEndsAt = uiNow + 20;
+      if (stage === 5) {
+        uiCombat.playerHp = Math.max(1, uiCombat.playerHp - 1);
+        uiCombat.events.push({
+          type: 'player-hit',
+          detail: { damage: 1, direction: 'left', playerHp: uiCombat.playerHp },
+        });
+      }
       uiCombat.events.push({ type: 'enemy-defeated', detail: { enemyId, stage } });
 
       const defeatedEvents = uiCombat.drainEvents();
@@ -241,7 +256,8 @@
       const challengeResult = document.querySelector('#challenge-result');
       const tacticPanel = document.querySelector('#challenge-tactic');
       const tacticRecap = challengeResult?.querySelector('[data-challenge-tactic-recap]');
-      if (!dailyButton || !campaignButton || !banner || !challengeResult || !tacticPanel || !tacticRecap) {
+      const tacticReflection = challengeResult?.querySelector('[data-challenge-tactic-reflection]');
+      if (!dailyButton || !campaignButton || !banner || !challengeResult || !tacticPanel || !tacticRecap || !tacticReflection) {
         throw new Error('daily/challenge/tactical player-facing controls were not installed');
       }
 
@@ -258,6 +274,7 @@
         root.dataset.dailyChallengeActive === 'true' &&
         root.dataset.challengeTacticPending === 'false' &&
         !root.dataset.challengeTacticScoutStage &&
+        reflectionCleared(tacticReflection) &&
         entry.start.detail?.dailyChallenge === true &&
         entry.start.detail?.dailyChallengeKey === key &&
         banner.hidden === false &&
@@ -312,8 +329,10 @@
       const victory = finalEvents.find((event) => event.type === 'victory');
       const progress = document.querySelector('[data-challenge-progress]');
       const expectedTacticRecap = '戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1';
+      const expectedTacticReflection = '戰策後果 · 2誓→3無傷 · 4息→5受擊1 · 6誓→7無傷';
       const resultRect = challengeResult.getBoundingClientRect();
       const recapRect = tacticRecap.getBoundingClientRect();
+      const reflectionRect = tacticReflection.getBoundingClientRect();
       const tacticRecapOk =
         tacticRecap.hidden === false &&
         tacticRecap.textContent.trim() === expectedTacticRecap &&
@@ -332,9 +351,31 @@
       root.dataset.challengeTacticRecapTerminal = String(tacticRecapOk);
       if (!tacticRecapOk) throw new Error('challenge tactic recap text/bounds did not match the accepted route');
 
+      const tacticReflectionOk =
+        tacticReflection.hidden === false &&
+        tacticReflection.textContent.trim() === expectedTacticReflection &&
+        root.dataset.challengeTacticReflection === expectedTacticReflection &&
+        root.dataset.challengeTacticReflectionCount === '3' &&
+        getComputedStyle(tacticReflection).pointerEvents === 'none' &&
+        reflectionRect.width > 0 &&
+        reflectionRect.height > 0 &&
+        reflectionRect.left >= resultRect.left - 0.5 &&
+        reflectionRect.right <= resultRect.right + 0.5 &&
+        reflectionRect.top >= resultRect.top - 0.5 &&
+        reflectionRect.bottom <= resultRect.bottom + 0.5 &&
+        reflectionRect.left >= -0.5 &&
+        reflectionRect.right <= innerWidth + 0.5 &&
+        reflectionRect.top >= -0.5 &&
+        reflectionRect.bottom <= innerHeight + 0.5 &&
+        victory?.detail?.challengeTacticReflection?.resolved === 3 &&
+        victory?.detail?.challengeTacticReflection?.hitEvents === 1;
+      root.dataset.challengeTacticReflectionTerminal = String(tacticReflectionOk);
+      if (!tacticReflectionOk) throw new Error('challenge tactic reflection did not truthfully bind choices to the immediate next waves');
+
       const terminalOk =
         stageTagsOk &&
         tacticRecapOk &&
+        tacticReflectionOk &&
         tacticScoutOk &&
         victory?.detail?.challenge === true &&
         victory?.detail?.dailyChallenge === true &&
@@ -354,7 +395,9 @@
       const retryKey = root.dataset.dailyChallengeKey || '';
       const retryFormation = rosterSignature();
       const retryRecapCleared = recapCleared(tacticRecap);
+      const retryReflectionCleared = reflectionCleared(tacticReflection);
       root.dataset.challengeTacticRecapRetryCleared = String(retryRecapCleared);
+      root.dataset.challengeTacticReflectionRetryCleared = String(retryReflectionCleared);
       const retryOk =
         retryKey === key &&
         retryFormation === formation &&
@@ -364,6 +407,7 @@
         root.dataset.challengeTacticPending === 'false' &&
         !root.dataset.challengeTacticScoutStage &&
         retryRecapCleared &&
+        retryReflectionCleared &&
         retry.start.detail?.dailyChallenge === true &&
         retry.start.detail?.dailyChallengeKey === key &&
         banner.hidden === false;
@@ -380,7 +424,9 @@
       campaignButton.click();
       const campaign = drainExpectedStage(1, 'daily campaign handoff');
       const campaignRecapCleared = recapCleared(tacticRecap);
+      const campaignReflectionCleared = reflectionCleared(tacticReflection);
       root.dataset.challengeTacticRecapCampaignCleared = String(campaignRecapCleared);
+      root.dataset.challengeTacticReflectionCampaignCleared = String(campaignReflectionCleared);
       const campaignOk =
         uiCombat.enemies.length === ENEMIES.length + 1 &&
         uiCombat[DAILY_CHALLENGE_ACTIVE] === false &&
@@ -392,6 +438,7 @@
         !root.dataset.challengeTacticScoutEnemy &&
         !root.dataset.challengeTacticScoutTags &&
         campaignRecapCleared &&
+        campaignReflectionCleared &&
         tacticPanel.hidden === true &&
         !root.dataset.dailyChallengeKey &&
         root.dataset.nextChallengeVariant === 'standard' &&
@@ -402,10 +449,10 @@
         banner.hidden === true;
       root.dataset.dailyChallengeCampaignHandoff = String(campaignOk);
       root.dataset.challengeTacticCampaignIsolation = String(campaignOk);
-      if (!campaignOk) throw new Error('今日陣/tactical scout state leaked into the restored four-stage campaign');
+      if (!campaignOk) throw new Error('今日陣/tactical scout/reflection state leaked into the restored four-stage campaign');
 
       root.dataset.dailyChallengeBrowserIntegration =
-        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk && tacticScoutOk ? 'pass' : 'fail';
+        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk && tacticReflectionOk && tacticScoutOk ? 'pass' : 'fail';
     } catch (error) {
       requestDailyChallenge(false);
       requestChallenge(false);
