@@ -99,32 +99,74 @@ function pct(value) {
   return Number.isFinite(value) ? `${value}%` : '—';
 }
 
+function allObservedDirectionsPerfect(snapshot) {
+  const rows = snapshot?.directionFocus?.rows || [];
+  const observed = rows.filter((row) => row.faced > 0);
+  return observed.length > 0 && observed.every((row) => row.accuracyPct === 100);
+}
+
+export function buildPracticeTargetOutcome(previous, current) {
+  if (!previous?.directionFocus || !current?.directionFocus || allObservedDirectionsPerfect(previous)) return null;
+  const direction = previous.directionFocus.weakDirection;
+  const previousRow = focusRow(previous, direction);
+  const currentRow = focusRow(current, direction);
+  if (!direction || !previousRow || previousRow.faced <= 0) return null;
+
+  const label = previousRow.label || previous.directionFocus.weakLabel || direction;
+  if (!currentRow || currentRow.faced <= 0) {
+    return Object.freeze({
+      state: 'unseen',
+      direction,
+      label,
+      previousAccuracyPct: previousRow.accuracyPct,
+      currentAccuracyPct: null,
+      delta: null,
+      text: `上局目標 · ${label} · 今局未再遇到`,
+    });
+  }
+
+  const previousAccuracyPct = previousRow.accuracyPct;
+  const currentAccuracyPct = currentRow.accuracyPct;
+  const delta = Number.isFinite(previousAccuracyPct) && Number.isFinite(currentAccuracyPct)
+    ? currentAccuracyPct - previousAccuracyPct
+    : null;
+  let state = 'steady';
+  let stateLabel = '持平';
+  if (Number.isFinite(delta) && delta > 0 && currentAccuracyPct === 100) {
+    state = 'mastered';
+    stateLabel = '達成';
+  } else if (Number.isFinite(delta) && delta > 0) {
+    state = 'improved';
+    stateLabel = '進步';
+  } else if (Number.isFinite(delta) && delta < 0) {
+    state = 'regressed';
+    stateLabel = '回落';
+  }
+
+  const rateText = delta === 0
+    ? pct(currentAccuracyPct)
+    : `${pct(previousAccuracyPct)}→${pct(currentAccuracyPct)}`;
+  return Object.freeze({
+    state,
+    direction,
+    label,
+    previousAccuracyPct,
+    currentAccuracyPct,
+    delta,
+    text: `上局目標 · ${label} · ${stateLabel} ${rateText}`,
+  });
+}
+
 export function buildPracticeFocusCoach(previous, current) {
   const focus = current?.directionFocus;
   if (!focus) return null;
 
   const nextRow = focusRow(current, focus.weakDirection);
-  const observed = focus.rows.filter((row) => row.faced > 0);
-  const allObservedPerfect = observed.length > 0 && observed.every((row) => row.accuracyPct === 100);
-
-  let trackedDirection = null;
-  let trackedDelta = null;
-  let trackedText = '';
-  const previousDirection = previous?.directionFocus?.weakDirection;
-  if (previousDirection) {
-    trackedDirection = previousDirection;
-    const previousRow = focusRow(previous, previousDirection);
-    const currentRow = focusRow(current, previousDirection);
-    const label = previousRow?.label || previous?.directionFocus?.weakLabel || previousDirection;
-    if (previousRow?.faced > 0 && currentRow?.faced > 0) {
-      trackedDelta = Number.isFinite(previousRow.accuracyPct) && Number.isFinite(currentRow.accuracyPct)
-        ? currentRow.accuracyPct - previousRow.accuracyPct
-        : null;
-      trackedText = `上局${label} ${pct(previousRow.accuracyPct)}→${pct(currentRow.accuracyPct)}（${signed(trackedDelta, '%')}）`;
-    } else {
-      trackedText = `上局${label}今局未再遇到`;
-    }
-  }
+  const allObservedPerfect = allObservedDirectionsPerfect(current);
+  const targetOutcome = buildPracticeTargetOutcome(previous, current);
+  const trackedDirection = targetOutcome?.direction || null;
+  const trackedDelta = targetOutcome?.delta ?? null;
+  const trackedText = targetOutcome?.text || '';
 
   const nextText = allObservedPerfect
     ? '今局遇到刀路全守住｜下一局保持節奏，試收窄 Perfect 時機'
@@ -136,6 +178,7 @@ export function buildPracticeFocusCoach(previous, current) {
     nextAccuracyPct: focus.weakAccuracyPct,
     trackedDirection,
     trackedDelta,
+    targetOutcome,
     allObservedPerfect,
     text: [trackedText, nextText].filter(Boolean).join(' · '),
   });
@@ -181,6 +224,8 @@ function hideProgress() {
   delete document.documentElement.dataset.practiceProgressRoute;
   delete document.documentElement.dataset.practiceProgressFocusDirection;
   delete document.documentElement.dataset.practiceProgressTrackedDirection;
+  delete document.documentElement.dataset.practiceProgressTargetState;
+  delete document.documentElement.dataset.practiceProgressTargetDirection;
   delete document.documentElement.dataset.practiceProgressFocusState;
 }
 
@@ -222,9 +267,18 @@ function renderProgress(routeKey, report) {
     } else {
       delete document.documentElement.dataset.practiceProgressTrackedDirection;
     }
+    if (coach.targetOutcome) {
+      document.documentElement.dataset.practiceProgressTargetState = coach.targetOutcome.state;
+      document.documentElement.dataset.practiceProgressTargetDirection = coach.targetOutcome.direction;
+    } else {
+      delete document.documentElement.dataset.practiceProgressTargetState;
+      delete document.documentElement.dataset.practiceProgressTargetDirection;
+    }
   } else {
     delete document.documentElement.dataset.practiceProgressFocusDirection;
     delete document.documentElement.dataset.practiceProgressTrackedDirection;
+    delete document.documentElement.dataset.practiceProgressTargetState;
+    delete document.documentElement.dataset.practiceProgressTargetDirection;
     delete document.documentElement.dataset.practiceProgressFocusState;
   }
 

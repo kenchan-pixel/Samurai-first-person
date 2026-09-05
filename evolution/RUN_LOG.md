@@ -194,3 +194,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold or gameplay rule is weakened. The change is a truthful presentation repair against the already-approved Closed Beta coaching contract.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 142 — Grade the practice target shown on the retry
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `7a888d8c7460852a0ee62f83575d216161745b57`.
+- Exact-head Actions CI #187 / run `33949747390` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; the latest exact-head review reports no actionable P0–P2 finding; the latest PR/Vercel comments contain no unresolved human blocker.
+- Candidate scoring: **explicit prior practice-target verdict 24/25** (impact 5, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 20/25; challenge pre-wave target cue 18/25. The first candidate wins because Run 140 already tells the player which observed weak direction to train on the same-opponent retry, but the result still returns only a raw percentage delta instead of saying whether that exact objective was achieved.
+
+### Feature
+
+- The existing result-only `修行進度` coaching now grades the exact directional objective that was carried into the retry: **達成** when it reaches 100%, **進步** when accuracy rises, **持平** when unchanged, **回落** when lower, and **今局未再遇到** when that direction never appears in the repeat. The line stays compact, for example `上局目標 · 上方 · 達成 0%→100%`, then continues into the existing next-run focus.
+- The verdict is derived only from authoritative observed strike/parry/STEP/player-hit direction data and only from the previous same-route weak direction. If the previous run was already all-observed-clean, no directional verdict is invented because the next intro challenged **Perfect** rather than naming a direction and the current practice snapshot does not measure Perfect timing.
+- Added deterministic outcome coverage and extended the existing focused 320×568 四向防守 / 修行進度 browser gate to prove the prior target state/direction, visible verdict, result bounds and later campaign cleanup. No new DOM surface, pointer target, persistence key or network path is added.
+- No attack definitions, timing, damage, posture, parry/Perfect/STEP, score, renderer pose, input ownership, local-best schema, identifier, analytics or network transport changed.
+
+### Verification boundary
+
+- The feature reuses the already accepted result-only coaching row and leaves all gameplay authority untouched. Repository-authoritative verification remains exact-head Actions after the single final commit.
+- Post-commit `npm test`, complete `npm run test:browser` including the existing run-analysis direction browser smoke, and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

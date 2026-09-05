@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 141,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD f95a32d4a661f5383842e320716fec60f72855ef is terminal green: Actions CI #186 / run 33947296485 succeeded, exact-head GitHub Vercel status succeeded, Draft PR #1 remains open/Draft/unmerged, inline review threads are empty, and Preview feedback reports 0 unresolved items. The latest exact-head Second Hourly review 5119950734 identified one actionable P2 correctness issue in Run 140: practice-progress clear means every observed direction was defended, but the stage-intro copy said 四向守穩 even when one or more directions were never observed. Run 141 repairs only that truthful-coaching seam. The clear-state intro now says 已見刀路守穩 · 挑戰 Perfect, preserving the existing session-only all-observed-perfect meaning without inventing coverage for unseen directions. A regression case explicitly uses two defended observed directions plus two faced=0 directions and forbids 四向守穩. No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, storage, identifier, analytics or network authority changes.",
-  "last_commit": "f95a32d4a661f5383842e320716fec60f72855ef",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove the corrected observed-direction copy remains bounded and the cumulative mobile/combat baseline stays green. No additional feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 142,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD 7a888d8c7460852a0ee62f83575d216161745b57 is terminal green: Actions CI #187 / run 33949747390 succeeded, exact-head GitHub Vercel status succeeded, Draft PR #1 remains open/Draft/unmerged, inline review threads are empty, the latest exact-head review reports no actionable P0-P2 finding, and the latest PR receipt/Vercel bot status contains no unresolved human blocker. With delivery and review gates clear, Run 142 selects the highest-scoring bounded player-visible slice: close the session-only same-opponent practice objective loop by explicitly grading the directional target that was carried into the retry. The result coaching now labels that prior target as 達成 / 進步 / 持平 / 回落, or 今局未再遇到, using only authoritative observed directional defense. It never invents a directional verdict after an all-observed-clean run because that prior intro challenged Perfect rather than a direction and the practice snapshot does not track Perfect timing. The existing next-run focus remains in the same compact result-only coaching row. No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, storage, identifier, analytics or network authority changes.",
+  "last_commit": "7a888d8c7460852a0ee62f83575d216161745b57",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove the new prior-target verdict is truthful, session/route isolated, in-bounds at 320x568, and leaves the cumulative mobile/combat baseline green. No additional feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "practice_focus_truthfulness_pending_exact_head",
-    "last_observed_head": "f95a32d4a661f5383842e320716fec60f72855ef",
-    "incoming_ci_run": 33947296485,
+    "status": "practice_target_verdict_pending_exact_head",
+    "last_observed_head": "7a888d8c7460852a0ee62f83575d216161745b57",
+    "incoming_ci_run": 33949747390,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "list_deployments returned 403; exact-head GitHub Vercel status is the canonical fallback",
+    "direct_vercel_connector": "project enumeration is unavailable in this runtime; exact-head GitHub Vercel status is the canonical fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 140 exact HEAD f95a32d4 is fully green, but exact-head review 5119950734 found a truthful-copy P2: allObservedPerfect intentionally means all observed directions were clean, while the retry intro overclaimed 四向守穩. The Closed Beta SOT already says unseen directions must never be invented and permits acknowledging only the observed刀路, so Run 141 is a bounded BLOCKER_FIX rather than a new feature. It changes only the clear-state stage-intro wording to 已見刀路守穩 and adds a regression with two observed 100% directions plus two unseen directions. Post-commit full Node/browser CI and exact-head Vercel are mandatory; the PR run comment is authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 141 exact HEAD 7a888d8c is fully green and the latest exact-head review reports no actionable P0-P2 issue, so feature selection is allowed. Candidate scoring: explicit prior practice-target verdict 24/25 (impact 5, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 20/25; challenge pre-wave target cue 18/25. Run 142 chooses the first because Run 140 already shows the next same-route weak direction before the duel while the result still reports only a raw percentage delta. The new verdict closes that loop without adding a new surface, persistence or gameplay authority. It grades only the prior directional target that was actually shown, publishes deterministic target state/direction for browser acceptance, and deliberately emits no directional verdict when the prior all-observed-clean intro challenged Perfect. Post-commit full Node/browser CI and exact-head Vercel are mandatory; the PR run comment is authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,10 +65,10 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice and inspect the corrected 已見刀路守穩 / targeted 今局修行 line together with 四向防守 / 修行進度; refine only if exact Preview evidence shows stale-route leakage, crowding or misleading focus",
+    "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice and inspect 上局目標 verdict + next 今局修行 focus together with 四向防守 / 修行進度; refine only if exact Preview evidence shows stale-route leakage, crowding or misleading grading",
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
-    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surface without duplicating 四向防守 / 修行進度 / 戰策回顧",
+    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surface without duplicating 四向防守 / 修行進度 / 上局目標 / 戰策回顧",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

@@ -164,6 +164,8 @@
         root.dataset.practiceProgressFocusDirection === Direction.TOP &&
         root.dataset.practiceProgressFocusState === 'target' &&
         !root.dataset.practiceProgressTrackedDirection &&
+        !root.dataset.practiceProgressTargetState &&
+        !root.dataset.practiceProgressTargetDirection &&
         progressFocus.textContent.includes('下局目標：上方 0%') &&
         progressFocus.textContent.includes('防 0/1')
       );
@@ -200,14 +202,20 @@
         progress.textContent.includes('受擊 −1') &&
         progress.textContent.includes('反擊 ±0%')
       );
+      const targetVerdict = Boolean(
+        root.dataset.practiceProgressTargetState === 'mastered' &&
+        root.dataset.practiceProgressTargetDirection === Direction.TOP &&
+        progressFocus?.textContent.includes('上局目標 · 上方 · 達成 0%→100%')
+      );
       const trackedFocus = Boolean(
         progressFocus && !progressFocus.hidden &&
         root.dataset.practiceProgressTrackedDirection === Direction.TOP &&
         root.dataset.practiceProgressFocusState === 'clear' &&
-        progressFocus.textContent.includes('上局上方 0%→100%（+100%）') &&
+        targetVerdict &&
         progressFocus.textContent.includes('今局遇到刀路全守住')
       );
       root.dataset.practiceProgressComparison = secondProgress ? 'pass' : 'fail';
+      root.dataset.practiceProgressTargetVerdict = targetVerdict ? 'pass' : 'fail';
       root.dataset.practiceProgressFocusTracked = trackedFocus ? 'pass' : 'fail';
       root.dataset.practiceProgressLayout = progressLayout ? 'pass' : 'fail';
       if (!secondProgress || !trackedFocus || !progressLayout) {
@@ -232,6 +240,8 @@
         !root.dataset.practiceProgressRoute &&
         !root.dataset.practiceProgressFocusDirection &&
         !root.dataset.practiceProgressTrackedDirection &&
+        !root.dataset.practiceProgressTargetState &&
+        !root.dataset.practiceProgressTargetDirection &&
         !root.dataset.practiceProgressFocusState
       );
       root.dataset.practiceProgressIsolation = progressIsolation ? 'pass' : 'fail';
@@ -239,7 +249,7 @@
 
       root.dataset.runAnalysisDirectionBrowser =
         firstPass && challengeOmitted && firstProgress && firstFocus &&
-        secondProgress && trackedFocus && progressLayout && progressIsolation ? 'pass' : 'fail';
+        secondProgress && targetVerdict && trackedFocus && progressLayout && progressIsolation ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   buildPracticeFocusCoach,
   buildPracticeSnapshot,
+  buildPracticeTargetOutcome,
   comparePracticeSnapshots,
 } from '../src/practice-progress.js';
 
@@ -91,9 +92,111 @@ test('practice focus coach turns the weakest observed direction into a next-run 
   assert.equal(coach.nextDirection, 'top');
   assert.equal(coach.nextAccuracyPct, 0);
   assert.equal(coach.trackedDirection, null);
+  assert.equal(coach.targetOutcome, null);
   assert.equal(coach.allObservedPerfect, false);
   assert.match(coach.text, /下局目標：上方 0%/);
   assert.match(coach.text, /防 0\/1/);
+});
+
+test('practice target outcome grades only the directional target actually carried into the retry', () => {
+  const previous = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 2,
+      counterOpenings: 1,
+      counters: 0,
+      directionReads: {
+        top: { faced: 2, defended: 0, hits: 2 },
+        right: { faced: 1, defended: 1, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 0, defended: 0, hits: 0 },
+      },
+    }],
+  });
+  const improved = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 1,
+      counterOpenings: 2,
+      counters: 1,
+      directionReads: {
+        top: { faced: 2, defended: 1, hits: 1 },
+        right: { faced: 1, defended: 1, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 0, defended: 0, hits: 0 },
+      },
+    }],
+  });
+  const mastered = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 0,
+      counterOpenings: 2,
+      counters: 2,
+      directionReads: {
+        top: { faced: 2, defended: 2, hits: 0 },
+        right: { faced: 1, defended: 1, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 0, defended: 0, hits: 0 },
+      },
+    }],
+  });
+  const unseen = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 0,
+      counterOpenings: 1,
+      counters: 1,
+      directionReads: {
+        top: { faced: 0, defended: 0, hits: 0 },
+        right: { faced: 1, defended: 1, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 0, defended: 0, hits: 0 },
+      },
+    }],
+  });
+
+  const improvedOutcome = buildPracticeTargetOutcome(previous, improved);
+  const masteredOutcome = buildPracticeTargetOutcome(previous, mastered);
+  const unseenOutcome = buildPracticeTargetOutcome(previous, unseen);
+
+  assert.equal(improvedOutcome.state, 'improved');
+  assert.equal(improvedOutcome.direction, 'top');
+  assert.equal(improvedOutcome.delta, 50);
+  assert.match(improvedOutcome.text, /上局目標 · 上方 · 進步 0%→50%/);
+  assert.equal(masteredOutcome.state, 'mastered');
+  assert.equal(masteredOutcome.delta, 100);
+  assert.match(masteredOutcome.text, /上局目標 · 上方 · 達成 0%→100%/);
+  assert.equal(unseenOutcome.state, 'unseen');
+  assert.equal(unseenOutcome.delta, null);
+  assert.match(unseenOutcome.text, /上局目標 · 上方 · 今局未再遇到/);
+});
+
+test('practice target outcome does not invent a directional target after an all-observed-clean Perfect challenge', () => {
+  const previous = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 0,
+      counterOpenings: 2,
+      counters: 2,
+      directionReads: {
+        top: { faced: 1, defended: 1, hits: 0 },
+        right: { faced: 0, defended: 0, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 1, defended: 1, hits: 0 },
+      },
+    }],
+  });
+  const current = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 0,
+      counterOpenings: 1,
+      counters: 1,
+      directionReads: {
+        top: { faced: 1, defended: 1, hits: 0 },
+        right: { faced: 0, defended: 0, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 0, defended: 0, hits: 0 },
+      },
+    }],
+  });
+
+  assert.equal(buildPracticeTargetOutcome(previous, current), null);
 });
 
 test('practice focus coach tracks the prior weak direction and recognizes a clean repeat', () => {
@@ -127,7 +230,8 @@ test('practice focus coach tracks the prior weak direction and recognizes a clea
 
   assert.equal(coach.trackedDirection, 'top');
   assert.equal(coach.trackedDelta, 100);
+  assert.equal(coach.targetOutcome.state, 'mastered');
   assert.equal(coach.allObservedPerfect, true);
-  assert.match(coach.text, /上局上方 0%→100%（\+100%）/);
+  assert.match(coach.text, /上局目標 · 上方 · 達成 0%→100%/);
   assert.match(coach.text, /今局遇到刀路全守住/);
 });
