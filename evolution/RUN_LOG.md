@@ -77,7 +77,6 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - This is intentionally a test-only blocker repair because the finding protects a material privacy boundary from silent future regression; it does not reintroduce the rejected structured topic/export feature.
 
 ### Verification boundary
-
 - No acceptance threshold is weakened and no runtime behavior changes.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.
 
@@ -237,7 +236,6 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, CSS, persistence, identifier, analytics or network authority changed.
 
 ### Verification boundary
-
 - This repair changes only which already-existing challenge state the presentation adapter trusts; it does not alter challenge rules or the player-facing campaign/practice feature.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
 
@@ -332,4 +330,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - This documentation-only change qualifies as a blocker repair because it closes an exact-head reviewer finding against the mandatory cumulative product/regression SOT; no acceptance threshold is weakened.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 148 — Close the challenge launch-intent suppression gap
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `92ed8dae1444eb42d2ccf461761e389897f8885d`.
+- Exact-head Actions CI #193 / run `33966421082` passed `npm test` but failed the production browser suite twice on `Production challenge route exposed the duel-read stage-intro card`; exact-head GitHub `Vercel` status is success. Direct Vercel deployment enumeration returns 403, so the GitHub commit status is the canonical deployment signal.
+- Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty. The latest exact-head review classifies the same production challenge leak as actionable P1, so feature work is prohibited.
+
+### Repair
+
+- Kept the Run 137 campaign/direct-practice 敵式 card, copy, layout, timing and all combat behavior unchanged.
+- Extended the existing challenge suppression helper to trust `data-next-run-mode="challenge"`, which `requestChallenge(true)` publishes synchronously before the nested start-button launch. This closes the launch-intent gap before the CombatEngine challenge symbol or DOM active mirror can be observed by the presentation adapter.
+- Reused the same root suppression helper inside `renderDuelReadProfile`, so even a stale drain-time snapshot cannot directly expose the card after a challenge launch has already been armed.
+- Added a focused unit regression proving the launch-intent signal suppresses the card while `data-challenge-active` is still false, while `nextRunMode=campaign` remains eligible for normal campaign/direct-practice presentation. The real 320×568 production challenge/今日陣 quietness gate is unchanged and remains mandatory.
+- No attack timing, damage, posture, parry/Perfect/STEP, score, renderer, input, CSS, persistence, identifier, analytics or network behavior changed.
+
+### Verification boundary
+
+- No acceptance threshold is weakened. This is a presentation startup-order repair against an already-approved cumulative baseline.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

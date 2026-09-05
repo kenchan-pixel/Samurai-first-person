@@ -86,8 +86,15 @@ export function duelPracticeFocusForStageStart(detail = {}, root = globalThis.do
   });
 }
 
+function duelReadProfileSuppressedForRoot(root) {
+  return (
+    root?.dataset?.challengeActive === 'true' ||
+    root?.dataset?.nextRunMode === 'challenge'
+  );
+}
+
 export function duelReadProfileSuppressedForRun(engine, root = globalThis.document?.documentElement) {
-  return engine?.[CHALLENGE_ACTIVE] === true || root?.dataset?.challengeActive === 'true';
+  return engine?.[CHALLENGE_ACTIVE] === true || duelReadProfileSuppressedForRoot(root);
 }
 
 function ensureStyles(documentRef) {
@@ -150,7 +157,7 @@ export function renderDuelReadProfile(profile, documentRef = globalThis.document
     return false;
   }
   const root = documentRef.documentElement;
-  if (root?.dataset?.challengeActive === 'true') {
+  if (duelReadProfileSuppressedForRoot(root)) {
     hideProfile(documentRef);
     return false;
   }
