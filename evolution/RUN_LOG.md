@@ -58,3 +58,25 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The restored source/test pair is byte-for-byte the previously accepted `ef14450` implementation that passed the full Node/browser suite before Run 134. No acceptance threshold is changed.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are still mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.
+
+## Run 136 — Restore feedback no-persistence regression guard
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `495eea6b1a21dd1baec6048bcdba739aec0032bd`.
+- Exact-head Actions CI #181 / run `33932917422` and exact-head GitHub `Vercel` status are terminal success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty and Vercel Preview feedback reports 0 unresolved items.
+- Latest same-head Second Hourly review `5118991053` has no P0/P1/runtime defect but one actionable P2: Run 135 removed the focused source assertion that guarded the approved local/export-only feedback boundary against accidental browser persistence.
+
+### Repair
+
+- Kept the Run 135 runtime contract unchanged; no product code or feedback payload fields changed.
+- Restored the focused source-level no-persistence regression guard in `tests/result-feedback.test.mjs` and extended it to forbid `localStorage`, `sessionStorage` and `indexedDB` references in the feedback module, alongside the existing `fetch` / XHR / beacon / WebSocket transport guards.
+- This is intentionally a test-only blocker repair because the finding protects a material privacy boundary from silent future regression; it does not reintroduce the rejected structured topic/export feature.
+
+### Verification boundary
+
+- No acceptance threshold is weakened and no runtime behavior changes.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.

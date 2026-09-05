@@ -73,8 +73,9 @@ test('deliverBetaFeedback falls back to local clipboard and cancellation remains
   assert.equal(cancellationCopied, false);
 });
 
-test('feedback module has no automatic upload transport', async () => {
+test('feedback module has no automatic upload transport or browser persistence', async () => {
   const source = await readFile(new URL('../src/result-feedback.js', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /\bfetch\s*\(/);
   assert.doesNotMatch(source, /XMLHttpRequest|sendBeacon|WebSocket/);
+  assert.doesNotMatch(source, /localStorage|sessionStorage|indexedDB/);
 });
