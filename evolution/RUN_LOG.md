@@ -311,3 +311,25 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Existing Node and browser-suite breadth is preserved; the established Perfect target harness is strengthened rather than replaced, and deterministic tests cover improving, declining, pre-third-run and unavailable-metric cases.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 147 — Reconcile the delivered 近3局 baseline and regression SOT
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `976f2d2d164c856833cd93bc9341d5f7dcd8039d`.
+- Exact-head Actions CI #192 / run `33963396194` is terminal success after the same-SHA rerun and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; Vercel Preview feedback reports 0 unresolved items.
+- Latest exact-head Second Hourly review `5121042009` has one actionable P2: Run 146 delivered and verified the player-visible **近3局** practice trajectory, but `docs/CURRENT_BASELINE.md` and `docs/REGRESSION_CHECKLIST.md` still describe only the immediate previous-attempt comparison. Because cumulative player-visible behavior and its acceptance contract are canonical SOT, this is a material delivery/SOT blocker and feature work is prohibited this run.
+
+### Repair
+
+- Updated `docs/CURRENT_BASELINE.md` to record the session-only rolling last-three same-route trend, the third-result visibility boundary, route isolation, three-snapshot cap, page-refresh reset, `—` handling for unavailable metrics, campaign/challenge/今日陣 exclusion and pointer-transparent 320×568 result-only presentation.
+- Extended `docs/REGRESSION_CHECKLIST.md` so future runs must preserve attempts one/two hidden, third-and-later truthful rolling values, route-switch/refresh isolation, campaign/challenge/今日陣 exclusion, coexistence with the immediate comparison/target coaching and the existing bounded pointer-transparent result surface.
+- Product source, tests and browser thresholds are unchanged. The repair records behavior already present in `src/practice-progress.js` and already exercised by the Run 146 exact-head Node/browser suite; it does not introduce a new feature, persistence, identifier, network path, combat rule or layout surface.
+
+### Verification boundary
+
+- This documentation-only change qualifies as a blocker repair because it closes an exact-head reviewer finding against the mandatory cumulative product/regression SOT; no acceptance threshold is weakened.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

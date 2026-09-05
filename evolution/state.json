@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 146,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD a7952ddcfc93ffb57fda37ec556e6093372bdca4 is terminal green: Actions CI #191 / run 33960874424 passed npm test and the complete browser suite, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review threads are empty, the latest exact-head Second Hourly review reports no actionable P0/P1/P2, and Vercel Preview Comments reports 0 unresolved feedback. Direct Vercel project enumeration remains unavailable in this runtime, so exact-head GitHub Vercel status is the canonical deployment signal. Run 146 therefore delivers one bounded player-visible direct-practice slice: after the third same-route result in the current page session, the existing 修行進度 card adds a compact 近3局 trajectory for authoritative defense rate, hits taken and manual-counter conversion, plus a truthful overall direction (整體向上 / 大致持平 / 需要調整). Attempts one and two remain unchanged, the immediate previous-attempt comparison and prior-target/Perfect coaching stay intact, histories are route-isolated and capped to three snapshots, refresh clears them, and no persistence, identifier, analytics, network, balance, renderer, input or combat authority changes.",
-  "last_commit": "a7952ddcfc93ffb57fda37ec556e6093372bdca4",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove the new third-attempt practice trend plus the cumulative 320x568 campaign/practice/challenge/今日陣 baseline. No additional feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 147,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD 976f2d2d164c856833cd93bc9341d5f7dcd8039d is terminal green: Actions CI #192 / run 33963396194 passed npm test and the complete browser suite, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review threads are empty, and Vercel Preview Comments reports 0 unresolved feedback. The latest exact-head Second Hourly review 5121042009 has one actionable P2 delivery/SOT finding: Run 146's player-visible 近3局 practice trajectory was implemented and verified but not recorded in CURRENT_BASELINE.md or REGRESSION_CHECKLIST.md. Under the repository rule that cumulative player-visible behavior and its regression contract must remain canonical, this blocks feature work. Run 147 therefore performs a bounded documentation/SOT BLOCKER_FIX only: reconcile the rolling last-three same-route trend, third-run visibility boundary, truthful unavailable-metric handling, route isolation/refresh reset, campaign/challenge exclusion and 320x568 pointer-transparent result-surface acceptance. No gameplay, runtime, test threshold, renderer, input, persistence, privacy/network or balance behavior changes.",
+  "last_commit": "976f2d2d164c856833cd93bc9341d5f7dcd8039d",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the SOT reconciliation commit. No additional feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "practice_three_attempt_trend_pending_exact_head",
-    "last_observed_head": "a7952ddcfc93ffb57fda37ec556e6093372bdca4",
-    "incoming_ci_run": 33960874424,
+    "status": "practice_three_attempt_sot_reconciliation_pending_exact_head",
+    "last_observed_head": "976f2d2d164c856833cd93bc9341d5f7dcd8039d",
+    "incoming_ci_run": 33963396194,
     "incoming_ci_result": "success",
     "incoming_ci_failure": null,
     "incoming_github_vercel_status_count": 1,
@@ -28,7 +28,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 146 starts from a fully green exact HEAD with no actionable current-head review finding. Candidate scoring selected bounded three-attempt same-route practice trend at 23/25 (impact 4, goal 5, novelty 4, confidence 5, safety 5) over a bounded result key-moment recap at 20/25 and challenge checkpoint outcome reflection at 19/25. The practice trend wins because it turns the already-approved repeat dojo loop into a visible short-session trajectory without creating progression currency, persistent mastery, remote data or another live-combat overlay. It appears only after three results for the same direct-practice route, retains at most three frozen snapshots per route in memory, preserves the immediate previous-attempt comparison and target/Perfect verdicts, and reuses the existing result card. The existing three-run Perfect browser harness now fails closed unless the trend stays hidden on attempts one/two, appears on attempt three with truthful values, remains pointer-transparent and fits 320x568. Post-commit full Node/browser CI and exact-head Vercel are mandatory, with the PR run comment authoritative for resulting SHA/status under the one-commit rule."
+    "note": "Run 147 starts from a fully green exact HEAD but cannot select a feature because exact-head Second Hourly review 5121042009 identifies a material cumulative-SOT gap from Run 146. The source already keeps a separate route-keyed in-memory rolling history capped to three snapshots, hides the trend before the third same-route result, renders unavailable values as —, and keeps the result row pointer-transparent; the exact-head Node/browser suite already passed after the Run 146 same-SHA rerun. This run changes only CURRENT_BASELINE.md, REGRESSION_CHECKLIST.md, state and run log so future autonomous runs must preserve the actual delivered behavior. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
