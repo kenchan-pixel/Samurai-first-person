@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 136,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 495eea6b1a21dd1baec6048bcdba739aec0032bd is terminal green in Actions CI #181 and exact-head GitHub Vercel status, with no inline review threads and zero unresolved Vercel Preview feedback. The latest same-head Second Hourly review identifies one actionable P2: Run 135 restored the approved feedback runtime contract but also removed the focused source guard that prevents accidental browser persistence of feedback/report data. Because this directly protects the approved Closed Beta privacy boundary, Run 136 restores the no-persistence assertion independently of the rejected topic feature and extends it to localStorage, sessionStorage and indexedDB while retaining the existing no-network transport guards. Runtime/product behavior is unchanged.",
-  "last_commit": "495eea6b1a21dd1baec6048bcdba739aec0032bd",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The focused feedback test must prove both no automatic upload transport and zero browser persistence while the complete Node/browser suite remains green. No feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 137,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD 1ff1e9bdab859435141fc8cbb4e00daabaffdca6 is terminal green in Actions CI #182 and exact-head GitHub Vercel status, with zero inline review threads, zero unresolved Preview feedback, and latest exact-head review 5119189042 reporting no actionable P0/P1/P2. With the delivery fence clear, Run 137 scored three player-visible candidates: opponent stage-intro read profiles 23/25, challenge-only post-wave threat forecast 19/25, and Perfect-technique streak feedback 18/25. The selected slice adds a bounded campaign/direct-practice 敵式 card during stage-intro for Ashigaru, Ronin, Oni, Shogun and direct Blood Moon, giving one truthful tell plus one response cue and clearing before the first telegraph. Challenge/今日陣 remain quiet to avoid stacking with their existing intro surfaces. The adapter observes only existing CombatEngine events, owns no input, storage, network, timing, damage, score or renderer authority, and adds focused Node plus real 320x568 browser acceptance.",
+  "last_commit": "1ff1e9bdab859435141fc8cbb4e00daabaffdca6",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The new focused browser gate must prove all four campaign archetypes plus direct Blood Moon render in bounds and pointer-transparent at 320x568, clear before telegraph, and stay suppressed in challenge/今日陣. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "feedback_no_persistence_guard_pending_exact_head",
-    "last_observed_head": "495eea6b1a21dd1baec6048bcdba739aec0032bd",
-    "incoming_ci_run": 33932917422,
+    "status": "duel_read_profile_pending_exact_head",
+    "last_observed_head": "1ff1e9bdab859435141fc8cbb4e00daabaffdca6",
+    "incoming_ci_run": 33935947767,
     "incoming_ci_result": "success_node_and_complete_browser",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Exact incoming HEAD 495eea6 is fully deployed and CI-green. Same-head review 5118991053 finds no runtime defect but identifies a privacy-boundary regression in focused coverage: tests/result-feedback.test.mjs no longer forbids browser persistence APIs. Run 136 restores that source guard without changing src/result-feedback.js or reintroducing the rejected topic/export feature. Post-commit full Node/browser CI and exact-head Vercel remain mandatory."
+    "note": "Exact incoming HEAD 1ff1e9b is fully deployed and CI-green; latest exact-head review has no actionable P0/P1/P2. Run 137 introduces only a stage-intro presentation adapter and focused browser gate. Post-commit full Node/browser CI and exact-head Vercel remain mandatory; PR run comment is authoritative for resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,10 +65,10 @@
     }
   },
   "next_candidates": [
+    "ACCEPTANCE: inspect the new stage-intro 敵式 card on campaign/direct-practice Preview; it must improve opponent distinction without lingering into telegraph or competing with blade reads",
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
     "FEATURE/ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice using 四向防守 plus weak-direction 修行進度 coaching; change difficulty only if repeated evidence shows a concrete wall",
     "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
-    "FEATURE: continue Closed Beta release prep only within the currently approved explicit feedback payload; any extra exported structured field requires owner-approved SOT expansion first",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

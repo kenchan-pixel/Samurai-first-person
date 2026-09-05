@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Duel read profile browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/duel-read-profile.js';
+    import { CombatEngine, ENEMIES } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE, activateBossPhaseTwoPractice } from '../src/boss-encounter.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const flush = async () => {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    };
+
+    function card() {
+      return document.querySelector('#duel-read-profile');
+    }
+
+    function assertVisible(profileId, snippets = []) {
+      const node = card();
+      if (!node || node.hidden) throw new Error(`duel read card was hidden for ${profileId}`);
+      if (node.dataset.profile !== profileId) throw new Error(`expected profile ${profileId}, got ${node.dataset.profile}`);
+      for (const snippet of snippets) {
+        if (!node.textContent.includes(snippet)) throw new Error(`profile ${profileId} missing copy: ${snippet}`);
+      }
+      const rect = node.getBoundingClientRect();
+      if (rect.left < -0.5 || rect.right > innerWidth + 0.5 || rect.top < -0.5 || rect.bottom > innerHeight + 0.5) {
+        throw new Error(`profile ${profileId} overflowed ${innerWidth}x${innerHeight}: ${JSON.stringify(rect.toJSON?.() || rect)}`);
+      }
+      if (getComputedStyle(node).pointerEvents !== 'none') throw new Error(`profile ${profileId} owns pointer input`);
+    }
+
+    function startEnemy(enemy, now) {
+      const engine = new CombatEngine({ enemies: [enemy] });
+      engine.start(now);
+      engine.drainEvents();
+      return engine;
+    }
+
+    try {
+      root.dataset.challengeActive = 'false';
+
+      const ashigaru = startEnemy(ENEMIES[0], 1000);
+      await flush();
+      assertVisible('ashigaru', ['敵式 · 直斬試探', '四向基本刀路']);
+      root.dataset.duelReadProfileAshigaru = 'true';
+
+      ashigaru.update(2550);
+      ashigaru.drainEvents();
+      await flush();
+      if (!card()?.hidden || root.dataset.duelReadProfileState !== 'hidden') {
+        throw new Error('duel read card did not clear before the first telegraph');
+      }
+      root.dataset.duelReadProfileClearsBeforeTelegraph = 'true';
+
+      startEnemy(ENEMIES[1], 4000);
+      await flush();
+      assertVisible('ronin', ['敵式 · 假動作', '最後方向']);
+      root.dataset.duelReadProfileRonin = 'true';
+
+      startEnemy(ENEMIES[2], 7000);
+      await flush();
+      assertVisible('oni', ['敵式 · 重斬壓迫', '重擊會追距']);
+      root.dataset.duelReadProfileOni = 'true';
+
+      startEnemy(BOSS_PHASE_ONE, 10000);
+      await flush();
+      assertVisible('shogun', ['敵式 · 快慢交錯', '重斬同假動作']);
+      root.dataset.duelReadProfileShogun = 'true';
+
+      const bloodMoon = new CombatEngine({ enemies: [BOSS_PHASE_ONE] });
+      bloodMoon.start(13000);
+      if (!activateBossPhaseTwoPractice(bloodMoon, 13000)) throw new Error('failed to activate direct Blood Moon practice');
+      bloodMoon.drainEvents();
+      await flush();
+      assertVisible('blood-moon', ['敵式 · 血月壓迫', '節奏更緊', '最後變向']);
+      root.dataset.duelReadProfileBloodMoon = 'true';
+
+      root.dataset.challengeActive = 'true';
+      startEnemy(ENEMIES[1], 16000);
+      await flush();
+      if (!card()?.hidden) throw new Error('duel read card should stay hidden in challenge/今日陣');
+      root.dataset.duelReadProfileChallengeQuiet = 'true';
+      root.dataset.challengeActive = 'false';
+
+      root.dataset.duelReadProfileLayout = 'pass';
+      root.dataset.duelReadProfileBrowserIntegration = 'pass';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.duelReadProfileBrowserIntegration = 'fail';
+    }
+  </script>
+</body>
+</html>

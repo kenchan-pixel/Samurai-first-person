@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.41.0-evolution — Opponent stage-intro read profiles
+
+- Added a compact campaign/direct-practice **敵式 / 應對** card during the existing stage-intro window. Ashigaru, Ronin, Oni and Shogun now open with one opponent-specific tell and one response cue; direct Blood Moon practice upgrades to a distinct tighter-pressure profile.
+- The card is driven only by existing CombatEngine `stage-start`, direct-practice `boss-phase` and `telegraph` events. It clears before live telegraph/blade reading, is suppressed in 連戰試煉 / 今日陣 to avoid stacking their existing intro surfaces, and owns no input, storage, network, timing, damage, score or renderer authority.
+- Added deterministic profile/privacy coverage plus a focused real 320×568 browser gate proving all five profiles, viewport bounds, pointer transparency, pre-telegraph cleanup and challenge quietness.
+
 ## 0.40.0-evolution — Direction-aware first-person grip
 
 - Upgraded the existing first-person katana support silhouette from a direction-neutral hand/forearm pulse to a bounded four-direction two-hand brace. TOP raises the support hands/forearms, BOTTOM lowers them, RIGHT/LEFT mirror a compact lateral brace, Perfect Parry strengthens the same family, and counter follow-through remains bounded.

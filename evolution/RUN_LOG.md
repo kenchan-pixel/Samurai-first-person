@@ -80,3 +80,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold is weakened and no runtime behavior changes.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.
+
+## Run 137 — Opponent stage-intro read profiles
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `1ff1e9bdab859435141fc8cbb4e00daabaffdca6`.
+- Exact-head Actions CI #182 / run `33935947767` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; latest exact-head review `5119189042` reports no actionable P0/P1/P2; Preview feedback reports 0 unresolved items.
+- Candidate scoring: **敵式 stage-intro read profiles 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); challenge post-wave threat forecast 19/25; Perfect-technique streak feedback 18/25. The first candidate wins because it strengthens the core read-the-opponent fantasy across every campaign/practice duel without touching balance or adding live-combat clutter.
+
+### Feature
+
+- Added a compact pointer-transparent **敵式 / 應對** card during the existing 1.55 s stage-intro only. Ashigaru teaches steady four-direction reading, Ronin warns that the first motion may be a feint, Oni highlights heavy tracking pressure, Shogun highlights mixed heavy/feint rhythm, and direct Blood Moon practice upgrades to a distinct tighter-pressure profile.
+- The card is event-driven from the existing `stage-start`, direct-practice `boss-phase`, and `telegraph` events; it clears before the first live telegraph rather than observing a per-frame phase dataset. Challenge/今日陣 suppress it so their existing intro/banner surfaces remain unchanged.
+- No attack definitions, timing, damage, posture, parry/Perfect/STEP, score, persistence, identifiers, analytics, network transport, renderer pose or input ownership changed.
+- Added deterministic profile/privacy coverage and a focused real 320×568 browser gate for Ashigaru/Ronin/Oni/Shogun/Blood Moon copy, viewport bounds, pointer transparency, pre-telegraph cleanup and challenge quietness.
+
+### Verification boundary
+
+- The new pure profile tests were syntax-checked and exercised in an isolated Node harness before the Git object was created; repository-authoritative verification remains exact-head Actions after the single final commit.
+- Post-commit `npm test`, complete `npm run test:browser` including `duel-read-profile-browser-smoke.mjs`, and exact-head Vercel success are mandatory. The PR run comment is the authoritative resulting-SHA receipt under the one-commit rule.
