@@ -1,58 +1,116 @@
 # Regression Checklist
 
-Run this checklist before marking an evolution pull request complete.
+Run before accepting an evolution implementation. Current mobile acceptance viewport is 320×568 CSS pixels.
 
-## Startup and layout
+## Startup / layout / input
 
-- [ ] App loads without JavaScript errors.
-- [ ] Start screen is usable at 320×568 CSS pixels.
-- [ ] iPhone portrait safe areas do not hide HUD or restart controls.
-- [ ] The primary combat view is not blocked by instructions or panels.
+- [ ] App loads without JS errors; Start remains usable inside 320×568 and safe areas.
+- [ ] Guided Duel, 刀路清晰, 節拍提示, 練浪人 / 練鬼 / 練將軍 / 練血月, 連戰試煉 and 今日陣 remain reachable without pushing 拔刀 off-screen; the shared selector stays in bounds with all six entries.
+- [ ] STEP/range/feedback follow the selected lower safe corner: right remains default, left-hand mode mirrors only the footwork cluster to the lower-left, and both layouts stay fully inside the 320×568 safe area without obstructing centre/bottom/opposite parry regions.
+- [ ] Pause remains a bounded 44×44 top-right HUD control; its own hit is isolated and immediately adjacent top/right canvas taps still map correctly.
+- [ ] Portrait top parry extends to 42% height; left/right/bottom retain 28%; nearest edge wins overlaps; centre stays neutral; landscape stays symmetric 28%.
+- [ ] Top/right/bottom/left taps and swipes map correctly; one gesture cannot trigger both; mouse fallback works.
+- [ ] STEP captures/rejects dragged pointers correctly and leaves later canvas pointer state clear.
+- [ ] 刀路清晰 / 節拍提示 / impact / Perfect-technique / challenge 氣勢 / 宿敵步速 / 今日陣 overlays remain pointer-transparent.
+- [ ] Campaign/direct-practice **敵式** stage-intro card stays pointer-transparent and fully inside 320×568, shows the current opponent profile only before live blade reading, and does not appear in 連戰試煉 / 今日陣.
 
-## Input
+## Pause / guide / accessibility
 
-- [ ] Tap near top produces top block.
-- [ ] Tap near right produces right block.
-- [ ] Tap near bottom produces bottom block.
-- [ ] Tap near left produces left block.
-- [ ] A centre tap does not accidentally trigger an edge block.
-- [ ] Swipe direction is recognised for top, right, bottom, and left.
-- [ ] Tap and swipe are not both triggered by one gesture.
-- [ ] Mouse fallback remains usable.
+- [ ] Pause freezes game-time phase/timing/animation; 玩法 returns to still-paused state; resume has no catch-up; restart/home reuse normal paths.
+- [ ] Guided Duel observes real Stage 1 read → parry → manual counter; evade-only clear does not persist completion; wrong-direction/time and feints are explained contextually.
+- [ ] 刀路清晰 follows displayed/final feint direction, strengthens at strike, clears after resolution, suppresses duplicate centre cue and stays static under reduced motion.
+- [ ] 節拍提示 uses authoritative telegraph progress, displayed/final direction and existing Perfect boundary; it never changes combat rules or creates a second clock.
+- [ ] With 節拍提示 off, engine updates cause zero timing-assist DOM mutations after setup; toggle-off clears once and later updates remain idle.
+- [ ] Blocked localStorage is non-fatal for all local preferences/best-run state, including challenge best and optional PB splits.
 
-## Combat
+## Combat / STEP / progression
 
-- [ ] Correct direction and timing parries an attack.
-- [ ] Wrong direction does not count as a parry.
-- [ ] Early/late input does not become an unintended perfect parry.
-- [ ] Perfect parry gives increased counter damage.
-- [ ] Enemy attacks damage the player when not parried.
-- [ ] Counterattack can only land once per recovery window.
-- [ ] Player and enemy health never become NaN or negative in the HUD.
+- [ ] Correct-direction parry remains legal throughout strike. A bounded near-contact late-telegraph buffer accepts only after the final direction is resolved, resolves at strike contact as a normal parry and can never become Perfect; earlier telegraph input, unresolved feints, wrong directions and input after the strike window still fail.
+- [ ] Enemy hits cause damage; health/posture never becomes invalid; only one manual counter lands per opening.
+- [ ] Parry raises enemy posture; Perfect raises faster; guard break gives exactly +2 next valid manual counter and resets correctly.
+- [ ] Incoming hits build player posture; heavy hits build faster; player guard break adds +1 to that hit and resets; successful parry relieves one point.
+- [ ] Perfect Parry immediately deals 1 auto-riposte damage, builds posture and normally leaves one manual counter; normal parry—including a buffered near-contact guard—does not auto-attack.
+- [ ] Stage start/restart begins mid distance. Normal STEP works only in bounded early strike and only evades if reach is escaped. Heavy/long attacks still track at far distance.
+- [ ] Perfect STEP remains narrower, deals exactly 1 auto-riposte damage, adds no posture and normally leaves one manual counter. Blood Moon/defeat closes that opening immediately.
+- [ ] Perfect Parry and Perfect STEP finish on distinct transient technique identities without changing the above rewards: Perfect Parry must say `敵勢大增`, Perfect STEP must say `無敵勢`; phase-shift/defeat STEP variants must not advertise an extra swipe, and the Perfect Parry auto-riposte counter must not replace the Perfect Parry cue with a second identity.
+- [ ] Ashigaru → Ronin → Oni → Crimson Shogun campaign progression remains intact; stage transition/restart resets combat state and distance.
+- [ ] 練浪人 starts the unchanged real Stage 2 and ends there; 練鬼 starts the unchanged real Stage 3 Oni Guard (8 HP / posture 5 / existing heavy attacks) and ends there; 練將軍 starts real Stage 4 Phase I, keeps the normal Blood Moon transition and ends there. All three practice routes keep retry/campaign handoff correct and never write campaign personal best.
+- [ ] 練血月 starts real Crimson Shogun Phase II directly at 6 HP, posture 7 and the unchanged Blood Moon attack/timing profile; it skips the normal +300 Phase I→II transition reward, cannot trigger that transition a second time, ends after Stage 4, supports 再戰血月 / full-campaign handoff and never writes campaign personal best.
+- [ ] 連戰試煉 starts exactly 8 stages, preserves HP/score across waves, uses bounded pressure rematches only at Stages 4–7, reaches the real Crimson Shogun/Blood Moon at Stage 8, keeps retry inside challenge and restores the normal four-duel roster on campaign handoff.
+- [ ] 今日陣 is challenge-only and deterministic for the same local `YYYY-MM-DD`: Stages 1–3 and Stage 8 remain unchanged, Stages 4–6 are a permutation of the existing three pressure rematches, Stage 7 stays Ronin Master, and only attack opening order rotates. HP/posture/gap/recovery/Perfect/telegraph/strike/damage/heavy values remain identical to each source pressure definition; standard challenge/campaign/practice restore unchanged.
+- [ ] Challenge 氣勢 is challenge-only: one hitless clear shows 1/2 momentum, any real `player-hit` emitted through the composed CombatEngine path breaks the chain, two consecutive hitless clears reset momentum and trigger exactly one 不屈 reward—+1 HP when damaged or +300 challenge score at full HP. If a full-health final-wave rally and victory are drained together, the post-rally score is authoritative in engine state, victory/result data and challenge-best persistence. Campaign/practice HP, score and timing remain unchanged.
+- [ ] Challenge 宿敵步速 is observation-only: it reads the authoritative cumulative challenge score after same-wave rewards/choices, never adds or removes score/HP, never pauses/advances the combat clock, and cannot change challenge ranking, enemy definitions, input, STEP/parry or campaign/practice state.
+- [ ] Challenge Waves 2/4/6 **下一陣 · 偵察** reads only `engine.enemies[checkpoint]` plus that next enemy's existing attack metadata. The shown enemy must exactly match the actual next runtime opponent; tags are bounded to truthful `重斬 / 變刀 / 快起手 / 正攻`, the scout must not rewrite roster/attacks/HP/score/timing, and it must clear as soon as the tactical choice closes.
+- [ ] Challenge/今日陣 **戰策回顧** shows only accepted Waves 2/4/6 choices plus their direct authoritative HP/score effect, stays inside the existing 320×568 challenge-result surface, and clears on retry/full-campaign handoff. It creates no persistence key, account, identifier, analytics/network write, balance rule or scoring authority.
+- [ ] Challenge/今日陣 **戰策後果** binds only an accepted Wave 2/4/6 choice to the immediately following Wave 3/5/7. It counts authoritative `player-hit` events and records only that wave's clear/defeat result; later waves cannot backfill or alter an earlier outcome. Zero hits on a completed next wave renders `無傷`, actual hits render `受擊N`, and an immediate-next-wave defeat is labelled as defeat rather than a clear. The reflection is observational only and must never alter HP, score, timing, tactics or enemy state.
+- [ ] Challenge/今日陣 **再戰重點** may derive only from resolved `戰策後果` outcomes: an immediate-next-wave defeat takes priority, otherwise the highest real hit-count Wave 3/5/7 is selected with an earlier-stage tie-break, otherwise a clean-route keep-rhythm cue is used. It may retitle only the existing retry control and must not state or imply that 整息/血誓 caused the observed result. Retry/full-campaign handoff must clear it before the next run.
 
-## Progression
+## Direction / animation / presentation
 
-- [ ] All three baseline enemies appear.
-- [ ] Each enemy retains distinct health and attack behaviour.
-- [ ] Defeating one stage advances to the next stage.
-- [ ] Defeating the final enemy reaches victory.
-- [ ] Reaching zero player health reaches defeat.
-- [ ] Restart resets health, enemy, stage, timing, and HUD.
+- [ ] **Before the first attack and during neutral gap/stage-intro, authored `Guard` is active and the actual Sword world axis points strongly toward the player/camera.** Sword stays directly parented to HandR.
+- [ ] **Enemy RIGHT/LEFT use player-screen cut travel:** RIGHT starts screen-left and travels screen-right; LEFT starts screen-right and travels screen-left. Only opponent horizontal presentation is mirrored; player input/parry/counter direction stays direct.
+- [ ] Telegraph body/blade motion matches all four incoming directions; Ronin feints switch to the final authored direction without generic Windup contamination.
+- [ ] Normal telegraph → strike → recovery stays on one Attack* track; interrupted recovery selects Parry. No Run-52-style per-frame Chest/arm/HandR override and no normal runtime Sword rotation returns.
+- [ ] Existing authoritative attack timings produce four presentation families without rewriting balance: measured cuts visibly load/hold, standard cuts remain neutral, quick cuts visibly snap/drive, and heavy cuts stay exclusively on the existing heavy-weight pass. The rhythm layer does not change telegraph/strike duration, damage, parry/Perfect/STEP or final/feint direction authority.
+- [ ] All four actual blade-tip paths advance toward/cross the player-facing parry plane and follow through; RIGHT/LEFT travel in their declared screen direction; top cuts down; bottom rises.
+- [ ] Authored mode keeps Sword/HandR orientation locked; whole-model depth assist stays within its bound; tempo readability never rotates Sword/HandR; tip trail follows actual history; full-blade afterimages sample only actual Sword history, stay bounded/reused and disappear under reduced-motion.
+- [ ] Player first-person katana remains visibly held by two hands/forearms and parry/counter animation follows direct input direction.
+- [ ] Normal/perfect parries, counter, guard break and incoming hit feedback remain visually distinct without covering blade reads; reduced motion preserves readable static/contact cues.
+- [ ] Perfect-technique identity reuses the existing action-cue footprint rather than adding persistent HUD: `PERFECT PARRY` keeps a cool clash/`破` treatment and `PERFECT STEP` keeps a green lateral/`閃` treatment; both stay inside 320×568, remain pointer-transparent and retain readable text when motion is reduced.
+- [ ] Four baseline stage identities and Shogun Phase I/Blood Moon signature presentation remain distinct without changing hit/timing/reach/damage. Challenge/今日陣 rematches resolve presentation from the current enemy id—not the 8-wave ordinal—so Waves 4–8 reuse Ashigaru → Ronin → Oni → Ronin → Shogun authored silhouettes/palettes while CombatEngine keeps its real progression index.
+- [ ] **敵式** copy remains truthful to existing mechanics only: Ashigaru steady four-direction reads, Ronin feints, Oni heavy tracking, Shogun mixed heavy/feint rhythm, direct Blood Moon tighter mixed pressure. It is driven by existing events, performs no per-frame phase observation, and clears on `telegraph` before any live direction read.
+- [ ] Live fight remains quiet: no persistent READ/PARRY/footer/block-zone/arena clutter; detailed instructions stay behind 玩法. The stage-intro-only 敵式 card must already be hidden once telegraph begins.
+- [ ] Challenge 氣勢 badge appears only during challenge, stays inside the 320×568 viewport, remains pointer-transparent, does not cover the blade-read centre, hides at terminal/campaign handoff, and the terminal challenge strip reports total 不屈 triggers.
+- [ ] Challenge 宿敵步速 badge appears only during challenge/今日陣, stays inside the 320×568 viewport below the top-right HUD, remains pointer-transparent, displays a signed PB delta only when the stored best has a valid split for that wave, and hides at terminal/campaign handoff.
+- [ ] Challenge **戰前抉擇** remains a phone-safe centered modal at Waves 2/4/6 with two ≥44 px choices. Its new **下一陣 · 偵察** block stays entirely inside the same 320×568 card, owns no pointer input, remains visible while the decision is parked, and never becomes live-combat HUD after the choice.
+- [ ] Challenge **戰策後果** appears only in the terminal challenge-result surface when at least one immediate post-choice wave has resolved, remains pointer-transparent and fully inside the 320×568 result bounds, and clears on challenge/今日陣 retry plus full-campaign handoff without leaking into campaign/practice results.
+- [ ] Challenge **再戰重點** appears only in the same terminal challenge-result surface, stays pointer-transparent and fully inside the 320×568 result bounds, may change only the existing retry button label, and clears on challenge/今日陣 retry plus full-campaign handoff without becoming live-combat HUD or leaking into campaign/practice.
+- [ ] 今日陣 shows only a compact pointer-transparent dated intro banner before the first telegraph and pressure-stage title identity; the intro banner clears before live blade reading and the terminal strip identifies the date-keyed run without adding non-challenge combat clutter.
+- [ ] 練血月 immediately uses the existing Blood Moon Phase II atmosphere/presentation, not a duplicated visual state, while the direct-practice score starts without the normal transition bonus.
+- [ ] Result **分享** stays off the live-combat HUD, is bounded to its own ≥44 px result-screen target inside the 320×568 safe viewport, and does not make campaign/practice/challenge/今日陣 terminal content taller.
 
-## Presentation and performance
+## Mastery / privacy / performance
 
-- [ ] WebGL scene renders a first-person arena, enemy, enemy sword, and player katana.
-- [ ] Telegraph animation visibly matches the incoming direction.
-- [ ] Player parry/attack animation matches input direction.
-- [ ] Audio remains optional and starts only after user interaction.
-- [ ] Gameplay timing is based on elapsed time, not frame count.
-- [ ] No unbounded object, event-listener, particle, or audio-node growth is introduced.
-- [ ] Recent target phone remains responsive during a complete three-stage run.
+- [ ] Mastery/result analysis does not alter combat. Campaign victory shows 0–100 + S/A/B/C/D; defeat remains D with stats.
+- [ ] Automatic riposte damage contributes to total damage but never inflates manual counter count/damage coaching.
+- [ ] Campaign/direct-practice result analysis derives **四向防守** only from authoritative incoming `strike` direction plus successful parry/STEP and `player-hit` outcomes, highlights the lowest observed defense rate, remains result-only, and omits the extra map when the run contains more than four stages so 連戰/今日陣 terminal layout stays unchanged.
+- [ ] Direct-practice **修行進度** is session-only and route-isolated: first completion prompts a same-opponent repeat; each later completion compares authoritative four-direction defense rate, hits taken and manual-counter conversion only with the immediately previous attempt for that route. A separate rolling **近3局** history is capped to the latest three same-route snapshots: attempts one/two hide the trend, attempt three and later show the ordered last-three values, unavailable metrics render `—`, and only comparable first-to-third metrics may determine `整體向上 / 大致持平 / 需要調整`. Switching practice opponents must not cross-contaminate either history; refresh clears both; campaign/challenge/今日陣 terminals hide the practice progress/trend.
+- [ ] The **近3局** result line remains inside the existing 320×568 direct-practice analysis surface, is pointer-transparent, does not add a touch target/live-combat HUD, and must coexist with `比上次`, `上局目標`, next-run coaching and 四向防守 without overflow.
+- [ ] Direct-practice **本次修行** is session-only and route-isolated: the first completion establishes a 1局 baseline; later same-route completions increment the attempt count and independently preserve the maximum defense percentage, minimum hits taken and maximum manual-counter conversion. `今局刷新` may name only metrics that strictly improve the stored session best; ties must not be presented as a new record, unavailable percentages remain `—`, switching opponents must not cross-contaminate records, and page refresh clears them.
+- [ ] The **本次修行** line remains pointer-transparent and inside the existing 320×568 direct-practice result surface together with 修行進度 / 近3局 / 上局目標 / 四向防守. It stays hidden for campaign/challenge/今日陣 terminals and creates no localStorage/sessionStorage/indexedDB key, account, identifier, analytics or network transport.
+- [ ] Practice results stay distinctly labelled by route (`RONIN / ONI / SHOGUN / BLOOD MOON PRACTICE`) and never read/overwrite campaign personal best; worse campaign runs do not overwrite better best.
+- [ ] Challenge results are distinctly labelled, store only the separate local best record ranked by waves/score, and never read/overwrite campaign personal best. The same record may optionally contain monotonic per-wave cumulative score splits; legacy records without splits remain valid, malformed split arrays are ignored, and retry/campaign handoff preserve isolation.
+- [ ] Challenge 氣勢/不屈, 戰前抉擇, 下一陣 · 偵察, 戰策後果, 再戰重點 and 宿敵步速 introduce no new persistence key, account, identifier or remote record. 戰策後果/再戰重點 are transient observation/coaching state only; only a better challenge result may write optional PB splits into the existing challenge-best key.
+- [ ] 今日陣 adds no persistence key, account, remote identifier or network request. It intentionally reuses the existing local challenge best, challenge momentum/tactics and PB split comparison; its date key is run-local only.
+- [ ] 練血月 adds no persistence key, account, network request or practice-only boss definition; it reuses the real Phase II definition and established local practice isolation.
+- [ ] Result sharing reads only already-rendered terminal text on an explicit tap, strips query/hash from the shared page URL, treats native-share cancellation as non-error, falls back to local clipboard copy when needed, and creates no identifier/persistence/analytics/background gameplay request.
+- [ ] **敵式** stage-intro profiles create no storage key, identifier, analytics/network request or additional timer/animation loop; their adapter is presentation-only and event-driven.
+- [ ] No login, analytics, tracking, advertising, paid API, remote identifier or new gameplay backend is introduced without approval.
+- [ ] Timing remains elapsed-time based; no unbounded entity/listener/particle/timer/audio-node/animation-loop growth is introduced.
+- [ ] Generated base character stays lightweight and attack pack remains animation-only/local/reproducible.
 
-## Delivery
+## Delivery gates
 
-- [ ] `npm test` passes.
-- [ ] CI configuration remains valid.
-- [ ] Current Baseline is updated only for accepted new baseline behaviour.
-- [ ] Changelog, backlog, and run log are updated.
-- [ ] Pull request contains Before/After and verification evidence.
+- [ ] `npm test` passes, including duel-read profile mapping/Blood Moon/privacy-source coverage, attack-rhythm exact-current-timing observation/classification/bounded-motion/heavy-neutrality coverage, bounded late-telegraph parry-buffer boundary/feint/Perfect-isolation coverage, Perfect-technique event identity/no-duplicate/closed-opening copy coverage, direct Stage 2/3/4 Phase I practice activation/terminal isolation, direct Blood Moon Phase II entry/terminal identity with no transition-score grant, challenge roster/best/lifecycle, legacy challenge-best compatibility + validated per-wave split persistence/PB-delta logic, deterministic 今日陣 same-date roster/order + unchanged pressure values + standard-mode restoration, composed real-CombatEngine `player-hit` → momentum-break → clean-wave-rebuild, heal/full-health-score/campaign-isolation, final-wave full-health +300 terminal-score-authority regressions, four-direction run-analysis accounting for parry/STEP/hit outcomes, same-opponent immediate practice-progress comparison plus three-snapshot trend logic (pre-third hidden, truthful unavailable metrics, improving/steady/declining grading), session-only practice-best aggregation/strict-refresh/no-storage-no-transport guards, challenge next-wave scout derivation from actual enemy attack metadata, challenge tactic-reflection immediate-next-wave hit/clear/defeat isolation + retry-focus defeat/highest-hit/clean priority + no-persistence/no-transport guard, and result-share payload/native/fallback behavior.
+- [ ] `npm run test:browser` passes.
+- [ ] Production browser smoke initializes PlayCanvas primary, keeps WebGL2 fallback, Start control, mastery, boss, onboarding, footwork, impact and the full six-entry practice/challenge selector inside the shared 320×568 start layout, plus 刀路清晰 and 節拍提示.
+- [ ] Combat UX smoke proves real 320×568 Start/parry/Pause freeze/玩法/resume/restart/home flow; it also selects and persists left STEP mode, starts the real duel, measures STEP/range/feedback inside the safe viewport, and re-proves unchanged swipe directions plus top-right Pause/parry routing.
+- [ ] Renderer contract samples actual ready-state Sword axis and fails unless Guard points at player; proves player-screen RIGHT left→right and LEFT right→left; proves grip lock, actual-Sword multi-pose afterimage history, telegraph→strike→parry→counter and all directional player-facing cuts.
+- [ ] Focused 320×568 **敵式** browser gate renders Ashigaru/Ronin/Oni/Shogun plus direct Blood Moon profiles from real CombatEngine stage-start/direct-practice boss-phase events, keeps the card in bounds and pointer-transparent, clears it before telegraph, and proves challenge/今日陣 suppress the extra card.
+- [ ] Focused 320×568 heavy-attack PlayCanvas gate drives the real Oni heavy `AttackTop` through telegraph → strike → recovery → gap, requires the heavy load/drive/follow pass to activate and clear, keeps the authored Sword directly on HandR with grip lock + real-blade read trail/finite tip diagnostics, and proves a normal Ashigaru telegraph leaves heavy weighting fully inactive.
+- [ ] Focused 320×568 attack-rhythm PlayCanvas gate proves measured → standard → quick → heavy from exact current timing metadata, requires the measured held load and quick bounded snap/read accent, requires standard rhythm offsets to stay zero and heavy rhythm offsets to stay zero while the established heavy pass remains active, and preserves authored `AttackTop`, Sword→HandR grip lock, real-blade read trail and unchanged combat timings.
+- [ ] Focused 320×568 perfect-technique browser gate uses the production action-cue surface, proves distinct `perfect-parry` / `perfect-step` style signatures and truthful reward copy, keeps both cue bounds inside the viewport and pointer events disabled.
+- [ ] Focused 320×568 challenge visual-identity browser gate renders the real pressure roster and requires Waves 4–8 to expose `ashigaru-jingasa → ronin-travel-wrap → oni-heavy-guard → ronin-travel-wrap → crimson-shogun-banner`, while proving the renderer restores the original 8-wave progression index after every draw.
+- [ ] Timing-assist harness proves deterministic default-off idle and off/on/off lifecycle without relying on a top-level RAF promise.
+- [ ] Mastery browser harness clicks 練浪人 / 練鬼 / 練將軍 and proves each real practice stage terminates after the selected duel, renders the correct opponent label/stage analysis, keeps campaign best isolated, supports same-practice retry and returns cleanly to Stage 1 campaign.
+- [ ] Boss browser harness proves both the normal Phase I→II transition/restart/victory path and direct Blood Moon practice entering the real Phase II runtime/atmosphere at 6 HP without transition score; the production start-layout marker includes 練血月 in the six-entry 320×568 selector.
+- [ ] Production practice orchestration gate first clicks the actual 320×568 start-screen 練浪人 / 練鬼 / 練將軍 controls and requires Stage 2 Ronin / Stage 3 Oni / Stage 4 Shogun Phase I respectively, with Blood Moon inactive and Pause → Home returning cleanly between launches. It then seeds only a deterministic Stage 2 campaign-result focus, clicks the generated 練浪人 action, requires the real production restart listener to enter Ronin practice, reach a real terminal defeat, retry the same opponent and hand off to clean Stage 1 campaign. Finally it returns through Pause → Home, clicks the real 練血月 control, requires the explicitly armed Shogun-practice Start chain to enter direct Blood Moon Phase II at 6 HP with 0 transition score, reaches real terminal retry, repeats direct Blood Moon and restores clean Stage 1 campaign through the existing handoff.
+- [ ] Mastery browser harness clicks the real 連戰試煉 control, proves composed 8-stage activation, visible pointer-safe 氣勢 UI, first clean-wave stack, a real two-clean-wave +1 HP 不屈 reward, terminal 不屈 summary and 8-card analysis, keeps challenge best isolated from campaign best, exercises 再戰連陣 / 開始完整主線, and keeps terminal content plus both controls inside 320×568.
+- [ ] Focused 320×568 challenge-rival browser gate starts from an existing eight-wave split PB, proves a visible behind split then an ahead split after the same-wave 不屈 score reward, persists eight authoritative monotonic splits after a better victory, reloads them on retry, and clears the badge on campaign handoff.
+- [ ] Focused 320×568 run-analysis direction gate renders all four directions, identifies a synthetic left-side 50% weakness from strike/parry/STEP/hit events, stays in-bounds, proves an eight-stage terminal suppresses the extra map, then completes direct practice repeatedly: attempts one/two keep **近3局** hidden, the third same-route completion shows the expected ordered defense/hit/counter trail alongside the immediate **修行進度** comparison, and the composed progress/trend surface remains pointer-transparent and inside 320×568. Route switching/refresh must leave no stale cross-route trend, and campaign/challenge/今日陣 remain excluded.
+- [ ] Focused 320×568 Perfect-practice browser gate additionally proves **本次修行** starts at 1局, reaches 3局 on the same route, reports the correct independent best defense/hits/counter values, remains pointer-transparent and keeps the combined practice result content in bounds beside the existing Perfect-target and 近3局 surfaces.
+- [ ] Focused 320×568 result-share browser gate proves the ≥44 px Share control stays in-bounds, native Web Share receives the visible terminal result/challenge progress/score with a clean URL, and clipboard fallback carries the same payload when native share is unavailable.
+- [ ] Focused 320×568 今日陣/challenge tactical gate completes real Waves 2/4/6 choices, requires each visible **下一陣 · 偵察** to exactly match `uiCombat.enemies[checkpoint]` and its bounded tags, keeps that scout in-bounds/pointer-transparent while parked, proves it clears on choice, then requires terminal **戰策回顧** text `戰策 · 2誓 · 4息 · 6誓 · +700分 · 生命-1`, terminal **戰策後果** text `戰策後果 · 2誓→3無傷 · 4息→5受擊1 · 6誓→7無傷`, and terminal **再戰重點** text `再戰重點 · 第5陣 · 上局受擊1 · 先守穩` for the deterministic test route. All three rows must remain inside the challenge-result surface/viewport, reflection + focus must stay pointer-transparent, the retry button must read `再戰 · 第5陣守穩`, and retry/full-campaign handoff must clear scout + recap + reflection + focus state.
+- [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
+- [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation when their represented product/engineering state changes.
+- [ ] Draft PR remains open/Draft/unmerged and contains one concise run comment with Before/After/verification/regression/risk/Preview.

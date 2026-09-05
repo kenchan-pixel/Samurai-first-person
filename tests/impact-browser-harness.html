@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Impact FX Browser Harness</title>
+</head>
+<body>
+  <div id="app" style="position:fixed;inset:0"></div>
+  <script type="module">
+    import { CombatEngine, Direction } from '../src/game-core.js';
+    import '../src/impact-fx.js';
+
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.documentElement.dataset.impactReducedMotion = String(reducedMotion);
+
+    const enemy = {
+      id: 'impact-harness',
+      name: 'Impact Harness',
+      title: 'Harness',
+      maxHp: 8,
+      postureMax: 4,
+      gapMs: 100,
+      recoveryMs: 260,
+      perfectWindowMs: 50,
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+    };
+
+    const combat = new CombatEngine({ enemies: [enemy] });
+    combat.start(0);
+    combat.drainEvents();
+    combat.update(1550);
+    combat.drainEvents();
+    combat.update(1650);
+    combat.drainEvents();
+    combat.attemptParry(Direction.TOP, 1650);
+    combat.drainEvents();
+
+    const layer = document.querySelector('#impact-fx-layer');
+    const perfectSeen = Boolean(layer?.querySelector('.impact-fx--perfect'));
+    const sparkCount = layer?.querySelectorAll('.impact-fx__spark').length ?? 0;
+    const sparkSeen = reducedMotion ? sparkCount === 0 : sparkCount >= 6;
+    const ringSeen = Boolean(layer?.querySelector('.impact-fx--perfect .impact-fx__ring'));
+
+    combat.attemptAttack(Direction.BOTTOM, 1660);
+    combat.drainEvents();
+    const slashCount = layer?.querySelectorAll('.impact-fx--slash .impact-fx__slash').length ?? 0;
+    const slashSeen = reducedMotion ? slashCount === 0 : slashCount >= 1;
+
+    const damageCombat = new CombatEngine({ enemies: [enemy], playerMaxHp: 4 });
+    damageCombat.start(0);
+    damageCombat.drainEvents();
+    damageCombat.update(1550);
+    damageCombat.drainEvents();
+    damageCombat.update(1650);
+    damageCombat.drainEvents();
+    damageCombat.update(1770);
+    damageCombat.drainEvents();
+    const damageSeen = Boolean(layer?.querySelector('.impact-fx--damage'));
+
+    const rect = layer?.getBoundingClientRect();
+    const pointerSafe = layer && getComputedStyle(layer).pointerEvents === 'none';
+    const layoutSafe = Boolean(
+      rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight
+    );
+
+    document.documentElement.dataset.impactIntegration = perfectSeen && slashSeen && damageSeen && sparkSeen && ringSeen ? 'pass' : 'fail';
+    document.documentElement.dataset.impactPointerSafe = String(Boolean(pointerSafe));
+    document.documentElement.dataset.impactLayout = layoutSafe ? 'pass' : 'fail';
+    document.documentElement.dataset.impactReducedFallback = String(Boolean(reducedMotion && ringSeen && sparkCount === 0 && slashCount === 0));
+
+    await new Promise((resolve) => setTimeout(resolve, 650));
+    document.documentElement.dataset.impactBounded = String(Boolean(layer && layer.childElementCount === 0));
+  </script>
+</body>
+</html>

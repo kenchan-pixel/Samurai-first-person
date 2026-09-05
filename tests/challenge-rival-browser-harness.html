@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Challenge rival browser integration harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <div class="crest" aria-hidden="true">刃</div>
+        <h1>連戰宿敵</h1>
+        <div id="practice-row" class="practice-row"></div>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+      </div>
+    </section>
+    <section id="result-screen" class="modal">
+      <div class="modal__content modal__content--result">
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/challenge-mode.js';
+    import '../src/challenge-momentum.js';
+    import '../src/challenge-rival.js';
+    import { CombatEngine, ENEMIES } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
+    import {
+      CHALLENGE_STAGE_COUNT,
+      CHALLENGE_STORAGE_KEY,
+      readChallengeBest,
+    } from '../src/challenge-mode.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const startScreen = document.querySelector('#start-screen');
+    const resultScreen = document.querySelector('#result-screen');
+    const startButton = document.querySelector('#start-button');
+    const restartButton = document.querySelector('#restart-button');
+    const uiCombat = new CombatEngine({ enemies: [...ENEMIES, BOSS_PHASE_ONE] });
+    let now = 1000;
+
+    async function flush() {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    startButton.addEventListener('click', () => {
+      startScreen.classList.remove('modal--visible');
+      resultScreen.classList.remove('modal--visible');
+      now += 1000;
+      uiCombat.start(now);
+    });
+
+    restartButton.addEventListener('click', () => {
+      resultScreen.classList.remove('modal--visible');
+      now += 1000;
+      uiCombat.reset(now);
+      uiCombat.start(now);
+    });
+
+    async function forceStageClear(stage) {
+      if (uiCombat.enemyIndex !== stage - 1) {
+        throw new Error(`expected challenge stage ${stage}, got ${uiCombat.enemyIndex + 1}`);
+      }
+      const enemyId = uiCombat.enemy?.id;
+      uiCombat.enemyHp = 0;
+      uiCombat.phase = 'stage-clear';
+      uiCombat.phaseStartedAt = now + 10;
+      uiCombat.phaseEndsAt = now + 20;
+      uiCombat.events.push({ type: 'enemy-defeated', detail: { enemyId, stage } });
+      now += 20;
+      uiCombat.update(now);
+      const events = uiCombat.drainEvents();
+      await flush();
+      return events;
+    }
+
+    try {
+      localStorage.setItem(CHALLENGE_STORAGE_KEY, JSON.stringify({
+        won: true,
+        wavesCleared: CHALLENGE_STAGE_COUNT,
+        score: 800,
+        waveScores: [100, 200, 300, 400, 500, 600, 700, 800],
+      }));
+
+      const challengeButton = document.querySelector('#challenge-button');
+      if (!challengeButton) throw new Error('real challenge control was not installed');
+      challengeButton.click();
+      uiCombat.drainEvents();
+      await flush();
+
+      const panel = document.querySelector('#challenge-rival');
+      if (!panel) throw new Error('challenge rival panel was not installed');
+      const entryRect = panel.getBoundingClientRect();
+      const entryOk =
+        panel.hidden === false &&
+        panel.textContent.includes('宿敵 PB 8/8') &&
+        root.dataset.challengeRivalActive === 'true' &&
+        root.dataset.challengeRivalHasSplits === 'true' &&
+        !startScreen.classList.contains('modal--visible') &&
+        !resultScreen.classList.contains('modal--visible') &&
+        getComputedStyle(panel).pointerEvents === 'none' &&
+        entryRect.left >= -0.5 && entryRect.right <= innerWidth + 0.5 &&
+        entryRect.top >= -0.5 && entryRect.bottom <= innerHeight + 0.5;
+      root.dataset.challengeRivalEntry = String(entryOk);
+      if (!entryOk) throw new Error('rival PB entry badge was not visible/pointer-safe/in-bounds');
+
+      await forceStageClear(1);
+      const firstSplitOk =
+        root.dataset.challengeRivalStage === '1' &&
+        root.dataset.challengeRivalDelta === '-100' &&
+        panel.dataset.pace === 'behind' &&
+        panel.textContent.includes('−00100');
+      root.dataset.challengeRivalBehind = String(firstSplitOk);
+      if (!firstSplitOk) throw new Error('first wave did not show the expected behind-PB split');
+
+      await forceStageClear(2);
+      const secondSplitOk =
+        uiCombat.score === 300 &&
+        root.dataset.challengeRivalStage === '2' &&
+        root.dataset.challengeRivalDelta === '100' &&
+        panel.dataset.pace === 'ahead' &&
+        panel.textContent.includes('+00100');
+      root.dataset.challengeRivalAhead = String(secondSplitOk);
+      if (!secondSplitOk) throw new Error('second wave did not include the same-wave rally in the PB split');
+
+      for (let stage = 3; stage <= CHALLENGE_STAGE_COUNT; stage += 1) {
+        await forceStageClear(stage);
+      }
+
+      const best = readChallengeBest();
+      const splitStored =
+        best?.won === true &&
+        best?.wavesCleared === CHALLENGE_STAGE_COUNT &&
+        best?.score === uiCombat.score &&
+        Array.isArray(best?.waveScores) &&
+        best.waveScores.length === CHALLENGE_STAGE_COUNT &&
+        best.waveScores.at(-1) === uiCombat.score &&
+        best.waveScores.every((value, index, values) => index === 0 || value >= values[index - 1]);
+      root.dataset.challengeRivalStored = String(splitStored);
+      if (!splitStored) throw new Error('winning challenge did not persist authoritative per-wave splits in the existing best key');
+
+      const terminalOk = panel.hidden === true && root.dataset.challengeRivalActive === 'false';
+      root.dataset.challengeRivalTerminal = String(terminalOk);
+      if (!terminalOk) throw new Error('rival badge did not clear at terminal');
+
+      restartButton.click();
+      uiCombat.drainEvents();
+      await flush();
+      const retryRect = panel.getBoundingClientRect();
+      const retryOk =
+        panel.hidden === false &&
+        panel.textContent.includes('宿敵 PB 8/8') &&
+        panel.textContent.includes(String(best.score).padStart(6, '0')) &&
+        root.dataset.challengeRivalHasSplits === 'true' &&
+        retryRect.left >= -0.5 && retryRect.right <= innerWidth + 0.5 &&
+        retryRect.top >= -0.5 && retryRect.bottom <= innerHeight + 0.5;
+      root.dataset.challengeRivalRetry = String(retryOk);
+      if (!retryOk) throw new Error('retry did not reload the just-earned split PB');
+
+      uiCombat.phase = 'defeat';
+      uiCombat.phaseStartedAt = now + 1;
+      uiCombat.phaseEndsAt = Infinity;
+      uiCombat.events.push({ type: 'defeat', detail: { score: uiCombat.score } });
+      uiCombat.drainEvents();
+      await flush();
+      const campaignButton = document.querySelector('#challenge-campaign-button');
+      if (!campaignButton || campaignButton.hidden) throw new Error('challenge campaign handoff was unavailable');
+      campaignButton.click();
+      uiCombat.drainEvents();
+      await flush();
+      const campaignOk =
+        root.dataset.challengeActive === 'false' &&
+        root.dataset.challengeRivalActive === 'false' &&
+        panel.hidden === true &&
+        uiCombat.enemies.length === ENEMIES.length + 1 &&
+        uiCombat.enemy?.id === 'ashigaru-scout';
+      root.dataset.challengeRivalCampaignIsolation = String(campaignOk);
+      if (!campaignOk) throw new Error('rival state leaked into full campaign');
+
+      root.dataset.challengeRivalBrowserIntegration =
+        entryOk && firstSplitOk && secondSplitOk && splitStored && terminalOk && retryOk && campaignOk ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.challengeRivalBrowserIntegration = 'fail';
+    }
+  </script>
+</body>
+</html>

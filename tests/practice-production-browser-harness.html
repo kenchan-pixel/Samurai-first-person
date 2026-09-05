@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Production Practice Orchestration Smoke</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+    #game{display:block;width:100vw;height:100vh;border:0}
+  </style>
+</head>
+<body>
+  <iframe id="game" src="/" title="Blade Reversal production document"></iframe>
+  <script type="module">
+    const root = document.documentElement;
+    const frame = document.querySelector('#game');
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    async function waitFor(check, timeout = 9000) {
+      const started = performance.now();
+      while (performance.now() - started < timeout) {
+        try {
+          if (check()) return true;
+        } catch {
+          // Production document may still be swapping module-owned UI state.
+        }
+        await sleep(25);
+      }
+      return false;
+    }
+
+    function mark(name, value) {
+      root.dataset[name] = String(Boolean(value));
+    }
+
+    function visible(node) {
+      return Boolean(node && !node.hidden && node.getClientRects().length);
+    }
+
+    async function waitForTerminal(doc, expectedMode, timeout = 11000) {
+      return waitFor(() =>
+        doc.documentElement.dataset.runMode === expectedMode &&
+        doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        visible(doc.querySelector('#ronin-practice-campaign'))
+      , timeout);
+    }
+
+    async function returnHome(doc, label) {
+      doc.querySelector('#pause-button')?.click();
+      const paused = await waitFor(() => !doc.querySelector('#pause-screen')?.hidden, 800);
+      if (!paused) throw new Error(`${label}: could not enter production pause`);
+      doc.querySelector('#pause-home-button')?.click();
+      const home = await waitFor(() => doc.querySelector('#start-screen')?.classList.contains('modal--visible'), 1000);
+      if (!home) throw new Error(`${label}: pause home did not return to start screen`);
+      return true;
+    }
+
+    async function launchStartPractice(doc, { selector, mode, stage, enemy, phaseOne = false }) {
+      const appRoot = doc.documentElement;
+      const button = doc.querySelector(selector);
+      if (!button) return false;
+      button.click();
+      return waitFor(() => {
+        const phaseOneOk = !phaseOne || (
+          doc.querySelector('#app')?.dataset.bossPhase === '1' &&
+          appRoot.dataset.bloodMoonPracticeActive !== 'true' &&
+          appRoot.dataset.nextBloodMoonPractice !== 'blood-moon'
+        );
+        return (
+          appRoot.dataset.runMode === mode &&
+          phaseOneOk &&
+          !doc.querySelector('#start-screen')?.classList.contains('modal--visible') &&
+          doc.querySelector('#stage-label')?.textContent?.includes(stage) &&
+          doc.querySelector('#enemy-name')?.textContent?.includes(enemy)
+        );
+      }, 2200);
+    }
+
+    function captureBloodMoonDebug(doc) {
+      const appRoot = doc.documentElement;
+      const fields = {
+        nextBloodMoon: appRoot.dataset.nextBloodMoonPractice || 'missing',
+        nextRun: appRoot.dataset.nextRunMode || 'missing',
+        runMode: appRoot.dataset.runMode || 'missing',
+        active: appRoot.dataset.bloodMoonPracticeActive || 'missing',
+        phase: appRoot.dataset.bloodMoonPracticePhase || 'missing',
+        hp: appRoot.dataset.bloodMoonPracticeEnemyHp || 'missing',
+        score: appRoot.dataset.bloodMoonPracticeStartScore || 'missing',
+        stage: doc.querySelector('#stage-label')?.textContent?.trim() || 'missing',
+        enemy: doc.querySelector('#enemy-name')?.textContent?.trim() || 'missing',
+        startVisible: String(Boolean(doc.querySelector('#start-screen')?.classList.contains('modal--visible'))),
+        resultVisible: String(Boolean(doc.querySelector('#result-screen')?.classList.contains('modal--visible'))),
+      };
+      root.dataset.practiceProductionDebug = Object.entries(fields).map(([key, value]) => `${key}:${value}`).join('|').slice(0, 900);
+    }
+
+    async function run() {
+      const loaded = await waitFor(() => {
+        const doc = frame.contentDocument;
+        if (!doc || doc.readyState !== 'complete') return false;
+        const appRoot = doc.documentElement;
+        return (
+          appRoot.dataset.startReady === 'true' &&
+          appRoot.dataset.practiceModeReady === 'true' &&
+          appRoot.dataset.bloodMoonPracticeReady === 'true' &&
+          appRoot.dataset.trainingRecommendationReady === 'true' &&
+          doc.querySelector('#restart-button') &&
+          doc.querySelector('#practice-ronin-button') &&
+          doc.querySelector('#practice-oni-button') &&
+          doc.querySelector('#practice-shogun-button') &&
+          doc.querySelector('#practice-blood-moon-button') &&
+          doc.querySelector('[data-analysis-focus]')
+        );
+      }, 5000);
+      if (!loaded) throw new Error('production app did not initialize required practice controls');
+
+      const doc = frame.contentDocument;
+      const appRoot = doc.documentElement;
+      mark('practiceProductionViewport', window.innerWidth === 320 && window.innerHeight === 568 && frame.getBoundingClientRect().width === 320 && frame.getBoundingClientRect().height === 568);
+
+      const normalRonin = await launchStartPractice(doc, {
+        selector: '#practice-ronin-button',
+        mode: 'ronin-practice',
+        stage: 'STAGE 2 / 4',
+        enemy: 'Wandering Ronin',
+      });
+      mark('practiceProductionNormalRonin', normalRonin);
+      if (!normalRonin) throw new Error('real 練浪人 start control was reset to campaign instead of Stage 2 practice');
+      await returnHome(doc, '練浪人');
+
+      const normalOni = await launchStartPractice(doc, {
+        selector: '#practice-oni-button',
+        mode: 'oni-practice',
+        stage: 'STAGE 3 / 4',
+        enemy: 'Oni Guard',
+      });
+      mark('practiceProductionNormalOni', normalOni);
+      if (!normalOni) throw new Error('real 練鬼 start control was reset to campaign instead of Stage 3 practice');
+      await returnHome(doc, '練鬼');
+
+      const normalShogun = await launchStartPractice(doc, {
+        selector: '#practice-shogun-button',
+        mode: 'shogun-practice',
+        stage: 'STAGE 4 / 4',
+        enemy: 'Crimson Shogun',
+        phaseOne: true,
+      });
+      mark('practiceProductionNormalShogun', normalShogun);
+      if (!normalShogun) throw new Error('real 練將軍 start control did not enter Stage 4 Phase I practice');
+      await returnHome(doc, '練將軍');
+
+      doc.querySelector('#start-screen')?.classList.remove('modal--visible');
+      doc.querySelector('#result-screen')?.classList.add('modal--visible');
+      const analysis = doc.querySelector('#result-analysis');
+      if (analysis) analysis.hidden = false;
+      appRoot.dataset.runMode = 'campaign';
+      const focus = doc.querySelector('[data-analysis-focus]');
+      focus.textContent = '第2關 · 浪人';
+
+      const recommended = await waitFor(() => {
+        const panel = doc.querySelector('#training-recommendation');
+        const action = doc.querySelector('[data-training-action]');
+        return visible(panel) && action?.textContent?.trim() === '練浪人';
+      }, 1800);
+      if (!recommended) throw new Error('Stage 2 campaign recommendation did not render');
+
+      doc.querySelector('[data-training-action]').click();
+      const trainingLaunch = await waitFor(() =>
+        appRoot.dataset.runMode === 'ronin-practice' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 2 / 4') &&
+        doc.querySelector('#enemy-name')?.textContent?.includes('Wandering Ronin')
+      , 2200);
+      mark('practiceProductionTrainingLaunch', trainingLaunch);
+      if (!trainingLaunch) throw new Error('recommendation click did not enter real Ronin practice through production restart');
+
+      const firstTrainingTerminal = await waitForTerminal(doc, 'ronin-practice');
+      const trainingComplete = firstTrainingTerminal && await waitFor(() =>
+        appRoot.dataset.trainingRecommendationState === 'practice-complete' &&
+        doc.querySelector('[data-training-action]')?.textContent?.trim() === '再練一次'
+      , 1200);
+      mark('practiceProductionTrainingTerminal', trainingComplete);
+      if (!trainingComplete) throw new Error('real Ronin practice did not reach terminal recommendation state');
+
+      doc.querySelector('[data-training-action]').click();
+      const trainingRetry = await waitFor(() =>
+        appRoot.dataset.runMode === 'ronin-practice' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 2 / 4')
+      , 2200);
+      mark('practiceProductionTrainingRetry', trainingRetry);
+      if (!trainingRetry) throw new Error('recommended practice retry did not stay on real Ronin practice');
+
+      const secondTrainingTerminal = await waitForTerminal(doc, 'ronin-practice');
+      if (!secondTrainingTerminal) throw new Error('second Ronin practice did not reach terminal handoff state');
+      doc.querySelector('#ronin-practice-campaign').click();
+      const trainingHandoff = await waitFor(() =>
+        appRoot.dataset.runMode === 'campaign' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 1 / 4') &&
+        doc.querySelector('#enemy-name')?.textContent?.includes('Ashigaru Scout')
+      , 2200);
+      mark('practiceProductionTrainingHandoff', trainingHandoff);
+      if (!trainingHandoff) throw new Error('practice campaign handoff did not return through production restart to Stage 1');
+
+      await returnHome(doc, 'Blood Moon setup');
+
+      doc.querySelector('#practice-blood-moon-button').click();
+      const bloodMoonLaunch = await waitFor(() =>
+        appRoot.dataset.runMode === 'blood-moon-practice' &&
+        appRoot.dataset.bloodMoonPracticeActive === 'true' &&
+        appRoot.dataset.bloodMoonPracticePhase === '2' &&
+        appRoot.dataset.bloodMoonPracticeEnemyHp === '6' &&
+        appRoot.dataset.bloodMoonPracticeStartScore === '0' &&
+        !doc.querySelector('#start-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 4 / 4') &&
+        doc.querySelector('#enemy-name')?.textContent?.includes('Crimson Shogun')
+      , 2400);
+      captureBloodMoonDebug(doc);
+      mark('practiceProductionBloodMoonLaunch', bloodMoonLaunch);
+      mark('practiceProductionBloodMoonPhaseTwo', bloodMoonLaunch);
+      if (!bloodMoonLaunch) throw new Error(`real 練血月 button did not enter direct Blood Moon Phase II at 6 HP / 0 transition score; ${root.dataset.practiceProductionDebug}`);
+
+      const firstBloodMoonTerminal = await waitForTerminal(doc, 'blood-moon-practice', 9000);
+      const bloodMoonTerminal = firstBloodMoonTerminal && doc.querySelector('#restart-button')?.textContent?.trim() === '再戰血月';
+      mark('practiceProductionBloodMoonTerminal', bloodMoonTerminal);
+      if (!bloodMoonTerminal) throw new Error('direct Blood Moon practice did not reach real terminal retry state');
+
+      doc.querySelector('#restart-button').click();
+      const bloodMoonRetry = await waitFor(() =>
+        appRoot.dataset.runMode === 'blood-moon-practice' &&
+        appRoot.dataset.bloodMoonPracticeActive === 'true' &&
+        appRoot.dataset.bloodMoonPracticePhase === '2' &&
+        appRoot.dataset.bloodMoonPracticeEnemyHp === '6' &&
+        appRoot.dataset.bloodMoonPracticeStartScore === '0' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 4 / 4')
+      , 2200);
+      mark('practiceProductionBloodMoonRetry', bloodMoonRetry);
+      if (!bloodMoonRetry) throw new Error('再戰血月 did not restart direct Phase II through production main path');
+
+      const secondBloodMoonTerminal = await waitForTerminal(doc, 'blood-moon-practice', 9000);
+      if (!secondBloodMoonTerminal) throw new Error('second Blood Moon practice did not reach terminal campaign handoff');
+      doc.querySelector('#ronin-practice-campaign').click();
+      const bloodMoonHandoff = await waitFor(() =>
+        appRoot.dataset.runMode === 'campaign' &&
+        appRoot.dataset.bloodMoonPracticeActive !== 'true' &&
+        appRoot.dataset.bloodMoonPracticePhase === undefined &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 1 / 4') &&
+        doc.querySelector('#enemy-name')?.textContent?.includes('Ashigaru Scout')
+      , 2200);
+      mark('practiceProductionBloodMoonHandoff', bloodMoonHandoff);
+      if (!bloodMoonHandoff) throw new Error('Blood Moon campaign handoff did not clear direct-phase request and restore Stage 1');
+
+      const allPass = [
+        'practiceProductionViewport',
+        'practiceProductionNormalRonin',
+        'practiceProductionNormalOni',
+        'practiceProductionNormalShogun',
+        'practiceProductionTrainingLaunch',
+        'practiceProductionTrainingTerminal',
+        'practiceProductionTrainingRetry',
+        'practiceProductionTrainingHandoff',
+        'practiceProductionBloodMoonLaunch',
+        'practiceProductionBloodMoonPhaseTwo',
+        'practiceProductionBloodMoonTerminal',
+        'practiceProductionBloodMoonRetry',
+        'practiceProductionBloodMoonHandoff',
+      ].every((key) => root.dataset[key] === 'true');
+      root.dataset.practiceProductionBrowser = allPass ? 'pass' : 'fail';
+    }
+
+    run().catch((error) => {
+      console.error(error);
+      root.dataset.practiceProductionBrowser = 'fail';
+      root.dataset.practiceProductionError = String(error?.message || error).slice(0, 900);
+    });
+  </script>
+</body>
+</html>

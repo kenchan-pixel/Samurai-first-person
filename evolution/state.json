@@ -1,0 +1,76 @@
+{
+  "status": "verifying",
+  "run_number": 152,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD 0c5d7490827adcf54afe54adccbfd2869330bc72 is not feature-ready: Actions CI #197 / run 33978459741 passed npm test 168/168 but the production 320x568 browser suite failed twice on Production challenge route exposed the duel-read stage-intro card, while exact-head GitHub Vercel status is success. Draft PR #1 is open/Draft/unmerged, main is untouched, inline review comments are empty, Preview feedback reports 0 unresolved items, and the latest exact-head review classifies the same leak as actionable P1. Inspection of the real production smoke exposed the remaining startup race: after the smoke restarts campaign and returns Home during Stage 1 intro, the prior campaign duel-read card can remain visible until the next animation-frame drain; root combatPhase also remains stage-intro, so a challenge launch can satisfy the smoke's authoritative challenge-start predicate before that drain hides the stale card. Run 152 performs a bounded BLOCKER_FIX in the duel-read presentation adapter: it now wraps CombatEngine.start and, after the composed start chain has published the authoritative challenge flag/root state, synchronously hides any stale duel-read card before start returns. Existing stage-start/boss-phase drain suppression, campaign/direct-practice presentation, combat rules, timing, renderer/input, persistence and network behavior remain unchanged. A focused regression recreates a stale visible campaign card and proves challenge start hides it without waiting for drainEvents.",
+  "last_commit": "0c5d7490827adcf54afe54adccbfd2869330bc72",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the stale-card challenge-start suppression repair. No feature work is allowed until the resulting HEAD is terminal green.",
+  "ci_status": "pending_self_verification",
+  "preview_status": "pending_exact_head_verification",
+  "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
+  "preview_status_target": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app/build-meta.json",
+  "deployment_status_source": "Direct Vercel exact-SHA deployment data when available; otherwise exact-head GitHub Vercel status; when those integration signals are unavailable/missing (not failed), fail-closed Preview /build-meta.json exact-SHA receipt.",
+  "vercel_project": "samurai-first-person",
+  "vercel_team": "kenchan-pixels-projects",
+  "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
+  "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
+  "preview_feedback_unresolved": 0,
+  "preview_self_verification": {
+    "viewport": "320x568",
+    "status": "challenge_duel_read_stale_card_start_repair_pending_exact_head",
+    "last_observed_head": "0c5d7490827adcf54afe54adccbfd2869330bc72",
+    "incoming_ci_run": 33978459741,
+    "incoming_ci_result": "failure",
+    "incoming_ci_failure": "npm test passed 168/168; production browser suite failed twice because 連戰試煉 observed a stale visible duel-read stage-intro card before the next animation-frame drain",
+    "incoming_github_vercel_status_count": 1,
+    "incoming_github_vercel_result": "success",
+    "direct_vercel_connector": "Exact project deployment enumeration is unavailable in this runtime; exact-head GitHub Vercel status is the canonical fallback permitted by the repository SOT.",
+    "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
+    "receipt_path": "/build-meta.json",
+    "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
+    "note": "Run 152 repairs only the presentation startup seam. The real production smoke first proves campaign duel-read behavior, later restarts campaign, returns Home while the restarted Stage 1 intro card may still be visible, then immediately launches challenge. Because combatPhase can still read stage-intro, the challenge-start wait can complete synchronously from the newly published challengeActive state before a requestAnimationFrame drains reset/stage-start events. The duel-read adapter now hides any stale card synchronously after the composed Engine.start publishes authoritative challenge state; the existing fail-closed 320x568 challenge/今日陣 quietness assertions remain unchanged. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+  },
+  "external_deployment_recovery": {
+    "last_incident": {
+      "provider": "vercel",
+      "incident_key": "vercel:deployment-rate-limit:42ada958c082324b0fd9f057556266f34eb334d8",
+      "failure_kind": "deployment_rate_limit",
+      "blocked_head": "42ada958c082324b0fd9f057556266f34eb334d8",
+      "status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Fpu2hoWYQiNfDnCkjYFKJ16FwyBj",
+      "first_seen_at": "2026-08-29T19:38:36Z",
+      "cooldown_until": "2026-08-30T19:38:36Z",
+      "rearm_attempted": true,
+      "rearm_head": "1a2ddce4f610d911a519a3808412d2b4c6232bf6",
+      "resolution": "success",
+      "resolved_at": "2026-09-01T01:33:00Z",
+      "resolved_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/3jPHtzwpzwXbWsean16q9VutK6Mf"
+    }
+  },
+  "delivery_verification_recovery": {
+    "last_incident": {
+      "provider": "vercel",
+      "incident_key": "vercel:missing-integration-signal:5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+      "failure_kind": "missing_exact_head_integration_signal",
+      "blocked_head": "5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+      "first_observed_at": "2026-09-03T10:21:08Z",
+      "incoming_ci": "success",
+      "github_vercel_status": "missing",
+      "direct_vercel_connector": "403_list_deployments_and_404_alias_lookup",
+      "preview_alias_reachable": true,
+      "repair": "emit_no_store_build_meta_exact_sha_receipt",
+      "receipt_path": "/build-meta.json",
+      "resolution": "success",
+      "resolved_head": "b76784eb181763f6b5d472f511b8a5c9d9afe165",
+      "resolved_at": "2026-09-03T10:35:32Z",
+      "resolved_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/EqETAzzctTknakQvodRhUnYJNVBs"
+    }
+  },
+  "next_candidates": [
+    "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect 戰策回顧 + 戰策後果 + 再戰重點 together with the actual runtime outcomes; refine only if exact Preview evidence shows misleading priority, crowding, pointer overlap or stale cleanup",
+    "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
+    "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
+    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surfaces without duplicating 四向防守 / 修行進度 / 上局目標 / 近3局 / 本次修行 / 戰策回顧 / 戰策後果 / 再戰重點",
+    "FEATURE: consider a small challenge mastery objective only if it derives from existing authoritative challenge events, remains session/local-only and adds no live-combat clutter or causal claim",
+    "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
+  ]
+}

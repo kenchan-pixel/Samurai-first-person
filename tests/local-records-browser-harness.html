@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Local records browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content"><h1>刃返</h1><button id="start-button" class="primary-button" type="button">拔刀</button></div>
+    </section>
+    <section id="result-screen" class="modal modal--visible"><div class="modal__content modal__content--result"><h2>結果</h2></div></section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+  <script type="module">
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const flush = async () => { await Promise.resolve(); await new Promise((resolve) => setTimeout(resolve, 0)); };
+    const inside = (rect, touch = false) =>
+      (!touch || (rect.width >= 44 && rect.height >= 44)) && rect.left >= -0.5 && rect.right <= innerWidth + 0.5 && rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
+    try {
+      localStorage.setItem('blade-reversal-mastery-v1', JSON.stringify({ grade: 'A', masteryPoints: 82, score: 4200 }));
+      localStorage.setItem('blade-reversal-challenge-v1', JSON.stringify({ won: false, wavesCleared: 5, score: 6800 }));
+      await import('../src/beta-readiness.js');
+      await import('../src/local-records.js');
+      await flush();
+
+      const resultScreen = document.querySelector('#result-screen');
+      if (root.dataset.betaReadinessProgress !== '0/3') {
+        throw new Error(`pre-visible result incorrectly backfilled beta progress: ${root.dataset.betaReadinessProgress}`);
+      }
+      resultScreen.classList.remove('modal--visible');
+      await flush();
+      if (root.dataset.betaReadinessProgress !== '0/3') {
+        throw new Error(`visible-to-hidden transition incorrectly advanced beta progress: ${root.dataset.betaReadinessProgress}`);
+      }
+
+      const button = document.querySelector('#beta-readiness-button');
+      const panel = document.querySelector('#beta-readiness-panel');
+      if (!button || !panel) throw new Error('Closed Beta guide missing');
+      const betaDomIntact = () => Boolean(
+        document.body &&
+        document.querySelector('#start-button') &&
+        document.body.contains(resultScreen) &&
+        document.body.contains(button) &&
+        document.body.contains(panel)
+      );
+      button.click();
+      await flush();
+      const section = panel.querySelector('[data-local-records]');
+      const campaign = panel.querySelector('[data-local-record-campaign]')?.textContent || '';
+      const challenge = panel.querySelector('[data-local-record-challenge]')?.textContent || '';
+      const next = panel.querySelector('[data-local-record-next]')?.textContent || '';
+      const normalPass = Boolean(
+        section && !panel.hidden && inside(button.getBoundingClientRect(), true) && inside(panel.getBoundingClientRect()) &&
+        campaign.includes('A級 · MASTERY 82 · 004200') && challenge.includes('連戰 5/8 · 006800') && next.includes('6/8') &&
+        section.textContent.includes('只讀 · 不上傳') && root.dataset.localRecordsReady === 'true' &&
+        root.dataset.betaReadinessProgress === '0/3' && betaDomIntact()
+      );
+      if (!normalPass) throw new Error(`local records failed: ${campaign} | ${challenge} | ${next}`);
+
+      resultScreen.classList.add('modal--visible');
+      await flush();
+      if (root.dataset.betaReadinessProgress !== '1/3' || !betaDomIntact()) {
+        throw new Error(`terminal result did not advance beta progress without detaching app DOM: ${root.dataset.betaReadinessProgress}`);
+      }
+      root.dataset.practiceProgressState = 'comparison';
+      await flush();
+      if (root.dataset.betaReadinessProgress !== '2/3' || !betaDomIntact()) {
+        throw new Error(`same-opponent comparison did not advance beta progress without detaching app DOM: ${root.dataset.betaReadinessProgress}`);
+      }
+      root.dataset.resultFeedbackLast = 'cancelled';
+      await flush();
+      if (root.dataset.betaReadinessProgress !== '2/3') throw new Error('cancelled feedback incorrectly completed tester progress');
+      root.dataset.resultFeedbackLast = 'copied';
+      await flush();
+      const completedRows = [...panel.querySelectorAll('[data-beta-readiness-complete="true"]')];
+      const progressText = panel.querySelector('[data-beta-readiness-progress]')?.textContent || '';
+      const betaProgressPass = Boolean(
+        root.dataset.betaReadinessProgress === '3/3' && root.dataset.betaReadinessComplete === 'true' && betaDomIntact() &&
+        completedRows.length === 3 && progressText.includes('3/3') && progressText.includes('完成') && button.textContent.includes('封測完成') &&
+        inside(button.getBoundingClientRect(), true) && inside(panel.getBoundingClientRect())
+      );
+      if (!betaProgressPass) throw new Error(`session beta progress failed: ${root.dataset.betaReadinessProgress} | ${progressText} | ${completedRows.length}`);
+
+      const storageDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+      try {
+        Object.defineProperty(globalThis, 'localStorage', {
+          configurable: true,
+          get() { throw new DOMException('storage denied by browser policy', 'SecurityError'); },
+        });
+        await import('../src/local-records.js?denied-storage=run110');
+        await flush();
+        const deniedCampaign = panel.querySelector('[data-local-record-campaign]')?.textContent || '';
+        const deniedChallenge = panel.querySelector('[data-local-record-challenge]')?.textContent || '';
+        const deniedNext = panel.querySelector('[data-local-record-next]')?.textContent || '';
+        const deniedPass = Boolean(
+          !panel.hidden && !button.disabled && document.querySelector('#start-button')?.disabled !== true && betaDomIntact() &&
+          deniedCampaign.includes('未有主線紀錄') && deniedChallenge.includes('未有連戰紀錄') && deniedNext.includes('完整主線') &&
+          root.dataset.localRecordsReady === 'true' && root.dataset.betaReadinessProgress === '3/3'
+        );
+        if (!deniedPass) throw new Error(`denied-storage fallback failed: ${deniedCampaign} | ${deniedChallenge} | ${deniedNext}`);
+      } finally {
+        if (storageDescriptor) Object.defineProperty(globalThis, 'localStorage', storageDescriptor);
+        else delete globalThis.localStorage;
+      }
+
+      root.dataset.localRecordsBrowser = 'pass';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.localRecordsBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

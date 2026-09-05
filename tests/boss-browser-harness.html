@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Boss browser integration harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/boss-overlay.js';
+    import '../src/blood-moon-practice.js';
+    import { CombatEngine, Direction } from '../src/game-core.js';
+    import {
+      BOSS_PHASE_ONE,
+      BOSS_PHASE_TWO,
+      BOSS_PHASE_TWO_HP,
+    } from '../src/boss-encounter.js';
+    import {
+      BLOOD_MOON_PRACTICE_MODE,
+      requestBloodMoonPractice,
+    } from '../src/blood-moon-practice.js';
+
+    const root = document.documentElement;
+    const app = document.querySelector('#app');
+    const errorNode = document.querySelector('#harness-error');
+
+    function setCounterOpening(combat, enemyHp) {
+      combat.enemyHp = enemyHp;
+      combat.phase = 'recovery';
+      combat.currentAttack = {
+        direction: Direction.TOP,
+        displayedDirection: Direction.TOP,
+        parried: true,
+        perfect: false,
+        counterUsed: false,
+        guardBroken: false,
+        strikeStartedAt: 0,
+      };
+    }
+
+    async function wait(ms) {
+      await new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function waitUntil(predicate, { timeoutMs, intervalMs = 25 }) {
+      let elapsedMs = 0;
+      while (elapsedMs <= timeoutMs) {
+        if (predicate()) return elapsedMs;
+        await wait(intervalMs);
+        elapsedMs += intervalMs;
+      }
+      return null;
+    }
+
+    try {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      root.dataset.bossReducedMotion = String(reducedMotion);
+      if (!reducedMotion) throw new Error('browser harness did not enter prefers-reduced-motion mode');
+
+      const combat = new CombatEngine({ enemies: [BOSS_PHASE_ONE] });
+      combat.start(0);
+      combat.drainEvents();
+      if (app.dataset.bossActive !== 'true' || app.dataset.bossPhase !== '1') {
+        throw new Error('boss stage did not activate Phase I atmosphere');
+      }
+
+      setCounterOpening(combat, 7);
+      const transition = combat.attemptAttack(Direction.BOTTOM, 2000);
+      if (!transition.accepted || transition.bossPhase !== 2) {
+        throw new Error('deterministic counter did not trigger boss Phase II');
+      }
+      combat.drainEvents();
+
+      const banner = document.querySelector('.boss-phase-banner');
+      if (app.dataset.bossPhase !== '2' || combat.enemy.title !== BOSS_PHASE_TWO.title) {
+        throw new Error('Phase II runtime or atmosphere state did not activate');
+      }
+      if (!banner?.classList.contains('is-visible')) {
+        throw new Error('Phase II banner was not shown');
+      }
+
+      // The production timer is 1150 ms. Poll until its real cleanup is visible instead
+      // of sampling one fixed instant; the 1500 ms ceiling preserves a bounded contract
+      // while tolerating headless/virtual-time callback scheduling jitter under CI load.
+      const bannerCleanupMs = await waitUntil(
+        () => !banner.classList.contains('is-visible') && getComputedStyle(banner).opacity === '0',
+        { timeoutMs: 1500 },
+      );
+      const bannerHidden = bannerCleanupMs !== null;
+      root.dataset.bossBannerCleanup = String(bannerHidden);
+      root.dataset.bossBannerCleanupMs = bannerHidden ? String(bannerCleanupMs) : 'timeout';
+      if (!bannerHidden) throw new Error('reduced-motion Phase II banner did not hide after its bounded lifetime');
+      if (app.dataset.bossActive !== 'true' || app.dataset.bossPhase !== '2') {
+        throw new Error('boss atmosphere ended when only the transition banner should hide');
+      }
+
+      combat.start(4000);
+      combat.drainEvents();
+      const restartPhaseOne = combat.enemy.title === BOSS_PHASE_ONE.title && app.dataset.bossPhase === '1';
+      root.dataset.bossRestart = String(restartPhaseOne);
+      if (!restartPhaseOne) throw new Error('restart did not restore boss Phase I');
+
+      requestBloodMoonPractice(true);
+      const bloodMoonCombat = new CombatEngine();
+      bloodMoonCombat.start(5000);
+      const bloodMoonEvents = bloodMoonCombat.drainEvents();
+      const bloodMoonStage = bloodMoonEvents.find((event) => event.type === 'stage-start');
+      const bloodMoonPhase = bloodMoonEvents.find((event) => event.type === 'boss-phase');
+      const bloodMoonPracticeOk =
+        bloodMoonCombat.enemy === BOSS_PHASE_TWO &&
+        bloodMoonCombat.enemyHp === BOSS_PHASE_TWO_HP &&
+        bloodMoonCombat.enemyPostureMax === 7 &&
+        bloodMoonCombat.score === 0 &&
+        bloodMoonStage?.detail?.practiceMode === BLOOD_MOON_PRACTICE_MODE &&
+        bloodMoonPhase?.detail?.directPractice === true &&
+        bloodMoonPhase?.detail?.practiceMode === BLOOD_MOON_PRACTICE_MODE &&
+        app.dataset.bossActive === 'true' &&
+        app.dataset.bossPhase === '2';
+      root.dataset.bloodMoonPracticePhaseTwo = String(bloodMoonPracticeOk);
+      if (!bloodMoonPracticeOk) throw new Error('direct Blood Moon practice did not enter the real Phase II runtime/atmosphere');
+      requestBloodMoonPractice(false);
+
+      const victoryCombat = new CombatEngine({ enemies: [BOSS_PHASE_ONE] });
+      victoryCombat.start(0);
+      victoryCombat.drainEvents();
+      setCounterOpening(victoryCombat, 1);
+      const finish = victoryCombat.attemptAttack(Direction.BOTTOM, 2000);
+      if (!finish.accepted || !finish.defeated) throw new Error('deterministic final counter did not defeat boss');
+      const defeatEvents = victoryCombat.drainEvents();
+      if (!defeatEvents.some((event) => event.type === 'enemy-defeated')) {
+        throw new Error('boss defeat event did not reach the patched browser runtime');
+      }
+      victoryCombat.update(3451);
+      const victoryEvents = victoryCombat.drainEvents();
+      const victoryReached = victoryCombat.phase === 'victory' && victoryEvents.some((event) => event.type === 'victory');
+      root.dataset.bossVictory = String(victoryReached);
+      if (!victoryReached) throw new Error('stage-4 boss defeat did not reach final victory');
+
+      // The production atmosphere deactivation timer is 900 ms. Use the same bounded
+      // condition-driven observation so a delayed headless callback cannot create a
+      // false event-stream regression while still failing if cleanup exceeds the cap.
+      const atmosphereCleanupMs = await waitUntil(
+        () => app.dataset.bossActive !== 'true',
+        { timeoutMs: 1250 },
+      );
+      root.dataset.bossAtmosphereCleanupMs = atmosphereCleanupMs === null ? 'timeout' : String(atmosphereCleanupMs);
+      if (atmosphereCleanupMs === null) throw new Error('boss atmosphere did not clear after final victory');
+
+      const passed =
+        root.dataset.bossReducedMotion === 'true' &&
+        root.dataset.bossBannerCleanup === 'true' &&
+        root.dataset.bossRestart === 'true' &&
+        root.dataset.bloodMoonPracticePhaseTwo === 'true' &&
+        root.dataset.bossVictory === 'true';
+      root.dataset.bossIntegration = passed ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.bossIntegration = 'fail';
+    }
+  </script>
+</body>
+</html>

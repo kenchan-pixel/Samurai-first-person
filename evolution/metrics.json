@@ -1,0 +1,11 @@
+{
+  "protocol_version": 1,
+  "implementation_runs": 0,
+  "feature_runs": 0,
+  "blocker_fix_runs": 0,
+  "regression_fix_runs": 0,
+  "accepted_runs": 0,
+  "rework_runs": 0,
+  "known_regressions": 0,
+  "notes": "Metrics are experimental. Scheduled runs should update only evidence-backed values."
+}
