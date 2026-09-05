@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 156,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD cf17c9b24954168b14ae79ccfc2758b717913b49 is not feature-ready: Actions CI #201 / run 33991966872 completed failure after npm test passed 175/175, because the new 320x568 enemy-posture PlayCanvas gate incorrectly required bladeTrajectoryState.gripLocked=true during neutral gap. Exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, unresolved review threads are empty and Preview feedback reports 0 unresolved items. Inspection of src/blade-trajectory.js confirms authored grip lock is intentionally active only during Attack* telegraph/strike/recovery; inactive gap explicitly reports gripLocked=false while Sword remains directly parented to HandR. Run 156 repairs only that acceptance contract: high-posture gap must keep Sword→HandR, remain outside authored attack grip and keep zero orientation delta; telegraph and guard-break recovery still require authored HandR grip lock. No runtime, combat, balance, renderer behavior, input, persistence or network authority changes.",
-  "last_commit": "cf17c9b24954168b14ae79ccfc2758b717913b49",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the repaired enemy-posture 320x568 acceptance contract. No feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 157,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD 007272e3d9d445c4576e7037be66defa24fc9e3c is feature-ready: Actions CI #202 / run 33993048025 and exact-head GitHub Vercel status are terminal success, Draft PR #1 remains open/Draft/unmerged, main is untouched, unresolved review threads are empty and no applicable P0/P1/P2 blocker remains. Run 157 adds one campaign-only result 關鍵一刻 marker inside the existing run-analysis stage grid. Victory selects the strongest stage from already-authoritative guard-break, Perfect-technique, hit and counter aggregates; defeat marks only the final reached stage. The marker is omitted from direct practice and runs longer than four stages so it does not duplicate 修行進度/近3局/本次修行 or the composed challenge/今日陣 terminal surfaces. No combat, balance, score, input, persistence, identifier, analytics or network authority changes.",
+  "last_commit": "007272e3d9d445c4576e7037be66defa24fc9e3c",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the new campaign 關鍵一刻 result marker. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,18 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "enemy_posture_gate_contract_repair_pending_exact_head",
-    "last_observed_head": "cf17c9b24954168b14ae79ccfc2758b717913b49",
-    "incoming_ci_run": 33991966872,
-    "incoming_ci_result": "failure",
-    "incoming_ci_failure": "npm test passed 175/175; npm run test:browser failed at enemy-posture gap because the new gate required gripLocked=true outside an authored Attack* phase",
+    "status": "campaign_key_moment_pending_exact_head",
+    "last_observed_head": "007272e3d9d445c4576e7037be66defa24fc9e3c",
+    "incoming_ci_run": 33993048025,
+    "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 156 changes only the dedicated enemy-posture browser acceptance harness. The neutral/high-posture gap now explicitly proves Sword remains parented to HandR while bladeTrajectoryState.gripLocked is false, matching the established inactive blade-trajectory contract. Telegraph and guard-break recovery continue to require authored Attack* grip lock and orientation continuity, so the repair does not weaken live-cut blade authority. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 157 reuses the existing result-analysis stage card and already-authoritative in-memory aggregates. The marker is campaign-only, omitted for direct-practice terminals and every run longer than four stages, creates no new touch target or live-combat surface, and adds no storage/network path. The existing true 320x568 run-analysis browser gate is extended to prove the marker is in-bounds, challenge/practice omission is clean and campaign presentation restores after practice. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,11 +65,12 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect the new enemy-posture pressured-guard read at 320x568 together with Guard + four authored cuts + measured/standard/quick tempo; refine only if exact Preview evidence shows blade-axis drift, excessive body sway, weak visibility or telegraph contamination",
+    "ACCEPTANCE: inspect the new campaign 關鍵一刻 marker at 320x568 together with 四向防守 and 師範建議; refine only if exact Preview evidence shows wrapping, weak hierarchy, stale stage selection or overlap",
+    "ACCEPTANCE: inspect the enemy-posture pressured-guard read at 320x568 together with Guard + four authored cuts + measured/standard/quick tempo; refine only if exact Preview evidence shows blade-axis drift, excessive body sway, weak visibility or telegraph contamination",
     "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect the composed 氣勢 + cumulative 無傷 objective during real play plus terminal 戰策回顧 / 戰策後果 / 再戰重點; refine only if exact Preview evidence shows crowding, misleading objective semantics, stale retry state or pointer overlap",
     "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
-    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surfaces without duplicating 四向防守 / 修行進度 / 上局目標 / 近3局 / 本次修行 / 戰策回顧 / 戰策後果 / 再戰重點 / 無傷試煉",
     "FEATURE: consider a Closed Beta next-test action only if it reuses existing local/session state, existing routes and >=44 px controls without new persistence/network behavior or start-screen crowding",
+    "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

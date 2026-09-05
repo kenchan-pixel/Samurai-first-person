@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   buildRunAdvice,
+  buildRunKeyMoment,
   createRunAnalysisSession,
   finishRunAnalysis,
   observeRunAnalysisEvent,
@@ -126,4 +127,50 @@ test('automatic riposte closures do not count unavailable manual counter opening
   assert.equal(defeatReport.stages[0].counters, 0);
   assert.equal(defeatAdvice.stageRows[0].counterOpenings, 0);
   assert.equal(defeatAdvice.stageRows[0].counters, 0);
+});
+
+test('key moment highlights the strongest truthful campaign stage and keeps defeat facts bounded', () => {
+  const win = createRunAnalysisSession();
+  observeRunAnalysisEvent(win, { type: 'stage-start', detail: { stage: 1, enemyId: 'ashigaru-scout', enemyName: 'Ashigaru Scout' } });
+  observeRunAnalysisEvent(win, { type: 'perfect-parry', detail: { direction: 'top' } });
+  observeRunAnalysisEvent(win, { type: 'enemy-guard-break', detail: {} });
+  observeRunAnalysisEvent(win, { type: 'counter', detail: { damage: 3 } });
+  observeRunAnalysisEvent(win, { type: 'enemy-defeated', detail: { stage: 1 } });
+  observeRunAnalysisEvent(win, { type: 'stage-start', detail: { stage: 2, enemyId: 'wandering-ronin', enemyName: 'Wandering Ronin' } });
+  observeRunAnalysisEvent(win, { type: 'parry', detail: { direction: 'left' } });
+  observeRunAnalysisEvent(win, { type: 'counter', detail: { damage: 1 } });
+  observeRunAnalysisEvent(win, { type: 'player-hit', detail: { direction: 'right', damage: 1 } });
+  observeRunAnalysisEvent(win, { type: 'enemy-defeated', detail: { stage: 2 } });
+
+  const winMoment = buildRunKeyMoment(finishRunAnalysis(win, { won: true, score: 1800 }));
+  assert.equal(winMoment.stage, 1);
+  assert.match(winMoment.copy, /關鍵一刻/);
+  assert.match(winMoment.copy, /破勢1/);
+  assert.match(winMoment.copy, /完美1/);
+
+  const defeat = createRunAnalysisSession();
+  observeRunAnalysisEvent(defeat, { type: 'stage-start', detail: { stage: 1, enemyId: 'ashigaru-scout', enemyName: 'Ashigaru Scout' } });
+  observeRunAnalysisEvent(defeat, { type: 'parry', detail: { direction: 'top' } });
+  observeRunAnalysisEvent(defeat, { type: 'telegraph', detail: {} });
+  observeRunAnalysisEvent(defeat, { type: 'player-hit', detail: { direction: 'left', damage: 1 } });
+  observeRunAnalysisEvent(defeat, { type: 'player-hit', detail: { direction: 'right', damage: 1 } });
+  const defeatMoment = buildRunKeyMoment(finishRunAnalysis(defeat, { won: false, score: 300 }));
+  assert.equal(defeatMoment.stage, 1);
+  assert.match(defeatMoment.copy, /受擊2/);
+  assert.match(defeatMoment.copy, /漏反1/);
+});
+
+test('key moment stays out of direct practice and eight-wave challenge terminals', () => {
+  const session = createRunAnalysisSession();
+  for (let stage = 1; stage <= 8; stage += 1) {
+    observeRunAnalysisEvent(session, { type: 'stage-start', detail: { stage, enemyId: `pressure-${stage}`, enemyName: `Pressure ${stage}` } });
+    observeRunAnalysisEvent(session, { type: 'enemy-defeated', detail: { stage } });
+  }
+  const report = finishRunAnalysis(session, { won: true, score: 2200 });
+  assert.equal(buildRunKeyMoment(report), null);
+
+  const practice = createRunAnalysisSession();
+  observeRunAnalysisEvent(practice, { type: 'stage-start', detail: { stage: 2, enemyId: 'wandering-ronin', enemyName: 'Wandering Ronin' } });
+  observeRunAnalysisEvent(practice, { type: 'enemy-defeated', detail: { stage: 2 } });
+  assert.equal(buildRunKeyMoment(finishRunAnalysis(practice, { won: true, score: 800 }), { practice: true }), null);
 });

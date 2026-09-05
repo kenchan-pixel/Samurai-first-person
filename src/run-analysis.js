@@ -226,6 +226,47 @@ function stageLabel(stage) {
   return `第${stage.stage}關 · ${enemy}`;
 }
 
+function perfectCount(stage) {
+  return Math.max(0, Number(stage?.perfectParries) || 0) + Math.max(0, Number(stage?.perfectSteps) || 0);
+}
+
+export function buildRunKeyMoment(report, { practice = false } = {}) {
+  const stages = Array.isArray(report?.stages) ? report.stages : [];
+  if (practice || !stages.length || stages.length > 4) return null;
+
+  const stage = report?.won
+    ? [...stages].sort((a, b) =>
+      (Number(b.guardBreaks) || 0) - (Number(a.guardBreaks) || 0) ||
+      perfectCount(b) - perfectCount(a) ||
+      (Number(a.hitsTaken) || 0) - (Number(b.hitsTaken) || 0) ||
+      (Number(b.counters) || 0) - (Number(a.counters) || 0) ||
+      (Number(b.stage) || 0) - (Number(a.stage) || 0),
+    )[0]
+    : stages[stages.length - 1];
+
+  if (!stage) return null;
+  const facts = [];
+  const guardBreaks = Math.max(0, Number(stage.guardBreaks) || 0);
+  const perfects = perfectCount(stage);
+  const hits = Math.max(0, Number(stage.hitsTaken) || 0);
+  const missedCounters = Math.max(0, Number(stage.missedCounters) || 0);
+  const counters = Math.max(0, Number(stage.counters) || 0);
+
+  if (guardBreaks > 0) facts.push(`破勢${guardBreaks}`);
+  if (perfects > 0 && facts.length < 2) facts.push(`完美${perfects}`);
+  if (hits > 0 && facts.length < 2) facts.push(`受擊${hits}`);
+  if (missedCounters > 0 && facts.length < 2) facts.push(`漏反${missedCounters}`);
+  if (hits === 0 && facts.length < 2) facts.push('無傷');
+  if (!facts.length && counters > 0) facts.push(`反擊${counters}`);
+  if (!facts.length) facts.push('守穩');
+
+  return Object.freeze({
+    stage: stage.stage,
+    label: stageLabel(stage),
+    copy: `關鍵一刻 · ${facts.join(' · ')}`,
+  });
+}
+
 export function buildDirectionFocus(stage) {
   if (!stage) return null;
   const rows = DIRECTION_META.map((meta, index) => {
@@ -339,6 +380,8 @@ function installStyles() {
     .result-analysis__stage strong,.result-analysis__stage span{display:block}
     .result-analysis__stage strong{font-size:11px;color:rgba(248,239,224,.9)}
     .result-analysis__stage span{margin-top:3px;font-size:10.5px;line-height:1.3;color:rgba(236,230,219,.66)}
+    .result-analysis__stage.is-key-moment{border-color:rgba(228,182,107,.38);background:rgba(228,182,107,.075)}
+    .result-analysis__stage .result-analysis__moment{padding-top:3px;border-top:1px solid rgba(228,182,107,.14);color:#f2dfbd;font-size:8.5px;font-weight:850;line-height:1.2;white-space:nowrap}
     .result-analysis__directions{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.07)}
     .result-analysis__directions-head strong{font-size:10.5px;color:rgba(255,214,160,.9)}
     .result-analysis__direction-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:6px}
@@ -374,11 +417,12 @@ function ensurePanel() {
   return panel;
 }
 
-function renderRunAnalysis(report) {
+function renderRunAnalysis(report, { practice = false } = {}) {
   installStyles();
   const panel = ensurePanel();
   if (!panel) return;
   const advice = buildRunAdvice(report);
+  const keyMoment = buildRunKeyMoment(report, { practice });
   const focus = panel.querySelector('[data-analysis-focus]');
   const grid = panel.querySelector('[data-analysis-grid]');
   const tip = panel.querySelector('[data-analysis-tip]');
@@ -399,7 +443,20 @@ function renderRunAnalysis(report) {
     const line2 = document.createElement('span');
     line2.textContent = `反擊 ${row.counters}/${row.counterOpenings} · STEP ${row.stepSuccesses}/${row.stepAttempts}`;
     card.append(title, line1, line2);
+    if (keyMoment?.stage === row.stage) {
+      card.classList.add('is-key-moment');
+      const moment = document.createElement('span');
+      moment.className = 'result-analysis__moment';
+      moment.textContent = keyMoment.copy;
+      card.append(moment);
+    }
     grid.append(card);
+  }
+
+  if (keyMoment) {
+    document.documentElement.dataset.runAnalysisKeyMomentStage = String(keyMoment.stage);
+  } else {
+    delete document.documentElement.dataset.runAnalysisKeyMomentStage;
   }
 
   const showDirections = Boolean(advice.directionFocus && advice.stageRows.length <= 4 && directions && directionFocus && directionGrid);
@@ -451,7 +508,8 @@ export function installRunAnalysis(Engine = CombatEngine) {
           won: event.type === 'victory',
           score: event.detail?.score,
         });
-        queueMicrotask(() => renderRunAnalysis(report));
+        const practice = Boolean(event.detail?.practice);
+        queueMicrotask(() => renderRunAnalysis(report, { practice }));
       }
     }
     return events;

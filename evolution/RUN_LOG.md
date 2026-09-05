@@ -541,3 +541,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The modified browser harness passes `node --check` locally. No production acceptance gate is removed and no player/runtime threshold is relaxed.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `enemy-posture-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 157 — Highlight one truthful campaign key moment
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `007272e3d9d445c4576e7037be66defa24fc9e3c`.
+- Exact-head Actions CI #202 / run `33993048025` is terminal success with `npm test` and the complete browser suite green; exact-head GitHub `Vercel` status is terminal success. Draft PR #1 remains open/Draft/unmerged, `main` is untouched, unresolved review threads are empty, Preview feedback reports 0 unresolved items and the latest applicable review has no actionable P0/P1/P2 finding.
+- Candidate scoring: **bounded campaign result key-moment recap 23/25** (impact 4, goal 5, novelty 5, confidence 5, safety 4); Closed Beta next-test action 21/25; Perfect-technique streak cue 20/25. The result recap wins because it gives the normal campaign a memorable factual takeaway from already-authoritative analysis without adding live-combat density, persistence or timing-adjacent state.
+
+### Feature
+
+- Normal campaign terminal analysis now marks exactly one existing stage card as **關鍵一刻** rather than adding a new result panel. Victory selects the strongest stage deterministically from existing guard-break, Perfect-technique, hit and counter aggregates; defeat marks only the final reached stage.
+- The compact line reports at most two factual signals such as `破勢1 · 完美1`, `受擊2 · 漏反1` or `無傷`; it never claims causation or invents an unseen event.
+- Direct-practice terminals deliberately omit the marker so it does not compete with 修行進度 / 上局目標 / 近3局 / 本次修行, and any run longer than four stages omits it so 連戰試煉 / 今日陣 keep their established composed result density.
+- No combat timing, damage, posture, parry/Perfect/STEP rules, score, renderer, input, local best, storage key, identifier, analytics or network path changed.
+
+### Verification boundary
+
+- Added deterministic Node coverage for winning-stage selection, defeat facts and practice/eight-wave omission.
+- Strengthened the existing true 320×568 run-analysis direction harness rather than creating a parallel gate: it must show an in-bounds `關鍵一刻 · 破勢1 · 完美1` campaign marker, clear it for the eight-stage terminal and direct practice, preserve all existing 四向防守/修行進度 assertions, then restore a campaign marker after practice isolation.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.

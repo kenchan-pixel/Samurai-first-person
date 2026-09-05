@@ -70,7 +70,8 @@
 
       combat.events.push(
         { type: 'strike', detail: { direction: Direction.TOP } },
-        { type: 'parry', detail: { direction: Direction.TOP } },
+        { type: 'perfect-parry', detail: { direction: Direction.TOP } },
+        { type: 'enemy-guard-break', detail: {} },
         { type: 'counter', detail: { direction: Direction.BOTTOM, damage: 1 } },
         { type: 'strike', detail: { direction: Direction.LEFT } },
         { type: 'player-hit', detail: { direction: Direction.LEFT, damage: 1 } },
@@ -88,6 +89,25 @@
       const focus = panel?.querySelector('[data-analysis-direction-focus]');
       const cells = [...(panel?.querySelectorAll('.result-analysis__direction') || [])];
       const weak = panel?.querySelector('.result-analysis__direction.is-weak');
+      const keyMoment = panel?.querySelector('.result-analysis__stage.is-key-moment .result-analysis__moment');
+      const keyMomentRect = keyMoment?.getBoundingClientRect();
+      const keyMomentLayout = Boolean(keyMomentRect) &&
+        keyMomentRect.left >= -0.5 &&
+        keyMomentRect.right <= window.innerWidth + 0.5 &&
+        keyMomentRect.top >= -0.5 &&
+        keyMomentRect.bottom <= window.innerHeight + 0.5;
+      const keyMomentPass = Boolean(
+        keyMoment &&
+        root.dataset.runAnalysisKeyMomentStage === '1' &&
+        keyMoment.textContent.includes('關鍵一刻') &&
+        keyMoment.textContent.includes('破勢1') &&
+        keyMoment.textContent.includes('完美1') &&
+        keyMomentLayout
+      );
+      root.dataset.runAnalysisKeyMoment = keyMomentPass ? 'pass' : 'fail';
+      root.dataset.runAnalysisKeyMomentLayout = keyMomentLayout ? 'pass' : 'fail';
+      if (!keyMomentPass) throw new Error(`campaign key moment missing or overflowed: ${keyMoment?.textContent || 'missing key moment'}`);
+
       const rect = directions?.getBoundingClientRect();
       const layoutOk = Boolean(rect) &&
         rect.left >= -0.5 &&
@@ -136,8 +156,11 @@
       await flush();
 
       const challengeOmitted = directions.hidden === true && !root.dataset.runAnalysisWeakDirection;
+      const challengeMomentOmitted = !panel?.querySelector('.result-analysis__stage.is-key-moment') && !root.dataset.runAnalysisKeyMomentStage;
       root.dataset.runAnalysisDirectionChallengeOmitted = String(challengeOmitted);
+      root.dataset.runAnalysisKeyMomentChallengeOmitted = String(challengeMomentOmitted);
       if (!challengeOmitted) throw new Error('eight-stage terminal should omit the four-way direction map');
+      if (!challengeMomentOmitted) throw new Error('eight-stage terminal should omit the key-moment marker');
 
       const firstPractice = new CombatEngine({ enemies: [enemy] });
       firstPractice.start(2000);
@@ -150,6 +173,10 @@
         { type: 'counter', detail: { direction: Direction.RIGHT, damage: 1 } },
       ], 700);
       await flush();
+
+      const practiceMomentOmitted = !panel?.querySelector('.result-analysis__stage.is-key-moment') && !root.dataset.runAnalysisKeyMomentStage;
+      root.dataset.runAnalysisKeyMomentPracticeOmitted = String(practiceMomentOmitted);
+      if (!practiceMomentOmitted) throw new Error('direct-practice terminal should omit the campaign key-moment marker');
 
       const progress = document.querySelector('#result-analysis [data-practice-progress-row]');
       const progressFocus = progress?.querySelector('[data-practice-progress-focus]');
@@ -244,12 +271,18 @@
         !root.dataset.practiceProgressTargetDirection &&
         !root.dataset.practiceProgressFocusState
       );
+      const campaignMomentRestored = Boolean(
+        panel?.querySelector('.result-analysis__stage.is-key-moment') &&
+        root.dataset.runAnalysisKeyMomentStage === '1'
+      );
       root.dataset.practiceProgressIsolation = progressIsolation ? 'pass' : 'fail';
+      root.dataset.runAnalysisKeyMomentCampaignRestored = campaignMomentRestored ? 'pass' : 'fail';
       if (!progressIsolation) throw new Error('practice progress/focus row leaked into a later campaign result');
+      if (!campaignMomentRestored) throw new Error('campaign key moment did not restore after practice isolation');
 
       root.dataset.runAnalysisDirectionBrowser =
-        firstPass && challengeOmitted && firstProgress && firstFocus &&
-        secondProgress && targetVerdict && trackedFocus && progressLayout && progressIsolation ? 'pass' : 'fail';
+        firstPass && keyMomentPass && challengeOmitted && challengeMomentOmitted && practiceMomentOmitted && firstProgress && firstFocus &&
+        secondProgress && targetVerdict && trackedFocus && progressLayout && progressIsolation && campaignMomentRestored ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);
