@@ -3,6 +3,7 @@ import { CHALLENGE_ACTIVE } from './challenge-mode.js';
 
 export const CHALLENGE_MOMENTUM_MAX = 2;
 export const CHALLENGE_FULL_HP_SCORE_BONUS = 300;
+export const CHALLENGE_CLEAN_WAVE_OBJECTIVE = 3;
 
 const installed = Symbol.for('blade-reversal.challenge-momentum-v1');
 const states = new WeakMap();
@@ -20,6 +21,31 @@ function stateFor(engine) {
     states.set(engine, state);
   }
   return state;
+}
+
+export function resolveChallengeMastery(cleanWaves = 0, target = CHALLENGE_CLEAN_WAVE_OBJECTIVE) {
+  const resolvedTarget = Math.max(1, Math.floor(Number(target) || CHALLENGE_CLEAN_WAVE_OBJECTIVE));
+  const resolvedCleanWaves = Math.max(0, Math.floor(Number(cleanWaves) || 0));
+  return {
+    target: resolvedTarget,
+    cleanWaves: resolvedCleanWaves,
+    progress: Math.min(resolvedTarget, resolvedCleanWaves),
+    achieved: resolvedCleanWaves >= resolvedTarget,
+  };
+}
+
+function formatChallengeMasteryLive(cleanWaves = 0) {
+  const objective = resolveChallengeMastery(cleanWaves);
+  return objective.achieved
+    ? `無傷✓${objective.cleanWaves}`
+    : `無傷 ${objective.progress}/${objective.target}`;
+}
+
+function formatChallengeMasteryTerminal(cleanWaves = 0) {
+  const objective = resolveChallengeMastery(cleanWaves);
+  return objective.achieved
+    ? `無傷✓${objective.cleanWaves}`
+    : `無傷 ${objective.progress}/${objective.target}`;
 }
 
 export function resolveChallengeMomentum({
@@ -138,8 +164,8 @@ function ensureUi() {
     panel.className = 'challenge-momentum';
     panel.hidden = true;
     panel.setAttribute('aria-live', 'polite');
-    panel.setAttribute('aria-label', '連戰氣勢');
-    panel.innerHTML = '<strong data-challenge-momentum-pips>氣勢 ◇◇</strong><span data-challenge-momentum-copy>連續兩關無傷觸發不屈</span>';
+    panel.setAttribute('aria-label', '連戰氣勢與無傷試煉');
+    panel.innerHTML = '<strong data-challenge-momentum-pips>氣勢 ◇◇ · 無傷 0/3</strong><span data-challenge-momentum-copy>連續兩關無傷觸發不屈</span>';
     (document.querySelector('#app') || document.body).append(panel);
   }
 
@@ -153,10 +179,15 @@ function renderMomentum(state, copy = '連續兩關無傷觸發不屈') {
   const root = document.documentElement;
   const panel = ensureUi();
   const active = Boolean(state?.active);
+  const objective = resolveChallengeMastery(active ? state.cleanWaves : 0);
 
   root.dataset.challengeMomentum = String(active ? state.momentum : 0);
   root.dataset.challengeRallies = String(active ? state.rallies : 0);
   root.dataset.challengeCleanWaves = String(active ? state.cleanWaves : 0);
+  root.dataset.challengeMasteryTarget = active ? String(objective.target) : '';
+  root.dataset.challengeMasteryProgress = active ? String(objective.progress) : '';
+  root.dataset.challengeMasteryCleanWaves = active ? String(objective.cleanWaves) : '';
+  root.dataset.challengeMasteryAchieved = active ? String(objective.achieved) : '';
   if (!panel) return;
 
   panel.hidden = !active;
@@ -166,8 +197,15 @@ function renderMomentum(state, copy = '連續兩關無傷觸發不屈') {
   const empty = '◇'.repeat(Math.max(0, CHALLENGE_MOMENTUM_MAX - state.momentum));
   const pips = panel.querySelector('[data-challenge-momentum-pips]');
   const message = panel.querySelector('[data-challenge-momentum-copy]');
-  if (pips) pips.textContent = `氣勢 ${filled}${empty}`;
+  if (pips) pips.textContent = `氣勢 ${filled}${empty} · ${formatChallengeMasteryLive(state.cleanWaves)}`;
   if (message) message.textContent = copy;
+}
+
+function resetTerminalSummaryMarker() {
+  if (typeof document === 'undefined') return;
+  const progress = document.querySelector('[data-challenge-progress]');
+  if (progress) delete progress.dataset.momentumSummary;
+  document.documentElement.dataset.challengeMomentumSummary = '';
 }
 
 function applyWaveClear(engine, state) {
@@ -216,15 +254,21 @@ function appendTerminalSummary(state) {
   if (typeof document === 'undefined') return;
   const rallies = state.rallies;
   const cleanWaves = state.cleanWaves;
+  const objective = resolveChallengeMastery(cleanWaves);
   queueMicrotask(() => {
     const progress = document.querySelector('[data-challenge-progress]');
     if (progress && progress.dataset.momentumSummary !== 'true') {
       progress.dataset.momentumSummary = 'true';
-      progress.textContent = `${progress.textContent} · 不屈×${rallies}`;
+      progress.textContent = `${progress.textContent} · 不屈×${rallies} · ${formatChallengeMasteryTerminal(cleanWaves)}`;
     }
     const panel = document.querySelector('#challenge-momentum');
     if (panel) panel.hidden = true;
-    document.documentElement.dataset.challengeMomentumSummary = `${cleanWaves}:${rallies}`;
+    const root = document.documentElement;
+    root.dataset.challengeMomentumSummary = `${cleanWaves}:${rallies}`;
+    root.dataset.challengeMasteryTarget = String(objective.target);
+    root.dataset.challengeMasteryProgress = String(objective.progress);
+    root.dataset.challengeMasteryCleanWaves = String(objective.cleanWaves);
+    root.dataset.challengeMasteryAchieved = String(objective.achieved);
   });
 }
 
@@ -242,6 +286,7 @@ export function installChallengeMomentum(Engine = CombatEngine) {
     state.cleanWaves = 0;
     state.rallies = 0;
     state.hitThisWave = false;
+    resetTerminalSummaryMarker();
     renderMomentum(state);
     return result;
   };
@@ -258,6 +303,7 @@ export function installChallengeMomentum(Engine = CombatEngine) {
         state.cleanWaves = 0;
         state.rallies = 0;
         state.hitThisWave = false;
+        resetTerminalSummaryMarker();
         renderMomentum(state);
       }
       return events;
@@ -279,11 +325,13 @@ export function installChallengeMomentum(Engine = CombatEngine) {
         const rally = applyWaveClear(this, state);
         if (rally) extraEvents.push(rally);
       } else if (event.type === 'victory' || event.type === 'defeat') {
+        const objective = resolveChallengeMastery(state.cleanWaves);
         event.detail = {
           ...(event.detail || {}),
           score: Math.max(0, Math.round(Number(this.score) || 0)),
           challengeCleanWaves: state.cleanWaves,
           challengeRallies: state.rallies,
+          challengeMasteryObjective: objective,
         };
         appendTerminalSummary(state);
       }

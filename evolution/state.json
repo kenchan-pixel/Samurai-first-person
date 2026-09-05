@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 153,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 950c7b1af6eca7f191771ff151999db582fea0c7 is terminal green: Actions CI #198 / run 33981057690 passed the complete Node and browser acceptance suite, exact-head GitHub Vercel status is success, Preview feedback reports 0 unresolved items, Draft PR #1 is open/Draft/unmerged, main is untouched and inline review threads are empty. Direct Vercel deployment enumeration still returns 403, so the repository-approved exact-head GitHub Vercel commit status is the deployment signal. The latest exact-head Second Hourly review 5122269751 raises one actionable P2 player-facing lifecycle gap: 再戰重點 clears its row/datasets but does not itself reset the retry button label, leaving correctness dependent on challenge-mode wrapper/microtask ordering. Run 153 performs a bounded BLOCKER_FIX by centralizing retry-label ownership in challenge-tactic-reflection: normal retry/start and campaign handoff explicitly restore 重新挑戰, a focused challenge terminal owns its targeted 再戰 label, and a later challenge terminal with no eligible reflection explicitly falls back to 再戰連陣 rather than inheriting stale advice. A new focused 320x568 browser gate proves focused label -> retry reset -> empty-terminal fallback -> full-campaign reset. Combat, tactics, balance, score, roster, persistence, renderer/input and network behavior are unchanged.",
-  "last_commit": "950c7b1af6eca7f191771ff151999db582fea0c7",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the retry-focus label ownership repair and its new 320x568 acceptance gate. No feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 154,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD 14817ab6c076d5be81e7a8808f6a943194ac5c24 is terminal green: Actions CI #199 / run 33984377511 passed the complete Node/browser suite, exact-head GitHub Vercel status is success, Preview feedback reports 0 unresolved items, Draft PR #1 is open/Draft/unmerged, main is untouched, unresolved review threads are empty and the latest exact-head review reports no actionable P0/P1/P2. Candidate scoring selected a bounded challenge cumulative hitless mastery objective 23/25 over a generic result key-moment recap 19/25 and unverified combat-motion refinement 17/25. Run 154 adds a session/run-local 3-wave cumulative hitless objective inside the existing challenge momentum badge rather than creating another live-combat surface: it displays 0/3 -> 1/3 -> 2/3 -> achieved from authoritative enemy-defeated/player-hit-derived clean-wave state, attaches a truthful terminal objective receipt, appends a compact terminal status, resets on retry and clears on campaign handoff. It changes no HP/score reward, timing, damage, roster, parry/Perfect/STEP, persistence, identifiers, analytics, networking, renderer or input authority. A dedicated real 320x568 browser gate proves live progression, terminal truth, retry reset, stale-summary prevention and campaign isolation.",
+  "last_commit": "14817ab6c076d5be81e7a8808f6a943194ac5c24",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the new challenge mastery objective and its dedicated 320x568 browser gate. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,18 +17,18 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "challenge_retry_focus_label_reset_repair_pending_exact_head",
-    "last_observed_head": "950c7b1af6eca7f191771ff151999db582fea0c7",
-    "incoming_ci_run": 33981057690,
+    "status": "challenge_mastery_objective_pending_exact_head",
+    "last_observed_head": "14817ab6c076d5be81e7a8808f6a943194ac5c24",
+    "incoming_ci_run": 33984377511,
     "incoming_ci_result": "success",
     "incoming_ci_failure": null,
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "403_list_deployments; exact-head GitHub Vercel status is the canonical fallback permitted by the repository SOT.",
+    "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 153 addresses the exact-head reviewer P2 at the player-facing result-action lifecycle rather than changing tactical coaching rules. The reflection adapter now explicitly owns all retry-label transitions: start/retry clears to 重新挑戰, focused terminal uses the derived target, no-focus challenge terminal uses 再戰連陣, and campaign handoff restores 重新挑戰. The new dedicated 320x568 browser gate exercises those four states in sequence and is appended to npm run test:browser. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 154 deliberately reuses the existing pointer-transparent challenge momentum badge and challenge-result progress line rather than adding another live-combat/result panel. The 3-wave objective counts only authoritative hitless wave clears, caps objective progress at 3 while retaining the truthful total clean-wave count, publishes achieved/target/progress in terminal event detail, resets the existing terminal-summary marker on a new run so retry cannot inherit the previous objective result, and clears all objective datasets on campaign handoff. The dedicated 320x568 browser smoke is appended to the full browser suite; post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,11 +66,11 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect 戰策回顧 + 戰策後果 + 再戰重點 together with the actual runtime outcomes; refine only if exact Preview evidence shows misleading priority, crowding, pointer overlap or stale cleanup",
+    "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect the composed 氣勢 + cumulative 無傷 objective during real play plus terminal 戰策回顧 / 戰策後果 / 再戰重點; refine only if exact Preview evidence shows crowding, misleading objective semantics, stale retry state or pointer overlap",
     "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surfaces without duplicating 四向防守 / 修行進度 / 上局目標 / 近3局 / 本次修行 / 戰策回顧 / 戰策後果 / 再戰重點",
-    "FEATURE: consider a small challenge mastery objective only if it derives from existing authoritative challenge events, remains session/local-only and adds no live-combat clutter or causal claim",
+    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surfaces without duplicating 四向防守 / 修行進度 / 上局目標 / 近3局 / 本次修行 / 戰策回顧 / 戰策後果 / 再戰重點 / 無傷試煉",
+    "FEATURE: consider a bounded challenge mastery follow-up only if it can use the now-authoritative objective receipt without adding rewards, persistence, live-HUD clutter or causal claims",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

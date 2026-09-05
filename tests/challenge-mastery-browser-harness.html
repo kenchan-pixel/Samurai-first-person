@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Challenge mastery browser integration harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <div class="crest" aria-hidden="true">刃</div>
+        <h1>無傷試煉</h1>
+        <div id="practice-row" class="practice-row"></div>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+      </div>
+    </section>
+    <section id="result-screen" class="modal">
+      <div id="result-content" class="modal__content modal__content--result">
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/challenge-mode.js';
+    import '../src/challenge-momentum.js';
+    import { CombatEngine, ENEMIES } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
+    import {
+      CHALLENGE_STAGE_COUNT,
+      requestChallenge,
+    } from '../src/challenge-mode.js';
+    import { CHALLENGE_CLEAN_WAVE_OBJECTIVE } from '../src/challenge-momentum.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const startScreen = document.querySelector('#start-screen');
+    const resultScreen = document.querySelector('#result-screen');
+    const startButton = document.querySelector('#start-button');
+    const restartButton = document.querySelector('#restart-button');
+    const combat = new CombatEngine({ enemies: [...ENEMIES, BOSS_PHASE_ONE] });
+    let now = 1000;
+
+    async function flush() {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    startButton.addEventListener('click', () => {
+      startScreen.classList.remove('modal--visible');
+      resultScreen.classList.remove('modal--visible');
+      now += 1000;
+      combat.start(now);
+    });
+
+    restartButton.addEventListener('click', () => {
+      resultScreen.classList.remove('modal--visible');
+      now += 1000;
+      combat.reset(now);
+      combat.start(now);
+    });
+
+    async function forceStageClear(stage) {
+      if (combat.enemyIndex !== stage - 1) {
+        throw new Error(`expected challenge stage ${stage}, got ${combat.enemyIndex + 1}`);
+      }
+      const enemyId = combat.enemy?.id;
+      combat.enemyHp = 0;
+      combat.phase = 'stage-clear';
+      combat.phaseStartedAt = now + 10;
+      combat.phaseEndsAt = now + 20;
+      combat.events.push({ type: 'enemy-defeated', detail: { enemyId, stage } });
+      now += 20;
+      combat.update(now);
+      const events = combat.drainEvents();
+      if (events.some((event) => event.type === 'victory' || event.type === 'defeat')) {
+        resultScreen.classList.add('modal--visible');
+      }
+      await flush();
+      return events;
+    }
+
+    function panelFits(panel) {
+      const rect = panel.getBoundingClientRect();
+      return (
+        rect.left >= -0.5 &&
+        rect.right <= innerWidth + 0.5 &&
+        rect.top >= -0.5 &&
+        rect.bottom <= innerHeight + 0.5 &&
+        getComputedStyle(panel).pointerEvents === 'none'
+      );
+    }
+
+    try {
+      if (CHALLENGE_CLEAN_WAVE_OBJECTIVE !== 3) throw new Error('unexpected challenge mastery target');
+
+      const challengeButton = document.querySelector('#challenge-button');
+      if (!challengeButton) throw new Error('challenge control was not installed');
+      challengeButton.click();
+      combat.drainEvents();
+      await flush();
+
+      const panel = document.querySelector('#challenge-momentum');
+      if (!panel) throw new Error('challenge momentum panel was not installed');
+      const pips = panel.querySelector('[data-challenge-momentum-pips]');
+      const entryOk =
+        panel.hidden === false &&
+        panelFits(panel) &&
+        pips?.textContent.includes('無傷 0/3') &&
+        root.dataset.challengeMasteryTarget === '3' &&
+        root.dataset.challengeMasteryProgress === '0' &&
+        root.dataset.challengeMasteryCleanWaves === '0' &&
+        root.dataset.challengeMasteryAchieved === 'false';
+      root.dataset.challengeMasteryEntry = String(entryOk);
+      if (!entryOk) throw new Error('challenge mastery objective was not visible at 0/3 on entry');
+
+      await forceStageClear(1);
+      const firstOk =
+        pips?.textContent.includes('無傷 1/3') &&
+        root.dataset.challengeMasteryProgress === '1' &&
+        root.dataset.challengeMasteryCleanWaves === '1' &&
+        root.dataset.challengeMasteryAchieved === 'false' &&
+        panelFits(panel);
+      root.dataset.challengeMasteryFirst = String(firstOk);
+      if (!firstOk) throw new Error('first hitless wave did not advance mastery objective to 1/3');
+
+      await forceStageClear(2);
+      const secondOk =
+        pips?.textContent.includes('無傷 2/3') &&
+        root.dataset.challengeMasteryProgress === '2' &&
+        root.dataset.challengeMasteryCleanWaves === '2' &&
+        root.dataset.challengeMasteryAchieved === 'false' &&
+        panelFits(panel);
+      root.dataset.challengeMasterySecond = String(secondOk);
+      if (!secondOk) throw new Error('second hitless wave did not advance mastery objective to 2/3');
+
+      await forceStageClear(3);
+      const achievedOk =
+        pips?.textContent.includes('無傷✓3') &&
+        root.dataset.challengeMasteryProgress === '3' &&
+        root.dataset.challengeMasteryCleanWaves === '3' &&
+        root.dataset.challengeMasteryAchieved === 'true' &&
+        panelFits(panel);
+      root.dataset.challengeMasteryAchievedLive = String(achievedOk);
+      if (!achievedOk) throw new Error('third hitless wave did not visibly complete the mastery objective');
+
+      let finalEvents = [];
+      for (let stage = 4; stage <= CHALLENGE_STAGE_COUNT; stage += 1) {
+        finalEvents = await forceStageClear(stage);
+      }
+
+      const victory = finalEvents.find((event) => event.type === 'victory');
+      const objective = victory?.detail?.challengeMasteryObjective;
+      const progress = document.querySelector('[data-challenge-progress]');
+      const challengeResult = document.querySelector('#challenge-result');
+      const terminalRect = challengeResult?.getBoundingClientRect();
+      const terminalOk =
+        Boolean(objective?.achieved) &&
+        objective?.target === 3 &&
+        objective?.cleanWaves === CHALLENGE_STAGE_COUNT &&
+        objective?.progress === 3 &&
+        panel.hidden === true &&
+        progress?.textContent.includes(`無傷✓${CHALLENGE_STAGE_COUNT}`) &&
+        root.dataset.challengeMasteryAchieved === 'true' &&
+        root.dataset.challengeMasteryCleanWaves === String(CHALLENGE_STAGE_COUNT) &&
+        challengeResult?.hidden === false &&
+        terminalRect &&
+        terminalRect.left >= -0.5 &&
+        terminalRect.right <= innerWidth + 0.5 &&
+        terminalRect.top >= -0.5 &&
+        terminalRect.bottom <= innerHeight + 0.5;
+      root.dataset.challengeMasteryTerminal = String(Boolean(terminalOk));
+      if (!terminalOk) throw new Error('challenge mastery terminal receipt was not truthful or in-bounds');
+
+      restartButton.click();
+      combat.drainEvents();
+      await flush();
+      const retryOk =
+        panel.hidden === false &&
+        pips?.textContent.includes('無傷 0/3') &&
+        root.dataset.challengeMasteryProgress === '0' &&
+        root.dataset.challengeMasteryCleanWaves === '0' &&
+        root.dataset.challengeMasteryAchieved === 'false';
+      root.dataset.challengeMasteryRetryReset = String(retryOk);
+      if (!retryOk) throw new Error('challenge mastery objective did not reset on retry');
+
+      combat.phase = 'defeat';
+      combat.phaseStartedAt = now + 1;
+      combat.phaseEndsAt = Infinity;
+      combat.events.push({ type: 'defeat', detail: { score: combat.score } });
+      const retryTerminalEvents = combat.drainEvents();
+      resultScreen.classList.add('modal--visible');
+      await flush();
+      const defeat = retryTerminalEvents.find((event) => event.type === 'defeat');
+      const retryObjective = defeat?.detail?.challengeMasteryObjective;
+      const retrySummary = document.querySelector('[data-challenge-progress]')?.textContent || '';
+      const retryTerminalOk =
+        retryObjective?.achieved === false &&
+        retryObjective?.cleanWaves === 0 &&
+        retryObjective?.progress === 0 &&
+        retrySummary.includes('無傷 0/3') &&
+        panel.hidden === true &&
+        root.dataset.challengeMasteryAchieved === 'false';
+      root.dataset.challengeMasteryRetryTerminal = String(retryTerminalOk);
+      if (!retryTerminalOk) throw new Error('retry terminal reused stale mastery success state');
+
+      const campaignButton = document.querySelector('#challenge-campaign-button');
+      if (!campaignButton || campaignButton.hidden) throw new Error('campaign handoff was unavailable');
+      campaignButton.click();
+      combat.drainEvents();
+      await flush();
+      const campaignOk =
+        root.dataset.challengeActive === 'false' &&
+        root.dataset.challengeMasteryTarget === '' &&
+        root.dataset.challengeMasteryProgress === '' &&
+        root.dataset.challengeMasteryCleanWaves === '' &&
+        root.dataset.challengeMasteryAchieved === '' &&
+        panel.hidden === true &&
+        combat.enemies.length === ENEMIES.length + 1 &&
+        combat.enemy?.id === 'ashigaru-scout';
+      root.dataset.challengeMasteryCampaignIsolation = String(campaignOk);
+      if (!campaignOk) throw new Error('challenge mastery state leaked into campaign');
+
+      root.dataset.challengeMasteryBrowser =
+        entryOk && firstOk && secondOk && achievedOk && terminalOk && retryOk && retryTerminalOk && campaignOk
+          ? 'pass'
+          : 'fail';
+    } catch (error) {
+      requestChallenge(false);
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.challengeMasteryBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

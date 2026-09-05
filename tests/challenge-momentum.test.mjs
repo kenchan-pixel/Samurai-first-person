@@ -4,9 +4,11 @@ import { CombatEngine, ENEMIES } from '../src/game-core.js';
 import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
 import { installChallengeMode, requestChallenge } from '../src/challenge-mode.js';
 import {
+  CHALLENGE_CLEAN_WAVE_OBJECTIVE,
   CHALLENGE_FULL_HP_SCORE_BONUS,
   CHALLENGE_MOMENTUM_MAX,
   installChallengeMomentum,
+  resolveChallengeMastery,
   resolveChallengeMomentum,
 } from '../src/challenge-momentum.js';
 
@@ -32,6 +34,40 @@ function resolveNextIncomingHit(combat) {
   combat.update(now); // strike -> real CombatEngine player-hit
   return { now, hpBefore, events: combat.drainEvents() };
 }
+
+test('challenge cumulative hitless mastery objective is bounded and truthful', () => {
+  assert.equal(CHALLENGE_CLEAN_WAVE_OBJECTIVE, 3);
+  assert.deepEqual(resolveChallengeMastery(0), {
+    target: 3,
+    cleanWaves: 0,
+    progress: 0,
+    achieved: false,
+  });
+  assert.deepEqual(resolveChallengeMastery(2), {
+    target: 3,
+    cleanWaves: 2,
+    progress: 2,
+    achieved: false,
+  });
+  assert.deepEqual(resolveChallengeMastery(3), {
+    target: 3,
+    cleanWaves: 3,
+    progress: 3,
+    achieved: true,
+  });
+  assert.deepEqual(resolveChallengeMastery(8), {
+    target: 3,
+    cleanWaves: 8,
+    progress: 3,
+    achieved: true,
+  });
+  assert.deepEqual(resolveChallengeMastery(-5, 0), {
+    target: 3,
+    cleanWaves: 0,
+    progress: 0,
+    achieved: false,
+  });
+});
 
 test('challenge momentum resolves hit, heal and full-health score rewards deterministically', () => {
   assert.equal(CHALLENGE_MOMENTUM_MAX, 2);

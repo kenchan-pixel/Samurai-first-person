@@ -115,3 +115,13 @@ Run before accepting an evolution implementation. Current mobile acceptance view
 - [ ] Existing mastery, boss, onboarding, footwork, readability and impact browser harnesses remain green.
 - [ ] CI configuration remains valid; Current Baseline, changelog, backlog, state and run log are updated with the implementation when their represented product/engineering state changes.
 - [ ] Draft PR remains open/Draft/unmerged and contains one concise run comment with Before/After/verification/regression/risk/Preview.
+
+## Run 154 additive gates — 無傷試煉
+
+- [ ] Challenge/今日陣 **無傷試煉** counts only authoritative cumulative hitless wave clears from the existing composed `enemy-defeated` / `player-hit` challenge state. The target is exactly 3 cumulative hitless waves, independent of the consecutive two-wave 氣勢 chain; a wave containing a real `player-hit` must not increment it.
+- [ ] **無傷試煉** is observation/coaching-only: it must not change HP, score, 不屈 rewards, tactics, challenge-best ranking/schema, attack timing/damage, parry/Perfect/STEP, roster or campaign/practice state.
+- [ ] The existing pointer-transparent challenge 氣勢 badge—not a new panel—must show `無傷 0/3 → 1/3 → 2/3 → 無傷✓3` and may continue with the truthful cumulative total after achievement. It must remain in-bounds at 320×568, own no touch target and add no additional live-combat overlay.
+- [ ] Terminal challenge events must carry truthful `{target, cleanWaves, progress, achieved}` objective detail and the existing challenge progress strip must append the same compact achieved/progress status without overflow. Retry must reset to 0/3 and clear the previous terminal-summary marker; a subsequent zero-clear defeat must show `無傷 0/3` rather than stale success. Full-campaign handoff must clear objective datasets/presentation.
+- [ ] **無傷試煉** creates no localStorage/sessionStorage/indexedDB key, account, identifier, analytics event, remote record or network request.
+- [ ] `npm test` includes deterministic objective boundaries for below-target, exact-target and above-target cumulative clean-wave counts, while preserving all existing challenge momentum/reward/campaign-isolation regressions.
+- [ ] Focused 320×568 challenge mastery browser gate proves real challenge entry `0/3`, Wave 1 `1/3`, Wave 2 `2/3`, Wave 3 achievement, truthful eight-wave terminal receipt/status, retry reset, immediate failed-retry terminal freshness and full-campaign isolation.

@@ -472,3 +472,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold is weakened. The repair makes the already-approved retry/full-campaign clearing contract explicit at the actual button owner and pins the stale-label sequence at the canonical 320×568 viewport.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` (including the new retry-focus reset smoke) and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 154 — Add a cumulative hitless challenge mastery objective
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `14817ab6c076d5be81e7a8808f6a943194ac5c24`.
+- Exact-head Actions CI #199 / run `33984377511` is terminal success with the complete Node/browser suite green and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; unresolved review threads are empty; Preview feedback reports 0 unresolved items; the latest exact-head review reports no actionable P0/P1/P2.
+- Candidate scoring: **cumulative hitless challenge mastery objective 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); bounded generic result key-moment recap 19/25; unverified combat-motion refinement 17/25. The objective wins because it gives the eight-wave route a clear replay target using already-authoritative challenge events while reusing the existing momentum surface and leaving balance/persistence untouched.
+
+### Feature
+
+- The existing challenge **氣勢** badge now carries one compact **無傷** objective on the same strong line: `無傷 0/3 → 1/3 → 2/3 → 無傷✓3`. It counts cumulative hitless wave clears across the active 連戰試煉/今日陣 run; it does not require consecutive clears and is independent of the existing two-wave momentum chain/reward.
+- On terminal victory/defeat, the same objective is attached as structured run-local event detail `{target, cleanWaves, progress, achieved}` and the existing challenge progress line appends a compact truthful status such as `無傷✓8` or `無傷 2/3`. No score, HP, reward, tactic, best-record or persistence schema changes.
+- Retry resets the objective to 0/3 and also clears the existing momentum terminal-summary marker before the next run, so a second terminal cannot inherit the previous mastery verdict. Full-campaign handoff clears the objective datasets and hides the badge.
+- Added deterministic objective-boundary tests and a dedicated real 320×568 browser gate covering entry 0/3, two increments, live achievement, terminal truth/layout, retry reset, failed-retry terminal freshness and campaign isolation. The new gate is appended to the full browser suite rather than replacing any existing acceptance path.
+- No attack timing/damage, posture, parry/Perfect/STEP, roster, renderer, input, analytics, identifier, network transport or remote data path changed.
+
+### Verification boundary
+
+- Modified/new JavaScript and the new embedded browser harness were syntax-checked before assembling Git objects. Repository-authoritative verification remains exact-head Actions after the single final commit.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `challenge-mastery-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
