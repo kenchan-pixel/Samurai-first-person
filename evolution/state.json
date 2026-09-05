@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 144,
+  "run_number": 145,
   "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 9911a57f4402613bc7fa7ec69277fdee577f5b72 is terminal green: Actions CI #189 / run 33955351258 passed npm test and the complete browser suite, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review threads are empty, the latest exact-head Second Hourly review reports no actionable P0/P1/P2, and the latest run receipt contains no unresolved human blocker. Run 144 therefore delivers one bounded player-visible practice-coaching slice: when the prior same-route attempt defended every observed direction at 100% and the next 敵式 intro challenges Perfect, the following 修行進度 result now grades that exact Perfect objective from authoritative Perfect Parry / Perfect STEP event counts as 達成 N次 or 未達成 0次. The verdict never invents a direction, remains page-session-only, adds no new result surface or pointer target, and changes no combat timing, Perfect timing/reward, score, renderer, input, persistence, identifier, analytics or network authority. A dedicated 320x568 browser gate exercises armed → achieved → missed on the composed result UI.",
-  "last_commit": "9911a57f4402613bc7fa7ec69277fdee577f5b72",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove the new Perfect practice-target verdict plus the cumulative 320x568 campaign/practice/challenge/今日陣 baseline. No additional feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD 4b7a1d39457458db3e8ac4ed32910ad3c1ad8041 is terminal green: Actions CI #190 / run 33958209494 passed npm test and the complete browser suite, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review threads are empty, the latest exact-head Second Hourly review reports no actionable P0/P1/P2, and Vercel Preview Comments reports 0 unresolved feedback. Direct Vercel project lookup returned 404 and team project enumeration returned empty, so the exact-head GitHub Vercel commit status remains the canonical deployment signal. Run 145 therefore delivers one bounded player-visible challenge decision slice: every existing Waves 2/4/6 戰前抉擇 now includes a non-interactive 下一陣 · 偵察 read of the actual next enemy in the current runtime roster, plus compact threat tags derived only from that enemy's existing attack definitions (重斬 / 變刀 / 快起手 / 正攻). The scout clears with the choice and on retry/campaign handoff, creates no persistence or network state, and changes no enemy definition, attack timing/damage, HP-score trade, parry/Perfect/STEP, renderer, input or challenge-best authority. The existing 今日陣 browser path now verifies all three scouts against the actual date-determined roster at 320x568.",
+  "last_commit": "4b7a1d39457458db3e8ac4ed32910ad3c1ad8041",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The complete Node/browser suite must prove the new next-wave tactical scout plus the cumulative 320x568 campaign/practice/challenge/今日陣 baseline. No additional feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,18 +17,18 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "practice_perfect_target_pending_exact_head",
-    "last_observed_head": "9911a57f4402613bc7fa7ec69277fdee577f5b72",
-    "incoming_ci_run": 33955351258,
+    "status": "challenge_tactical_scout_pending_exact_head",
+    "last_observed_head": "4b7a1d39457458db3e8ac4ed32910ad3c1ad8041",
+    "incoming_ci_run": 33958209494,
     "incoming_ci_result": "success",
     "incoming_ci_failure": null,
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "project enumeration is unavailable in this runtime; exact-head GitHub Vercel status is the canonical fallback",
+    "direct_vercel_connector": "get_project returned 404 and list_projects returned an empty team project list in this runtime; exact-head GitHub Vercel status is the canonical fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 144 starts from a fully green exact HEAD with no actionable current-head review finding. Candidate scoring selected the existing Perfect retry-objective closure over broader trend/history or key-moment recap work because it completes the already-shipped all-observed-clean → 挑戰 Perfect loop without adding persistence, live-combat clutter or a new interaction. The implementation reads only authoritative run-analysis Perfect Parry / Perfect STEP counts, reuses the existing 修行進度 row, publishes a target-kind marker so a null direction cannot stringify into misleading state, and adds a focused 320x568 browser gate for armed, achieved and missed outcomes. Post-commit full Node/browser CI and exact-head Vercel are mandatory, with the PR run comment authoritative for resulting SHA/status under the one-commit rule."
+    "note": "Run 145 starts from a fully green exact HEAD with no actionable current-head review finding. Candidate scoring selected next-wave tactical scouting at the existing Waves 2/4/6 decision gate (23/25) over a bounded three-attempt practice trend (20/25) and a result key-moment recap (20/25). This deliberately moves away from the recently refined practice subsystem while strengthening the challenge decision fantasy: the player can see the actual upcoming opponent and only truthful threat tags derived from the already-authoritative roster/attack metadata before choosing 整息 or 血誓. The scout is presentation-only, is removed as soon as the decision closes, and the existing 今日陣 browser route now fails closed if any checkpoint shows stale/wrong next-enemy data, overflows 320x568, owns pointer input, or leaks into retry/campaign state. Post-commit full Node/browser CI and exact-head Vercel are mandatory, with the PR run comment authoritative for resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -66,9 +66,9 @@
     }
   },
   "next_candidates": [
+    "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect all three 下一陣 · 偵察 reads against the actual runtime roster together with 戰前抉擇, 戰策回顧, 氣勢/不屈 and 宿敵步速; refine only if exact Preview evidence shows stale enemy identity, misleading tags, crowding or pointer overlap",
     "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon practice and inspect directional 上局目標 plus all-observed-clean Perfect verdict together with next 今局修行 focus, 四向防守 and 修行進度; refine only if exact Preview evidence shows stale-route leakage, crowding or misleading grading",
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "ACCEPTANCE: repeat challenge/今日陣 and use 戰策回顧 + 氣勢/不屈 + 宿敵步速 evidence before tuning challenge-only values",
     "FEATURE: consider a bounded three-attempt practice trend only if it can add meaningful repeat-play value without new persistence or duplicating the immediate previous-attempt comparison",
     "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surface without duplicating 四向防守 / 修行進度 / 上局目標 / 戰策回顧",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"

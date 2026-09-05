@@ -27,6 +27,33 @@ function stateFor(engine) {
   return state;
 }
 
+export function describeChallengeThreat(enemy, stage = 1) {
+  const attacks = Array.isArray(enemy?.attacks) ? enemy.attacks : [];
+  const enemyName = String(enemy?.name || enemy?.title || enemy?.id || '').trim();
+  if (!enemyName || attacks.length === 0) return null;
+
+  const stageNumber = Math.max(1, Math.floor(Number(stage) || 1));
+  const tags = [];
+  if (attacks.some((attack) => Boolean(attack?.heavy))) tags.push('重斬');
+  if (attacks.some((attack) => Boolean(attack?.feintFrom))) tags.push('變刀');
+  const fastestTelegraph = attacks.reduce((fastest, attack) => {
+    const value = Number(attack?.telegraphMs);
+    if (!Number.isFinite(value) || value <= 0) return fastest;
+    return Math.min(fastest, value);
+  }, Infinity);
+  if (fastestTelegraph <= 500) tags.push('快起手');
+  if (tags.length === 0) tags.push('正攻');
+
+  const boundedTags = tags.slice(0, 3);
+  return {
+    stage: stageNumber,
+    enemyId: String(enemy?.id || ''),
+    enemyName,
+    tags: boundedTags,
+    text: `第 ${stageNumber} 關 · ${enemyName} · ${boundedTags.join(' / ')}`,
+  };
+}
+
 export function resolveChallengeTactic({
   choice,
   playerHp = 0,
@@ -154,7 +181,11 @@ function ensureStyles() {
     }
     .challenge-tactic__eyebrow{margin:0;color:#dcae67;font-size:9px;letter-spacing:.13em;text-align:center}
     .challenge-tactic__card h3{margin:5px 0 3px;color:#f4ead7;font-size:20px;line-height:1.05;text-align:center}
-    .challenge-tactic__status{margin:0 0 10px;color:rgba(244,232,210,.68);font-size:10px;text-align:center}
+    .challenge-tactic__status{margin:0 0 9px;color:rgba(244,232,210,.68);font-size:10px;text-align:center}
+    .challenge-tactic__scout{margin:0 0 9px;padding:7px 9px;border:1px solid rgba(228,182,107,.2);border-radius:10px;background:rgba(228,182,107,.06);pointer-events:none}
+    .challenge-tactic__scout[hidden]{display:none}
+    .challenge-tactic__scout span{display:block;color:#dcae67;font-size:8px;letter-spacing:.11em}
+    .challenge-tactic__scout strong{display:block;margin-top:2px;color:rgba(244,232,210,.82);font-size:9.5px;line-height:1.22;font-weight:600;letter-spacing:.01em}
     .challenge-tactic__choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .challenge-tactic__choice{
       min-height:58px;
@@ -178,6 +209,7 @@ function ensureStyles() {
       .challenge-tactic{padding-top:calc(var(--safe-top) + 48px);padding-bottom:calc(var(--safe-bottom) + 12px)}
       .challenge-tactic__card{padding:11px}
       .challenge-tactic__card h3{font-size:18px}
+      .challenge-tactic__scout{padding:6px 8px;margin-bottom:8px}
       .challenge-tactic__choice{min-height:52px;padding:7px 6px}
       .challenge-tactic-recap{font-size:8px;line-height:1.08}
     }
@@ -202,6 +234,10 @@ function ensureUi() {
         <p class="challenge-tactic__eyebrow">連戰 · 戰前抉擇</p>
         <h3 id="challenge-tactic-title">收刀一息</h3>
         <p class="challenge-tactic__status" data-challenge-tactic-status></p>
+        <div class="challenge-tactic__scout" data-challenge-tactic-scout hidden>
+          <span>下一陣 · 偵察</span>
+          <strong data-challenge-tactic-scout-copy></strong>
+        </div>
         <div class="challenge-tactic__choices">
           <button class="challenge-tactic__choice" type="button" data-challenge-tactic="recover">
             <strong>整息</strong><small data-challenge-tactic-recover>回復 1 生命</small>
@@ -272,9 +308,18 @@ function renderTacticRecap(summary) {
 function renderHidden(state = null) {
   if (typeof document === 'undefined') return;
   const panel = ensureUi();
-  if (panel) panel.hidden = true;
+  if (panel) {
+    panel.hidden = true;
+    const scout = panel.querySelector('[data-challenge-tactic-scout]');
+    const scoutCopy = panel.querySelector('[data-challenge-tactic-scout-copy]');
+    if (scout) scout.hidden = true;
+    if (scoutCopy) scoutCopy.textContent = '';
+  }
   const root = document.documentElement;
   root.dataset.challengeTacticPending = 'false';
+  root.dataset.challengeTacticScoutStage = '';
+  root.dataset.challengeTacticScoutEnemy = '';
+  root.dataset.challengeTacticScoutTags = '';
   if (!state?.active) root.dataset.challengeTacticCheckpoint = '';
 }
 
@@ -286,9 +331,14 @@ function renderChoice(engine, state) {
   const maxHp = Math.max(hp, Number(engine.playerMaxHp) || 0);
   const score = Math.max(0, Math.round(Number(engine.score) || 0));
   const status = panel.querySelector('[data-challenge-tactic-status]');
+  const scout = panel.querySelector('[data-challenge-tactic-scout]');
+  const scoutCopy = panel.querySelector('[data-challenge-tactic-scout-copy]');
   const recoverCopy = panel.querySelector('[data-challenge-tactic-recover]');
   const risk = panel.querySelector('[data-challenge-tactic="blood-vow"]');
+  const threat = describeChallengeThreat(engine.enemies?.[state.checkpoint], state.checkpoint + 1);
   if (status) status.textContent = `第 ${state.checkpoint} 關突破 · 生命 ${hp}/${maxHp} · ${String(score).padStart(6, '0')}`;
+  if (scout) scout.hidden = !threat;
+  if (scoutCopy) scoutCopy.textContent = threat?.text || '';
   if (recoverCopy) recoverCopy.textContent = hp < maxHp ? '回復 1 生命' : '保持滿血 · 安全續戰';
   if (risk) {
     risk.disabled = hp <= 1;
@@ -299,6 +349,9 @@ function renderChoice(engine, state) {
   root.dataset.challengeTacticPending = 'true';
   root.dataset.challengeTacticCheckpoint = String(state.checkpoint);
   root.dataset.challengeTacticChoices = String(state.choicesMade);
+  root.dataset.challengeTacticScoutStage = threat ? String(threat.stage) : '';
+  root.dataset.challengeTacticScoutEnemy = threat?.enemyId || '';
+  root.dataset.challengeTacticScoutTags = threat?.tags?.join(',') || '';
 }
 
 function openCheckpoint(engine, state, stage) {

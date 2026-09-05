@@ -41,6 +41,7 @@
     import {
       CHALLENGE_TACTIC_CHECKPOINTS,
       CHALLENGE_TACTIC_SCORE_BONUS,
+      describeChallengeThreat,
     } from '../src/challenge-tactics.js';
     import { CombatEngine, ENEMIES } from '../src/game-core.js';
     import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
@@ -53,6 +54,7 @@
     let uiNow = 1000;
     let tacticUiOk = true;
     let tacticRiskRewardOk = true;
+    let tacticScoutOk = true;
 
     startButton.addEventListener('click', () => {
       uiNow += 1000;
@@ -102,6 +104,22 @@
       }) && buttons.every((button) => button.getBoundingClientRect().height >= 44);
     }
 
+    function tacticScoutMatches(panel, checkpoint) {
+      const threat = describeChallengeThreat(uiCombat.enemies[checkpoint], checkpoint + 1);
+      const scout = panel?.querySelector('[data-challenge-tactic-scout]');
+      const copy = panel?.querySelector('[data-challenge-tactic-scout-copy]');
+      if (!threat || !scout || !copy || scout.hidden) return false;
+      const rect = scout.getBoundingClientRect();
+      return copy.textContent.trim() === threat.text &&
+        root.dataset.challengeTacticScoutStage === String(threat.stage) &&
+        root.dataset.challengeTacticScoutEnemy === threat.enemyId &&
+        root.dataset.challengeTacticScoutTags === threat.tags.join(',') &&
+        getComputedStyle(scout).pointerEvents === 'none' &&
+        rect.width > 0 && rect.height > 0 &&
+        rect.left >= -0.5 && rect.right <= innerWidth + 0.5 &&
+        rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
+    }
+
     function recapCleared(node) {
       return node?.hidden === true &&
         node.textContent === '' &&
@@ -136,15 +154,21 @@
         tacticUiOk = tacticUiOk && parked;
         if (!parked) throw new Error(`stage ${stage} tactical choice did not safely park the between-wave transition`);
 
+        const scoutMatched = tacticScoutMatches(panel, stage);
+        tacticScoutOk = tacticScoutOk && scoutMatched;
+        if (!scoutMatched) throw new Error(`stage ${stage} tactical scout did not match the actual next-wave enemy`);
+
         uiNow += 5000;
         uiCombat.update(uiNow);
         const waitedSafely =
           uiCombat.enemyIndex === stage - 1 &&
           uiCombat.phase === 'stage-clear' &&
           uiCombat.phaseEndsAt === Infinity &&
-          root.dataset.challengeTacticPending === 'true';
+          root.dataset.challengeTacticPending === 'true' &&
+          tacticScoutMatches(panel, stage);
         tacticUiOk = tacticUiOk && waitedSafely;
-        if (!waitedSafely) throw new Error(`stage ${stage} decision wait advanced combat before a choice`);
+        tacticScoutOk = tacticScoutOk && waitedSafely;
+        if (!waitedSafely) throw new Error(`stage ${stage} decision wait advanced combat or lost its next-wave scout before a choice`);
 
         const beforeHp = uiCombat.playerHp;
         const beforeScore = uiCombat.score;
@@ -156,9 +180,14 @@
         const selected =
           root.dataset.challengeTacticPending === 'false' &&
           panel.hidden === true &&
-          root.dataset.challengeTacticLast === tacticChoice;
+          root.dataset.challengeTacticLast === tacticChoice &&
+          !root.dataset.challengeTacticScoutStage &&
+          !root.dataset.challengeTacticScoutEnemy &&
+          !root.dataset.challengeTacticScoutTags &&
+          panel.querySelector('[data-challenge-tactic-scout]')?.hidden === true;
         tacticUiOk = tacticUiOk && selected;
-        if (!selected) throw new Error(`stage ${stage} tactic ${tacticChoice} did not close the choice gate`);
+        tacticScoutOk = tacticScoutOk && selected;
+        if (!selected) throw new Error(`stage ${stage} tactic ${tacticChoice} did not close the choice/scout gate`);
 
         if (tacticChoice === 'blood-vow') {
           tacticRiskRewardOk = tacticRiskRewardOk &&
@@ -228,6 +257,7 @@
         root.dataset.challengeActive === 'true' &&
         root.dataset.dailyChallengeActive === 'true' &&
         root.dataset.challengeTacticPending === 'false' &&
+        !root.dataset.challengeTacticScoutStage &&
         entry.start.detail?.dailyChallenge === true &&
         entry.start.detail?.dailyChallengeKey === key &&
         banner.hidden === false &&
@@ -268,13 +298,16 @@
       const tacticCountOk =
         tacticUiOk &&
         tacticRiskRewardOk &&
+        tacticScoutOk &&
         root.dataset.challengeTacticChoices === '3' &&
         root.dataset.challengeTacticPending === 'false' &&
+        !root.dataset.challengeTacticScoutStage &&
         tacticPanel.hidden === true;
       root.dataset.challengeTacticBrowser = String(tacticUiOk);
       root.dataset.challengeTacticRiskReward = String(tacticRiskRewardOk);
+      root.dataset.challengeTacticScoutBrowser = String(tacticScoutOk);
       root.dataset.challengeTacticThreeChoices = String(tacticCountOk);
-      if (!tacticCountOk) throw new Error('challenge tactical checkpoints/risk-reward did not complete three bounded choices');
+      if (!tacticCountOk) throw new Error('challenge tactical checkpoints/scout/risk-reward did not complete three bounded choices');
 
       const victory = finalEvents.find((event) => event.type === 'victory');
       const progress = document.querySelector('[data-challenge-progress]');
@@ -302,6 +335,7 @@
       const terminalOk =
         stageTagsOk &&
         tacticRecapOk &&
+        tacticScoutOk &&
         victory?.detail?.challenge === true &&
         victory?.detail?.dailyChallenge === true &&
         victory?.detail?.dailyChallengeKey === key &&
@@ -328,6 +362,7 @@
         root.dataset.dailyChallengeActive === 'true' &&
         root.dataset.challengeTacticChoices === '0' &&
         root.dataset.challengeTacticPending === 'false' &&
+        !root.dataset.challengeTacticScoutStage &&
         retryRecapCleared &&
         retry.start.detail?.dailyChallenge === true &&
         retry.start.detail?.dailyChallengeKey === key &&
@@ -353,6 +388,9 @@
         root.dataset.dailyChallengeActive === 'false' &&
         root.dataset.challengeTacticPending === 'false' &&
         root.dataset.challengeTacticChoices === '0' &&
+        !root.dataset.challengeTacticScoutStage &&
+        !root.dataset.challengeTacticScoutEnemy &&
+        !root.dataset.challengeTacticScoutTags &&
         campaignRecapCleared &&
         tacticPanel.hidden === true &&
         !root.dataset.dailyChallengeKey &&
@@ -364,10 +402,10 @@
         banner.hidden === true;
       root.dataset.dailyChallengeCampaignHandoff = String(campaignOk);
       root.dataset.challengeTacticCampaignIsolation = String(campaignOk);
-      if (!campaignOk) throw new Error('今日陣/tactical state leaked into the restored four-stage campaign');
+      if (!campaignOk) throw new Error('今日陣/tactical scout state leaked into the restored four-stage campaign');
 
       root.dataset.dailyChallengeBrowserIntegration =
-        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk ? 'pass' : 'fail';
+        entryOk && bannerLifecycle && terminalOk && retryOk && campaignOk && tacticCountOk && tacticRecapOk && tacticScoutOk ? 'pass' : 'fail';
     } catch (error) {
       requestDailyChallenge(false);
       requestChallenge(false);

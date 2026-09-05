@@ -263,3 +263,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The implementation is intentionally result/coaching-only and keeps the prior directional-target contract intact. The new browser smoke is appended to the complete existing browser suite rather than replacing any gate.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` (including `practice-perfect-target-browser-smoke.mjs`) and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 145 — Scout the actual next challenge opponent
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `4b7a1d39457458db3e8ac4ed32910ad3c1ad8041`.
+- Exact-head Actions CI #190 / run `33958209494` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; the latest exact-head Second Hourly review reports no actionable P0/P1/P2; Vercel Preview Comments reports 0 unresolved feedback. Direct Vercel project lookup returned 404 and team project enumeration returned empty in this runtime, so the exact-head GitHub `Vercel` status is the canonical deployment signal.
+- Candidate scoring: **next-wave tactical scout 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); bounded three-attempt practice trend 20/25; bounded result key-moment recap 20/25. The first candidate wins because it strengthens an existing meaningful challenge decision and diversifies away from the recent practice-coaching refinements without touching combat balance.
+
+### Feature
+
+- Each existing Waves 2/4/6 **戰前抉擇** now shows a compact non-interactive **下一陣 · 偵察** read before the player chooses 整息 or 血誓. It reads `engine.enemies[checkpoint]`, so normal challenge and 今日陣 both show the actual next runtime opponent rather than a hard-coded stage assumption.
+- Threat tags are derived only from that actual enemy's existing attack metadata: **重斬** when its set contains heavy attacks, **變刀** when it contains feints, **快起手** when its attack set contains a ≤500 ms telegraph, otherwise **正攻**. At most three tags render. No roster/attack definition is mutated.
+- The scout is pointer-transparent, stays inside the same decision card, persists only while the stage-clear transition is already parked, and clears immediately when the choice closes as well as on retry/full-campaign handoff.
+- The existing 320×568 今日陣 browser harness now verifies all three scouts against the actual date-determined runtime roster, their exact text/state, viewport/pointer safety, persistence during the parked decision, and cleanup before the next stage; existing risk/reward and 戰策回顧 assertions remain intact.
+- No combat timing, damage, posture, parry/Perfect/STEP, HP-score trade, challenge ranking, renderer/input authority, storage key, identifier, analytics or network behavior changed.
+
+### Verification boundary
+
+- Existing browser-suite breadth is preserved; the composed 今日陣/challenge tactical gate is strengthened rather than replaced.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

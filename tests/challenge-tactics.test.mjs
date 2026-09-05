@@ -9,6 +9,7 @@ import {
   CHALLENGE_TACTIC_CHECKPOINTS,
   CHALLENGE_TACTIC_SCORE_BONUS,
   chooseChallengeTactic,
+  describeChallengeThreat,
   formatChallengeTacticRecap,
   installChallengeTactics,
   resolveChallengeTactic,
@@ -17,6 +18,32 @@ import {
 
 test('challenge tactic checkpoints stay bounded to three between-wave decisions', () => {
   assert.deepEqual(CHALLENGE_TACTIC_CHECKPOINTS, [2, 4, 6]);
+});
+
+test('next-wave scout derives compact threat tags from the actual enemy definition', () => {
+  assert.deepEqual(describeChallengeThreat(ENEMIES[0], 5), {
+    stage: 5,
+    enemyId: 'ashigaru-scout',
+    enemyName: 'Ashigaru Scout',
+    tags: ['正攻'],
+    text: '第 5 關 · Ashigaru Scout · 正攻',
+  });
+  assert.deepEqual(describeChallengeThreat(ENEMIES[1], 5), {
+    stage: 5,
+    enemyId: 'wandering-ronin',
+    enemyName: 'Wandering Ronin',
+    tags: ['變刀'],
+    text: '第 5 關 · Wandering Ronin · 變刀',
+  });
+  assert.deepEqual(describeChallengeThreat(ENEMIES[2], 5), {
+    stage: 5,
+    enemyId: 'oni-guard',
+    enemyName: 'Oni Guard',
+    tags: ['重斬', '變刀', '快起手'],
+    text: '第 5 關 · Oni Guard · 重斬 / 變刀 / 快起手',
+  });
+  assert.equal(describeChallengeThreat(null, 3), null);
+  assert.equal(describeChallengeThreat({ name: 'No attacks', attacks: [] }, 3), null);
 });
 
 test('整息 restores at most one HP without changing score', () => {
