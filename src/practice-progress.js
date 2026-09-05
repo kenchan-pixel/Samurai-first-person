@@ -9,6 +9,7 @@ import {
 const installed = Symbol.for('blade-reversal.practice-progress-v1');
 const sessions = new WeakMap();
 const routeHistory = new Map();
+const routeTrendHistory = new Map();
 
 function clampPct(value) {
   return Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
@@ -91,6 +92,38 @@ export function comparePracticeSnapshots(previous, current) {
     hitsDelta: hits.delta,
     counterDelta: counter.delta,
     text: `比上次：防守 ${signed(defense.delta, '%')} · 受擊 ${signed(hits.delta)} · 反擊 ${signed(counter.delta, '%')}`,
+  });
+}
+
+function metricTrail(snapshots, key, suffix = '') {
+  return snapshots
+    .map((snapshot) => Number.isFinite(snapshot?.[key]) ? `${snapshot[key]}${suffix}` : '—')
+    .join('→');
+}
+
+export function buildPracticeTrend(snapshots) {
+  const runs = Array.isArray(snapshots) ? snapshots.filter(Boolean).slice(-3) : [];
+  if (runs.length < 3) return null;
+
+  const first = runs[0];
+  const current = runs[runs.length - 1];
+  const defense = compareMetric(first.defensePct, current.defensePct);
+  const hits = compareMetric(first.hitsTaken, current.hitsTaken, true);
+  const counter = compareMetric(first.counterPct, current.counterPct);
+  const comparable = [defense, hits, counter].filter((metric) => Number.isFinite(metric.delta));
+  if (!comparable.length) return null;
+
+  const quality = comparable.reduce((sum, metric) => sum + metric.quality, 0);
+  const state = quality > 0 ? 'improving' : quality < 0 ? 'declining' : 'steady';
+  const status = state === 'improving' ? '整體向上' : state === 'declining' ? '需要調整' : '大致持平';
+
+  return Object.freeze({
+    state,
+    status,
+    defenseDelta: defense.delta,
+    hitsDelta: hits.delta,
+    counterDelta: counter.delta,
+    text: `近3局 · ${status}｜防守 ${metricTrail(runs, 'defensePct', '%')} · 受擊 ${metricTrail(runs, 'hitsTaken')} · 反擊 ${metricTrail(runs, 'counterPct', '%')}`,
   });
 }
 
@@ -210,12 +243,13 @@ function installStyles() {
   style.dataset.practiceProgressStyle = 'true';
   style.textContent = `
     .result-analysis__practice-progress{margin-top:8px;padding:7px 8px;border:1px solid rgba(129,193,154,.2);border-radius:9px;background:rgba(57,106,75,.09)}
-    .result-analysis__practice-progress[hidden],.result-analysis__practice-focus[hidden]{display:none}
+    .result-analysis__practice-progress[hidden],.result-analysis__practice-focus[hidden],.result-analysis__practice-trend[hidden]{display:none}
     .result-analysis__practice-progress strong,.result-analysis__practice-progress span{display:block}
     .result-analysis__practice-progress strong{font-size:10px;letter-spacing:.08em;color:rgba(184,229,198,.9)}
     .result-analysis__practice-progress span{margin-top:2px;font-size:10px;line-height:1.3;color:rgba(237,235,224,.72)}
+    .result-analysis__practice-trend{margin-top:3px!important;color:rgba(205,224,211,.78)!important;pointer-events:none}
     .result-analysis__practice-focus{margin-top:4px!important;padding-top:4px;border-top:1px solid rgba(184,229,198,.12);color:rgba(220,238,224,.82)!important}
-    @media(max-width:360px){.result-analysis__practice-progress{padding:6px 7px}.result-analysis__practice-progress span{font-size:9.5px}.result-analysis__practice-focus{font-size:9px!important}}
+    @media(max-width:360px){.result-analysis__practice-progress{padding:6px 7px}.result-analysis__practice-progress span{font-size:9.5px}.result-analysis__practice-trend,.result-analysis__practice-focus{font-size:9px!important}}
   `;
   document.head.append(style);
 }
@@ -229,7 +263,7 @@ function ensureProgressNode() {
     node.className = 'result-analysis__practice-progress';
     node.dataset.practiceProgressRow = 'true';
     node.hidden = true;
-    node.innerHTML = '<strong data-practice-progress-title></strong><span data-practice-progress-copy></span><span class="result-analysis__practice-focus" data-practice-progress-focus></span>';
+    node.innerHTML = '<strong data-practice-progress-title></strong><span data-practice-progress-copy></span><span class="result-analysis__practice-trend" data-practice-progress-trend hidden></span><span class="result-analysis__practice-focus" data-practice-progress-focus></span>';
     const tip = panel.querySelector('[data-analysis-tip]');
     if (tip) tip.insertAdjacentElement('beforebegin', node);
     else panel.append(node);
@@ -248,6 +282,7 @@ function hideProgress() {
   delete document.documentElement.dataset.practiceProgressTargetState;
   delete document.documentElement.dataset.practiceProgressTargetDirection;
   delete document.documentElement.dataset.practiceProgressFocusState;
+  delete document.documentElement.dataset.practiceProgressTrendState;
 }
 
 function renderProgress(routeKey, report) {
@@ -261,10 +296,13 @@ function renderProgress(routeKey, report) {
 
   const title = node.querySelector('[data-practice-progress-title]');
   const copy = node.querySelector('[data-practice-progress-copy]');
+  const trendCopy = node.querySelector('[data-practice-progress-trend]');
   const focusCopy = node.querySelector('[data-practice-progress-focus]');
   const previous = routeHistory.get(routeKey) || null;
   const comparison = comparePracticeSnapshots(previous, snapshot);
   const coach = buildPracticeFocusCoach(previous, snapshot);
+  const trendRuns = [...(routeTrendHistory.get(routeKey) || []), snapshot].slice(-3);
+  const trend = buildPracticeTrend(trendRuns);
 
   if (comparison) {
     title.textContent = `修行進度 · ${comparison.status}`;
@@ -274,6 +312,16 @@ function renderProgress(routeKey, report) {
     title.textContent = '修行進度';
     copy.textContent = '再戰同一對手一次，就會比較今局與上局的防守、受擊及反擊。';
     document.documentElement.dataset.practiceProgressState = 'first';
+  }
+
+  if (trendCopy) {
+    trendCopy.textContent = trend?.text || '';
+    trendCopy.hidden = !trend;
+  }
+  if (trend) {
+    document.documentElement.dataset.practiceProgressTrendState = trend.state;
+  } else {
+    delete document.documentElement.dataset.practiceProgressTrendState;
   }
 
   if (focusCopy) {
@@ -311,6 +359,7 @@ function renderProgress(routeKey, report) {
   }
 
   routeHistory.set(routeKey, snapshot);
+  routeTrendHistory.set(routeKey, Object.freeze([...trendRuns]));
   node.hidden = false;
   document.documentElement.dataset.practiceProgressRoute = routeKey;
 }

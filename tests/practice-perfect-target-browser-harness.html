@@ -87,9 +87,12 @@
 
       const progress = document.querySelector('#result-analysis [data-practice-progress-row]');
       const focus = progress?.querySelector('[data-practice-progress-focus]');
+      const trend = progress?.querySelector('[data-practice-progress-trend]');
       const armed = Boolean(
         progress && !progress.hidden &&
         focus && !focus.hidden &&
+        trend && trend.hidden &&
+        !root.dataset.practiceProgressTrendState &&
         root.dataset.practiceProgressRoute === 'enemy:wandering-ronin' &&
         root.dataset.practiceProgressFocusState === 'clear' &&
         !root.dataset.practiceProgressTargetKind &&
@@ -108,6 +111,8 @@
         root.dataset.practiceProgressTargetKind === 'perfect' &&
         root.dataset.practiceProgressTargetState === 'mastered' &&
         !root.dataset.practiceProgressTargetDirection &&
+        trend.hidden &&
+        !root.dataset.practiceProgressTrendState &&
         focus.textContent.includes('上局目標 · Perfect · 達成 1次') &&
         progressLayoutOk(progress)
       );
@@ -127,8 +132,21 @@
       root.dataset.practicePerfectTargetMissed = String(missed);
       if (!missed) throw new Error(`Perfect retry target was not graded as missed: ${progress?.textContent || 'missing progress'}`);
 
+      const trendVisible = Boolean(
+        trend && !trend.hidden &&
+        root.dataset.practiceProgressTrendState === 'steady' &&
+        trend.textContent.includes('近3局 · 大致持平') &&
+        trend.textContent.includes('防守 100%→100%→100%') &&
+        trend.textContent.includes('受擊 0→0→0') &&
+        trend.textContent.includes('反擊 100%→100%→100%') &&
+        getComputedStyle(trend).pointerEvents === 'none' &&
+        progressLayoutOk(progress)
+      );
+      root.dataset.practiceThreeRunTrend = String(trendVisible);
+      if (!trendVisible) throw new Error(`three-run practice trend was not truthful, bounded and visible on attempt three: ${progress?.textContent || 'missing progress'}`);
+
       root.dataset.practicePerfectTargetLayout = progressLayoutOk(progress) ? 'pass' : 'fail';
-      root.dataset.practicePerfectTargetBrowser = armed && achieved && missed && progressLayoutOk(progress) ? 'pass' : 'fail';
+      root.dataset.practicePerfectTargetBrowser = armed && achieved && missed && trendVisible && progressLayoutOk(progress) ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);

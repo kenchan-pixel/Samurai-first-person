@@ -5,6 +5,7 @@ import {
   buildPracticeFocusCoach,
   buildPracticeSnapshot,
   buildPracticeTargetOutcome,
+  buildPracticeTrend,
   comparePracticeSnapshots,
 } from '../src/practice-progress.js';
 
@@ -71,6 +72,36 @@ test('practice progress comparison can flag a worse repeat without inventing una
   assert.equal(comparison.hitsDelta, 2);
   assert.equal(comparison.counterDelta, null);
   assert.match(comparison.text, /反擊 —%/);
+});
+
+test('three-attempt practice trend summarizes bounded same-route trajectory', () => {
+  const trend = buildPracticeTrend([
+    { defensePct: 50, hitsTaken: 2, counterPct: 50 },
+    { defensePct: 75, hitsTaken: 1, counterPct: 75 },
+    { defensePct: 100, hitsTaken: 0, counterPct: 100 },
+  ]);
+
+  assert.equal(trend.state, 'improving');
+  assert.equal(trend.status, '整體向上');
+  assert.equal(trend.defenseDelta, 50);
+  assert.equal(trend.hitsDelta, -2);
+  assert.equal(trend.counterDelta, 50);
+  assert.equal(trend.text, '近3局 · 整體向上｜防守 50%→75%→100% · 受擊 2→1→0 · 反擊 50%→75%→100%');
+});
+
+test('three-attempt practice trend waits for three runs and keeps unavailable metrics truthful', () => {
+  assert.equal(buildPracticeTrend([
+    { defensePct: 50, hitsTaken: 1, counterPct: null },
+    { defensePct: 50, hitsTaken: 1, counterPct: null },
+  ]), null);
+
+  const trend = buildPracticeTrend([
+    { defensePct: 100, hitsTaken: 0, counterPct: null },
+    { defensePct: 80, hitsTaken: 1, counterPct: null },
+    { defensePct: 60, hitsTaken: 2, counterPct: null },
+  ]);
+  assert.equal(trend.state, 'declining');
+  assert.match(trend.text, /反擊 —→—→—/);
 });
 
 test('practice focus coach turns the weakest observed direction into a next-run target', () => {

@@ -287,3 +287,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Existing browser-suite breadth is preserved; the composed 今日陣/challenge tactical gate is strengthened rather than replaced.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 146 — Show a bounded three-attempt practice trajectory
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `a7952ddcfc93ffb57fda37ec556e6093372bdca4`.
+- Exact-head Actions run `33960874424` is terminal success with `npm test` and the complete browser suite green; exact-head GitHub `Vercel` status is success; Vercel Preview Comments reports 0 unresolved feedback. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; latest exact-head Second Hourly review `5120891626` reports no actionable P0/P1/P2.
+- Candidate scoring: **bounded three-attempt same-route practice trend 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 20/25; challenge checkpoint outcome reflection 19/25. The trend wins because it adds visible repeat-play progression to the already-approved dojo loop without persistence, balance changes or another live-combat overlay, and Run 145 already diversified the previous evolution into challenge tactics.
+
+### Feature
+
+- The existing direct-practice `修行進度` card now adds a compact **近3局** line only after the third result for the same practice route in the current page session. It shows the three authoritative defense rates, hits taken and manual-counter conversion values in order and grades only the first-to-third aggregate as `整體向上`, `大致持平` or `需要調整`.
+- Attempts one and two remain unchanged. The established immediate `比上次` comparison, `上局目標` directional/Perfect verdict and next-run coaching remain intact rather than being replaced by the trend.
+- Trend history is kept in a separate route-keyed in-memory map, capped to three frozen snapshots per route. Switching routes cannot mix opponents; refresh clears the history. Missing counter data stays `—` instead of being invented.
+- The existing three-run Perfect browser harness now proves the trend stays hidden on attempts one/two, appears on attempt three with truthful `100%→100%→100% / 0→0→0 / 100%→100%→100%` evidence, owns no pointer input and keeps the composed result card inside 320×568.
+- No combat timing, damage, posture, parry/Perfect/STEP, score, enemy balance, renderer/input authority, storage key, identifier, analytics or network behavior changed.
+
+### Verification boundary
+
+- Existing Node and browser-suite breadth is preserved; the established Perfect target harness is strengthened rather than replaced, and deterministic tests cover improving, declining, pre-third-run and unavailable-metric cases.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

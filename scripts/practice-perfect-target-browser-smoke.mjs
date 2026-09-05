@@ -52,13 +52,14 @@ try {
     ['data-practice-perfect-target-armed="true"', 'clean practice did not arm the Perfect retry target'],
     ['data-practice-perfect-target-achieved="true"', 'Perfect retry was not graded as achieved'],
     ['data-practice-perfect-target-missed="true"', 'no-Perfect retry was not graded as missed'],
-    ['data-practice-perfect-target-layout="pass"', 'Perfect target verdict overflowed the 320×568 result surface'],
+    ['data-practice-three-run-trend="true"', 'three-run practice trend did not appear truthfully on the third same-route result'],
+    ['data-practice-perfect-target-layout="pass"', 'Perfect target/trend result content overflowed the 320×568 result surface'],
   ];
   for (const [marker, message] of required) {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 6000)}`);
   }
 
-  console.log(`practice Perfect target browser smoke passed with ${browser}: armed → achieved → missed, 320×568 in bounds`);
+  console.log(`practice Perfect target browser smoke passed with ${browser}: armed → achieved → missed + bounded three-run trend, 320×568 in bounds`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {
