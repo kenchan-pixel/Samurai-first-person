@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 138,
+  "run_number": 139,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD ef790c7e5b87a804d331beed97568d3518ce5a64 is terminal green in Actions CI #183 and exact-head GitHub Vercel status, with Draft PR #1 still open/Draft and no inline review comments. Latest exact-head review 5119499034 has no P0/P1 but one actionable P2: Run 137's player-visible 敵式 stage-intro card was browser-tested only in an isolated harness, so the acceptance gate did not prove safe composition with the real 320x568 production HUD/prompt or production challenge/今日陣 suppression. Run 138 keeps runtime/gameplay unchanged and extends the existing production Combat UX contract to verify a real campaign stage-intro renders the Ashigaru 敵式 card in bounds, pointer-transparent, clear of the visible HUD/Pause surface, with the production combat prompt confirmed non-visible under the current Combat UX contract; it must clear on the first real telegraph. The same production route then launches real 連戰試煉 and 今日陣 entries and proves the card remains suppressed. No attack timing, damage, posture, parry/Perfect/STEP, score, renderer, persistence, privacy or network behavior changes.",
-  "last_commit": "ef790c7e5b87a804d331beed97568d3518ce5a64",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The strengthened production Combat UX gate must pass at 320x568 for real campaign stage-intro composition, first-telegraph cleanup, and real challenge/今日陣 suppression. No feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD 89c386d7f092297bb44b18349fb1e0df4687426a has terminal-success exact-head GitHub Vercel status. Actions CI #184 / run 33942070284 first completed with npm test 149/149 green but failed inside the production Combat UX browser smoke after the new Run 138 campaign/challenge/今日陣 route had already reached late-stage diagnostics. Re-running the exact same CI job on the exact same SHA then passed npm test and the complete browser suite with no code or deployment change, proving a nondeterministic acceptance-runner timing defect rather than a repeatable game/runtime regression. Run 139 keeps all product/runtime assertions unchanged, widens only the bounded virtual-time runway for the now-longer production Combat UX path, and adds explicit runner diagnostics for campaign 敵式 composition, first-telegraph cleanup, challenge suppression and 今日陣 suppression. No gameplay timing, damage, posture, parry/Perfect/STEP, renderer, input, CSS, persistence, privacy/network or player-visible behavior changes.",
+  "last_commit": "89c386d7f092297bb44b18349fb1e0df4687426a",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required. The stabilized production Combat UX acceptance runner must complete the same 320x568 campaign → Pause/Home → 連戰試煉 → 今日陣 contract without lowering any existing assertion. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "duel_read_production_composition_pending_exact_head",
-    "last_observed_head": "ef790c7e5b87a804d331beed97568d3518ce5a64",
-    "incoming_ci_run": 33939625243,
-    "incoming_ci_result": "success_node_and_complete_browser",
+    "status": "combat_ux_browser_flake_repair_pending_exact_head",
+    "last_observed_head": "89c386d7f092297bb44b18349fb1e0df4687426a",
+    "incoming_ci_run": 33942070284,
+    "incoming_ci_result": "same_sha_first_browser_failure_then_full_rerun_success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for this run; exact-head GitHub Vercel status is authoritative fallback",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Exact incoming HEAD ef790c7 is fully deployed and CI-green. Review 5119499034 identifies only a production-composition acceptance blind spot, not a confirmed runtime overlap. Run 138 repairs that blocker by extending the existing real-app Combat UX smoke; runtime behavior and acceptance thresholds remain unchanged. Post-commit full Node/browser CI and exact-head Vercel remain mandatory; the PR run comment is authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Exact incoming HEAD 89c386d is deployed successfully. CI #184 failed once only in the expanded production Combat UX route, while its same-SHA rerun passed the full Node/browser suite without source changes. Run 139 therefore repairs the delivery gate rather than product behavior: the bounded virtual-time budget is increased for the longer sequential route and each new duel-read production marker gets an explicit failure diagnostic. Post-commit full Node/browser CI and exact-head Vercel remain mandatory; the PR run comment is authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {

@@ -126,3 +126,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold is weakened and no gameplay/runtime product behavior changes. The strengthened production Combat UX smoke is expected to fail closed if the new card ever overlaps production chrome, blocks input, lingers into telegraph, or leaks into challenge/今日陣.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is the authoritative resulting-SHA receipt under the one-commit rule.
+
+## Run 139 — Stabilize production Combat UX acceptance timing
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `89c386d7f092297bb44b18349fb1e0df4687426a`.
+- Exact-head GitHub `Vercel` status is terminal success. CI #184 / run `33942070284` first completed with `npm test` 149/149 green but failed inside the first production Combat UX browser smoke. The failure DOM already proved campaign 敵式 composition and first-telegraph cleanup true and had reached the real 今日陣 route.
+- Re-running the exact same CI job on the exact same SHA completed the full `npm run test:browser` suite successfully. With no code/deployment change between attempts, this is treated as a nondeterministic delivery-gate timing defect rather than a product/runtime regression. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review threads remain empty.
+
+### Repair
+
+- Kept all Run 138 production assertions and all player/runtime behavior unchanged.
+- Increased only the bounded virtual-time allowance for the now-longer production Combat UX path so the sequential campaign → Pause/Home → 連戰試煉 → 今日陣 acceptance flow can finish deterministically on CI.
+- Added explicit browser-runner assertions for production 敵式 composition, first-telegraph cleanup, challenge suppression and 今日陣 suppression so a future failure names the exact contract instead of truncating before the late root-dataset markers.
+- No gameplay timing, damage, posture, parry/Perfect/STEP, renderer, input, CSS, persistence, privacy/network or product copy changes.
+
+### Verification boundary
+
+- No acceptance threshold is lowered; the same aggregate `data-combat-ux-browser="pass"` contract and every existing production/mobile assertion remain mandatory.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success remain mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

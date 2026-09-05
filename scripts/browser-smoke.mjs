@@ -165,10 +165,22 @@ try {
   }
 
   const combatUxDom = await dumpDomWithDeviceMetrics(browser, '/?browser-smoke=combat-ux', {
-    budget: 6500,
+    budget: 8500,
     width: 320,
     height: 568,
   });
+  if (!combatUxDom.includes('data-combat-ux-duel-read-intro-composition="true"')) {
+    throw new Error('Production duel-read stage-intro card failed the 320x568 composition contract');
+  }
+  if (!combatUxDom.includes('data-combat-ux-duel-read-clears-before-telegraph="true"')) {
+    throw new Error('Production duel-read card did not clear before the first real telegraph');
+  }
+  if (!combatUxDom.includes('data-combat-ux-duel-read-challenge-quiet="true"')) {
+    throw new Error('Production challenge route exposed the duel-read stage-intro card');
+  }
+  if (!combatUxDom.includes('data-combat-ux-duel-read-daily-quiet="true"')) {
+    throw new Error('Production 今日陣 route exposed the duel-read stage-intro card');
+  }
   if (!combatUxDom.includes('data-combat-ux-browser="pass"')) {
     throw new Error(`Production Combat UX integration failed. DOM:\n${combatUxDom.slice(0, 6000)}`);
   }
