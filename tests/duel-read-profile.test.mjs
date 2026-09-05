@@ -7,6 +7,7 @@ import {
   duelPracticeFocusForStageStart,
   duelReadProfileForEnemy,
   duelReadProfileSuppressedForRun,
+  installDuelReadProfile,
 } from '../src/duel-read-profile.js';
 import {
   buildPracticeFocusCoach,
@@ -112,6 +113,49 @@ test('challenge suppression survives both engine-to-DOM and launch-intent startu
   assert.equal(duelReadProfileSuppressedForRun({}, staleRoot), false);
 });
 
+test('challenge start synchronously hides a stale campaign read card before the next drain', () => {
+  const challengeActive = Symbol.for('blade-reversal.challenge-active-v1');
+  const card = { hidden: false };
+  const root = {
+    dataset: {
+      challengeActive: 'false',
+      nextRunMode: 'campaign',
+      duelReadProfileState: 'visible',
+      duelReadPracticeFocusState: 'target',
+      duelReadPracticeFocusDirection: 'right',
+    },
+  };
+  const documentRef = {
+    documentElement: root,
+    querySelector(selector) {
+      if (selector === '#app') return {};
+      if (selector === 'style[data-duel-read-profile]') return {};
+      if (selector === '#duel-read-profile') return card;
+      return null;
+    },
+  };
+
+  class ChallengeStartEngine {
+    start() {
+      this[challengeActive] = true;
+      root.dataset.challengeActive = 'true';
+      return 'started';
+    }
+
+    drainEvents() {
+      return [];
+    }
+  }
+
+  installDuelReadProfile(ChallengeStartEngine, documentRef);
+  const engine = new ChallengeStartEngine();
+  assert.equal(engine.start(0), 'started');
+  assert.equal(card.hidden, true);
+  assert.equal(root.dataset.duelReadProfileState, 'hidden');
+  assert.equal(root.dataset.duelReadPracticeFocusState, undefined);
+  assert.equal(root.dataset.duelReadPracticeFocusDirection, undefined);
+});
+
 test('duel read profile stays presentation-only with no storage or network transport', async () => {
   const source = await readFile(new URL('../src/duel-read-profile.js', import.meta.url), 'utf8');
   for (const forbidden of ['localStorage', 'sessionStorage', 'indexedDB', 'fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket']) {
@@ -122,5 +166,6 @@ test('duel read profile stays presentation-only with no storage or network trans
   assert.match(source, /CHALLENGE_ACTIVE/);
   assert.match(source, /challengeActive === 'true'/);
   assert.match(source, /nextRunMode === 'challenge'/);
+  assert.match(source, /Engine\.prototype\.start/);
   assert.match(source, /practiceProgressRoute/);
 });

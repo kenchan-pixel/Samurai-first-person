@@ -194,8 +194,17 @@ export function renderDuelReadProfile(profile, documentRef = globalThis.document
 export function installDuelReadProfile(Engine = CombatEngine, documentRef = globalThis.document) {
   if (!documentRef || !Engine?.prototype || Engine.prototype[installed]) return;
   ensureUi(documentRef);
+  const originalStart = Engine.prototype.start;
   const originalDrainEvents = Engine.prototype.drainEvents;
   Object.defineProperty(Engine.prototype, installed, { value: true });
+
+  Engine.prototype.start = function duelReadProfileStart(now = 0) {
+    const result = originalStart.call(this, now);
+    if (duelReadProfileSuppressedForRun(this, documentRef.documentElement)) {
+      hideProfile(documentRef);
+    }
+    return result;
+  };
 
   Engine.prototype.drainEvents = function duelReadProfileDrainEvents() {
     const events = originalDrainEvents.call(this);

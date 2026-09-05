@@ -57,7 +57,7 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - The restored source/test pair is byte-for-byte the previously accepted `ef14450` implementation that passed the full Node/browser suite before Run 134. No acceptance threshold is changed.
-- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are still mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.
+- Post-commit exact-head Actions `npm test`, complete `npm run test:browser` and exact-head Vercel success are still mandatory. The PR run comment is the authoritative post-commit receipt under the one-commit rule.
 
 ## Run 136 — Restore feedback no-persistence regression guard
 
@@ -424,4 +424,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 ### Verification boundary
 
 - No existing browser gate or acceptance threshold is removed. The implementation reuses the established challenge terminal strip and existing retry control rather than introducing another combat-time surface.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 152 — Hide stale campaign 敵式 state synchronously on challenge start
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `0c5d7490827adcf54afe54adccbfd2869330bc72`.
+- Exact-head Actions CI #197 / run `33978459741` passed `npm test` 168/168 but failed the real production 320×568 browser suite twice on `Production challenge route exposed the duel-read stage-intro card`; exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged, `main` is untouched, inline review comments are empty and Preview feedback reports 0 unresolved items.
+- Latest exact-head review `5122132834` classifies the same leak as actionable P1. Feature work is therefore prohibited.
+- Inspection of the production smoke found the remaining race: the smoke restarts campaign, returns Home only ~100 ms into the restarted Stage 1 intro, then launches challenge. The restarted campaign card can remain visible until a later animation-frame `drainEvents()` processes reset; meanwhile `data-combat-phase` can still be `stage-intro`. Once challenge start synchronously publishes `data-challenge-active=true`, the smoke can satisfy its start predicate before that next frame, observing the stale campaign card even though the challenge's own `stage-start` would be suppressed.
+
+### Repair
+
+- Kept the existing authoritative engine-symbol, DOM-active and launch-intent suppression checks, and kept the real challenge/今日陣 browser assertions unchanged.
+- Extended only the duel-read presentation adapter's composed `Engine.start` seam. After the underlying start chain has published authoritative challenge state, a challenge/今日陣 start now synchronously hides any already-visible duel-read card before `start()` returns. The existing event-drain suppression remains as the second line of defense for challenge `stage-start` / `boss-phase` events.
+- Added a focused regression that begins with a stale visible campaign card and stale campaign DOM intent, lets a fake composed start publish the authoritative challenge symbol/root state, and proves the card plus practice-focus datasets are hidden immediately without calling `drainEvents()`.
+- Campaign/direct-practice 敵式 copy/timing/layout, challenge rules, attack timing/damage, posture, parry/Perfect/STEP, score, renderer, input, persistence, privacy and network behavior are unchanged.
+
+### Verification boundary
+
+- No acceptance threshold is weakened. This fixes the stale pre-challenge presentation seam that the existing fail-closed production gate exposed; it does not special-case or relax the test.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
