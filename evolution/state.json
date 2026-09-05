@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 152,
+  "run_number": 153,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 0c5d7490827adcf54afe54adccbfd2869330bc72 is not feature-ready: Actions CI #197 / run 33978459741 passed npm test 168/168 but the production 320x568 browser suite failed twice on Production challenge route exposed the duel-read stage-intro card, while exact-head GitHub Vercel status is success. Draft PR #1 is open/Draft/unmerged, main is untouched, inline review comments are empty, Preview feedback reports 0 unresolved items, and the latest exact-head review classifies the same leak as actionable P1. Inspection of the real production smoke exposed the remaining startup race: after the smoke restarts campaign and returns Home during Stage 1 intro, the prior campaign duel-read card can remain visible until the next animation-frame drain; root combatPhase also remains stage-intro, so a challenge launch can satisfy the smoke's authoritative challenge-start predicate before that drain hides the stale card. Run 152 performs a bounded BLOCKER_FIX in the duel-read presentation adapter: it now wraps CombatEngine.start and, after the composed start chain has published the authoritative challenge flag/root state, synchronously hides any stale duel-read card before start returns. Existing stage-start/boss-phase drain suppression, campaign/direct-practice presentation, combat rules, timing, renderer/input, persistence and network behavior remain unchanged. A focused regression recreates a stale visible campaign card and proves challenge start hides it without waiting for drainEvents.",
-  "last_commit": "0c5d7490827adcf54afe54adccbfd2869330bc72",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the stale-card challenge-start suppression repair. No feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD 950c7b1af6eca7f191771ff151999db582fea0c7 is terminal green: Actions CI #198 / run 33981057690 passed the complete Node and browser acceptance suite, exact-head GitHub Vercel status is success, Preview feedback reports 0 unresolved items, Draft PR #1 is open/Draft/unmerged, main is untouched and inline review threads are empty. Direct Vercel deployment enumeration still returns 403, so the repository-approved exact-head GitHub Vercel commit status is the deployment signal. The latest exact-head Second Hourly review 5122269751 raises one actionable P2 player-facing lifecycle gap: 再戰重點 clears its row/datasets but does not itself reset the retry button label, leaving correctness dependent on challenge-mode wrapper/microtask ordering. Run 153 performs a bounded BLOCKER_FIX by centralizing retry-label ownership in challenge-tactic-reflection: normal retry/start and campaign handoff explicitly restore 重新挑戰, a focused challenge terminal owns its targeted 再戰 label, and a later challenge terminal with no eligible reflection explicitly falls back to 再戰連陣 rather than inheriting stale advice. A new focused 320x568 browser gate proves focused label -> retry reset -> empty-terminal fallback -> full-campaign reset. Combat, tactics, balance, score, roster, persistence, renderer/input and network behavior are unchanged.",
+  "last_commit": "950c7b1af6eca7f191771ff151999db582fea0c7",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the retry-focus label ownership repair and its new 320x568 acceptance gate. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,18 +17,18 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "challenge_duel_read_stale_card_start_repair_pending_exact_head",
-    "last_observed_head": "0c5d7490827adcf54afe54adccbfd2869330bc72",
-    "incoming_ci_run": 33978459741,
-    "incoming_ci_result": "failure",
-    "incoming_ci_failure": "npm test passed 168/168; production browser suite failed twice because 連戰試煉 observed a stale visible duel-read stage-intro card before the next animation-frame drain",
+    "status": "challenge_retry_focus_label_reset_repair_pending_exact_head",
+    "last_observed_head": "950c7b1af6eca7f191771ff151999db582fea0c7",
+    "incoming_ci_run": 33981057690,
+    "incoming_ci_result": "success",
+    "incoming_ci_failure": null,
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "Exact project deployment enumeration is unavailable in this runtime; exact-head GitHub Vercel status is the canonical fallback permitted by the repository SOT.",
+    "direct_vercel_connector": "403_list_deployments; exact-head GitHub Vercel status is the canonical fallback permitted by the repository SOT.",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 152 repairs only the presentation startup seam. The real production smoke first proves campaign duel-read behavior, later restarts campaign, returns Home while the restarted Stage 1 intro card may still be visible, then immediately launches challenge. Because combatPhase can still read stage-intro, the challenge-start wait can complete synchronously from the newly published challengeActive state before a requestAnimationFrame drains reset/stage-start events. The duel-read adapter now hides any stale card synchronously after the composed Engine.start publishes authoritative challenge state; the existing fail-closed 320x568 challenge/今日陣 quietness assertions remain unchanged. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 153 addresses the exact-head reviewer P2 at the player-facing result-action lifecycle rather than changing tactical coaching rules. The reflection adapter now explicitly owns all retry-label transitions: start/retry clears to 重新挑戰, focused terminal uses the derived target, no-focus challenge terminal uses 再戰連陣, and campaign handoff restores 重新挑戰. The new dedicated 320x568 browser gate exercises those four states in sequence and is appended to npm run test:browser. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {

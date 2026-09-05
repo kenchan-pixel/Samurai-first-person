@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Challenge retry-focus reset browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <div class="crest" aria-hidden="true">刃</div>
+        <h1>Blade Reversal</h1>
+        <div id="practice-row" class="practice-row"></div>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+      </div>
+    </section>
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">敗北</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import { CHALLENGE_ACTIVE, requestChallenge } from '../src/challenge-mode.js';
+    import '../src/challenge-tactic-reflection.js';
+    import { CombatEngine, ENEMIES } from '../src/game-core.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const restartButton = document.querySelector('#restart-button');
+    const campaignButton = document.querySelector('#challenge-campaign-button');
+    const challengeResult = document.querySelector('#challenge-result');
+    const focusNode = challengeResult?.querySelector('[data-challenge-retry-focus]');
+    const engine = new CombatEngine({ enemies: ENEMIES });
+    let now = 1000;
+
+    async function flush() {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    function focusCleared() {
+      return focusNode?.hidden === true &&
+        focusNode.textContent === '' &&
+        !root.dataset.challengeRetryFocus &&
+        !root.dataset.challengeRetryFocusKind &&
+        !root.dataset.challengeRetryFocusStage;
+    }
+
+    function buttonFits() {
+      const rect = restartButton.getBoundingClientRect();
+      return rect.width > 0 && rect.height >= 36 &&
+        rect.left >= -0.5 && rect.right <= innerWidth + 0.5 &&
+        rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
+    }
+
+    restartButton.addEventListener('click', () => {
+      now += 1000;
+      engine.reset(now);
+      engine.start(now);
+      engine.drainEvents();
+    });
+
+    try {
+      if (!restartButton || !campaignButton || !challengeResult || !focusNode) {
+        throw new Error('challenge retry-focus controls were not installed');
+      }
+
+      requestChallenge(true);
+      engine.start(now);
+      engine.drainEvents();
+
+      engine.events.push({ type: 'challenge-tactic', detail: { checkpoint: 2, choice: 'recover' } });
+      engine.drainEvents();
+      engine.enemyIndex = 2;
+      engine.events.push({ type: 'player-hit', detail: { damage: 1, direction: 'left', playerHp: engine.playerHp } });
+      engine.events.push({ type: 'enemy-defeated', detail: { enemyId: engine.enemy.id, stage: 3 } });
+      engine.drainEvents();
+      engine.events.push({ type: 'defeat', detail: { score: engine.score } });
+      engine.drainEvents();
+      await flush();
+
+      const focusedOk =
+        focusNode.hidden === false &&
+        root.dataset.challengeRetryFocusKind === 'hits' &&
+        root.dataset.challengeRetryFocusStage === '3' &&
+        restartButton.textContent === '再戰 · 第3陣守穩' &&
+        buttonFits();
+      root.dataset.challengeRetryFocusFocused = String(focusedOk);
+      if (!focusedOk) throw new Error('focused challenge result did not own the retry label');
+
+      restartButton.click();
+      await flush();
+      const retryResetOk =
+        engine[CHALLENGE_ACTIVE] === true &&
+        focusCleared() &&
+        restartButton.textContent === '重新挑戰';
+      root.dataset.challengeRetryFocusRetryLabelReset = String(retryResetOk);
+      if (!retryResetOk) throw new Error('retry inherited stale 再戰重點 button copy');
+
+      engine.events.push({ type: 'defeat', detail: { score: engine.score } });
+      engine.drainEvents();
+      await flush();
+      const emptyTerminalOk =
+        engine[CHALLENGE_ACTIVE] === true &&
+        focusCleared() &&
+        restartButton.textContent === '再戰連陣' &&
+        buttonFits();
+      root.dataset.challengeRetryFocusEmptyTerminalDefault = String(emptyTerminalOk);
+      if (!emptyTerminalOk) throw new Error('challenge terminal without eligible reflection did not restore generic retry copy');
+
+      campaignButton.click();
+      await flush();
+      const campaignResetOk =
+        engine[CHALLENGE_ACTIVE] === false &&
+        root.dataset.challengeActive === 'false' &&
+        focusCleared() &&
+        restartButton.textContent === '重新挑戰' &&
+        challengeResult.hidden === true;
+      root.dataset.challengeRetryFocusCampaignLabelReset = String(campaignResetOk);
+      if (!campaignResetOk) throw new Error('full-campaign handoff retained challenge retry-focus copy');
+
+      root.dataset.challengeRetryFocusResetBrowser =
+        focusedOk && retryResetOk && emptyTerminalOk && campaignResetOk ? 'pass' : 'fail';
+    } catch (error) {
+      requestChallenge(false);
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.challengeRetryFocusResetBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

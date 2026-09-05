@@ -232,7 +232,7 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Kept the campaign/direct-practice 敵式 card, copy, layout, timing and practice coaching unchanged.
 - The duel-read adapter now treats the CombatEngine `Symbol.for('blade-reversal.challenge-active-v1')` flag as authoritative for challenge/今日陣 suppression and retains the existing DOM `data-challenge-active` check only as a presentation fallback. Because challenge-mode sets the engine flag before entering the underlying start flow, a stage-start/boss-phase event cannot expose the card during startup ordering while the DOM mirror is still stale.
-- Added a focused unit regression proving challenge suppression remains true when the authoritative engine flag is true but the DOM mirror still says false. The existing real 320×568 production browser gate is not weakened and must continue proving both `連戰試煉` and `今日陣` remain quiet.
+- Added a focused unit regression proving challenge suppression remains true when the authoritative engine flag is true but the DOM mirror still says false. The existing production-browser challenge/daily suppression gate remains intact.
 - No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, CSS, persistence, identifier, analytics or network authority changed.
 
 ### Verification boundary
@@ -449,3 +449,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold is weakened. This fixes the stale pre-challenge presentation seam that the existing fail-closed production gate exposed; it does not special-case or relax the test.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 153 — Own the 再戰重點 retry-label lifecycle
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `950c7b1af6eca7f191771ff151999db582fea0c7`.
+- Exact-head Actions CI #198 / run `33981057690` is terminal success with the complete Node/browser suite green. Exact-head GitHub `Vercel` status is success and Preview feedback reports 0 unresolved items. Direct Vercel deployment enumeration still returns 403, so the canonical GitHub `Vercel` commit status is used. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review threads are empty.
+- Latest exact-head Second Hourly review `5122269751` raises one actionable P2: `再戰重點` clears its own row/datasets but does not itself reset the existing retry button label, so correctness depends on challenge-mode wrapper/microtask ordering and stale coaching could survive a lifecycle change. Because the retry label is player-facing coaching, this is treated as a bounded correctness blocker rather than starting a new feature.
+
+### Repair
+
+- Centralized retry-label ownership inside `challenge-tactic-reflection.js`. Start/retry and campaign handoff now explicitly restore `重新挑戰`; a resolved focus still owns the targeted `再戰 · 第N陣守穩` / clean-route copy; a challenge terminal with no eligible reflection explicitly falls back to `再戰連陣` instead of inheriting prior advice.
+- Added a dedicated real 320×568 browser gate that executes the complete lifecycle in one composed CombatEngine path: create a real focused result, retry and prove the targeted copy is gone, end the next challenge before any eligible Wave 3/5/7 reflection and prove the terminal shows generic `再戰連陣`, then use the existing full-campaign handoff and prove `重新挑戰` plus empty focus state.
+- Appended the focused gate to `npm run test:browser`. Existing 今日陣/challenge tactical, production challenge quietness and all other browser gates remain unchanged.
+- No tactic choice, HP/score effect, roster, combat timing/damage, parry/Perfect/STEP, renderer, input, persistence, identifier, analytics or network behavior changed.
+
+### Verification boundary
+
+- No acceptance threshold is weakened. The repair makes the already-approved retry/full-campaign clearing contract explicit at the actual button owner and pins the stale-label sequence at the canonical 320×568 viewport.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` (including the new retry-focus reset smoke) and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

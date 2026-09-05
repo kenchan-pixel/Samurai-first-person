@@ -143,6 +143,12 @@ export function formatChallengeRetryButton(focus = null) {
   return '再戰連陣';
 }
 
+function setRestartButtonLabel(label) {
+  if (typeof document === 'undefined') return;
+  const restartButton = document.querySelector('#restart-button');
+  if (restartButton) restartButton.textContent = label;
+}
+
 function ensureUi() {
   if (typeof document === 'undefined') return null;
   if (!document.querySelector('style[data-challenge-tactic-reflection]')) {
@@ -179,7 +185,7 @@ function ensureUi() {
   return { result, node, focusNode };
 }
 
-function clearUi() {
+function clearUi(restartLabel = '重新挑戰') {
   if (typeof document === 'undefined') return;
   const ui = ensureUi();
   if (ui) {
@@ -195,6 +201,7 @@ function clearUi() {
   root.dataset.challengeRetryFocus = '';
   root.dataset.challengeRetryFocusKind = '';
   root.dataset.challengeRetryFocusStage = '';
+  setRestartButtonLabel(restartLabel);
 }
 
 function renderUi(summary) {
@@ -203,7 +210,7 @@ function renderUi(summary) {
   const focus = deriveChallengeRetryFocus(summary);
   const focusText = formatChallengeRetryFocus(focus);
   if (!text && !focusText) {
-    clearUi();
+    clearUi(formatChallengeRetryButton(null));
     return;
   }
   const ui = ensureUi();
@@ -219,8 +226,7 @@ function renderUi(summary) {
   root.dataset.challengeRetryFocus = focusText;
   root.dataset.challengeRetryFocusKind = focus?.kind || '';
   root.dataset.challengeRetryFocusStage = focus?.nextStage ? String(focus.nextStage) : '';
-  const restartButton = document.querySelector('#restart-button');
-  if (restartButton && focusText) restartButton.textContent = formatChallengeRetryButton(focus);
+  setRestartButtonLabel(formatChallengeRetryButton(focus));
 }
 
 export function installChallengeTacticReflection(Engine = CombatEngine) {
