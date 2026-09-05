@@ -1,6 +1,12 @@
 import { CombatEngine } from './game-core.js';
 
 const installed = Symbol.for('blade-reversal.duel-read-profile-v1');
+const PRACTICE_DIRECTION_LABELS = Object.freeze({
+  top: '上方',
+  right: '右方',
+  bottom: '下方',
+  left: '左方',
+});
 
 export const DUEL_READ_PROFILES = Object.freeze({
   'ashigaru-scout': Object.freeze({
@@ -46,6 +52,39 @@ export function duelReadProfileForEnemy(enemyId, { bloodMoon = false } = {}) {
   return DUEL_READ_PROFILES[String(enemyId || '')] || null;
 }
 
+function practiceRouteKey(detail = {}) {
+  if (!detail?.practice) return null;
+  if (detail.practiceMode) return `mode:${detail.practiceMode}`;
+  const enemyId = detail.practiceEnemyId || detail.enemyId;
+  return enemyId ? `enemy:${enemyId}` : null;
+}
+
+export function duelPracticeFocusForStageStart(detail = {}, root = globalThis.document?.documentElement) {
+  const routeKey = practiceRouteKey(detail);
+  if (!routeKey || !root?.dataset || root.dataset.practiceProgressRoute !== routeKey) return null;
+
+  const state = root.dataset.practiceProgressFocusState;
+  if (state === 'clear') {
+    return Object.freeze({
+      state: 'clear',
+      direction: null,
+      label: '四向',
+      text: '今局修行 · 四向守穩 · 挑戰 Perfect',
+    });
+  }
+
+  if (state !== 'target') return null;
+  const direction = root.dataset.practiceProgressFocusDirection;
+  const label = PRACTICE_DIRECTION_LABELS[direction];
+  if (!label) return null;
+  return Object.freeze({
+    state: 'target',
+    direction,
+    label,
+    text: `今局修行 · ${label} · 先守穩再反擊`,
+  });
+}
+
 function ensureStyles(documentRef) {
   if (!documentRef?.head || documentRef.querySelector('style[data-duel-read-profile]')) return;
   const style = documentRef.createElement('style');
@@ -64,7 +103,9 @@ function ensureStyles(documentRef) {
     .duel-read-profile__copy strong{font-size:10.5px;letter-spacing:.08em;color:#f6e8cf}
     .duel-read-profile__tell{margin-top:2px;font-size:9px;line-height:1.25;color:rgba(246,235,216,.72)}
     .duel-read-profile__response{margin-top:3px;font-size:8.5px;line-height:1.25;color:rgba(176,205,245,.78)}
-    @media(max-width:360px){.duel-read-profile{top:calc(var(--safe-top) + 110px);width:min(78vw,238px);padding:7px 9px}.duel-read-profile__tell{font-size:8.5px}.duel-read-profile__response{font-size:8px}}
+    .duel-read-profile__practice{margin-top:4px;padding-top:4px;border-top:1px solid rgba(184,229,198,.16);font-size:8px;line-height:1.25;color:rgba(195,232,204,.88)}
+    .duel-read-profile__practice[hidden]{display:none!important}
+    @media(max-width:360px){.duel-read-profile{top:calc(var(--safe-top) + 110px);width:min(78vw,238px);padding:7px 9px}.duel-read-profile__tell{font-size:8.5px}.duel-read-profile__response{font-size:8px}.duel-read-profile__practice{font-size:7.7px}}
   `;
   documentRef.head.append(style);
 }
@@ -81,7 +122,7 @@ function ensureUi(documentRef) {
     card.hidden = true;
     card.setAttribute('aria-live', 'polite');
     card.setAttribute('aria-label', '今場敵式提示');
-    card.innerHTML = '<div class="duel-read-profile__glyph" data-duel-read-glyph></div><div class="duel-read-profile__copy"><strong data-duel-read-title></strong><span class="duel-read-profile__tell" data-duel-read-tell></span><span class="duel-read-profile__response" data-duel-read-response></span></div>';
+    card.innerHTML = '<div class="duel-read-profile__glyph" data-duel-read-glyph></div><div class="duel-read-profile__copy"><strong data-duel-read-title></strong><span class="duel-read-profile__tell" data-duel-read-tell></span><span class="duel-read-profile__response" data-duel-read-response></span><span class="duel-read-profile__practice" data-duel-read-practice hidden></span></div>';
     host.append(card);
   }
   return card;
@@ -91,10 +132,14 @@ function hideProfile(documentRef) {
   const card = documentRef?.querySelector?.('#duel-read-profile');
   if (card) card.hidden = true;
   const root = documentRef?.documentElement;
-  if (root) root.dataset.duelReadProfileState = 'hidden';
+  if (root) {
+    root.dataset.duelReadProfileState = 'hidden';
+    delete root.dataset.duelReadPracticeFocusState;
+    delete root.dataset.duelReadPracticeFocusDirection;
+  }
 }
 
-export function renderDuelReadProfile(profile, documentRef = globalThis.document) {
+export function renderDuelReadProfile(profile, documentRef = globalThis.document, practiceFocus = null) {
   if (!profile || !documentRef) {
     hideProfile(documentRef);
     return false;
@@ -110,11 +155,26 @@ export function renderDuelReadProfile(profile, documentRef = globalThis.document
   card.querySelector('[data-duel-read-title]').textContent = `敵式 · ${profile.title}`;
   card.querySelector('[data-duel-read-tell]').textContent = profile.tell;
   card.querySelector('[data-duel-read-response]').textContent = `應對 · ${profile.response}`;
+  const practiceNode = card.querySelector('[data-duel-read-practice]');
+  if (practiceNode) {
+    practiceNode.textContent = practiceFocus?.text || '';
+    practiceNode.hidden = !practiceFocus;
+  }
   card.dataset.profile = profile.id;
+  if (practiceFocus) card.dataset.practiceFocus = practiceFocus.state === 'clear' ? 'clear' : practiceFocus.direction;
+  else delete card.dataset.practiceFocus;
   card.hidden = false;
   if (root) {
     root.dataset.duelReadProfile = profile.id;
     root.dataset.duelReadProfileState = 'visible';
+    if (practiceFocus) {
+      root.dataset.duelReadPracticeFocusState = practiceFocus.state;
+      if (practiceFocus.direction) root.dataset.duelReadPracticeFocusDirection = practiceFocus.direction;
+      else delete root.dataset.duelReadPracticeFocusDirection;
+    } else {
+      delete root.dataset.duelReadPracticeFocusState;
+      delete root.dataset.duelReadPracticeFocusDirection;
+    }
   }
   return true;
 }
@@ -129,13 +189,21 @@ export function installDuelReadProfile(Engine = CombatEngine, documentRef = glob
     const events = originalDrainEvents.call(this);
     for (const event of events) {
       if (event.type === 'stage-start') {
-        renderDuelReadProfile(duelReadProfileForEnemy(event.detail?.enemyId), documentRef);
+        renderDuelReadProfile(
+          duelReadProfileForEnemy(event.detail?.enemyId),
+          documentRef,
+          duelPracticeFocusForStageStart(event.detail, documentRef.documentElement),
+        );
       } else if (
         event.type === 'boss-phase' &&
         Number(event.detail?.phase) === 2 &&
         this.phase === 'stage-intro'
       ) {
-        renderDuelReadProfile(duelReadProfileForEnemy('crimson-shogun', { bloodMoon: true }), documentRef);
+        renderDuelReadProfile(
+          duelReadProfileForEnemy('crimson-shogun', { bloodMoon: true }),
+          documentRef,
+          duelPracticeFocusForStageStart(event.detail, documentRef.documentElement),
+        );
       } else if (event.type === 'telegraph' || event.type === 'victory' || event.type === 'defeat' || event.type === 'reset') {
         hideProfile(documentRef);
       }

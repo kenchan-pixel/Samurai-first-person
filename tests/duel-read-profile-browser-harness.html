@@ -12,7 +12,11 @@
   </main>
 
   <script type="module">
-    import '../src/duel-read-profile.js';
+    import {
+      duelPracticeFocusForStageStart,
+      duelReadProfileForEnemy,
+      renderDuelReadProfile,
+    } from '../src/duel-read-profile.js';
     import { CombatEngine, ENEMIES } from '../src/game-core.js';
     import { BOSS_PHASE_ONE, activateBossPhaseTwoPractice } from '../src/boss-encounter.js';
 
@@ -39,6 +43,15 @@
         throw new Error(`profile ${profileId} overflowed ${innerWidth}x${innerHeight}: ${JSON.stringify(rect.toJSON?.() || rect)}`);
       }
       if (getComputedStyle(node).pointerEvents !== 'none') throw new Error(`profile ${profileId} owns pointer input`);
+    }
+
+    function assertPracticeFocus(expectedState, snippet) {
+      const node = card()?.querySelector('[data-duel-read-practice]');
+      if (!node || node.hidden) throw new Error('practice retry focus line was hidden');
+      if (!node.textContent.includes(snippet)) throw new Error(`practice retry focus missing copy: ${snippet}`);
+      if (root.dataset.duelReadPracticeFocusState !== expectedState) {
+        throw new Error(`practice focus state mismatch: ${root.dataset.duelReadPracticeFocusState}`);
+      }
     }
 
     function startEnemy(enemy, now) {
@@ -69,9 +82,25 @@
       assertVisible('ronin', ['敵式 · 假動作', '最後方向']);
       root.dataset.duelReadProfileRonin = 'true';
 
+      root.dataset.practiceProgressRoute = 'enemy:wandering-ronin';
+      root.dataset.practiceProgressFocusState = 'target';
+      root.dataset.practiceProgressFocusDirection = 'right';
+      const repeatFocus = duelPracticeFocusForStageStart({
+        practice: true,
+        enemyId: 'wandering-ronin',
+      }, root);
+      renderDuelReadProfile(duelReadProfileForEnemy('wandering-ronin'), document, repeatFocus);
+      await flush();
+      assertVisible('ronin', ['敵式 · 假動作', '今局修行 · 右方', '先守穩再反擊']);
+      assertPracticeFocus('target', '右方');
+      if (card()?.dataset.practiceFocus !== 'right') throw new Error('practice focus did not publish the targeted direction');
+      root.dataset.duelReadProfilePracticeRepeat = 'true';
+
       startEnemy(ENEMIES[2], 7000);
       await flush();
       assertVisible('oni', ['敵式 · 重斬壓迫', '重擊會追距']);
+      const staleFocus = card()?.querySelector('[data-duel-read-practice]');
+      if (staleFocus && !staleFocus.hidden) throw new Error('practice focus leaked into a campaign stage intro');
       root.dataset.duelReadProfileOni = 'true';
 
       startEnemy(BOSS_PHASE_ONE, 10000);

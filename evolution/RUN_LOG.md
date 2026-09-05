@@ -149,3 +149,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No acceptance threshold is lowered; the same aggregate `data-combat-ux-browser="pass"` contract and every existing production/mobile assertion remain mandatory.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success remain mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 140 — Carry practice weakness into the next duel intro
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `1ef134e270655066e4685fcd5235cab870690149`.
+- Exact-head Actions CI #185 / run `33944703796` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; the latest exact-head review reports no actionable P0–P2 finding; the latest PR receipt contains no unresolved human blocker.
+- Candidate scoring: **same-opponent practice focus carried into the next 敵式 intro 24/25** (impact 5, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 20/25; Closed Beta next-test prompt 18/25. The first candidate wins because it closes the already-approved 四向防守 → 修行進度 → retry loop at the exact moment the player starts the next duel, without touching live combat or persistence.
+
+### Feature
+
+- The existing direct-practice `修行進度` route/focus receipt now feeds one compact **今局修行** line into the existing stage-intro 敵式 card on a same-route retry. A tracked weak direction shows `今局修行 · 右方/左方/上方/下方 · 先守穩再反擊`; if every observed direction in the prior attempt was clean, the line becomes `四向守穩 · 挑戰 Perfect`.
+- The carry-over is strict and session-only: the stored practice route must exactly match the new practice route. Campaign starts, another opponent's practice, 連戰試煉 and 今日陣 never receive the line; refresh still clears all practice progress. The entire card remains pointer-transparent and still disappears on the first telegraph.
+- No attack definitions, timing, damage, posture, parry/Perfect/STEP, score, renderer pose, input ownership, storage key, identifier, analytics or network transport changed.
+- Added deterministic route-isolation/clean-repeat coverage and extended the existing focused 320×568 duel-read browser gate to prove the retry line is visible/in-bounds, publishes the intended focus state, and does not leak into the next campaign profile.
+
+### Verification boundary
+
+- Modified JavaScript and the embedded browser-harness module were syntax-checked before creating the Git objects. Repository-authoritative verification remains exact-head Actions after the single final commit.
+- Post-commit `npm test`, complete `npm run test:browser` including the existing duel-read profile browser smoke, and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

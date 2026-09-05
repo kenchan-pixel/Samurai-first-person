@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   BLOOD_MOON_READ_PROFILE,
   DUEL_READ_PROFILES,
+  duelPracticeFocusForStageStart,
   duelReadProfileForEnemy,
 } from '../src/duel-read-profile.js';
 
@@ -24,6 +25,59 @@ test('direct Blood Moon practice gets a distinct truthful pressure profile', () 
   assert.match(profile.response, /最後變向/);
 });
 
+test('same-route practice retry carries the prior weak direction into stage intro', () => {
+  const root = {
+    dataset: {
+      practiceProgressRoute: 'enemy:wandering-ronin',
+      practiceProgressFocusState: 'target',
+      practiceProgressFocusDirection: 'right',
+    },
+  };
+  const focus = duelPracticeFocusForStageStart({
+    practice: true,
+    enemyId: 'wandering-ronin',
+  }, root);
+
+  assert.equal(focus?.state, 'target');
+  assert.equal(focus?.direction, 'right');
+  assert.equal(focus?.label, '右方');
+  assert.match(focus?.text || '', /今局修行 · 右方/);
+  assert.match(focus?.text || '', /先守穩再反擊/);
+});
+
+test('practice retry focus is route-isolated and never leaks into campaign', () => {
+  const root = {
+    dataset: {
+      practiceProgressRoute: 'enemy:wandering-ronin',
+      practiceProgressFocusState: 'target',
+      practiceProgressFocusDirection: 'top',
+    },
+  };
+
+  assert.equal(duelPracticeFocusForStageStart({ practice: true, enemyId: 'oni-guard' }, root), null);
+  assert.equal(duelPracticeFocusForStageStart({ practice: false, enemyId: 'wandering-ronin' }, root), null);
+});
+
+test('clean Blood Moon repeat converts the same route receipt into a Perfect challenge', () => {
+  const root = {
+    dataset: {
+      practiceProgressRoute: 'mode:blood-moon-practice',
+      practiceProgressFocusState: 'clear',
+      practiceProgressFocusDirection: 'left',
+    },
+  };
+  const focus = duelPracticeFocusForStageStart({
+    practice: true,
+    practiceMode: 'blood-moon-practice',
+    practiceEnemyId: 'crimson-shogun',
+  }, root);
+
+  assert.equal(focus?.state, 'clear');
+  assert.equal(focus?.direction, null);
+  assert.match(focus?.text || '', /四向守穩/);
+  assert.match(focus?.text || '', /Perfect/);
+});
+
 test('duel read profile stays presentation-only with no storage or network transport', async () => {
   const source = await readFile(new URL('../src/duel-read-profile.js', import.meta.url), 'utf8');
   for (const forbidden of ['localStorage', 'sessionStorage', 'indexedDB', 'fetch(', 'XMLHttpRequest', 'sendBeacon', 'WebSocket']) {
@@ -32,4 +86,5 @@ test('duel read profile stays presentation-only with no storage or network trans
   assert.match(source, /event\.type === 'stage-start'/);
   assert.match(source, /event\.type === 'telegraph'/);
   assert.match(source, /challengeActive === 'true'/);
+  assert.match(source, /practiceProgressRoute/);
 });
