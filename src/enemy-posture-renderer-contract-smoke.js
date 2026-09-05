@@ -47,7 +47,7 @@ try {
   assert(pressured.enemyZ < neutral.enemyZ - 0.035, 'High posture did not visibly retreat the whole enemy');
   assert(pressured.enemyY < neutral.enemyY - 0.015, 'High posture did not visibly lower the whole enemy stance');
   assert(pressured.characterPitch > neutral.characterPitch + 1.0, 'High posture did not visibly load the skinned whole-body guard');
-  assert(pressured.swordParent === 'HandR' && pressured.gripLocked && pressured.orientationDeltaDeg < 0.25, 'Posture presence broke authored Sword/HandR grip authority');
+  assert(pressured.swordParent === 'HandR' && !pressured.gripLocked && pressured.orientationDeltaDeg < 0.25, 'Posture presence broke neutral Sword/HandR hierarchy or activated authored attack grip outside an Attack* phase');
   assert([pressured.enemyX, pressured.enemyY, pressured.enemyZ, pressured.characterPitch, pressured.characterRoll].every(Number.isFinite), 'Posture pressure produced a non-finite transform');
 
   const telegraph = draw({ ...gap, phase: 'telegraph', phaseProgress: 0.55, enemyPosture: 5, attack: { direction: Direction.TOP, displayedDirection: Direction.TOP, heavy: false, guardBroken: true } }, 2300);

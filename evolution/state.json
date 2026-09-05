@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 155,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 0301e7b205f062022bf5a1a895d6c8dfeab0914b is terminal green: Actions CI #200 / run 33987624086 passed the complete Node/browser suite, exact-head GitHub Vercel status is success, Preview feedback reports 0 unresolved items, Draft PR #1 is open/Draft/unmerged, main is untouched, unresolved review threads are empty and the latest exact-head review reports no actionable P0/P1/P2. Candidate scoring selected enemy-posture body-language readability 23/25 over a bounded generic result key-moment recap 19/25 and a Closed Beta next-test action 18/25. Run 155 adds presentation-only pressured-guard body language: accumulated enemy posture now produces a bounded whole-model retreat/lower/lean/sway during gap and recovery, with a stronger guard-break recovery read, while telegraph/strike explicitly suppress the offsets so authoritative blade direction remains unchanged. It changes no HP, score, timing, damage, posture values, parry/Perfect/STEP, roster, persistence, identifiers, analytics, networking or input authority. A dedicated real 320x568 PlayCanvas gate proves neutral-to-pressure escalation, telegraph suppression, stronger guard-break recovery, finite bounded transforms and Sword-to-HandR grip continuity.",
-  "last_commit": "0301e7b205f062022bf5a1a895d6c8dfeab0914b",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the new enemy-posture body-language slice and its dedicated 320x568 PlayCanvas browser gate. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 156,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD cf17c9b24954168b14ae79ccfc2758b717913b49 is not feature-ready: Actions CI #201 / run 33991966872 completed failure after npm test passed 175/175, because the new 320x568 enemy-posture PlayCanvas gate incorrectly required bladeTrajectoryState.gripLocked=true during neutral gap. Exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, unresolved review threads are empty and Preview feedback reports 0 unresolved items. Inspection of src/blade-trajectory.js confirms authored grip lock is intentionally active only during Attack* telegraph/strike/recovery; inactive gap explicitly reports gripLocked=false while Sword remains directly parented to HandR. Run 156 repairs only that acceptance contract: high-posture gap must keep Sword→HandR, remain outside authored attack grip and keep zero orientation delta; telegraph and guard-break recovery still require authored HandR grip lock. No runtime, combat, balance, renderer behavior, input, persistence or network authority changes.",
+  "last_commit": "cf17c9b24954168b14ae79ccfc2758b717913b49",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the repaired enemy-posture 320x568 acceptance contract. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,18 +17,18 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "enemy_posture_presence_pending_exact_head",
-    "last_observed_head": "0301e7b205f062022bf5a1a895d6c8dfeab0914b",
-    "incoming_ci_run": 33987624086,
-    "incoming_ci_result": "success",
-    "incoming_ci_failure": null,
+    "status": "enemy_posture_gate_contract_repair_pending_exact_head",
+    "last_observed_head": "cf17c9b24954168b14ae79ccfc2758b717913b49",
+    "incoming_ci_run": 33991966872,
+    "incoming_ci_result": "failure",
+    "incoming_ci_failure": "npm test passed 175/175; npm run test:browser failed at enemy-posture gap because the new gate required gripLocked=true outside an authored Attack* phase",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 155 deliberately adds no new HUD or combat rule. It composes a bounded whole-model posture-pressure pass after authored/heavy/rhythm pose evaluation but before blade-trajectory sampling, so downstream grip/tip evidence observes the actual final rendered weapon pose. The pass is active only during gap/recovery, is zero during telegraph/strike, and uses no storage or transport path. The dedicated 320x568 PlayCanvas browser smoke is appended to the full browser suite; post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 156 changes only the dedicated enemy-posture browser acceptance harness. The neutral/high-posture gap now explicitly proves Sword remains parented to HandR while bladeTrajectoryState.gripLocked is false, matching the established inactive blade-trajectory contract. Telegraph and guard-break recovery continue to require authored Attack* grip lock and orientation continuity, so the repair does not weaken live-cut blade authority. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
