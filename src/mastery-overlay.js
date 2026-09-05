@@ -4,6 +4,7 @@ import './beta-readiness.js';
 import './local-records.js';
 import './run-analysis.js';
 import './practice-progress.js';
+import './practice-session-record.js';
 import { CombatEngine } from './game-core.js';
 import {
   createMasterySession,

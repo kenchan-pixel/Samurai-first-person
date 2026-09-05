@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 149,
+  "run_number": 150,
   "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 9d384d63964bba478b9b3d526f0b93c64c91daf2 is feature-ready: Actions CI #194 / run 33969196873 is terminal success, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review comments are empty, Preview feedback reports 0 unresolved items, and latest exact-head review 5121524967 reports no actionable P0-P2. Run 149 therefore implements one bounded player-visible challenge learning slice: terminal 戰策後果 binds each accepted Waves 2/4/6 整息/血誓 choice only to the immediately following Wave 3/5/7 authoritative player-hit event count and clear/defeat outcome. The reflection reports observation rather than causation, is session-only, clears on retry/full-campaign handoff, and changes no HP, score, timing, tactics, roster, persistence, privacy/network, renderer or input authority. The existing composed 今日陣/challenge 320x568 tactical gate is extended to prove exact outcome text, bounds/pointer safety and cleanup.",
-  "last_commit": "9d384d63964bba478b9b3d526f0b93c64c91daf2",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for Run 149 challenge tactic reflection. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD d19f725f2c638c36f8d33a48c4c862122ef5020f is feature-ready: Actions CI #195 / run 33972579496 is terminal success, exact-head GitHub Vercel status is success, Draft PR #1 is open/Draft/unmerged, main is untouched, inline review comments are empty, direct Vercel deployment enumeration returns 403 so the repository-approved GitHub Vercel commit status is canonical, and Preview feedback reports 0 unresolved items. Run 150 implements one bounded player-visible repeat-practice slice: a session-only 本次修行 personal-best line counts same-route direct-practice attempts and independently keeps best defense percentage, fewest hits taken and best manual-counter conversion, naming only strict current-attempt improvements as 今局刷新. The record is route-isolated, resets on page refresh, uses no browser storage or transport, stays result-only/pointer-transparent, and changes no combat, score, campaign/challenge personal-best schema, renderer or input authority. The existing 320x568 Perfect-practice browser gate is extended to prove attempts 1->3, bounded layout and pointer safety; focused Node coverage guards best aggregation, strict refresh semantics and no-storage/no-transport.",
+  "last_commit": "d19f725f2c638c36f8d33a48c4c862122ef5020f",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for Run 150 session-only practice personal bests. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "challenge_tactic_reflection_pending_exact_head",
-    "last_observed_head": "9d384d63964bba478b9b3d526f0b93c64c91daf2",
-    "incoming_ci_run": 33969196873,
+    "status": "practice_session_record_pending_exact_head",
+    "last_observed_head": "d19f725f2c638c36f8d33a48c4c862122ef5020f",
+    "incoming_ci_run": 33972579496,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "Previous project/deployment enumeration is unavailable in this runtime path; exact-head GitHub Vercel status is the canonical fallback permitted by the repository SOT.",
+    "direct_vercel_connector": "Exact project deployment enumeration returned 403 in this run; exact-head GitHub Vercel status is the canonical fallback permitted by the repository SOT.",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 149 is an observation-only challenge learning slice. src/challenge-tactic-reflection.js observes accepted challenge-tactic events plus authoritative player-hit/enemy-defeated/victory/defeat events, binds only the immediate next Wave 3/5/7 to the preceding Waves 2/4/6 choice, and renders a compact terminal 戰策後果 line. It intentionally does not claim the tactic caused the outcome and does not change combat, reward, persistence or network behavior. Deterministic Node coverage guards immediate-wave isolation and no-storage/no-transport; the existing real 320x568 今日陣/challenge tactical browser path is extended with one Wave-5 hit to require exact 戰策後果 text, pointer transparency, viewport bounds and retry/campaign cleanup. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 150 adds only a direct-practice result/session record. src/practice-session-record.js observes the same authoritative run-analysis event stream, keeps one in-memory route-keyed aggregate per practice route, and renders a compact 本次修行 line inside the existing result analysis card. It never writes localStorage/sessionStorage/indexedDB or sends network traffic and does not modify combat, scoring or the established campaign/challenge best records. The new source/test and embedded browser-harness module were syntax-checked before Git object assembly; the existing 320x568 Perfect-practice gate is extended rather than replaced. Post-commit full Node/browser CI and exact-head Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,10 +65,10 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 近3局 together with 比上次, 上局目標, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage or misleading trend grading",
+    "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
     "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect all three 下一陣 · 偵察 reads plus 戰策回顧 and 戰策後果 against the actual runtime roster/outcomes together with 氣勢/不屈 and 宿敵步速; refine only if exact Preview evidence shows stale identity, misleading causal language, crowding or pointer overlap",
     "ACCEPTANCE: inspect Guard + four authored cuts + measured/standard/quick tempo + accepted 50 ms Ronin feint crossfade at normal speed; refine only concrete body/blade continuity defects",
-    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surface without duplicating 四向防守 / 修行進度 / 上局目標 / 近3局 / 戰策回顧 / 戰策後果",
+    "FEATURE: consider a bounded result key-moment recap only if it can fit the established 320x568 terminal surface without duplicating 四向防守 / 修行進度 / 上局目標 / 近3局 / 本次修行 / 戰策回顧 / 戰策後果",
     "FEATURE: consider a bounded challenge retry prompt derived only from completed immediate-next-wave outcomes if it can avoid implying causal optimization, persistence or any tactics-balance change",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]

@@ -378,3 +378,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The new JavaScript, Node test and embedded browser-harness module were syntax-checked before the Git objects were assembled. Existing browser-suite breadth and tactical reward/scout/recap assertions are preserved rather than replaced.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 150 — Track session-only practice personal bests
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `d19f725f2c638c36f8d33a48c4c862122ef5020f`.
+- Exact-head Actions CI #195 / run `33972579496` is terminal success and exact-head GitHub `Vercel` status is success. Direct Vercel deployment enumeration returns 403, so the exact-head GitHub commit status is the canonical deployment signal permitted by SOT. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review comments are empty and Preview feedback reports 0 unresolved items. No applicable unresolved P0/P1/material-P2 or baseline regression was found.
+- Candidate scoring: **same-route session practice personal bests 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); bounded result key-moment recap 22/25; challenge retry prompt from immediate-next-wave outcomes 22/25. The first candidate wins because it makes Closed Beta repeat practice measurable across the whole current page session, complements rather than replaces immediate `比上次` and rolling `近3局`, and diversifies away from the recent challenge-result work without persistence or balance risk.
+
+### Feature
+
+- Added a compact pointer-transparent **本次修行** line inside the existing direct-practice result analysis card. The first result establishes a one-attempt baseline; each same-route retry increments the count and independently keeps the best observed defense percentage, fewest hits taken and best manual-counter conversion for that practice route.
+- A later result adds `今局刷新` only for metrics that strictly improve the existing session best; ties are not called records and unavailable percentage metrics remain `—`. Ronin/Oni/Shogun/Blood Moon histories are isolated from each other and page refresh clears all of them.
+- Added `src/practice-session-record.js` as a bounded in-memory CombatEngine result adapter loaded through the existing mastery/result composition. It reuses authoritative run-analysis events/snapshots, creates no localStorage/sessionStorage/indexedDB key or network request, and does not alter combat, score, campaign/challenge personal-best schemas, renderer or input authority.
+- Added deterministic best/strict-refresh/privacy tests and extended the existing 320×568 Perfect-practice browser gate to prove attempt counts 1→2→3, exact aggregate text, pointer transparency and the combined result layout alongside Perfect-target and 近3局 content. Existing acceptance gates are preserved rather than replaced.
+- Updated Current Baseline and Regression Checklist in the same implementation commit so the session-only route-isolated record, privacy boundary and 320×568 composition remain cumulative SOT.
+
+### Verification boundary
+
+- The new JavaScript, Node test, mastery import, browser runner and embedded browser-harness module were syntax-checked before Git object assembly. The authoritative full repository test/browser suite can run only after the single final commit in this tool surface.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

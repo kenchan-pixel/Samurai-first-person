@@ -88,10 +88,17 @@
       const progress = document.querySelector('#result-analysis [data-practice-progress-row]');
       const focus = progress?.querySelector('[data-practice-progress-focus]');
       const trend = progress?.querySelector('[data-practice-progress-trend]');
+      const sessionRecord = progress?.querySelector('[data-practice-session-record]');
       const armed = Boolean(
         progress && !progress.hidden &&
         focus && !focus.hidden &&
         trend && trend.hidden &&
+        sessionRecord && !sessionRecord.hidden &&
+        root.dataset.practiceSessionRecordRoute === 'enemy:wandering-ronin' &&
+        root.dataset.practiceSessionRecordAttempts === '1' &&
+        sessionRecord.textContent.includes('本次修行 · 1局') &&
+        sessionRecord.textContent.includes('最佳 防守 100% · 受擊 0 · 反擊 100%') &&
+        getComputedStyle(sessionRecord).pointerEvents === 'none' &&
         !root.dataset.practiceProgressTrendState &&
         root.dataset.practiceProgressRoute === 'enemy:wandering-ronin' &&
         root.dataset.practiceProgressFocusState === 'clear' &&
@@ -102,7 +109,7 @@
         focus.textContent.includes('Perfect')
       );
       root.dataset.practicePerfectTargetArmed = String(armed);
-      if (!armed) throw new Error(`clean practice did not arm the Perfect retry target: ${progress?.textContent || 'missing progress'}`);
+      if (!armed) throw new Error(`clean practice did not arm the Perfect retry target/session record: ${progress?.textContent || 'missing progress'}`);
 
       runPractice(1000, { perfect: true, score: 950 });
       await flush();
@@ -111,13 +118,15 @@
         root.dataset.practiceProgressTargetKind === 'perfect' &&
         root.dataset.practiceProgressTargetState === 'mastered' &&
         !root.dataset.practiceProgressTargetDirection &&
+        root.dataset.practiceSessionRecordAttempts === '2' &&
+        sessionRecord.textContent.includes('本次修行 · 2局') &&
         trend.hidden &&
         !root.dataset.practiceProgressTrendState &&
         focus.textContent.includes('上局目標 · Perfect · 達成 1次') &&
         progressLayoutOk(progress)
       );
       root.dataset.practicePerfectTargetAchieved = String(achieved);
-      if (!achieved) throw new Error(`Perfect retry target was not graded as achieved: ${progress?.textContent || 'missing progress'}`);
+      if (!achieved) throw new Error(`Perfect retry target/session record was not graded as achieved: ${progress?.textContent || 'missing progress'}`);
 
       runPractice(2000, { perfect: false, score: 900 });
       await flush();
@@ -126,11 +135,15 @@
         root.dataset.practiceProgressTargetKind === 'perfect' &&
         root.dataset.practiceProgressTargetState === 'missed' &&
         !root.dataset.practiceProgressTargetDirection &&
+        root.dataset.practiceSessionRecordAttempts === '3' &&
+        root.dataset.practiceSessionRecordRefreshed === 'none' &&
+        sessionRecord.textContent.includes('本次修行 · 3局') &&
+        sessionRecord.textContent.includes('最佳 防守 100% · 受擊 0 · 反擊 100%') &&
         focus.textContent.includes('上局目標 · Perfect · 未達成 0次') &&
         progressLayoutOk(progress)
       );
       root.dataset.practicePerfectTargetMissed = String(missed);
-      if (!missed) throw new Error(`Perfect retry target was not graded as missed: ${progress?.textContent || 'missing progress'}`);
+      if (!missed) throw new Error(`Perfect retry target/session record was not graded as missed: ${progress?.textContent || 'missing progress'}`);
 
       const trendVisible = Boolean(
         trend && !trend.hidden &&
@@ -145,11 +158,13 @@
       root.dataset.practiceThreeRunTrend = String(trendVisible);
       if (!trendVisible) throw new Error(`three-run practice trend was not truthful, bounded and visible on attempt three: ${progress?.textContent || 'missing progress'}`);
 
+      root.dataset.practiceSessionRecordBrowser = sessionRecord && !sessionRecord.hidden && progressLayoutOk(progress) ? 'pass' : 'fail';
       root.dataset.practicePerfectTargetLayout = progressLayoutOk(progress) ? 'pass' : 'fail';
       root.dataset.practicePerfectTargetBrowser = armed && achieved && missed && trendVisible && progressLayoutOk(progress) ? 'pass' : 'fail';
     } catch (error) {
       errorNode.hidden = false;
       errorNode.textContent = error?.stack || String(error);
+      root.dataset.practiceSessionRecordBrowser = 'fail';
       root.dataset.practicePerfectTargetBrowser = 'fail';
     }
   </script>
