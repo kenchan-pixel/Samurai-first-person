@@ -172,3 +172,25 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Modified JavaScript and the embedded browser-harness module were syntax-checked before creating the Git objects. Repository-authoritative verification remains exact-head Actions after the single final commit.
 - Post-commit `npm test`, complete `npm run test:browser` including the existing duel-read profile browser smoke, and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 141 — Keep practice retry coaching truthful to observed directions
+
+**Date:** 2026-09-05  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `f95a32d4a661f5383842e320716fec60f72855ef`.
+- Exact-head Actions CI #186 / run `33947296485` is terminal success; exact-head GitHub `Vercel` status is success; Vercel Preview feedback reports 0 unresolved items. Direct Vercel deployment enumeration returned 403, so the canonical GitHub Vercel commit status is used. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review threads are empty.
+- Latest exact-head Second Hourly review `5119950734` has no P0/P1 but one actionable P2 correctness finding: the practice-progress `clear` state means all **observed** directions were defended, while Run 140's stage-intro copy said `四向守穩`, which can overclaim directions that never appeared. The Closed Beta SOT explicitly forbids inventing unseen-direction failures/coverage and allows coaching to acknowledge only observed刀路, so this blocks new feature work.
+
+### Repair
+
+- Preserved the existing session-only `allObservedPerfect` meaning and changed only the retry-intro clear copy from `四向守穩` to `已見刀路守穩`, keeping the bounded `挑戰 Perfect` next-step cue.
+- Added a regression case with exactly two observed directions defended at 100% and two directions at `faced=0`; it must remain a valid all-observed-clean state but must not emit `四向守穩`.
+- Route isolation, campaign/challenge suppression, pre-telegraph cleanup and all combat/storage/network authority remain unchanged.
+
+### Verification boundary
+
+- No acceptance threshold or gameplay rule is weakened. The change is a truthful presentation repair against the already-approved Closed Beta coaching contract.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

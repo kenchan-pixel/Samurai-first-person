@@ -68,8 +68,8 @@ export function duelPracticeFocusForStageStart(detail = {}, root = globalThis.do
     return Object.freeze({
       state: 'clear',
       direction: null,
-      label: '四向',
-      text: '今局修行 · 四向守穩 · 挑戰 Perfect',
+      label: '已見刀路',
+      text: '今局修行 · 已見刀路守穩 · 挑戰 Perfect',
     });
   }
 

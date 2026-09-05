@@ -7,6 +7,10 @@ import {
   duelPracticeFocusForStageStart,
   duelReadProfileForEnemy,
 } from '../src/duel-read-profile.js';
+import {
+  buildPracticeFocusCoach,
+  buildPracticeSnapshot,
+} from '../src/practice-progress.js';
 
 test('duel read profiles cover the four approved campaign archetypes', () => {
   assert.equal(duelReadProfileForEnemy('ashigaru-scout'), DUEL_READ_PROFILES['ashigaru-scout']);
@@ -58,12 +62,28 @@ test('practice retry focus is route-isolated and never leaks into campaign', () 
   assert.equal(duelPracticeFocusForStageStart({ practice: false, enemyId: 'wandering-ronin' }, root), null);
 });
 
-test('clean Blood Moon repeat converts the same route receipt into a Perfect challenge', () => {
+test('all-observed-clean practice never claims four directions when some directions were unseen', () => {
+  const snapshot = buildPracticeSnapshot({
+    stages: [{
+      hitsTaken: 0,
+      counterOpenings: 2,
+      counters: 2,
+      directionReads: {
+        top: { faced: 1, defended: 1, hits: 0 },
+        right: { faced: 0, defended: 0, hits: 0 },
+        bottom: { faced: 0, defended: 0, hits: 0 },
+        left: { faced: 1, defended: 1, hits: 0 },
+      },
+    }],
+  });
+  const coach = buildPracticeFocusCoach(null, snapshot);
+  assert.equal(coach?.allObservedPerfect, true);
+
   const root = {
     dataset: {
       practiceProgressRoute: 'mode:blood-moon-practice',
-      practiceProgressFocusState: 'clear',
-      practiceProgressFocusDirection: 'left',
+      practiceProgressFocusState: coach?.allObservedPerfect ? 'clear' : 'target',
+      practiceProgressFocusDirection: coach?.nextDirection || '',
     },
   };
   const focus = duelPracticeFocusForStageStart({
@@ -74,7 +94,8 @@ test('clean Blood Moon repeat converts the same route receipt into a Perfect cha
 
   assert.equal(focus?.state, 'clear');
   assert.equal(focus?.direction, null);
-  assert.match(focus?.text || '', /四向守穩/);
+  assert.match(focus?.text || '', /已見刀路守穩/);
+  assert.doesNotMatch(focus?.text || '', /四向守穩/);
   assert.match(focus?.text || '', /Perfect/);
 });
 
