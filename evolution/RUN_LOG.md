@@ -240,3 +240,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - This repair changes only which already-existing challenge state the presentation adapter trusts; it does not alter challenge rules or the player-facing campaign/practice feature.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.
+
+## Run 144 — Close the all-observed-clean Perfect practice objective
+
+**Date:** 2026-09-05  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `9911a57f4402613bc7fa7ec69277fdee577f5b72`.
+- Exact-head Actions CI #189 / run `33955351258` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review threads are empty; latest exact-head Second Hourly review `5120531810` reports no actionable P0/P1/P2; the latest Run 143 receipt contains no unresolved human blocker.
+- Candidate scoring: **close the existing Perfect retry objective at result 24/25** (impact 5, goal 5, novelty 4, confidence 5, safety 5); three-attempt practice trend 22/25; bounded result key-moment recap 20/25. The first candidate wins because Run 141 already tells an all-observed-clean player to `挑戰 Perfect`, but Run 142 deliberately cannot grade that objective, leaving the repeat-practice loop one step short of an explicit outcome.
+
+### Feature
+
+- The same-route practice snapshot now retains only a coaching count of authoritative `perfect-parry` and `perfect-step-riposte` outcomes. When the previous attempt defended every **observed** direction at 100%, the following `修行進度` result grades the exact Perfect objective: one or more Perfect techniques shows `上局目標 · Perfect · 達成 N次`; zero shows `上局目標 · Perfect · 未達成 0次`.
+- The existing directional `上局目標` grading remains unchanged for non-clean prior attempts. Perfect grading has `direction=null`, publishes an explicit `perfect` target-kind marker, and removes any target-direction dataset rather than stringifying a fake direction. The existing next-run focus still derives from the current observed direction evidence.
+- Reused the existing result-only coaching row; no new result panel, pointer target, live-combat HUD, storage key, identifier, analytics or network transport is added. Perfect timing, auto-riposte damage, posture, STEP rules, score, enemy balance, renderer pose and input ownership are unchanged.
+- Added focused deterministic tests plus a dedicated 320×568 browser gate that exercises an all-observed-clean practice → Perfect target armed → Perfect achieved → later Perfect missed sequence on the composed result UI and fails closed on overflow or fake direction state.
+
+### Verification boundary
+
+- The implementation is intentionally result/coaching-only and keeps the prior directional-target contract intact. The new browser smoke is appended to the complete existing browser suite rather than replacing any gate.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` (including `practice-perfect-target-browser-smoke.mjs`) and exact-head Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA under the one-commit rule.

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Practice Perfect target browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">PRACTICE COMPLETE</p>
+        <h2 id="result-title">勝利</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">再戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/mastery-overlay.js';
+    import { CombatEngine, Direction } from '../src/game-core.js';
+
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+    const enemy = Object.freeze({
+      id: 'perfect-practice-smoke',
+      name: 'Perfect Practice Smoke',
+      title: 'Practice Arena',
+      maxHp: 3,
+      postureMax: 4,
+      gapMs: 10,
+      recoveryMs: 20,
+      perfectWindowMs: 20,
+      attacks: Object.freeze([
+        Object.freeze({ direction: Direction.TOP, telegraphMs: 10, strikeMs: 100, damage: 1 }),
+      ]),
+    });
+
+    async function flush() {
+      await Promise.resolve();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    function runPractice(now, { perfect = false, score = 900 } = {}) {
+      const combat = new CombatEngine({ enemies: [enemy] });
+      combat.start(now);
+      combat.drainEvents();
+      combat.events.push(
+        { type: 'strike', detail: { direction: Direction.TOP } },
+        { type: perfect ? 'perfect-parry' : 'parry', detail: { direction: Direction.TOP } },
+        { type: 'counter', detail: { direction: Direction.BOTTOM, damage: 1 } },
+        { type: 'strike', detail: { direction: Direction.LEFT } },
+        { type: 'parry', detail: { direction: Direction.LEFT } },
+        { type: 'counter', detail: { direction: Direction.RIGHT, damage: 1 } },
+        { type: 'enemy-defeated', detail: { enemyId: enemy.id, stage: 1 } },
+        {
+          type: 'victory',
+          detail: {
+            score,
+            playerHp: 4,
+            practice: true,
+            practiceEnemyId: 'wandering-ronin',
+          },
+        },
+      );
+      combat.drainEvents();
+      return combat;
+    }
+
+    function progressLayoutOk(progress) {
+      const rect = progress?.getBoundingClientRect();
+      return Boolean(rect) &&
+        rect.left >= -0.5 &&
+        rect.right <= window.innerWidth + 0.5 &&
+        rect.top >= -0.5 &&
+        rect.bottom <= window.innerHeight + 0.5;
+    }
+
+    try {
+      runPractice(0, { perfect: false, score: 800 });
+      await flush();
+
+      const progress = document.querySelector('#result-analysis [data-practice-progress-row]');
+      const focus = progress?.querySelector('[data-practice-progress-focus]');
+      const armed = Boolean(
+        progress && !progress.hidden &&
+        focus && !focus.hidden &&
+        root.dataset.practiceProgressRoute === 'enemy:wandering-ronin' &&
+        root.dataset.practiceProgressFocusState === 'clear' &&
+        !root.dataset.practiceProgressTargetKind &&
+        !root.dataset.practiceProgressTargetState &&
+        !root.dataset.practiceProgressTargetDirection &&
+        focus.textContent.includes('下一局保持節奏') &&
+        focus.textContent.includes('Perfect')
+      );
+      root.dataset.practicePerfectTargetArmed = String(armed);
+      if (!armed) throw new Error(`clean practice did not arm the Perfect retry target: ${progress?.textContent || 'missing progress'}`);
+
+      runPractice(1000, { perfect: true, score: 950 });
+      await flush();
+
+      const achieved = Boolean(
+        root.dataset.practiceProgressTargetKind === 'perfect' &&
+        root.dataset.practiceProgressTargetState === 'mastered' &&
+        !root.dataset.practiceProgressTargetDirection &&
+        focus.textContent.includes('上局目標 · Perfect · 達成 1次') &&
+        progressLayoutOk(progress)
+      );
+      root.dataset.practicePerfectTargetAchieved = String(achieved);
+      if (!achieved) throw new Error(`Perfect retry target was not graded as achieved: ${progress?.textContent || 'missing progress'}`);
+
+      runPractice(2000, { perfect: false, score: 900 });
+      await flush();
+
+      const missed = Boolean(
+        root.dataset.practiceProgressTargetKind === 'perfect' &&
+        root.dataset.practiceProgressTargetState === 'missed' &&
+        !root.dataset.practiceProgressTargetDirection &&
+        focus.textContent.includes('上局目標 · Perfect · 未達成 0次') &&
+        progressLayoutOk(progress)
+      );
+      root.dataset.practicePerfectTargetMissed = String(missed);
+      if (!missed) throw new Error(`Perfect retry target was not graded as missed: ${progress?.textContent || 'missing progress'}`);
+
+      root.dataset.practicePerfectTargetLayout = progressLayoutOk(progress) ? 'pass' : 'fail';
+      root.dataset.practicePerfectTargetBrowser = armed && achieved && missed && progressLayoutOk(progress) ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.practicePerfectTargetBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

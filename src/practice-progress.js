@@ -50,11 +50,14 @@ export function buildPracticeSnapshot(report) {
   const counterOpenings = Math.max(0, Number(stage.counterOpenings) || 0);
   const counters = Math.max(0, Number(stage.counters) || 0);
   const counterPct = counterOpenings > 0 ? clampPct((counters / counterOpenings) * 100) : null;
+  const perfectParries = Math.max(0, Number(stage.perfectParries) || 0);
+  const perfectSteps = Math.max(0, Number(stage.perfectSteps) || 0);
 
   return Object.freeze({
     defensePct,
     hitsTaken: Math.max(0, Number(stage.hitsTaken) || 0),
     counterPct,
+    perfectCount: perfectParries + perfectSteps,
     directionFocus: snapshotDirectionFocus(stage),
   });
 }
@@ -103,6 +106,23 @@ function allObservedDirectionsPerfect(snapshot) {
   const rows = snapshot?.directionFocus?.rows || [];
   const observed = rows.filter((row) => row.faced > 0);
   return observed.length > 0 && observed.every((row) => row.accuracyPct === 100);
+}
+
+export function buildPracticePerfectTargetOutcome(previous, current) {
+  if (!previous?.directionFocus || !current?.directionFocus || !allObservedDirectionsPerfect(previous)) return null;
+  const perfectCount = Math.max(0, Number(current.perfectCount) || 0);
+  const mastered = perfectCount > 0;
+  return Object.freeze({
+    kind: 'perfect',
+    state: mastered ? 'mastered' : 'missed',
+    direction: null,
+    label: 'Perfect',
+    previousAccuracyPct: null,
+    currentAccuracyPct: null,
+    delta: null,
+    perfectCount,
+    text: `上局目標 · Perfect · ${mastered ? '達成' : '未達成'} ${perfectCount}次`,
+  });
 }
 
 export function buildPracticeTargetOutcome(previous, current) {
@@ -163,7 +183,7 @@ export function buildPracticeFocusCoach(previous, current) {
 
   const nextRow = focusRow(current, focus.weakDirection);
   const allObservedPerfect = allObservedDirectionsPerfect(current);
-  const targetOutcome = buildPracticeTargetOutcome(previous, current);
+  const targetOutcome = buildPracticePerfectTargetOutcome(previous, current) || buildPracticeTargetOutcome(previous, current);
   const trackedDirection = targetOutcome?.direction || null;
   const trackedDelta = targetOutcome?.delta ?? null;
   const trackedText = targetOutcome?.text || '';
@@ -224,6 +244,7 @@ function hideProgress() {
   delete document.documentElement.dataset.practiceProgressRoute;
   delete document.documentElement.dataset.practiceProgressFocusDirection;
   delete document.documentElement.dataset.practiceProgressTrackedDirection;
+  delete document.documentElement.dataset.practiceProgressTargetKind;
   delete document.documentElement.dataset.practiceProgressTargetState;
   delete document.documentElement.dataset.practiceProgressTargetDirection;
   delete document.documentElement.dataset.practiceProgressFocusState;
@@ -268,15 +289,22 @@ function renderProgress(routeKey, report) {
       delete document.documentElement.dataset.practiceProgressTrackedDirection;
     }
     if (coach.targetOutcome) {
+      document.documentElement.dataset.practiceProgressTargetKind = coach.targetOutcome.kind || 'direction';
       document.documentElement.dataset.practiceProgressTargetState = coach.targetOutcome.state;
-      document.documentElement.dataset.practiceProgressTargetDirection = coach.targetOutcome.direction;
+      if (coach.targetOutcome.direction) {
+        document.documentElement.dataset.practiceProgressTargetDirection = coach.targetOutcome.direction;
+      } else {
+        delete document.documentElement.dataset.practiceProgressTargetDirection;
+      }
     } else {
+      delete document.documentElement.dataset.practiceProgressTargetKind;
       delete document.documentElement.dataset.practiceProgressTargetState;
       delete document.documentElement.dataset.practiceProgressTargetDirection;
     }
   } else {
     delete document.documentElement.dataset.practiceProgressFocusDirection;
     delete document.documentElement.dataset.practiceProgressTrackedDirection;
+    delete document.documentElement.dataset.practiceProgressTargetKind;
     delete document.documentElement.dataset.practiceProgressTargetState;
     delete document.documentElement.dataset.practiceProgressTargetDirection;
     delete document.documentElement.dataset.practiceProgressFocusState;
