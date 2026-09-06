@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 165,
+  "run_number": 166,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 898ed3dd5c6943147f8ba6dc28f09a2796453ba3 has exact-head GitHub Vercel success, Draft PR #1 remains open/Draft/unmerged, main is untouched and unresolved review threads are empty, but Actions CI #210 / run 34012922804 failed after npm test 189/189 and every preceding browser gate passed. The real 320x568 Closed Beta production path still reached the first Ronin-practice terminal but did not publish the required 1/3 + repeat-practice + restart-button + visible 再練 action even after the Run 164 bounded wait, proving the issue is not merely harness sampling latency. Code inspection found a production synchronization gap in beta-readiness: data-practice-progress-state only triggered work when it became comparison; the authoritative first-practice receipt was ignored, so the result CTA depended on an unrelated later data-run-mode/result mutation to refresh. Run 165 makes every practice-progress-state transition re-render the Closed Beta action while preserving comparison as the only transition that completes repeat-practice. No acceptance requirement is weakened and no combat, renderer, input, balance, persistence, privacy, feedback payload, navigation or network behavior changes.",
-  "last_commit": "898ed3dd5c6943147f8ba6dc28f09a2796453ba3",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the Closed Beta first-practice observer synchronization repair. No feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD d199577120685a6f509860719406fd496ce7b98f has terminal GitHub Vercel success, Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review comments are empty, but Actions CI #211 / run 34014172660 is terminal red after npm test 189/189 and every browser gate before beta-readiness passed. The real 320x568 Closed Beta flow still reaches the first Ronin-practice terminal but its result-level 下一步 does not settle on the canonical same-opponent restart action. Run 165 already made data-practice-progress-state re-render beta readiness, so this run treats the remaining failure as a terminal-order reconciliation defect rather than adding another feature. Run 166 adds a bounded session-only direct-practice reconciliation adapter: after result/run-mode/practice-progress mutations settle to the next animation frame, a direct-practice terminal idempotently re-marks only the already-valid duel receipt through markBetaReadinessItem('duel'), forcing the existing canonical beta-readiness renderer to recompute the CTA without completing repeat-practice or writing synthetic progress. The existing fail-closed 320x568 production gate remains unchanged.",
+  "last_commit": "d199577120685a6f509860719406fd496ce7b98f",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the direct-practice Closed Beta reconciliation repair. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "closed_beta_first_practice_observer_sync_pending_exact_head",
-    "last_observed_head": "898ed3dd5c6943147f8ba6dc28f09a2796453ba3",
-    "incoming_ci_run": 34012922804,
-    "incoming_ci_result": "failed only at first real direct-practice Closed Beta next-step settlement after 189/189 Node tests and every earlier browser gate passed; Run 164 already waited 1800 ms, ruling out simple observer latency",
+    "status": "closed_beta_direct_practice_reconcile_pending_exact_head",
+    "last_observed_head": "d199577120685a6f509860719406fd496ce7b98f",
+    "incoming_ci_run": 34014172660,
+    "incoming_ci_result": "failed only at first real direct-practice Closed Beta next-step settlement after 189/189 Node tests and every earlier browser gate passed",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 165 repairs the production beta-readiness synchronization edge itself. The first same-opponent practice receipt now forces an immediate action re-render, while only practiceProgressState=comparison can complete the repeat-practice checklist item. The existing real 320x568 campaign -> Ronin-practice -> same-opponent retry -> comparison -> feedback -> explicit export -> 3/3 gate remains unchanged and fail-closed."
+    "note": "Run 166 does not weaken or bypass beta acceptance. The adapter can only idempotently re-mark the canonical duel item on an already-visible direct-practice terminal; repeat-practice still requires practiceProgressState=comparison, feedback still requires the real explicit export receipt, and challenge/daily routes are excluded. No combat, renderer, input, balance, persistence, identifier, analytics, feedback transport or network authority changes."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: keep the real 320x568 Closed Beta 下一步 production gate fail-closed at every observer-owned result transition; refine only if exact Preview/CI evidence shows another stale routing, payload/export failure or challenge/今日陣 leakage",
+    "ACCEPTANCE: keep the real 320x568 Closed Beta 下一步 production gate fail-closed at every observer/reconciliation-owned result transition; refine only if exact Preview/CI evidence shows another stale routing, payload/export failure or challenge/今日陣 leakage",
     "ACCEPTANCE: inspect the new campaign 再戰目標 at 320x568 together with 關鍵一刻, 四向防守, Closed Beta 下一步/回報/分享 and the restart button; refine only if exact Preview/CI evidence shows wrapping, stale target carry, route leakage, misleading progression or terminal overlap",
     "ACCEPTANCE: inspect the normal/Perfect/guard-break enemy parry recoil at 320x568 together with authored Attack* recovery, pressured-guard body language, blade trajectory and actual-Sword afterimages; refine only if exact Preview/CI evidence shows excessive motion, blade-axis drift, unclear escalation or counter/late-recovery leakage",
     "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
