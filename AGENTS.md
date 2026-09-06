@@ -1,5 +1,15 @@
 # AGENTS.md
 
+## Active owner control — PAUSED_BY_OWNER
+
+Ken explicitly requested on 2026-09-06: **pause autonomous development** and merge once only if there are no unresolved review issues. This owner instruction takes precedence over all normal evolution rules below.
+
+- Autonomous development is paused until Ken explicitly resumes it. Scheduled invocations must stop after reading this control; do not implement features, repair blockers, refactor, create commits, trigger deployments or merge automatically.
+- A recurring "Run the autonomous evolution loop" prompt is not an instruction to resume. Existing failed CI or review findings do not override this owner-directed pause.
+- Read-only reviews/inspection remain permitted. Do not disable GitHub CI, delete the branch, close PR #1, or alter unrelated scheduled tasks.
+- The requested one-time merge was not performed: product HEAD `eaa8ce49181070da7e7a7fc095d78badef2b3698` has an unresolved P1 finisher-grip finding and failed CI #221. `main` must remain unchanged; no automatic merge has been queued.
+- This control is a repository-level stop guard, not a claim that the ChatGPT scheduler switch was disabled. That switch was unavailable in the handling session. See the owner-control receipt at the top of `docs/SCHEDULED_TASK_PROMPT.md`.
+
 ## Authority
 
 1. Direct written instruction from Ken.

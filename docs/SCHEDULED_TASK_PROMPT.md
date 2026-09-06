@@ -1,5 +1,22 @@
 # Scheduled Task Prompt — Autonomous Evolution
 
+## Owner control — PAUSED_BY_OWNER (2026-09-06)
+
+Ken's direct instruction: `暫停自動開發，依家branch冇comment 就merge 一次係main`.
+
+**Autonomous development is paused. Apply this control before every run decision below.** A scheduled trigger repeating the evolution prompt does not revoke the pause. Until Ken explicitly resumes development, do not implement features, repair blockers, refactor, write commits, trigger deployments, or merge automatically. Return `PAUSED_BY_OWNER` without changing repository state. Read-only reviews/inspection remain allowed; do not disable GitHub CI or other projects' tasks.
+
+Owner-control receipt (not an evolution implementation run):
+
+- Inspected product HEAD: `eaa8ce49181070da7e7a7fc095d78badef2b3698`; PR #1 was open/Draft/unmerged; `main` was `b6d42422cec9c35b7f1ccf07d50c8f2ff3e6ce40`.
+- Inline review threads were empty, but the latest submitted review contains an unresolved **P1**: final-counter `stage-clear` grip/orientation acceptance fails with `Finisher body reaction broke Sword/HandR grip authority`.
+- Exact-head CI #221 / `34039320712`: 195/195 Node tests passed; the real 320x568 `enemy-posture` browser gate failed. Exact-head GitHub `Vercel` status was success. Preview success does not clear the P1 or failed CI.
+- Conditional one-time merge: **not performed and not queued**, because unresolved review feedback and failed CI remain. Preserve `main`, PR #1 and both branches; do not repair or roll back gameplay as part of the pause request.
+- The handling session had no usable ChatGPT scheduler-control tool. This repository stop guard does **not** assert that task `6a8ee5c02efc8191b3f7fe65cbbbf900` is disabled; it ensures a later invocation must not perform development after reading the mandatory SOT. Scheduler state remains unverified.
+- The owner-control commit changes only this file and `AGENTS.md`, not gameplay, tests, CI/deployment configuration, product data, `evolution/state.json` or the implementation run counter. Run 174 remains unaccepted; this is not Run 175.
+- Review: https://github.com/kenchan-pixel/Samurai-first-person/pull/1#pullrequestreview-5125645868
+- CI: https://github.com/kenchan-pixel/Samurai-first-person/actions/runs/34039320712
+
 Use this as the canonical instruction for the recurring ChatGPT Scheduled Task.
 
 ## Goal
