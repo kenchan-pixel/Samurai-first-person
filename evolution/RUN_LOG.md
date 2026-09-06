@@ -252,7 +252,7 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 ### Feature
 
-- The same-route practice snapshot now retains only a coaching count of authoritative `perfect-parry` and `perfect-step-riposte` outcomes. When the previous attempt defended every **observed** direction at 100%, the following `修行進度` result grades the exact Perfect objective: one or more Perfect techniques shows `上局目標 · Perfect · 達成 N次`; zero shows `上局目標 · Perfect · 未達成 0次`.
+- The same-route practice snapshot now retains only a coaching count of authoritative `perfect-parry` and `perfect-step-riposte` outcomes. When the previous attempt defended every **observed** direction at 100%, the following `修行進度` result grades the exact Perfect objective: one or more Perfect techniques shows `上局目標 · Perfect · 達成 N次`, while zero shows `上局目標 · Perfect · 未達成 0次`.
 - The existing directional `上局目標` grading remains unchanged for non-clean prior attempts. Perfect grading has `direction=null`, publishes an explicit `perfect` target-kind marker, and removes any target-direction dataset rather than stringifying a fake direction. The existing next-run focus still derives from the current observed direction evidence.
 - Reused the existing result-only coaching row; no new result panel, pointer target, live-combat HUD, storage key, identifier, analytics or network transport is added. Perfect timing, auto-riposte damage, posture, STEP rules, score, enemy balance, renderer pose and input ownership are unchanged.
 - Added focused deterministic tests plus a dedicated 320×568 browser gate that exercises an all-observed-clean practice → Perfect target armed → Perfect achieved → later Perfect missed sequence on the composed result UI and fails closed on overflow or fake direction state.
@@ -589,3 +589,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Modified/new JavaScript, the embedded browser module, JSON state and browser runner were syntax-checked locally before Git object assembly. Existing campaign key-moment and eight-wave/practice omission gates remain intact.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `run-analysis-mode-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 159 — Close the Closed Beta result-to-next-test loop
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `25c9fcbd5e713402b182c426f2303b13e489c5f7`.
+- Exact-head Actions CI #204 / run `33999305843` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; unresolved review threads are empty; the latest exact-head review reports no actionable P0/P1/P2 and Preview feedback reports 0 unresolved items.
+- Candidate scoring: **adaptive Closed Beta result 下一步 24/25** (impact 5, goal 5, novelty 4, confidence 5, safety 5); bounded live-combat mastery cue 19/25 (impact 4, goal 4, novelty 4, confidence 3, safety 4); terminal-density refinement without regression evidence 17/25 (impact 3, goal 4, novelty 2, confidence 4, safety 4). The first candidate wins because it turns the already-approved 0/3 tester guide into an actionable end-to-end test loop while reusing existing routes and explicit export controls rather than adding another gameplay system.
+
+### Feature
+
+- The existing session-only Closed Beta 0/3 receipts now drive one compact **result-level 下一步** pill. After an eligible campaign result it invokes the existing `練浪人` route; during direct practice it invokes the existing `restart-button` so the same opponent is repeated; after `修行進度` reaches comparison it opens the existing explicit `回報` panel; after successful share/copy it becomes a disabled `封測 3/3 ✓` completion receipt.
+- The action is navigation-only and owns no gameplay authority. It is hidden when the result is not visible and for 連戰試煉/今日陣, so those modes keep their established replay controls. Missing target controls fail closed instead of inventing a route.
+- The new pill shares the result modal safe top edge with the existing 回報/分享 controls, remains ≥44 px, and does not increase the vertical terminal stack. The focused 320×568 gate requires all three controls to stay in bounds and non-overlapping.
+- No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, persistence key, account, identifier, analytics, backend, remote feedback endpoint or network transport changed. The 0/3 progress remains module-memory only and resets on refresh.
+- Updated the Closed Beta release-prep SOT in the same commit so this result action is explicitly bounded to existing controls, session-only state and local/export-only privacy rules.
+
+### Verification boundary
+
+- `src/beta-readiness.js`, its focused Node tests and the new browser runner pass local syntax checks; focused beta-readiness Node tests pass 5/5 before Git object assembly.
+- Added a dedicated real 320×568 browser gate that proves campaign result → existing Ronin route → same-opponent retry → existing explicit feedback panel → 3/3 completion, ≥44 px touch ownership, non-overlap with 回報/分享, and challenge quietness. It is appended to the full browser suite rather than replacing an existing gate.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `beta-readiness-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.

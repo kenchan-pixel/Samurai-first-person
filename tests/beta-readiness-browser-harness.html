@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Closed Beta next-test browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <div class="crest" aria-hidden="true">刃</div>
+        <p class="modal__eyebrow">FIRST-PERSON SAMURAI ACTION</p>
+        <h1>Blade Reversal<br /><span>刃返</span></h1>
+        <p>Closed Beta next-test navigation acceptance.</p>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+      </div>
+    </section>
+
+    <section id="result-screen" class="modal" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">勝利</h2>
+        <p id="result-summary">格擋 4 · 完美 1 · 受擊 0</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">1200</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/beta-readiness.js';
+    import '../src/result-feedback.js';
+    import '../src/result-share.js';
+    import '../src/practice-mode.js';
+
+    const root = document.documentElement;
+    const startScreen = document.querySelector('#start-screen');
+    const resultScreen = document.querySelector('#result-screen');
+    const startButton = document.querySelector('#start-button');
+    const restartButton = document.querySelector('#restart-button');
+    const errorNode = document.querySelector('#harness-error');
+    let startClicks = 0;
+    let restartClicks = 0;
+
+    startButton.addEventListener('click', () => { startClicks += 1; });
+    restartButton.addEventListener('click', () => { restartClicks += 1; });
+
+    const flush = async () => {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      await Promise.resolve();
+    };
+
+    function rectInsideViewport(node) {
+      if (!node || node.hidden) return false;
+      const rect = node.getBoundingClientRect();
+      return rect.left >= -0.5 && rect.right <= window.innerWidth + 0.5 && rect.top >= -0.5 && rect.bottom <= window.innerHeight + 0.5;
+    }
+
+    function overlap(a, b) {
+      const ar = a.getBoundingClientRect();
+      const br = b.getBoundingClientRect();
+      return !(ar.right <= br.left || br.right <= ar.left || ar.bottom <= br.top || br.bottom <= ar.top);
+    }
+
+    try {
+      await flush();
+      const next = document.querySelector('#beta-next-test-button');
+      const feedback = document.querySelector('#result-feedback-button');
+      const share = document.querySelector('#result-share-button');
+      const ronin = document.querySelector('#practice-ronin-button');
+      if (!next || !feedback || !share || !ronin) throw new Error('required existing Closed Beta/result/practice controls were not installed');
+      if (!next.hidden || root.dataset.betaReadinessProgress !== '0/3') throw new Error('next-test action was visible before a terminal result');
+
+      root.dataset.runMode = 'campaign';
+      startScreen.classList.remove('modal--visible');
+      resultScreen.classList.add('modal--visible');
+      await flush();
+
+      const firstActionOk =
+        root.dataset.betaReadinessProgress === '1/3' &&
+        root.dataset.betaReadinessNextStep === 'repeat-practice' &&
+        root.dataset.betaReadinessNextTarget === 'practice-ronin-button' &&
+        next.hidden === false &&
+        next.textContent.includes('修行');
+      root.dataset.betaReadinessNextFirst = firstActionOk ? 'pass' : 'fail';
+      if (!firstActionOk) throw new Error('campaign result did not guide the tester into the existing practice route');
+
+      const touchOk = [next, feedback, share].every((node) => node.getBoundingClientRect().height >= 44);
+      const layoutOk =
+        [next, feedback, share, document.querySelector('#result-content')].every(rectInsideViewport) &&
+        !overlap(next, feedback) && !overlap(next, share) && !overlap(feedback, share);
+      root.dataset.betaReadinessNextTouch = String(touchOk);
+      root.dataset.betaReadinessNextLayout = layoutOk ? 'pass' : 'fail';
+      if (!touchOk || !layoutOk) throw new Error('result next-test/share/report controls do not compose safely at 320x568');
+
+      next.click();
+      await flush();
+      const practiceNavigationOk =
+        root.dataset.betaReadinessNextNavigation === 'practice-ronin-button' &&
+        root.dataset.nextRunMode === 'ronin-practice' &&
+        startClicks === 1;
+      root.dataset.betaReadinessNextPracticeNavigation = String(practiceNavigationOk);
+      if (!practiceNavigationOk) throw new Error('next-test practice action did not invoke the existing Ronin route');
+
+      resultScreen.classList.remove('modal--visible');
+      root.dataset.runMode = 'ronin-practice';
+      resultScreen.classList.add('modal--visible');
+      await flush();
+      const repeatActionOk =
+        root.dataset.betaReadinessProgress === '1/3' &&
+        root.dataset.betaReadinessNextTarget === 'restart-button' &&
+        next.textContent.includes('再練');
+      root.dataset.betaReadinessNextRepeat = repeatActionOk ? 'pass' : 'fail';
+      if (!repeatActionOk) throw new Error('first direct-practice result did not keep the tester on the same-opponent retry path');
+
+      next.click();
+      await flush();
+      if (restartClicks !== 1 || root.dataset.betaReadinessNextNavigation !== 'restart-button') {
+        throw new Error('same-opponent next-test action did not reuse the existing restart control');
+      }
+
+      root.dataset.practiceProgressState = 'comparison';
+      await flush();
+      const feedbackActionOk =
+        root.dataset.betaReadinessProgress === '2/3' &&
+        root.dataset.betaReadinessNextStep === 'feedback' &&
+        root.dataset.betaReadinessNextTarget === 'result-feedback-button' &&
+        next.textContent.includes('回報');
+      root.dataset.betaReadinessNextFeedback = feedbackActionOk ? 'pass' : 'fail';
+      if (!feedbackActionOk) throw new Error('repeat-practice completion did not guide into the existing explicit feedback path');
+
+      next.click();
+      await flush();
+      const feedbackPanel = document.querySelector('#result-feedback-panel');
+      const feedbackNavigationOk =
+        root.dataset.betaReadinessNextNavigation === 'result-feedback-button' &&
+        feedbackPanel?.hidden === false;
+      root.dataset.betaReadinessNextFeedbackNavigation = String(feedbackNavigationOk);
+      if (!feedbackNavigationOk) throw new Error('next-test feedback action did not open the existing explicit report panel');
+
+      root.dataset.resultFeedbackLast = 'copied';
+      await flush();
+      const doneOk =
+        root.dataset.betaReadinessProgress === '3/3' &&
+        root.dataset.betaReadinessComplete === 'true' &&
+        root.dataset.betaReadinessNextStep === 'done' &&
+        next.disabled === true &&
+        next.textContent.includes('3/3');
+      root.dataset.betaReadinessNextDone = String(doneOk);
+      if (!doneOk) throw new Error('successful explicit feedback export did not close the result-level tester loop at 3/3');
+
+      root.dataset.runMode = 'challenge';
+      await flush();
+      const challengeQuiet = next.hidden === true && root.dataset.betaReadinessNextVisible === 'false';
+      root.dataset.betaReadinessNextChallengeQuiet = String(challengeQuiet);
+      if (!challengeQuiet) throw new Error('Closed Beta next-test action leaked into challenge result mode');
+
+      const passed =
+        root.dataset.betaReadinessNextFirst === 'pass' &&
+        root.dataset.betaReadinessNextTouch === 'true' &&
+        root.dataset.betaReadinessNextLayout === 'pass' &&
+        root.dataset.betaReadinessNextPracticeNavigation === 'true' &&
+        root.dataset.betaReadinessNextRepeat === 'pass' &&
+        root.dataset.betaReadinessNextFeedback === 'pass' &&
+        root.dataset.betaReadinessNextFeedbackNavigation === 'true' &&
+        root.dataset.betaReadinessNextDone === 'true' &&
+        root.dataset.betaReadinessNextChallengeQuiet === 'true';
+      root.dataset.betaReadinessNextBrowser = passed ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.betaReadinessNextBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

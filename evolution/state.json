@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 158,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 1b1b6d4b60c81b8defeacc692c703f61efb3ae95 is not feature-ready despite terminal-green Actions CI #203 / run 33996463766 and exact-head GitHub Vercel success: the latest exact-head All Repos review identifies an actionable P1 mode-isolation regression where campaign-only 關鍵一刻 can leak into a 連戰試煉 / 今日陣 defeat before wave 5 because suppression was inferred from stage count instead of authoritative run mode. Run 158 binds result-analysis to explicit campaign/practice/challenge mode, with the authoritative challenge engine symbol taking precedence and terminal detail as fallback, so 關鍵一刻 renders only for campaign. Deterministic coverage plus a true 320x568 composed browser gate now prove early standard-challenge and 今日陣 defeats remain marker-free and in bounds. No combat, balance, score, input, persistence, identifier, analytics or network authority changes.",
-  "last_commit": "1b1b6d4b60c81b8defeacc692c703f61efb3ae95",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the campaign-only 關鍵一刻 mode-isolation repair. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 159,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD 25c9fcbd5e713402b182c426f2303b13e489c5f7 is feature-ready: Actions CI #204 / run 33999305843 and exact-head GitHub Vercel status are terminal success, Draft PR #1 remains open/Draft/unmerged, main is untouched, unresolved review threads are empty, Preview feedback reports 0 unresolved items and the latest exact-head review reports no actionable P0/P1/P2. Run 159 adds one adaptive result-level Closed Beta 下一步 action driven only by the existing session-only 0/3 readiness receipts. After an eligible campaign result it invokes the existing Ronin practice entry; during direct practice it reuses the existing retry control to keep the same opponent; after 修行進度 comparison it opens the existing explicit 回報 panel; a successful share/copy closes the loop at 3/3. Challenge/今日陣 remain quiet. No combat, balance, score, persistence, identifier, analytics, backend or network authority changes.",
+  "last_commit": "25c9fcbd5e713402b182c426f2303b13e489c5f7",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the new Closed Beta result-level 下一步 flow. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "campaign_key_moment_mode_isolation_pending_exact_head",
-    "last_observed_head": "1b1b6d4b60c81b8defeacc692c703f61efb3ae95",
-    "incoming_ci_run": 33996463766,
+    "status": "closed_beta_next_test_action_pending_exact_head",
+    "last_observed_head": "25c9fcbd5e713402b182c426f2303b13e489c5f7",
+    "incoming_ci_run": 33999305843,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 158 repairs the exact-head P1 review finding without changing intended product scope: result-analysis now resolves explicit campaign/practice/challenge mode at the terminal event, preferring the authoritative CHALLENGE_ACTIVE engine symbol so wrapper ordering cannot misclassify early standard challenge or 今日陣 defeats. 關鍵一刻 is eligible only in campaign mode; the existing >4-stage cap remains defense-in-depth. A deterministic mode test and a dedicated composed true-320x568 browser gate cover wave-1 defeat in both challenge variants, require no key-moment card/dataset marker, and fail closed on terminal overflow. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 159 closes the approved local/export-only Closed Beta tester loop without adding a new start-screen control or gameplay route. The result-only 下一步 pill is derived from the existing in-memory 0/3 receipts and delegates to already-existing practice restart/report controls. A focused real 320x568 browser gate proves campaign-result → existing Ronin route → same-opponent retry → existing explicit feedback panel → 3/3 completion, >=44px touch sizing, no overlap with existing 分享/回報 controls and challenge quietness. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,12 +65,12 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect the repaired campaign-only 關鍵一刻 isolation at 320x568, including an early 連戰試煉/今日陣 defeat plus normal campaign result; refine only if exact Preview evidence shows mode leakage, stale marker state, wrapping or terminal overlap",
+    "ACCEPTANCE: inspect the new Closed Beta result 下一步 flow at 320x568 together with existing 回報/分享 controls; refine only if exact Preview evidence shows overlap, stale session routing, confusing copy or challenge/今日陣 leakage",
+    "ACCEPTANCE: inspect the repaired campaign-only 關鍵一刻 isolation at 320x568, including early 連戰試煉/今日陣 defeat plus normal campaign result; refine only if exact Preview evidence shows mode leakage, stale marker state, wrapping or terminal overlap",
     "ACCEPTANCE: inspect the enemy-posture pressured-guard read at 320x568 together with Guard + four authored cuts + measured/standard/quick tempo; refine only if exact Preview evidence shows blade-axis drift, excessive body sway, weak visibility or telegraph contamination",
-    "ACCEPTANCE: repeat 連戰試煉/今日陣 at 320x568 and inspect the composed 氣勢 + cumulative 無傷 objective during real play plus terminal 戰策回顧 / 戰策後果 / 再戰重點; refine only if exact Preview evidence shows crowding, misleading objective semantics, stale retry state or pointer overlap",
     "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
-    "FEATURE: consider a Closed Beta next-test action only if it reuses existing local/session state, existing routes and >=44 px controls without new persistence/network behavior or start-screen crowding",
     "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
+    "FEATURE: consider a campaign replay objective only if it reuses existing result/run-analysis evidence and adds no persistence/network/live-HUD density",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

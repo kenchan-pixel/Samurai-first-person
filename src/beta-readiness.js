@@ -35,6 +35,115 @@ export function betaReadinessProgress(completed = []) {
   });
 }
 
+function isDirectPracticeMode(runMode) {
+  const mode = String(runMode || '');
+  return mode.endsWith('-practice') || mode === 'practice';
+}
+
+function isChallengeMode(runMode) {
+  const mode = String(runMode || '');
+  return mode === 'challenge' || mode === 'daily-challenge' || mode.includes('challenge');
+}
+
+export function betaReadinessNextTestAction({
+  completed = [],
+  runMode = 'campaign',
+  resultVisible = false,
+} = {}) {
+  const progress = betaReadinessProgress(completed);
+  if (!resultVisible || isChallengeMode(runMode)) {
+    return Object.freeze({
+      visible: false,
+      id: null,
+      label: '',
+      ariaLabel: '',
+      targetId: null,
+      done: progress.done,
+    });
+  }
+
+  if (!progress.completedIds.includes('duel')) {
+    return Object.freeze({
+      visible: false,
+      id: 'duel',
+      label: '',
+      ariaLabel: '',
+      targetId: null,
+      done: false,
+    });
+  }
+
+  if (!progress.completedIds.includes('repeat-practice')) {
+    if (isDirectPracticeMode(runMode)) {
+      return Object.freeze({
+        visible: true,
+        id: 'repeat-practice',
+        label: '下一步 · 再練',
+        ariaLabel: 'Closed Beta 下一步：再練同一對手一次，完成修行進度比較',
+        targetId: 'restart-button',
+        done: false,
+      });
+    }
+    return Object.freeze({
+      visible: true,
+      id: 'repeat-practice',
+      label: '下一步 · 修行',
+      ariaLabel: 'Closed Beta 下一步：開始浪人修行，之後再練同一對手一次',
+      targetId: 'practice-ronin-button',
+      done: false,
+    });
+  }
+
+  if (!progress.completedIds.includes('feedback')) {
+    return Object.freeze({
+      visible: true,
+      id: 'feedback',
+      label: '下一步 · 回報',
+      ariaLabel: 'Closed Beta 下一步：用今局結果開啟體驗意見或錯誤回報',
+      targetId: 'result-feedback-button',
+      done: false,
+    });
+  }
+
+  return Object.freeze({
+    visible: true,
+    id: 'done',
+    label: '封測 3/3 ✓',
+    ariaLabel: 'Closed Beta 本次封測流程已完成 3 / 3',
+    targetId: null,
+    done: true,
+  });
+}
+
+function renderNextTestAction(documentRef, progress) {
+  const nextButton = documentRef?.querySelector?.('#beta-next-test-button');
+  if (!nextButton) return null;
+  const result = documentRef.querySelector?.('#result-screen');
+  const resultVisible = Boolean(result?.classList?.contains('modal--visible'));
+  const root = documentRef.documentElement;
+  const action = betaReadinessNextTestAction({
+    completed: progress.completedIds,
+    runMode: root?.dataset?.runMode || 'campaign',
+    resultVisible,
+  });
+
+  nextButton.hidden = !action.visible;
+  nextButton.disabled = Boolean(action.done);
+  nextButton.textContent = action.label;
+  nextButton.setAttribute('aria-label', action.ariaLabel || 'Closed Beta 下一步');
+  if (action.targetId) nextButton.dataset.betaReadinessTarget = action.targetId;
+  else delete nextButton.dataset.betaReadinessTarget;
+  nextButton.dataset.betaReadinessStep = action.id || '';
+
+  if (root) {
+    root.dataset.betaReadinessNextStep = action.id || 'hidden';
+    root.dataset.betaReadinessNextVisible = String(action.visible);
+    if (action.targetId) root.dataset.betaReadinessNextTarget = action.targetId;
+    else delete root.dataset.betaReadinessNextTarget;
+  }
+  return action;
+}
+
 function renderSessionProgress(documentRef = globalThis.document) {
   if (!documentRef) return betaReadinessProgress(sessionCompleted);
   const progress = betaReadinessProgress(sessionCompleted);
@@ -67,6 +176,7 @@ function renderSessionProgress(documentRef = globalThis.document) {
     documentRef.documentElement.dataset.betaReadinessProgress = `${progress.completed}/${progress.total}`;
     documentRef.documentElement.dataset.betaReadinessComplete = String(progress.done);
   }
+  renderNextTestAction(documentRef, progress);
   return progress;
 }
 
@@ -91,6 +201,7 @@ function observeSessionProgress(documentRef) {
         const nextVisible = Boolean(result?.classList?.contains('modal--visible'));
         if (!resultVisible && nextVisible) markBetaReadinessItem('duel', documentRef);
         resultVisible = nextVisible;
+        renderSessionProgress(documentRef);
         continue;
       }
       if (record.target !== root) continue;
@@ -103,11 +214,12 @@ function observeSessionProgress(documentRef) {
       ) {
         markBetaReadinessItem('feedback', documentRef);
       }
+      if (record.attributeName === 'data-run-mode') renderSessionProgress(documentRef);
     }
   });
   observer.observe(root, {
     attributes: true,
-    attributeFilter: ['data-practice-progress-state', 'data-result-feedback-last'],
+    attributeFilter: ['data-practice-progress-state', 'data-result-feedback-last', 'data-run-mode'],
   });
   if (result) observer.observe(result, { attributes: true, attributeFilter: ['class'] });
 }
@@ -130,7 +242,7 @@ function ensureStyles(documentRef) {
       gap:10px;padding:14px;border:1px solid rgba(126,174,255,.26);border-radius:16px;background:rgba(9,12,18,.975);
       box-shadow:0 18px 50px rgba(0,0,0,.52);overflow:auto;color:#eef4ff;text-align:left;
     }
-    .beta-readiness-panel[hidden]{display:none!important}
+    .beta-readiness-panel[hidden],.beta-next-test-button[hidden]{display:none!important}
     .beta-readiness-panel__eyebrow{margin:0;color:rgba(170,200,248,.66);font-size:9px;font-weight:850;letter-spacing:.16em}
     .beta-readiness-panel h3{margin:0;font-size:20px;letter-spacing:.03em}
     .beta-readiness-panel p{margin:0;font-size:11px;line-height:1.5;color:rgba(231,237,247,.72)}
@@ -149,10 +261,20 @@ function ensureStyles(documentRef) {
       min-height:44px;margin-top:auto;border:1px solid rgba(255,255,255,.16);border-radius:11px;background:rgba(255,255,255,.055);
       color:#f4f6fa;font:inherit;font-size:12px;font-weight:850;cursor:pointer;
     }
+    .beta-next-test-button{
+      position:absolute;z-index:4;top:calc(var(--safe-top) + 4px);left:50%;transform:translateX(-50%);
+      width:128px;max-width:calc(100% - 156px);min-height:44px;margin:0;padding:0 9px;border:1px solid rgba(129,193,154,.34);
+      border-radius:999px;background:rgba(14,25,19,.82);box-shadow:0 8px 24px rgba(0,0,0,.28);color:#dff2e5;
+      font-size:10px;font-weight:850;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;
+      backdrop-filter:blur(8px);-webkit-tap-highlight-color:transparent;
+    }
+    .beta-next-test-button:active:not(:disabled){transform:translate(-50%,1px)}
+    .beta-next-test-button:disabled{border-color:rgba(129,193,154,.24);background:rgba(35,63,45,.72);color:rgba(211,239,220,.78);cursor:default}
     @media(max-width:360px) and (max-height:620px){
       .beta-readiness-panel{gap:7px;padding:11px}.beta-readiness-panel h3{font-size:18px}
       .beta-readiness-session{padding:7px 8px}.beta-readiness-list{gap:5px}.beta-readiness-list li{padding:6px 8px}.beta-readiness-list span{font-size:9px}
       .beta-readiness-privacy{padding:6px 8px}.beta-readiness-panel p{font-size:9.5px}
+      .beta-next-test-button{width:116px;max-width:calc(100% - 148px);padding:0 7px;font-size:9px}
     }
   `;
   documentRef.head.append(style);
@@ -184,7 +306,7 @@ function ensureUi(documentRef) {
     panel.innerHTML = `
       <p class="beta-readiness-panel__eyebrow">RELEASE PREP</p>
       <h3>Closed Beta v0.5 測試指南</h3>
-      <p>今版先集中驗證實戰手感、重複修行同回報流程；唔需要建立帳戶。</p>
+      <p>今版先集中驗證實戰手感、重複修行同回報流程；唔需要建立帳戶。結果頁會按本次進度顯示「下一步」。</p>
       <div class="beta-readiness-session" aria-live="polite">
         <strong data-beta-readiness-progress>本次封測 0/${BETA_READINESS_ITEMS.length}</strong>
         <span data-beta-readiness-progress-hint>只記今次開頁進度 · 重新整理會重設 · 不上傳</span>
@@ -198,13 +320,43 @@ function ensureUi(documentRef) {
     screen.append(panel);
   }
 
-  return { button, panel, close: panel.querySelector('[data-beta-readiness-close]') };
+  const resultContent = documentRef.querySelector?.('#result-screen .modal__content--result');
+  let nextAction = documentRef.querySelector('#beta-next-test-button');
+  if (resultContent && !nextAction) {
+    nextAction = documentRef.createElement('button');
+    nextAction.id = 'beta-next-test-button';
+    nextAction.type = 'button';
+    nextAction.className = 'beta-next-test-button';
+    nextAction.hidden = true;
+    nextAction.setAttribute('aria-label', 'Closed Beta 下一步');
+    resultContent.append(nextAction);
+  }
+
+  return {
+    button,
+    panel,
+    close: panel.querySelector('[data-beta-readiness-close]'),
+    nextAction,
+  };
 }
 
-function setOpen(ui, open) {
+function setOpen(ui, open, documentRef = globalThis.document) {
   ui.panel.hidden = !open;
   ui.button.setAttribute('aria-expanded', open ? 'true' : 'false');
-  document.documentElement.dataset.betaReadinessOpen = open ? 'true' : 'false';
+  if (documentRef?.documentElement) documentRef.documentElement.dataset.betaReadinessOpen = open ? 'true' : 'false';
+}
+
+function navigateToNextTest(ui, documentRef) {
+  const targetId = ui.nextAction?.dataset?.betaReadinessTarget;
+  if (!targetId || ui.nextAction?.disabled) return false;
+  const target = documentRef?.getElementById?.(targetId);
+  if (!target || typeof target.click !== 'function') {
+    if (documentRef?.documentElement) documentRef.documentElement.dataset.betaReadinessNextNavigation = 'unavailable';
+    return false;
+  }
+  if (documentRef?.documentElement) documentRef.documentElement.dataset.betaReadinessNextNavigation = targetId;
+  target.click();
+  return true;
 }
 
 export function installBetaReadiness(documentRef = globalThis.document) {
@@ -214,8 +366,12 @@ export function installBetaReadiness(documentRef = globalThis.document) {
   if (!ui) return null;
   if (ui.button.dataset.betaReadinessBound !== 'true') {
     ui.button.dataset.betaReadinessBound = 'true';
-    ui.button.addEventListener('click', () => setOpen(ui, ui.panel.hidden));
-    ui.close?.addEventListener('click', () => setOpen(ui, false));
+    ui.button.addEventListener('click', () => setOpen(ui, ui.panel.hidden, documentRef));
+    ui.close?.addEventListener('click', () => setOpen(ui, false, documentRef));
+  }
+  if (ui.nextAction && ui.nextAction.dataset.betaReadinessBound !== 'true') {
+    ui.nextAction.dataset.betaReadinessBound = 'true';
+    ui.nextAction.addEventListener('click', () => navigateToNextTest(ui, documentRef));
   }
   renderSessionProgress(documentRef);
   observeSessionProgress(documentRef);
