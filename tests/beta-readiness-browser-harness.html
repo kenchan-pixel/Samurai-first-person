@@ -77,6 +77,14 @@
       , timeout);
     }
 
+    async function waitForPracticeTerminalReconciled(doc, expectedMode, timeout = 16000) {
+      return waitFor(() =>
+        doc.documentElement.dataset.runMode === expectedMode &&
+        doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.documentElement.dataset.betaReadinessPracticeReconcile === 'terminal-retry-match'
+      , timeout);
+    }
+
     async function returnHomeFromActiveCampaign(doc, label) {
       const pauseButton = doc.querySelector('#pause-button');
       if (!pauseButton) throw new Error(`${label}: production Pause control missing`);
@@ -169,13 +177,18 @@
       mark('betaReadinessNextPracticeNavigation', practiceLaunch);
       if (!practiceLaunch) throw new Error('production 下一步 · 修行 did not invoke the real Ronin practice route');
 
-      if (!await waitForTerminal(doc, 'ronin-practice')) throw new Error('first real Ronin practice did not reach terminal result');
-      const repeatActionOk = await waitFor(() =>
+      // A real direct-practice result becomes semantically ready only after the production
+      // reconciliation adapter has observed the terminal retry receipt. Synchronize on that
+      // receipt once, then assert the unchanged 1/3 → same-opponent retry contract without
+      // racing a second fixed presentation timer.
+      if (!await waitForPracticeTerminalReconciled(doc, 'ronin-practice')) {
+        throw new Error('first real Ronin practice did not reach a reconciled production terminal result');
+      }
+      const repeatActionOk =
         appRoot.dataset.betaReadinessProgress === '1/3' &&
         appRoot.dataset.betaReadinessNextStep === 'repeat-practice' &&
         appRoot.dataset.betaReadinessNextTarget === 'restart-button' &&
-        visible(next) && next.textContent.includes('再練')
-      , 1800);
+        visible(next) && next.textContent.includes('再練');
       root.dataset.betaReadinessNextRepeat = repeatActionOk ? 'pass' : 'fail';
       if (!repeatActionOk) throw new Error('first real direct-practice result did not keep the tester on same-opponent retry');
 

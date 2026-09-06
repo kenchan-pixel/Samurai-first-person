@@ -136,3 +136,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Post-commit exact-head Actions remains authoritative. If the gate is still red, this run is expected to expose the exact inner mismatch needed for the next blocker repair; feature work remains prohibited until that evidence-driven repair returns the complete browser suite to green.
 - Exact-head GitHub `Vercel` success remains the approved deployment signal when direct Vercel enumeration is unavailable. The PR run comment must record the resulting SHA, CI outcome, surfaced inner receipt and Preview status.
+
+## Run 170 — Synchronize Closed Beta acceptance on the production terminal receipt
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `b38d887c9cf0ce463ac1febc0d3219e3439d46ef`.
+- Exact-head GitHub `Vercel` status is terminal success; Vercel Preview Comments reports 0 unresolved feedback; Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review threads are empty. Actions CI #216 / run `34025028082` is terminal red only at the real 320×568 Closed Beta gate after **190/190 Node tests** and every preceding browser gate passed.
+- The current-head review uses Run 169's new inner receipt to prove the production first-Ronin terminal is already correct at the failure instant: `ronin-practice`, `practiceProgressState=first`, `betaProgress=1/3`, `repeat-practice → restart-button`, visible `下一步 · 再練`, restart `再練浪人` and `reconcile=terminal-retry-match`. The remaining P1 is therefore an acceptance-harness synchronization false negative, not a production state-machine defect.
+
+### Repair
+
+- Keep the real production document, 320×568 viewport, route and all downstream fail-closed assertions unchanged.
+- Replace the first Ronin terminal's two-stage race (`waitForTerminal` followed by an unrelated 1800 ms CTA timer) with one bounded semantic terminal-settle wait that requires the real visible Ronin result **and** the production-owned `data-beta-readiness-practice-reconcile=terminal-retry-match` receipt.
+- Only after that receipt exists does the harness apply the same unchanged `1/3 + repeat-practice + restart-button + visible 下一步 · 再練` assertion. No production dataset is synthesized and no completion rule is relaxed.
+- The current-head P2 about the copy-coupled retry-label map is explicitly dispositioned as non-blocking for this run: the separate real production Blood Moon journey is already green, so there is no evidenced current runtime/playability/privacy/data-loss defect. Centralizing the four-route terminal/retry contract remains maintenance hardening to bundle with a qualifying future implementation rather than consuming a blocker run as pure refactor work.
+- No combat, renderer, input, balance, damage, posture, score, persistence, identifier, analytics, feedback transport, privacy or network authority changed.
+
+### Verification boundary
+
+- Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the same real-production Closed Beta campaign → Ronin → same-opponent retry → comparison → explicit feedback → 3/3 path plus challenge/今日陣 quietness.
+- Exact-head GitHub `Vercel` success remains mandatory. The PR run comment is authoritative for the resulting SHA, CI, regression result and deployment status under the one-commit rule.
