@@ -65,3 +65,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - This is a blocker repair for terminal-order reconciliation, not a relaxed acceptance test or synthetic completion path.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including the unchanged real-production Closed Beta gate, plus exact-head GitHub Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 167 — Use the authoritative practice retry receipt
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `4b316430b97d71ea20e4ee584980a794e4b5706d`.
+- Exact-head GitHub `Vercel` status is terminal success, Draft PR #1 remains open/Draft/unmerged, `main` is untouched and inline review threads are empty, but Actions CI #212 / run `34016636774` remains terminal failure.
+- `npm test` is **190/190 green** and every earlier browser gate passes. The unchanged real 320×568 Closed Beta route still fails only after the first real Ronin-practice terminal, so feature work remains prohibited.
+
+### Root cause and repair
+
+- Run 166 still depended on `requestAnimationFrame` to decide when the direct-practice result had settled. That is a presentation-frame signal, not the authoritative semantic receipt for “same opponent can now be retried”.
+- `practice-mode` already owns that semantic receipt by changing the existing `#restart-button` label to the same-opponent retry action only at a real terminal. Run 167 therefore makes the reconciliation adapter observe that existing retry-control mutation in addition to run mode, practice progress and result visibility.
+- Reconciliation is now queued from `MutationObserver` delivery with `queueMicrotask`, then reuses only canonical `markBetaReadinessItem('duel')`. It still cannot complete `repeat-practice`; only `practiceProgressState=comparison` can do that. Challenge/今日陣 remain excluded.
+- A compact session-only diagnostic snapshot records actual `runMode`, result visibility, practice-progress state and retry label if the exact-head production gate ever fails again. No persistence, telemetry or network transport is added.
+- The source regression test now protects the authoritative retry receipt and explicitly rejects a return to render-frame-dependent reconciliation. The real 320×568 production gate itself is unchanged/fail-closed.
+
+### Verification boundary
+
+- No combat timing, renderer, input, balance, damage, posture, score, persistence, identifier, analytics, feedback transport or privacy authority changed.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser`, plus exact-head GitHub Vercel success, are mandatory. The PR run comment records the resulting one-commit verification outcome.

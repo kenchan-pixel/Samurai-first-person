@@ -2,7 +2,8 @@ import { markBetaReadinessItem } from './beta-readiness.js';
 
 const root = document.documentElement;
 const result = document.querySelector('#result-screen');
-let settleFrame = 0;
+const restart = document.querySelector('#restart-button');
+let reconcileQueued = false;
 
 function isDirectPractice(mode) {
   const value = String(mode || '');
@@ -10,29 +11,44 @@ function isDirectPractice(mode) {
 }
 
 function reconcileDirectPracticeResult() {
-  settleFrame = 0;
-  if (!result?.classList.contains('modal--visible')) return;
-  if (!isDirectPractice(root.dataset.runMode)) return;
+  reconcileQueued = false;
+  const mode = root?.dataset?.runMode || '';
+  const visible = Boolean(result?.classList.contains('modal--visible'));
+  const progressState = root?.dataset?.practiceProgressState || 'unset';
+  const retryLabel = restart?.textContent?.trim() || '';
 
-  // A direct-practice terminal is itself a valid first-duel receipt. Re-marking
-  // `duel` is Set-idempotent, but it deliberately re-renders the canonical
-  // Closed Beta next action after all terminal/practice microtasks have settled.
-  // This avoids a stale campaign target without inventing repeat-practice progress.
+  if (root) {
+    root.dataset.betaReadinessPracticeReconcileSnapshot = [
+      `mode=${mode || 'unset'}`,
+      `result=${visible ? 'visible' : 'hidden'}`,
+      `practice=${progressState}`,
+      `retry=${retryLabel || 'unset'}`,
+    ].join('|');
+  }
+
+  if (!visible || !isDirectPractice(mode)) return;
+
+  // `practice-mode` owns the same-opponent retry control. Its terminal label
+  // mutation is therefore an authoritative receipt that the real direct-
+  // practice result has finished settling. Re-render only the already-valid
+  // duel item; repeat-practice still requires practiceProgressState=comparison.
   markBetaReadinessItem('duel');
-  root.dataset.betaReadinessPracticeReconcile = 'settled';
+  root.dataset.betaReadinessPracticeReconcile = 'terminal-authority';
 }
 
 function scheduleReconcile() {
-  if (settleFrame || typeof requestAnimationFrame !== 'function') return;
-  settleFrame = requestAnimationFrame(reconcileDirectPracticeResult);
+  if (reconcileQueued || typeof queueMicrotask !== 'function') return;
+  reconcileQueued = true;
+  queueMicrotask(reconcileDirectPracticeResult);
 }
 
-if (root && result && typeof MutationObserver === 'function') {
+if (root && result && restart && typeof MutationObserver === 'function') {
   const observer = new MutationObserver(scheduleReconcile);
   observer.observe(root, {
     attributes: true,
     attributeFilter: ['data-run-mode', 'data-practice-progress-state'],
   });
   observer.observe(result, { attributes: true, attributeFilter: ['class'] });
+  observer.observe(restart, { childList: true, subtree: true, characterData: true });
   root.dataset.betaReadinessPracticeReconcileReady = 'true';
 }
