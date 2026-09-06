@@ -87,6 +87,7 @@
   </main>
 
   <script type="module" src="./src/mastery-overlay.js"></script>
+  <script type="module" src="./src/campaign-replay-objective.js"></script>
   <script type="module" src="./src/boss-overlay.js"></script>
   <script type="module" src="./src/onboarding-coach.js"></script>
   <script type="module" src="./src/footwork.js"></script>
@@ -121,6 +122,8 @@
       import('./src/enemy-posture-renderer-contract-smoke.js');
     } else if (smoke === 'attack-rhythm') {
       import('./src/attack-rhythm-renderer-contract-smoke.js');
+    } else if (smoke === 'campaign-replay') {
+      import('./src/campaign-replay-objective-contract-smoke.js');
     }
   </script>
 </body>

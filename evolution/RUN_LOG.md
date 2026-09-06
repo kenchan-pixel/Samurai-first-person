@@ -687,3 +687,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The new focused pure suite passed 4/4 locally and all modified/new JavaScript passed `node --check` before Git object assembly. Repository-authoritative full verification remains exact-head Actions after the single final commit.
 - Post-commit exact-head `npm test`, complete `npm run test:browser` including the strengthened enemy-posture browser gate, and exact-head GitHub Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 163 — Turn campaign results into one replay objective
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `654c9726b105ca0d910b8f7f070dc5605a35c4d2`.
+- Exact-head Actions CI #208 / run `34009302753` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; unresolved review threads are empty; Preview feedback reports 0 unresolved items; latest exact-head review reports no actionable P0/P1/P2.
+- Candidate scoring: **session-only campaign replay objective 23/25** (impact 4, goal 5, novelty 4, confidence 5, safety 5); manual-counter impact recoil 21/25; bounded live-combat mastery cue 18/25. The replay objective wins because it closes the normal-campaign result → retry learning loop using already-authoritative analysis, adds no live-combat HUD/persistence/network path, and diversifies away from the just-modified renderer subsystem.
+
+### Feature
+
+- Added one compact pointer-transparent campaign-only **再戰目標** row inside the existing result-analysis card. A defeat asks the next campaign to reach one stage farther; a Stage 4 defeat asks to defeat the Shogun. A completed campaign derives a bounded next target from existing total hits, missed manual-counter openings or Perfect-technique counts.
+- The objective is module-memory only. The next campaign consumes and grades that exact target: success shows a factual `✓` receipt and derives the next target; failure shows `未達` and keeps the same target. Direct practice, 連戰試煉 and 今日陣 cannot display, consume or grade it, and page refresh clears it.
+- Added a pure target/evaluation model plus a bounded CombatEngine/run-analysis observer. No combat timing, damage, posture, HP, score, input, renderer, persistence, identifier, analytics or network authority changes.
+- Added deterministic unit coverage and a real-production 320×568 browser gate proving Stage 1 defeat → `再戰目標 · 打入第2關`, next campaign reaching Stage 2 → `✓ 打入第2關 · 下一步 打入第3關`, in-bounds/pointer-transparent composition and challenge isolation.
+- Updated Current Baseline and Regression Checklist in the same implementation commit so the session-only lifecycle, privacy boundary and production acceptance remain cumulative SOT.
+
+### Verification boundary
+
+- Focused target-model tests passed 4/4 and all new JavaScript/browser scripts passed `node --check` before Git object assembly. Repository-authoritative verification remains exact-head Actions after the single final commit.
+- Post-commit exact-head `npm test`, complete `npm run test:browser` including `campaign-replay-objective-browser-smoke.mjs`, and exact-head GitHub Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.

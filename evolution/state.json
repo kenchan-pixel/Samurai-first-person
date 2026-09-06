@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 162,
+  "run_number": 163,
   "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD c32ab5e1032fd2f2f10748ac590d76697121a881 is terminal green on Actions CI #207 / run 34006686352 and exact-head GitHub Vercel status, Draft PR #1 remains open/Draft/unmerged, main is untouched, inline review comments are empty, Preview feedback reports 0 unresolved items and the latest exact-head review reports no actionable P0/P1/P2. Candidate scoring selected bounded enemy parry recoil 24/25 over a campaign replay objective 20/25 and a live mastery cue 18/25 because it materially improves physical combat response without adding HUD, persistence or gameplay authority. Run 162 adds a presentation-only whole-body recoil during the already-authoritative pre-counter recovery after a parry: normal parry recoils visibly, Perfect Parry is stronger, guard break is strongest, horizontal attack directions mirror the off-axis reaction, and the effect settles before late recovery or immediately when a manual counter is consumed. It is exactly neutral during telegraph/strike/gap, owns no timer, never rotates Sword/HandR directly and composes before blade-trajectory verification. The existing 320x568 enemy-posture PlayCanvas gate is strengthened to prove normal→Perfect→guard-break escalation, telegraph suppression, bounded finite transforms, late-recovery settlement and unchanged HandR/grip authority.",
-  "last_commit": "c32ab5e1032fd2f2f10748ac590d76697121a881",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the parry-recoil implementation. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD 654c9726b105ca0d910b8f7f070dc5605a35c4d2 is terminal green on Actions CI #208 / run 34009302753 and exact-head GitHub Vercel status, Draft PR #1 remains open/Draft/unmerged, main is untouched, unresolved review threads are empty, Preview feedback reports 0 unresolved items and the latest exact-head review reports no actionable P0/P1/P2. Candidate scoring selected a session-only campaign replay objective 23/25 over manual-counter impact recoil 21/25 and a bounded live mastery cue 18/25: it closes the campaign result→retry learning loop using already-authoritative run-analysis facts, diversifies away from the just-modified renderer subsystem, adds no live-combat HUD and keeps persistence/network authority unchanged. Run 163 adds one compact campaign-only 再戰目標 row inside the existing result-analysis card. A defeat asks the next campaign to reach one stage farther (or defeat the Shogun from Stage 4); a completed campaign asks for fewer hits, zero missed counter openings or one bounded Perfect target. The target lives only in module memory, is consumed by the next campaign, is graded truthfully on the following campaign result, stays unchanged when missed, and is hidden from direct practice, 連戰試煉 and 今日陣. A dedicated production-page 320x568 browser gate proves offer→retry completion→next target plus challenge isolation and in-bounds composition.",
+  "last_commit": "654c9726b105ca0d910b8f7f070dc5605a35c4d2",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the campaign replay objective implementation. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "enemy_parry_recoil_pending_exact_head",
-    "last_observed_head": "c32ab5e1032fd2f2f10748ac590d76697121a881",
-    "incoming_ci_run": 34006686352,
+    "status": "campaign_replay_objective_pending_exact_head",
+    "last_observed_head": "654c9726b105ca0d910b8f7f070dc5605a35c4d2",
+    "incoming_ci_run": 34009302753,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 162 is a player-visible renderer slice only. It reads the existing recovery phaseProgress plus attack.parried/perfect/guardBroken/counterUsed flags, adds bounded whole-enemy/root and skinned-model reaction offsets, remains zero in telegraph/strike/gap and after the counter/late-recovery boundary, and is sampled before blade-trajectory/afterimage verification. No CombatEngine, timing, damage, posture, score, input, storage, identifier, analytics or network authority changes. The focused 320x568 production PlayCanvas gate must prove normal/Perfect/guard-break escalation and unchanged Sword→HandR grip authority."
+    "note": "Run 163 is a result-only campaign replay slice. It mirrors authoritative run-analysis events into a separate in-memory observer, never mutates CombatEngine authority, and renders one compact line inside the existing result-analysis card. The production 320x568 gate must prove a Stage-1 defeat offers 打入第2關, the next campaign reaching Stage 2 grades that target achieved and offers 打入第3關, and challenge mode hides/clears the campaign-only line. No storage, identifier, analytics, backend or network API is introduced."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,12 +65,11 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect the new normal/Perfect/guard-break enemy parry recoil at 320x568 together with authored Attack* recovery, pressured-guard body language, blade trajectory and actual-Sword afterimages; refine only if exact Preview/CI evidence shows excessive motion, blade-axis drift, unclear escalation or counter/late-recovery leakage",
+    "ACCEPTANCE: inspect the new campaign 再戰目標 at 320x568 together with 關鍵一刻, 四向防守, Closed Beta 下一步/回報/分享 and the restart button; refine only if exact Preview/CI evidence shows wrapping, stale target carry, route leakage, misleading progression or terminal overlap",
+    "ACCEPTANCE: inspect the normal/Perfect/guard-break enemy parry recoil at 320x568 together with authored Attack* recovery, pressured-guard body language, blade trajectory and actual-Sword afterimages; refine only if exact Preview/CI evidence shows excessive motion, blade-axis drift, unclear escalation or counter/late-recovery leakage",
     "ACCEPTANCE: keep the Closed Beta 下一步 production-page gate fail-closed at 320x568; refine only if exact Preview/CI evidence shows timing flake, overlap, stale routing, payload/export failure or challenge/今日陣 leakage",
-    "ACCEPTANCE: inspect the repaired campaign-only 關鍵一刻 isolation at 320x568, including early 連戰試煉/今日陣 defeat plus normal campaign result; refine only if exact Preview evidence shows mode leakage, stale marker state, wrapping or terminal overlap",
-    "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
-    "FEATURE: consider a campaign replay objective only if it reuses existing result/run-analysis evidence and adds no persistence/network/live-HUD density",
     "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
+    "FEATURE: consider a manual-counter impact reaction only if concrete Preview evidence shows successful counters still lack physical contact feel after the existing parry-recoil pass; avoid another renderer-only iteration without evidence",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }
