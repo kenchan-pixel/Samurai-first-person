@@ -89,3 +89,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - No combat timing, renderer, input, balance, damage, posture, score, persistence, identifier, analytics, feedback transport or privacy authority changed.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser`, plus exact-head GitHub Vercel success, are mandatory. The PR run comment records the resulting one-commit verification outcome.
+
+## Run 168 — Gate on the exact practice retry receipt
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `8345e6bffc62ce9d0abe975caf51c28fbeb8d00f`.
+- Exact-head GitHub `Vercel` status is terminal success; Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review threads are empty. Actions run `34019356766` is terminal red only at the first real Ronin-practice Closed Beta result after **190/190 Node tests** and every earlier browser gate passed.
+- Current-head review exposes the remaining P1 race: Run 167 observes `#restart-button`, but reconciliation never proves the observed mutation is the terminal retry mutation. Its queued microtask can be claimed by an earlier run-mode/result/progress mutation, causing the later authoritative retry mutation to be ignored. Feature work therefore remains prohibited.
+
+### Root cause and repair
+
+- Take the review-approved narrow repair instead of adding another timing layer: map each direct-practice run mode to the exact same-opponent retry label already owned by `practice-mode` (`再練浪人` / `再戰鬼武者` / `再戰將軍`).
+- Reconciliation now runs directly on every observed run-mode, result-visibility or retry-label mutation. It only re-renders when the result is visible, the mode is direct practice, and the current retry label exactly matches the expected label for that mode.
+- Remove `queueMicrotask` coalescing entirely, so an earlier non-terminal mutation cannot suppress the later authoritative retry-label mutation. The diagnostic snapshot now records actual and expected retry labels.
+- It still only re-marks canonical `duel`; only `practiceProgressState=comparison` can complete `repeat-practice`. Challenge/今日陣 remain excluded. The real 320×568 production gate remains unchanged and fail-closed.
+- No combat timing, renderer, input, balance, damage, posture, score, persistence, identifier, analytics, feedback transport, privacy or network authority changed.
+
+### Verification boundary
+
+- Post-commit exact-head Actions `npm test` + the complete browser suite, including the unchanged real-production 320×568 Closed Beta route, plus exact-head GitHub Vercel success are mandatory.
+- If the production route is still red, no new feature is allowed; use the `mode/result/practice/retry/expectedRetry` snapshot as the next debugging authority rather than another timing guess.

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 167,
+  "run_number": 168,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 4b316430b97d71ea20e4ee584980a794e4b5706d has terminal GitHub Vercel success, Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty, but Actions CI #212 / run 34016636774 is terminal red after npm test 190/190 and every browser gate before beta-readiness passed. The unchanged real 320x568 Closed Beta gate still fails only after the first real Ronin-practice terminal: progress remains 1/3 but 下一步 does not converge on repeat-practice + restart-button + 再練. Runs 164-166 already ruled out sampling latency, added practice-progress rerendering and tried next-frame reconciliation. Run 167 replaces that render-frame-dependent reconciliation with a semantic terminal receipt: the adapter now also observes the existing restart-button text owned by practice-mode, and queues canonical markBetaReadinessItem('duel') reconciliation from MutationObserver delivery. This keeps the gate fail-closed, cannot synthesize repeat-practice, and records a compact failure-state snapshot without adding persistence or transport.",
-  "last_commit": "4b316430b97d71ea20e4ee584980a794e4b5706d",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the authoritative direct-practice terminal reconciliation repair. No feature work is allowed until the resulting HEAD is terminal green.",
+  "last_action": "Incoming exact HEAD 8345e6bffc62ce9d0abe975caf51c28fbeb8d00f has terminal GitHub Vercel success, Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty, but Actions run 34019356766 is terminal red after npm test 190/190 and every browser gate before beta-readiness passed. The real 320x568 Closed Beta gate still fails only after the first real Ronin-practice terminal. Review identified the remaining race precisely: Run 167 observed the retry label but never gated reconciliation on an authoritative terminal state, so unrelated earlier mutations could consume the queued reconciliation before practice-mode finished its terminal render. Run 168 takes the review-approved narrow path: it requires the exact practice-mode-owned same-opponent retry label before refreshing and removes the queued microtask that could coalesce an earlier non-terminal mutation with the later authoritative retry mutation. The adapter now maps each direct-practice run mode to its exact retry receipt, re-evaluates synchronously on every observed result/run-mode/retry mutation, and only idempotently re-renders canonical duel when the visible result and expected retry label match. It still cannot synthesize repeat-practice.",
+  "last_commit": "8345e6bffc62ce9d0abe975caf51c28fbeb8d00f",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the practice-mode-owned terminal receipt repair. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "closed_beta_authoritative_retry_reconcile_pending_exact_head",
-    "last_observed_head": "4b316430b97d71ea20e4ee584980a794e4b5706d",
-    "incoming_ci_run": 34016636774,
-    "incoming_ci_result": "failed only at first real direct-practice Closed Beta next-step settlement after 190/190 Node tests and every earlier browser gate passed",
+    "status": "closed_beta_exact_retry_receipt_pending_exact_head",
+    "last_observed_head": "8345e6bffc62ce9d0abe975caf51c28fbeb8d00f",
+    "incoming_ci_run": 34019356766,
+    "incoming_ci_result": "failed only at first real direct-practice Closed Beta same-opponent routing after 190/190 Node tests and every earlier browser gate passed",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 167 keeps the existing production acceptance unchanged. Reconciliation is driven by DOM MutationObserver delivery plus the restart-button terminal label that practice-mode already owns, not requestAnimationFrame timing. It re-marks only the canonical duel item; repeat-practice still requires practiceProgressState=comparison, feedback still requires the real explicit export receipt, and challenge/daily routes remain excluded. A compact dataset snapshot records runMode/result/practice-state/retry-label for any future exact-head failure."
+    "note": "Run 168 does not weaken the production gate. Closed Beta reconciliation now requires the exact practice-mode-owned same-opponent retry label for the current direct-practice run mode and no longer coalesces reconciliation behind queueMicrotask. It re-marks only duel. repeat-practice remains exclusively practiceProgressState=comparison; feedback remains the real explicit export receipt; challenge and 今日陣 remain excluded. No combat, renderer, input, balance, persistence, identifier, analytics, feedback transport or network authority changes."
   },
   "external_deployment_recovery": {
     "last_incident": {
