@@ -44,9 +44,43 @@ try {
     budget: 70000,
     width: 320,
     height: 568,
-    doneExpression: `document.documentElement.dataset.betaReadinessNextBrowser === 'pass' || document.documentElement.dataset.betaReadinessNextBrowser === 'fail'`,
+    doneExpression: `(() => {
+      const harnessRoot = document.documentElement;
+      const status = harnessRoot.dataset.betaReadinessNextBrowser;
+      if (status !== 'pass' && status !== 'fail') return false;
+      if (status === 'fail') {
+        try {
+          const doc = document.querySelector('#game')?.contentDocument;
+          const appRoot = doc?.documentElement;
+          const next = doc?.querySelector('#beta-next-test-button');
+          const restart = doc?.querySelector('#restart-button');
+          const result = doc?.querySelector('#result-screen');
+          const receipt = [
+            'runMode=' + (appRoot?.dataset?.runMode || 'unset'),
+            'practiceProgressState=' + (appRoot?.dataset?.practiceProgressState || 'unset'),
+            'practiceProgressRoute=' + (appRoot?.dataset?.practiceProgressRoute || 'unset'),
+            'reconcile=' + (appRoot?.dataset?.betaReadinessPracticeReconcile || 'unset'),
+            'reconcileSnapshot=' + (appRoot?.dataset?.betaReadinessPracticeReconcileSnapshot || 'unset'),
+            'betaProgress=' + (appRoot?.dataset?.betaReadinessProgress || 'unset'),
+            'nextStep=' + (appRoot?.dataset?.betaReadinessNextStep || 'unset'),
+            'nextTarget=' + (appRoot?.dataset?.betaReadinessNextTarget || 'unset'),
+            'nextVisible=' + (appRoot?.dataset?.betaReadinessNextVisible || 'unset'),
+            'nextHidden=' + String(Boolean(next?.hidden)),
+            'nextText=' + JSON.stringify(next?.textContent?.trim() || ''),
+            'restartText=' + JSON.stringify(restart?.textContent?.trim() || ''),
+            'resultVisible=' + String(Boolean(result?.classList?.contains('modal--visible'))),
+          ].join('|');
+          harnessRoot.dataset.betaReadinessNextInnerReceipt = receipt.slice(0, 1800);
+        } catch (error) {
+          harnessRoot.dataset.betaReadinessNextInnerReceipt = 'receipt-error:' + String(error?.message || error).slice(0, 500);
+        }
+      }
+      return true;
+    })()`,
   });
 
+  const receiptMatch = dom.match(/data-beta-readiness-next-inner-receipt="([^"]*)"/);
+  const innerReceipt = receiptMatch?.[1] || 'unavailable';
   const required = [
     ['data-beta-readiness-next-browser="pass"', 'Closed Beta production next-test browser flow failed'],
     ['data-beta-readiness-next-production-document="true"', 'acceptance gate did not execute against the production document'],
@@ -65,7 +99,9 @@ try {
     ['data-beta-readiness-next-layout="pass"', 'production next/share/report controls overlapped or escaped 320×568'],
   ];
   for (const [marker, message] of required) {
-    if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 9000)}`);
+    if (!dom.includes(marker)) {
+      throw new Error(`${message}. Inner production receipt: ${innerReceipt}. DOM:\n${dom.slice(0, 9000)}`);
+    }
   }
 
   console.log(`Closed Beta production next-test browser smoke passed with ${browser}: real campaign result → Ronin retry/comparison → real feedback payload through deterministic Web Share seam → challenge + 今日陣 quietness at 320×568`);

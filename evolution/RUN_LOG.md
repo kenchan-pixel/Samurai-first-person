@@ -113,3 +113,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Post-commit exact-head Actions `npm test` + the complete browser suite, including the unchanged real-production 320×568 Closed Beta route, plus exact-head GitHub Vercel success are mandatory.
 - If the production route is still red, no new feature is allowed; use the `mode/result/practice/retry/expectedRetry` snapshot as the next debugging authority rather than another timing guess.
+
+## Run 169 — Surface the inner production failure receipt
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `46df6c906e8d35aa858efecc20d085e6253a9ffc`.
+- Exact-head GitHub `Vercel` status is terminal success, Preview feedback is 0 unresolved, Draft PR #1 remains open/Draft/unmerged, `main` is untouched and inline review threads are empty. Actions CI #214 / run `34022237452` remains terminal red after **190/190 Node tests** and every browser gate before the real Closed Beta route passed.
+- The unchanged real 320×568 gate still fails only after the first real Ronin-practice terminal. The current-head P1 review explicitly rejects another timing/copy heuristic without evidence because CI dumps only the outer harness document; its P2 also notes that retry-label strings are a weak machine contract and omit Blood Moon.
+
+### Blocker evidence repair
+
+- Keep the production route and all completion assertions unchanged and fail-closed. Instead, make the CDP completion expression copy a compact **inner production receipt** into the outer harness only when the real gate has already failed.
+- The receipt records the actual production `runMode`, `practiceProgressState` and route, reconciliation state/snapshot, Closed Beta progress, next step/target/visibility/hidden state/text, restart label and real result visibility.
+- The smoke runner now includes that inner receipt directly in the thrown CI error before the outer DOM excerpt. This removes the current observability deadlock without mutating production DOM state, synthesizing completion, weakening the 1/3 → repeat-practice assertion, or adding storage/network telemetry.
+- No combat, renderer, input, balance, damage, posture, score, readiness completion rule, persistence, identifier, analytics, feedback transport, privacy or network authority changed.
+
+### Verification boundary
+
+- Post-commit exact-head Actions remains authoritative. If the gate is still red, this run is expected to expose the exact inner mismatch needed for the next blocker repair; feature work remains prohibited until that evidence-driven repair returns the complete browser suite to green.
+- Exact-head GitHub `Vercel` success remains the approved deployment signal when direct Vercel enumeration is unavailable. The PR run comment must record the resulting SHA, CI outcome, surfaced inner receipt and Preview status.
