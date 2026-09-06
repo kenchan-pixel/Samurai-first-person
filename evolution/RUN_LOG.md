@@ -130,3 +130,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - This is a delivery-gate timing repair against a real asynchronous production observer, not a relaxed product assertion. The second-practice → feedback transition already uses the same bounded-settlement pattern.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including the real-production Closed Beta gate, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 165 — Synchronize Closed Beta 下一步 with the first practice receipt
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `898ed3dd5c6943147f8ba6dc28f09a2796453ba3`.
+- Exact-head GitHub `Vercel` status is terminal success, Draft PR #1 remains open/Draft/unmerged, `main` is untouched and unresolved review threads are empty, but Actions CI #210 / run `34012922804` is red. `npm test` is **189/189 green** and every browser gate before the real Closed Beta path passes.
+- The Run 164 gate already waits up to 1800 ms after the first real Ronin-practice terminal, yet the required `1/3 + repeat-practice + restart-button + visible 再練` state still does not appear. That rules out a simple harness sampling race and requires a production synchronization repair before any feature work.
+
+### Repair
+
+- Code inspection found that `beta-readiness` observes `data-practice-progress-state`, but only reacts when the value becomes `comparison`. The authoritative first-practice receipt (`first`) was ignored, so the result-level CTA could remain stale unless another unrelated result/run-mode mutation happened to trigger a re-render.
+- The observer now handles every practice-progress-state transition. `comparison` remains the **only** value allowed to complete the `repeat-practice` checklist item; all other values only re-render existing session/CTA state. This makes the first same-opponent practice receipt deterministically settle `下一步 · 再練` onto the existing `restart-button` without inventing progress or bypassing the real route.
+- The existing 1800 ms production acceptance, exact `1/3`, `repeat-practice`, `restart-button`, visible `再練`, second-practice comparison, feedback payload/export, challenge quietness, 今日陣 quietness, touch target and 320×568 layout requirements are unchanged and remain fail-closed.
+- No combat timing, renderer, input, damage, posture, score, persistence, identifier, analytics, feedback transport, privacy or network behavior changed.
+
+### Verification boundary
+
+- This is a production observer synchronization fix for an existing Closed Beta player-visible navigation contract, not a test relaxation.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including the real-production Closed Beta gate, plus exact-head GitHub Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.

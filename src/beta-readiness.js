@@ -205,8 +205,16 @@ function observeSessionProgress(documentRef) {
         continue;
       }
       if (record.target !== root) continue;
-      if (record.attributeName === 'data-practice-progress-state' && root.dataset.practiceProgressState === 'comparison') {
-        markBetaReadinessItem('repeat-practice', documentRef);
+      if (record.attributeName === 'data-practice-progress-state') {
+        if (root.dataset.practiceProgressState === 'comparison') {
+          markBetaReadinessItem('repeat-practice', documentRef);
+        } else {
+          // The first same-opponent practice receipt is also an authoritative route
+          // transition. Re-render now so 下一步 settles on the existing retry button
+          // instead of depending on an unrelated later mutation to refresh the CTA.
+          renderSessionProgress(documentRef);
+        }
+        continue;
       }
       if (
         record.attributeName === 'data-result-feedback-last' &&
