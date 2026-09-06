@@ -184,3 +184,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the same real-production Closed Beta campaign → Ronin → same-opponent retry → comparison → explicit feedback → 3/3 path plus challenge/今日陣 quietness.
 - Exact-head GitHub `Vercel` success remains mandatory. If CI is still red, the new geometric/computed-visibility receipt—not another timing guess—becomes the next blocker authority. The PR run comment is authoritative for the resulting SHA, CI, regression and deployment result under the one-commit rule.
+
+## Run 172 — Stop campaign replay isolation from hiding the production root
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `0df9f5a280ead42731832703e0b8e60e734f01d4`.
+- Draft PR #1 remains open/Draft/unmerged, `main` is untouched and current-head review threads are empty. Exact-head GitHub `Vercel` is terminal success, but Actions CI #218 / run `34030726858` is terminal red only at the real 320×568 Closed Beta first-Ronin retry gate after **190/190 Node tests** and every preceding browser gate passed.
+- Run 171's geometry receipt proves the semantic retry state is correct while the inner production `HTML` root itself is `hidden` / `display:none`. The current-head P1 therefore requires root-visibility provenance rather than another timing change.
+
+### Root cause and repair
+
+- Run 163's campaign **再戰目標** intentionally writes `data-campaign-replay-objective` both on its result-line element and on `document.documentElement` as a machine-readable receipt.
+- Its non-campaign cleanup path used the global selector `document.querySelector('[data-campaign-replay-objective]')`. After a campaign result had created the root receipt, the selector resolved to `HTML` before the result line. The first direct-practice terminal then executed `line.hidden = true` on `document.documentElement`, exactly matching Run 171's 0×0 / root-hidden receipt.
+- Scope that cleanup selector to `#result-analysis`, so only the campaign replay result line can be hidden while the root receipt is deleted normally.
+- Harden the dedicated 320×568 campaign replay browser contract to query the same scoped result line and explicitly fail if `document.documentElement` ever becomes hidden or computed `display:none` through campaign replay route isolation.
+- The real Closed Beta production gate remains unchanged and fail-closed. No timing delay, synthetic completion or visibility relaxation is introduced.
+- No combat, renderer, input, balance, damage, posture, score, readiness completion rule, persistence, identifier, analytics, feedback transport, privacy or network authority changed.
+
+### Verification boundary
+
+- Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the unchanged Closed Beta campaign → Ronin → same-opponent retry → comparison → explicit feedback → 3/3 journey and the campaign replay browser gate.
+- Exact-head GitHub `Vercel` success remains mandatory. The PR run comment records the resulting one-commit SHA, CI result, regression result and deployment status.

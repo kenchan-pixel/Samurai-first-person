@@ -66,7 +66,8 @@ function renderReplayObjective(previous, next) {
 }
 
 function hideReplayObjective() {
-  const line = document.querySelector('[data-campaign-replay-objective]');
+  const analysis = document.querySelector('#result-analysis');
+  const line = analysis?.querySelector('[data-campaign-replay-objective]');
   if (line) line.hidden = true;
   delete document.documentElement.dataset.campaignReplayObjective;
   delete document.documentElement.dataset.campaignReplayObjectiveState;

@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 171,
+  "run_number": 172,
   "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 9743ced2ebfee4dd5738f12a9a7807cf8a56effe has terminal GitHub Vercel success and the Vercel PR bot reports the branch Preview Ready with 0 unresolved feedback. The direct Vercel connector still cannot enumerate this project (list_projects for the recorded team returns zero projects), so the repository-approved exact-head GitHub Vercel status remains the deployment signal. Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty, but Actions CI #217 / run 34027476435 is terminal red only at the real 320x568 Closed Beta beta-readiness gate after npm test 190/190 and every preceding browser gate passed. The failure-time inner production receipt already satisfies the complete semantic first-Ronin contract, including betaProgress=1/3, repeat-practice -> restart-button, nextVisible=true, nextHidden=false and 下一步 · 再練. Current-head P1 review therefore identifies the remaining false negative as the harness sampling geometric visibility once immediately after the semantic reconciliation receipt. Run 171 changes only acceptance synchronization: it waits within one bounded budget for the complete player-facing predicate (mode, real result, reconciliation receipt, 1/3 progress, repeat-practice, restart-button, geometric visibility and 再練 copy). On timeout it records hidden state, ClientRects count, bounding rect and computed visibility for the CTA and a bounded ancestor chain. No production combat, renderer, UI state machine, readiness completion rule, persistence, feedback transport or network authority changes.",
-  "last_commit": "9743ced2ebfee4dd5738f12a9a7807cf8a56effe",
-  "active_blocker": "Post-commit exact-head CI must return npm test plus the complete browser suite, including the unchanged real-production Closed Beta campaign -> Ronin -> same-opponent retry -> comparison -> explicit feedback -> 3/3 flow, to terminal green before feature work resumes. If it remains red, the new timeout geometry/computed-visibility receipt must be used as the next debugging authority rather than adding another fixed delay. Exact-head Vercel verification remains mandatory.",
+  "last_action": "Incoming exact HEAD 0df9f5a280ead42731832703e0b8e60e734f01d4 has terminal GitHub Vercel success and Draft PR #1 remains open/Draft/unmerged with main untouched and no unresolved review threads, but Actions CI #218 / run 34030726858 is terminal red only at the real 320x568 Closed Beta first-Ronin retry visibility gate after npm test 190/190 and every preceding browser gate passed. Run 171's failure receipt proves the production semantic state is already correct while the inner production HTML root becomes hidden/display:none. Run 172 traces this to the Run 163 campaign replay feature: renderReplayObjective writes data-campaign-replay-objective on documentElement as a receipt, then hideReplayObjective later used an unscoped document.querySelector('[data-campaign-replay-objective]'), which selects that root before the result line and sets root.hidden=true when a non-campaign terminal such as direct practice is reached. The repair scopes hideReplayObjective to #result-analysis and scopes the dedicated campaign replay browser contract to the same UI line while explicitly asserting the production root remains renderable. No combat, renderer, input, balance, readiness completion, persistence, feedback transport, privacy or network authority changes.",
+  "last_commit": "0df9f5a280ead42731832703e0b8e60e734f01d4",
+  "active_blocker": "Post-commit exact-head CI must return npm test plus the complete browser suite, including the unchanged real-production Closed Beta campaign -> Ronin -> same-opponent retry -> comparison -> explicit feedback -> 3/3 flow and the campaign replay browser smoke, to terminal green before feature work resumes. Exact-head Vercel verification remains mandatory. If CI remains red, use the exact new failing gate/receipt rather than weakening visibility assertions or adding timing delays.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "closed_beta_full_retry_predicate_wait_pending_exact_head",
-    "last_observed_head": "9743ced2ebfee4dd5738f12a9a7807cf8a56effe",
-    "incoming_ci_run": 34027476435,
-    "incoming_ci_result": "failed only at beta-readiness-browser-smoke after 190/190 Node tests and every preceding browser gate passed; the failure-time inner production receipt already satisfied runMode=ronin-practice, practiceProgressState=first, reconciliation=terminal-retry-match, betaProgress=1/3, repeat-practice -> restart-button, nextVisible=true, nextHidden=false and 下一步 · 再練",
+    "status": "campaign_replay_root_selector_fix_pending_exact_head",
+    "last_observed_head": "0df9f5a280ead42731832703e0b8e60e734f01d4",
+    "incoming_ci_run": 34030726858,
+    "incoming_ci_result": "failed only at beta-readiness-browser-smoke after 190/190 Node tests and every preceding browser gate passed; the first-Ronin semantic receipt was correct but CTA geometry was 0x0 because the inner production HTML root had hidden=true/display:none",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
-    "direct_vercel_connector": "attempted list_projects for team_qnmhvwQSVdB0ygoS9fw5lLtr and received zero projects; exact-head GitHub Vercel status is therefore the repository-approved fallback deployment signal",
+    "direct_vercel_connector": "historically unable to enumerate the recorded project; exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "Vercel PR bot reports the branch Preview Ready with 0 unresolved feedback; supplemental only, while exact-head GitHub Vercel status remains authoritative",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 171 keeps the true 320x568 production document and all completion assertions fail-closed. The first-Ronin retry gate now polls the complete acceptance predicate in one bounded wait instead of ending the wait at the semantic receipt and sampling layout once. A timeout records CTA hidden, getClientRects length, bounding rect, computed display/visibility/opacity/pointer-events and up to five ancestor visibility states. No production behavior or authority changes."
+    "note": "Run 172 repairs the proven selector collision rather than relaxing the Closed Beta gate. The campaign replay result line and root machine receipt intentionally share a data attribute; all UI hiding/verification now scopes to #result-analysis so route isolation cannot mutate documentElement.hidden. The campaign replay browser contract also fails if the root ever becomes hidden/display:none."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: if Run 171 exact-head CI is green, treat the first-Ronin Closed Beta false negative as resolved; if the unchanged route is still red, use the new geometric/computed-visibility timeout receipt to repair only the proven remaining mismatch before any feature work",
+    "ACCEPTANCE: if Run 172 exact-head CI is green, treat the campaign-replay selector collision and first-Ronin Closed Beta blocker as resolved; if any gate remains red, repair only the new exact failing receipt before feature work",
     "MAINTENANCE: centralize the machine-readable direct-practice terminal/retry contract shared by practice-mode, Blood Moon and Closed Beta reconciliation, including blood-moon-practice / 再戰血月, when it can be bundled with a qualifying implementation rather than consuming a run as a pure refactor",
     "ACCEPTANCE: keep the real 320x568 Closed Beta 下一步 production gate fail-closed at every observer/reconciliation-owned result transition; refine only if exact Preview/CI evidence shows another stale routing, payload/export failure or challenge/今日陣 leakage",
     "ACCEPTANCE: inspect the campaign 再戰目標 at 320x568 together with 關鍵一刻, 四向防守, Closed Beta 下一步/回報/分享 and the restart button; refine only if exact Preview/CI evidence shows wrapping, stale target carry, route leakage, misleading progression or terminal overlap",
