@@ -209,3 +209,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the unchanged Closed Beta campaign → Ronin → same-opponent retry → comparison → explicit feedback → 3/3 journey and the campaign replay browser gate.
 - Exact-head GitHub `Vercel` success remains mandatory. The PR run comment records the resulting one-commit SHA, CI result, regression result and deployment status.
+
+## Run 173 — Directional manual-counter body impact
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `1b8ab3887f60ff0b11f7e918ae47d360a00a83e8`.
+- Exact-head Actions CI #219 / run `34033527278` is terminal green for `npm test` plus the complete browser suite. Exact-head GitHub `Vercel` status is success; Vercel Preview Comments reports 0 unresolved feedback. Draft PR #1 remains open/Draft/unmerged, `main` is untouched, current-head All Repos review reports no actionable P0/P1/P2 and review threads are empty.
+- Candidate scoring: directional manual-counter body impact **23/25** (impact 5, goal alignment 5, novelty 4, confidence 4, safety 5); finisher-only collapse **21/25**; transient live mastery cue **17/25** because it risks adding blade-read clutter. The broader counter-impact slice wins and includes the final-blow escalation as one coherent contact-feedback path.
+
+### Player-visible slice
+
+- Existing successful counters already produce player weapon motion, slash/spark FX, audio, haptic and camera response, but the opponent body itself becomes visually neutral exactly when Run 162 parry recoil clears on `counterUsed=true`. Run 173 closes that contact gap without changing the combat result.
+- Add `src/enemy-counter-reaction.js`, a presentation-only whole-opponent response driven by the existing accepted-counter snapshot plus `main.js`'s existing normalized `hitAge` and `playerDirectionIndex`. RIGHT/LEFT swipe counters mirror lateral knockback; TOP lifts the body; BOTTOM drives it lower. Guard-break counters escalate the same bounded envelope, and a defeating counter adds the strongest bounded retreat/collapse.
+- The adapter owns no clock, timer, score/damage/posture/input state, persistence or transport. It is neutral before a real manual counter, outside recovery/stage-clear, and after normalized hit age 1. It moves only the complete enemy root plus skinned whole-body Euler presentation and never rotates Sword/HandR directly.
+- Compose it after pressured-guard + parry-recoil presentation and before blade-trajectory/actual-Sword afterimage sampling, so downstream grip/trajectory evidence observes the final rendered body reaction.
+- Extend the existing real 320×568 PlayCanvas enemy-posture browser contract instead of creating a parallel acceptance path: prove counter-only activation, parry-recoil handoff, RIGHT/LEFT mirroring, guard-break escalation, final-blow escalation, bounded settling, finite transforms and Sword→HandR/grip continuity.
+
+### Verification boundary
+
+- Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the extended 320×568 real PlayCanvas pressure → parry → manual counter → guard-break counter → finisher → settle sequence and all unchanged Closed Beta/challenge/practice gates.
+- Exact-head GitHub `Vercel` success remains mandatory. Direct Vercel deployment listing returned 403 this run, so the repository-approved exact-head GitHub `Vercel` status is authoritative. The PR run comment records the resulting one-commit SHA, CI result, regression result and Preview status.

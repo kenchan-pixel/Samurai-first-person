@@ -1,6 +1,6 @@
 # Current Baseline
 
-Version: **0.44.0-evolution**
+Version: **0.45.0-evolution**
 
 This is the cumulative approved baseline on `autonomous-evolution`. `main` remains Ken-approved production until Draft PR #1 is manually merged. Future work may replace implementations but must not silently remove user-facing behaviour.
 
@@ -171,3 +171,10 @@ The PlayCanvas-first Decision Gate remains approved: **PlayCanvas + locally gene
 - The objective is module-memory only. The next **campaign** consumes and grades the exact carried target; success shows a factual `✓` receipt and derives the next target, while failure shows `未達` and keeps the same target. Direct practice, 連戰試煉 and 今日陣 neither display nor consume/grade the target, and page refresh clears it.
 - `src/campaign-replay-objective.js` may mirror only already-emitted CombatEngine/run-analysis events into its own bounded in-memory observer. It may not mutate combat timing, damage, posture, HP, score, input, renderer authority, persistence, identifiers, analytics or network transport. `src/campaign-replay-objective-model.js` remains pure target derivation/evaluation logic.
 - A focused real-production 320×568 browser gate must prove Stage 1 defeat → `再戰目標 · 打入第2關`, the next campaign reaching Stage 2 → `✓ 打入第2關 · 下一步 打入第3關`, in-bounds/pointer-transparent composition, and challenge suppression/cleanup without weakening existing result-analysis gates.
+
+## Run 173 additive baseline — manual counter body impact
+
+- An authoritative accepted **manual swipe counter** now gives the opponent a short bounded whole-body impact response at contact, filling the physical gap between the existing parry recoil and the already-existing slash/spark/audio/haptic/camera feedback. RIGHT/LEFT counters mirror lateral knockback in player-screen swipe direction; TOP lifts the opponent; BOTTOM drives the stance lower. A true guard-break counter is stronger and a counter that reaches `stage-clear` at 0 HP gets the strongest bounded retreat/collapse.
+- `src/enemy-counter-reaction.js` derives only from the existing render snapshot (`phase`, `enemyHp`, `attack.counterUsed`, `attack.perfect`, `attack.guardBroken`) plus `main.js`'s existing normalized `meta.hitAge` and `meta.playerDirectionIndex`. It owns no clock or combat state, is neutral before a consumed manual counter, outside recovery/stage-clear, or after normalized hit age 1, and never changes damage, posture, score, input, persistence or transport.
+- The adapter may move only the complete enemy root and skinned-model whole-body Euler presentation. It must never rotate Sword/HandR directly. It composes after pressured-guard/parry-recoil body language and before blade-trajectory/actual-Sword afterimage sampling, so downstream grip/trajectory evidence sees the final body impact while weapon authority remains HandR-authored.
+- The focused real 320×568 PlayCanvas posture/reaction gate must prove the counter response cannot leak into live telegraph or pre-counter parry recoil, normal counter contact is visibly directional, RIGHT/LEFT mirror correctly, guard-break escalation is stronger, final-blow collapse is strongest within bounds, the reaction settles after the existing hit-age envelope, all transforms remain finite and Sword stays directly parented/grip-locked to HandR with orientation continuity.

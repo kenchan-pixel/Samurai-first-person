@@ -43,10 +43,11 @@ try {
   if (!dom.includes('data-renderer-backend="playcanvas"')) throw new Error('Enemy-posture gate did not stay on the PlayCanvas production renderer');
   if (!dom.includes('data-enemy-posture-renderer-integration="pass"')) throw new Error(`Enemy-posture renderer contract failed. DOM:\n${dom.slice(0, 6000)}`);
   if (!dom.includes('data-enemy-posture-renderer-viewport="320x568"')) throw new Error('Enemy-posture renderer contract did not run at the required 320x568 viewport');
-  if (!dom.includes('data-enemy-posture-renderer-sequence="neutral-pressure-telegraph-suppressed-parry-perfect-guard-break-settle"')) throw new Error('Enemy-posture renderer contract did not complete the intended pressure + parry-recoil lifecycle');
-  if (!dom.includes('data-enemy-parry-recoil-renderer="normal-perfect-break"')) throw new Error('Enemy-posture renderer contract did not prove normal/Perfect/guard-break recoil differentiation');
+  if (!dom.includes('data-enemy-posture-renderer-sequence="neutral-pressure-telegraph-suppressed-parry-perfect-guard-break-counter-finisher-settle"')) throw new Error('Enemy-posture renderer contract did not complete the intended pressure + parry + counter lifecycle');
+  if (!dom.includes('data-enemy-parry-recoil-renderer="normal-perfect-break"')) throw new Error('Enemy-posture renderer contract did not prove normal/Perfect/guard-break parry recoil differentiation');
+  if (!dom.includes('data-enemy-counter-reaction-renderer="normal-break-finisher"')) throw new Error('Enemy-posture renderer contract did not prove manual-counter/guard-break/finisher body-reaction differentiation');
   if (!dom.includes('data-enemy-posture-renderer-blade="handr-grip-locked"')) throw new Error('Enemy-posture renderer contract did not preserve Sword/HandR grip authority');
-  console.log(`enemy-posture browser smoke passed with ${browser}: 320x568 real PlayCanvas pressured guard + parry/Perfect/guard-break recoil + telegraph suppression + HandR authority`);
+  console.log(`enemy-posture browser smoke passed with ${browser}: 320x568 real PlayCanvas pressured guard + parry recoil + directional manual-counter/guard-break/finisher body reaction + HandR authority`);
 } finally {
   await new Promise((resolveClose) => server.close(resolveClose));
 }
