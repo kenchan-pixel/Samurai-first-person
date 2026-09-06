@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { authoredAttackOwnsGrip } from './authored-enemy-attacks.js';
 
 const installed = Symbol.for('blade-reversal.blade-trajectory-v3');
 const BLADE_LENGTH = 1.78;
@@ -9,8 +10,8 @@ const GRIP_DEPTH_ASSIST_MAX = 1.10;
 const AUTHORED_FORWARD_REACH = 1.08;
 
 // Fallback world-space blade axes. The authored Attack* clips own the Sword bone during
-// normal telegraph/strike/recovery; these axes remain for primitive/base-animation and
-// interrupted-recovery fallback paths only.
+// normal telegraph/strike/recovery and a lethal manual-counter stage-clear hold; these
+// axes remain for primitive/base-animation and interrupted-recovery fallback paths only.
 const PATHS = Object.freeze([
   Object.freeze({ wind: [0.04, 0.995, 0.09], contact: [0.00, -0.12, 0.993], follow: [-0.05, -0.82, 0.57] }),
   Object.freeze({ wind: [0.73, 0.67, 0.12], contact: [0.06, -0.08, 0.995], follow: [-0.79, -0.20, 0.58] }),
@@ -60,9 +61,9 @@ function angleBetween(a, b) {
   return Math.acos(dot) * 180 / Math.PI;
 }
 
-function authoredGripLockActive(view, phase) {
+function authoredGripLockActive(view, phase, attack) {
   return view.authoredAttackClipsReady === true
-    && ['telegraph', 'strike', 'recovery'].includes(phase)
+    && authoredAttackOwnsGrip(phase, attack)
     && /^Attack(Top|Right|Bottom|Left)$/.test(view.authoredAttackState?.clip || '');
 }
 
@@ -179,7 +180,7 @@ export function installBladeTrajectoryView(view) {
     forwardFloorMet: true,
   };
 
-  let current = { phase: 'ready', progress: 0, directionIndex: 0, baseDirection: null };
+  let current = { phase: 'ready', progress: 0, directionIndex: 0, attack: null, baseDirection: null };
   let history = [];
   let lastPhase = 'ready';
   let lastDirection = 0;
@@ -207,8 +208,9 @@ export function installBladeTrajectoryView(view) {
     const phase = current.phase;
     const progress = clamp01(current.progress);
     const directionIndex = Math.max(0, Math.min(3, current.directionIndex | 0));
-    const active = ['telegraph', 'strike', 'recovery', 'recovery-interrupted'].includes(phase);
-    const gripLocked = authoredGripLockActive(view, phase);
+    const active = ['telegraph', 'strike', 'recovery', 'recovery-interrupted'].includes(phase)
+      || (phase === 'stage-clear' && current.attack?.counterUsed === true);
+    const gripLocked = authoredGripLockActive(view, phase, current.attack);
 
     const modelPos = model.getLocalPosition();
     const baseDepth = active ? depthFor(phase, progress) : 0;
@@ -326,6 +328,7 @@ export function installBladeTrajectoryView(view) {
       phase: snapshot?.phase || 'ready',
       progress: snapshot?.phaseProgress || 0,
       directionIndex: meta?.attackDirectionIndex ?? 0,
+      attack: snapshot?.attack ?? null,
       baseDirection: null,
     };
     const result = originalDraw(snapshot, now, meta);

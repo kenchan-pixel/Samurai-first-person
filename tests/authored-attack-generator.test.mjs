@@ -13,6 +13,7 @@ import {
   SAMURAI_ATTACK_GUARD_AXIS,
 } from '../tools/generate-samurai-attacks-glb.mjs';
 import {
+  authoredAttackOwnsGrip,
   authoredAttackProgress,
   authoredAttackTransitionSeconds,
   AUTHORED_FEINT_BLEND_SECONDS,
@@ -77,6 +78,15 @@ test('authored clip timeline stays continuous across telegraph, strike and recov
   assertNear(authoredAttackProgress('recovery', 0), 0.84);
   assertNear(authoredAttackProgress('recovery', 1), 1);
   assertNear(authoredAttackProgress('strike', 1), authoredAttackProgress('recovery', 0));
+});
+
+test('lethal manual counter keeps authored grip ownership through stage-clear finisher reaction', () => {
+  assert.equal(authoredAttackOwnsGrip('recovery', { counterUsed: true }), true);
+  assert.equal(authoredAttackOwnsGrip('stage-clear', { counterUsed: true }), true);
+  assert.equal(authoredAttackOwnsGrip('stage-clear', { counterUsed: false }), false);
+  assert.equal(authoredAttackOwnsGrip('stage-clear', null), false);
+  assertNear(authoredAttackProgress('stage-clear', 0), 0.84);
+  assertNear(authoredAttackProgress('stage-clear', 1), 0.84);
 });
 
 test('telegraph direction changes use the approved bounded authored crossfade while neutral Guard entry stays unchanged', () => {

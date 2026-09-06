@@ -13,11 +13,20 @@ const phaseClip = (phase) => phase === 'telegraph' ? 'Windup'
         : 'Idle';
 const guardPhase = (phase) => ['ready', 'stage-intro', 'gap'].includes(phase);
 
+export function authoredAttackOwnsGrip(phase, attack = null) {
+  return ['telegraph', 'strike', 'recovery'].includes(phase)
+    || (phase === 'stage-clear' && attack?.counterUsed === true);
+}
+
 export function authoredAttackProgress(phase, phaseProgress) {
   const p = clamp01(phaseProgress);
   if (phase === 'telegraph') return p * 0.34;
   if (phase === 'strike') return 0.34 + p * 0.50;
   if (phase === 'recovery') return 0.84 + p * 0.16;
+  // A lethal manual counter changes CombatEngine to stage-clear immediately. Hold the
+  // existing authored follow-through pose while presentation-only finisher recoil plays
+  // so Sword stays physically owned by HandR instead of snapping to generic Idle.
+  if (phase === 'stage-clear') return 0.84;
   return p;
 }
 
@@ -111,8 +120,9 @@ export function installAuthoredEnemyAttacks(view) {
     const direction = Math.max(0, Math.min(3, directionIndex | 0));
     const genericClip = phaseClip(phase);
     const layer = view.skinnedModel?.anim?.baseLayer;
+    const finisherHold = phase === 'stage-clear' && state?.attack?.counterUsed === true;
     const useAuthoredAttack = view.authoredAttackClipsReady
-      && ['telegraph', 'strike', 'recovery'].includes(phase)
+      && authoredAttackOwnsGrip(phase, state?.attack)
       && layer;
     const useAuthoredGuard = view.authoredAttackClipsReady && guardPhase(phase) && layer;
     const useAuthored = Boolean(useAuthoredAttack || useAuthoredGuard);
@@ -137,7 +147,11 @@ export function installAuthoredEnemyAttacks(view) {
       return;
     }
 
-    const clip = useAuthoredGuard ? AUTHORED_GUARD_CLIP : AUTHORED_ATTACK_CLIPS[direction];
+    const clip = useAuthoredGuard
+      ? AUTHORED_GUARD_CLIP
+      : finisherHold && AUTHORED_ATTACK_CLIPS.includes(view.authoredAttackActiveClip)
+        ? view.authoredAttackActiveClip
+        : AUTHORED_ATTACK_CLIPS[direction];
     const progress = useAuthoredGuard ? 0 : authoredAttackProgress(phase, state?.phaseProgress);
     if (clip !== view.authoredAttackActiveClip || layer.activeState !== clip) {
       const previousClip = AUTHORED_PACK_CLIPS.includes(layer.activeState)
@@ -148,7 +162,9 @@ export function installAuthoredEnemyAttacks(view) {
       // 50 ms at the same normalized authored progress. This removes the hard pose snap
       // without adding a timing clock, delaying the final direction, rotating Sword/HandR,
       // or routing through the generic Windup state. Guard entry remains immediate because
-      // every Attack* recovery ends on the exact Guard target.
+      // every Attack* recovery ends on the exact Guard target. A lethal manual counter
+      // deliberately keeps the current Attack* through stage-clear so finisher recoil can
+      // move the whole body without surrendering Sword/HandR grip authority.
       const blend = authoredAttackTransitionSeconds(phase, previousClip, clip);
       layer.transition(clip, blend, progress);
       view.authoredAttackActiveClip = clip;
