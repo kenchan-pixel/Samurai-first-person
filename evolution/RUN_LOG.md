@@ -233,3 +233,26 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the extended 320×568 real PlayCanvas pressure → parry → manual counter → guard-break counter → finisher → settle sequence and all unchanged Closed Beta/challenge/practice gates.
 - Exact-head GitHub `Vercel` success remains mandatory. Direct Vercel deployment listing returned 403 this run, so the repository-approved exact-head GitHub `Vercel` status is authoritative. The PR run comment records the resulting one-commit SHA, CI result, regression result and Preview status.
+
+## Run 174 — Restore pure TOP counter lift
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `de255568d6806376858bd2c26d4b0348b91b63e8`.
+- Exact-head GitHub `Vercel` status is terminal success; direct deployment listing still returns 403 and Vercel Preview toolbar feedback has 0 unresolved threads. Draft PR #1 remains open/Draft/unmerged, `main` is untouched and inline review threads are empty.
+- Actions CI #220 / run `34036554052` is terminal red in `npm test`; the browser suite is skipped. Current-head All Repos P1 pinpoints `enemyCounterReactionFrame()` TOP vertical contract: TOP receives its intended lift plus an unintended neutral `0.020` base drop, contradicting the baseline `TOP lifts / BOTTOM lowers` direction language.
+
+### Repair
+
+- Make TOP own zero base drop while retaining the separate defeated/finisher collapse drop.
+- Keep RIGHT/LEFT `0.014` body-settle drop, BOTTOM `0.042` lower stance, tier escalation, hit-age settling and whole-root/Euler-only renderer ownership unchanged.
+- Do not change or relax the focused `top.lift > 0 && top.drop === 0` assertion or the real 320×568 PlayCanvas browser gate.
+- No combat timing, damage, posture, score, input, persistence, identifier, analytics, privacy, network or Sword/HandR authority changes.
+
+### Verification boundary
+
+- Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the extended 320×568 pressure → parry → directional counter → guard-break → finisher → settle contract and all unchanged Closed Beta/challenge/practice gates.
+- Exact-head GitHub `Vercel` success remains mandatory. The PR run comment is authoritative for the new SHA, CI/regression result and deployment status.

@@ -56,7 +56,7 @@ export function enemyCounterReactionFrame(state, meta = {}, out = {}) {
   out.retreat = 0.088 * tier * settle;
   out.lateral = lateralSign * 0.052 * tier * settle;
   out.lift = (isTop ? 0.030 : 0) * tier * settle;
-  out.drop = ((isBottom ? 0.042 : lateralSign ? 0.014 : 0.020) + (defeated ? 0.018 : 0)) * tier * settle;
+  out.drop = ((isBottom ? 0.042 : lateralSign ? 0.014 : 0) + (defeated ? 0.018 : 0)) * tier * settle;
   out.pitch = (isTop ? -4.6 : isBottom ? 5.5 : 2.1) * tier * settle;
   out.yaw = lateralSign * 7.2 * tier * settle;
   out.roll = -lateralSign * 6.2 * tier * settle;

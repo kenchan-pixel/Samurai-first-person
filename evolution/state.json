@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 173,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 1b8ab3887f60ff0b11f7e918ae47d360a00a83e8 is fully verified: Actions CI #219 / run 34033527278 is terminal green for npm test plus the complete browser suite, exact-head GitHub Vercel status is success, Vercel Preview Comments reports 0 unresolved feedback, Draft PR #1 remains open/Draft/unmerged, main is untouched, current-head All Repos review reports no actionable P0/P1/P2 and review threads are empty. With the delivery fence clear, Run 173 selects a bounded player-visible manual-counter body-impact slice over a live mastery cue or finisher-only reaction. Existing counters already had slash/spark/camera/audio feedback, while Run 162 parry recoil intentionally clears as soon as counterUsed becomes true, leaving the opponent body itself visually neutral at the accepted swipe contact. The new presentation-only enemy-counter-reaction adapter reuses main.js's existing normalized hitAge and playerDirectionIndex; accepted manual counters now push/stagger the complete opponent in the swipe direction, guard-break counters are stronger and a defeating counter adds the strongest bounded collapse. It owns no clock/gameplay state, is neutral before a real counter and after hitAge 1, never rotates Sword/HandR directly, and composes before blade-trajectory/afterimage sampling. The existing real 320x568 PlayCanvas enemy-posture browser gate is extended to prove normal/guard-break/finisher differentiation, directional mirroring, settling and Sword->HandR grip continuity. No combat timing, damage, posture, score, input, persistence, identifier, analytics, privacy or network authority changes.",
-  "last_commit": "1b8ab3887f60ff0b11f7e918ae47d360a00a83e8",
-  "active_blocker": "No incoming blocker. Post-commit exact-head Actions must pass npm test plus the complete browser suite, including the extended 320x568 real PlayCanvas posture/parry/counter-reaction gate, and exact-head Vercel must be terminal success before another feature run. Any red exact-head result becomes the next BLOCKER_FIX authority.",
+  "run_number": 174,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD de255568d6806376858bd2c26d4b0348b91b63e8 has terminal exact-head GitHub Vercel success and Vercel Preview toolbar feedback reports 0 unresolved threads; Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. Actions CI #220 / run 34036554052 is terminal red at npm test before the browser suite can run. The current-head All Repos P1 pinpoints a contract mismatch in enemyCounterReactionFrame(): a normal TOP manual counter gets the intended lift plus an unintended neutral 0.020 base drop, contradicting the Run 173 baseline that TOP lifts while BOTTOM drives the stance lower. Run 174 repairs only that vertical presentation branch: TOP now owns zero base drop, while the separate defeated/finisher collapse drop remains available; RIGHT/LEFT settling drop, BOTTOM drop, tier escalation, hit-age settling and whole-root/Euler-only renderer ownership remain unchanged. The focused top.lift > 0 && top.drop === 0 assertion and the complete real 320x568 PlayCanvas browser contract are not weakened. No combat timing, damage, posture, score, input, persistence, identifier, analytics, privacy, network or Sword/HandR authority changes.",
+  "last_commit": "de255568d6806376858bd2c26d4b0348b91b63e8",
+  "active_blocker": "Post-commit exact-head Actions must pass npm test plus the complete browser suite, including the extended 320x568 real PlayCanvas pressure/parry/directional-counter/guard-break/finisher/settle gate and all unchanged Closed Beta/challenge/practice gates, and exact-head Vercel must be terminal success before feature work resumes. Any red exact-head result becomes the next BLOCKER_FIX authority.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "manual_counter_body_reaction_pending_exact_head",
-    "last_observed_head": "1b8ab3887f60ff0b11f7e918ae47d360a00a83e8",
-    "incoming_ci_run": 34033527278,
-    "incoming_ci_result": "success: npm test plus complete npm run test:browser passed on the incoming exact head, including the real-production Closed Beta flow and campaign replay regression gate",
+    "status": "manual_counter_top_drop_fix_pending_exact_head",
+    "last_observed_head": "de255568d6806376858bd2c26d4b0348b91b63e8",
+    "incoming_ci_run": 34036554052,
+    "incoming_ci_result": "failure: npm test failed at the focused TOP-vs-BOTTOM manual-counter vertical body-read assertion; npm run test:browser was skipped",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "list_deployments for the recorded project/team returned 403 Forbidden this run; exact-head GitHub Vercel status is therefore the repository-approved deployment signal",
-    "owner_preview_reachability": "Vercel Preview Comments reports 0 unresolved feedback for autonomous-evolution; supplemental only, while exact-head GitHub Vercel status remains authoritative",
+    "owner_preview_reachability": "Vercel Preview toolbar reports 0 unresolved feedback for autonomous-evolution; supplemental only, while exact-head GitHub Vercel status remains authoritative",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 173 adds no new HUD, timer or combat rule. The body response is driven only by the existing accepted-counter state plus the existing normalized hitAge/player swipe direction meta. The 320x568 PlayCanvas gate remains fail-closed for live telegraph suppression, parry recoil hierarchy, counter/guard-break/finisher reaction hierarchy, bounded transforms and Sword->HandR grip continuity."
+    "note": "Run 174 fixes only the proven TOP base-drop mismatch. A normal TOP counter keeps its upward lift with zero base drop; a defeated TOP counter may still receive the separate finisher-collapse drop. The focused Node assertion and the 320x568 PlayCanvas directional counter/guard-break/finisher gate remain unchanged and fail-closed."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: if Run 173 exact-head CI and Vercel are green, treat manual-counter body impact as delivered; refine only if exact Preview/CI evidence shows excessive displacement, wrong swipe mirroring, Sword/HandR drift, telegraph leakage or poor settling",
+    "ACCEPTANCE: if Run 174 exact-head CI and Vercel are green, treat the TOP directional-contract blocker as resolved and manual-counter body impact as delivered; refine only if exact Preview/CI evidence shows excessive displacement, wrong swipe mirroring, Sword/HandR drift, telegraph leakage or poor settling",
     "MAINTENANCE: centralize the machine-readable direct-practice terminal/retry contract shared by practice-mode, Blood Moon and Closed Beta reconciliation, including blood-moon-practice / 再戰血月, when it can be bundled with a qualifying implementation rather than consuming a run as a pure refactor",
     "ACCEPTANCE: keep the real 320x568 Closed Beta 下一步 production gate fail-closed at every observer/reconciliation-owned result transition; refine only if exact Preview/CI evidence shows another stale routing, payload/export failure or challenge/今日陣 leakage",
     "ACCEPTANCE: inspect the campaign 再戰目標 at 320x568 together with 關鍵一刻, 四向防守, Closed Beta 下一步/回報/分享 and the restart button; refine only if exact Preview/CI evidence shows wrapping, stale target carry, route leakage, misleading progression or terminal overlap",
