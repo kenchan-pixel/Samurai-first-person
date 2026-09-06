@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 159,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 25c9fcbd5e713402b182c426f2303b13e489c5f7 is feature-ready: Actions CI #204 / run 33999305843 and exact-head GitHub Vercel status are terminal success, Draft PR #1 remains open/Draft/unmerged, main is untouched, unresolved review threads are empty, Preview feedback reports 0 unresolved items and the latest exact-head review reports no actionable P0/P1/P2. Run 159 adds one adaptive result-level Closed Beta 下一步 action driven only by the existing session-only 0/3 readiness receipts. After an eligible campaign result it invokes the existing Ronin practice entry; during direct practice it reuses the existing retry control to keep the same opponent; after 修行進度 comparison it opens the existing explicit 回報 panel; a successful share/copy closes the loop at 3/3. Challenge/今日陣 remain quiet. No combat, balance, score, persistence, identifier, analytics, backend or network authority changes.",
-  "last_commit": "25c9fcbd5e713402b182c426f2303b13e489c5f7",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the new Closed Beta result-level 下一步 flow. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 160,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD f5fddc20f6683b64aa7a7f6120617e27031ba3f7 has terminal-green Actions CI #205 / run 34001970334 and exact-head GitHub Vercel success, Draft PR #1 remains open/Draft/unmerged, main is untouched, unresolved review threads are empty and Preview feedback reports 0 unresolved items. The latest exact-head review identifies one actionable P2 acceptance blocker: Run 159's Closed Beta result 下一步 gate used a synthetic result/practice DOM and therefore did not prove the CTA composes and routes correctly on the real production 320x568 result screen. Run 160 replaces that sole synthetic browser acceptance path with an iframe of the real production index.html and drives real campaign terminal → Ronin practice → same-opponent retry/comparison → existing feedback export, then real standard challenge and 今日陣 terminals to prove suppression. No gameplay/runtime product behavior changes.",
+  "last_commit": "f5fddc20f6683b64aa7a7f6120617e27031ba3f7",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the production-page Closed Beta acceptance repair. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,9 +17,9 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "closed_beta_next_test_action_pending_exact_head",
-    "last_observed_head": "25c9fcbd5e713402b182c426f2303b13e489c5f7",
-    "incoming_ci_run": 33999305843,
+    "status": "closed_beta_production_acceptance_pending_exact_head",
+    "last_observed_head": "f5fddc20f6683b64aa7a7f6120617e27031ba3f7",
+    "incoming_ci_run": 34001970334,
     "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
@@ -27,7 +27,7 @@
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 159 closes the approved local/export-only Closed Beta tester loop without adding a new start-screen control or gameplay route. The result-only 下一步 pill is derived from the existing in-memory 0/3 receipts and delegates to already-existing practice restart/report controls. A focused real 320x568 browser gate proves campaign-result → existing Ronin route → same-opponent retry → existing explicit feedback panel → 3/3 completion, >=44px touch sizing, no overlap with existing 分享/回報 controls and challenge quietness. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
+    "note": "Run 160 is a test/SOT blocker repair only. The Closed Beta browser gate now embeds the real production document and forbids the prior manual result/run-mode/practice-progress mutations. It must reach a real campaign terminal, prove the actual 下一步/回報/分享 controls are >=44px, in-bounds and non-overlapping, launch the real Ronin route, reach two real practice terminals with the production retry/comparison lifecycle, open and export through the existing feedback panel, and then prove real standard challenge and 今日陣 terminals keep 下一步 hidden. Full exact-head Node/browser CI and Vercel remain mandatory, with the PR run comment authoritative for the resulting SHA/status under the one-commit rule."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,7 +65,7 @@
     }
   },
   "next_candidates": [
-    "ACCEPTANCE: inspect the new Closed Beta result 下一步 flow at 320x568 together with existing 回報/分享 controls; refine only if exact Preview evidence shows overlap, stale session routing, confusing copy or challenge/今日陣 leakage",
+    "ACCEPTANCE: keep the Closed Beta 下一步 production-page gate fail-closed at 320x568; refine only if exact Preview/CI evidence shows timing flake, overlap, stale routing, feedback-export failure or challenge/今日陣 leakage",
     "ACCEPTANCE: inspect the repaired campaign-only 關鍵一刻 isolation at 320x568, including early 連戰試煉/今日陣 defeat plus normal campaign result; refine only if exact Preview evidence shows mode leakage, stale marker state, wrapping or terminal overlap",
     "ACCEPTANCE: inspect the enemy-posture pressured-guard read at 320x568 together with Guard + four authored cuts + measured/standard/quick tempo; refine only if exact Preview evidence shows blade-axis drift, excessive body sway, weak visibility or telegraph contamination",
     "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",

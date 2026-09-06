@@ -614,3 +614,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 - `src/beta-readiness.js`, its focused Node tests and the new browser runner pass local syntax checks; focused beta-readiness Node tests pass 5/5 before Git object assembly.
 - Added a dedicated real 320×568 browser gate that proves campaign result → existing Ronin route → same-opponent retry → existing explicit feedback panel → 3/3 completion, ≥44 px touch ownership, non-overlap with 回報/分享, and challenge quietness. It is appended to the full browser suite rather than replacing an existing gate.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `beta-readiness-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 160 — Prove Closed Beta next-test on the production page
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `f5fddc20f6683b64aa7a7f6120617e27031ba3f7`.
+- Exact-head Actions CI #205 / run `34001970334` is terminal success and exact-head GitHub `Vercel` status is success. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; unresolved review threads are empty and Preview feedback reports 0 unresolved items.
+- Latest exact-head review has no P0/P1 but one actionable P2: the Run 159 320×568 gate constructed its own result screen and manually changed `data-run-mode`, `data-practice-progress-state` and feedback completion state, so it did not prove the new player-visible CTA composes and routes correctly on the real production result page. This is a material acceptance/playability evidence gap and blocks feature work.
+
+### Repair
+
+- Replaced the synthetic Closed Beta next-test browser harness with a 320×568 iframe of the real production `/` document. The gate now starts the real campaign and waits for a real terminal result before checking the actual `下一步`, `回報` and `分享` controls for ≥44 px sizing, viewport bounds and non-overlap.
+- The same production document must then use `下一步 · 修行` to launch the real Ronin route, reach a real practice terminal, use `下一步 · 再練` through the real restart listener, reach the second real terminal/`修行進度` comparison, open the existing feedback panel, and complete explicit share/copy export to 3/3.
+- After returning through existing production handoffs, the gate launches the real `連戰試煉` and real `今日陣`, waits for each terminal result and requires the Closed Beta result CTA to remain hidden in both variants.
+- The runner now requires explicit production-document, production-route, challenge and 今日陣 receipts and gives this longer real lifecycle a bounded 70 s virtual-time budget. No product runtime, combat, balance, persistence, identifier, analytics or network code changes.
+- Updated the Closed Beta release-prep SOT so future acceptance cannot regress back to a synthetic-only result harness for this flow.
+
+### Verification boundary
+
+- The revised runner and embedded production-harness module pass local `node --check` syntax validation before Git object assembly. No existing Node/browser gate is removed; only the previously synthetic Closed Beta gate is made stricter and production-composed.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including the production Closed Beta gate, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
