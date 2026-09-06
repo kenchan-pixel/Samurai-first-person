@@ -38,6 +38,37 @@
       return Boolean(node && !node.hidden && node.getClientRects().length);
     }
 
+    function visibilityDiagnostic(node) {
+      if (!node) return 'node=missing';
+      const view = node.ownerDocument?.defaultView;
+      const style = view?.getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      const ancestors = [];
+      let current = node.parentElement;
+      while (current && ancestors.length < 5) {
+        const currentStyle = view?.getComputedStyle(current);
+        ancestors.push([
+          current.id || current.tagName,
+          current.hidden ? 'hidden' : 'shown',
+          currentStyle?.display || 'na',
+          currentStyle?.visibility || 'na',
+          currentStyle?.opacity || 'na',
+        ].join(':'));
+        current = current.parentElement;
+      }
+      const fixed = (value) => Number.isFinite(value) ? value.toFixed(1) : 'na';
+      return [
+        `hidden=${node.hidden}`,
+        `rects=${node.getClientRects().length}`,
+        `rect=${fixed(rect.left)},${fixed(rect.top)},${fixed(rect.width)},${fixed(rect.height)}`,
+        `display=${style?.display || 'na'}`,
+        `visibility=${style?.visibility || 'na'}`,
+        `opacity=${style?.opacity || 'na'}`,
+        `pointer=${style?.pointerEvents || 'na'}`,
+        `ancestors=${ancestors.join('>') || 'none'}`,
+      ].join('|');
+    }
+
     function rectInsideViewport(node) {
       if (!visible(node)) return false;
       const rect = node.getBoundingClientRect();
@@ -77,11 +108,16 @@
       , timeout);
     }
 
-    async function waitForPracticeTerminalReconciled(doc, expectedMode, timeout = 16000) {
+    async function waitForPracticeRepeatAction(doc, next, expectedMode, timeout = 16000) {
       return waitFor(() =>
         doc.documentElement.dataset.runMode === expectedMode &&
         doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
-        doc.documentElement.dataset.betaReadinessPracticeReconcile === 'terminal-retry-match'
+        doc.documentElement.dataset.betaReadinessPracticeReconcile === 'terminal-retry-match' &&
+        doc.documentElement.dataset.betaReadinessProgress === '1/3' &&
+        doc.documentElement.dataset.betaReadinessNextStep === 'repeat-practice' &&
+        doc.documentElement.dataset.betaReadinessNextTarget === 'restart-button' &&
+        visible(next) &&
+        next.textContent.includes('再練')
       , timeout);
     }
 
@@ -177,20 +213,16 @@
       mark('betaReadinessNextPracticeNavigation', practiceLaunch);
       if (!practiceLaunch) throw new Error('production 下一步 · 修行 did not invoke the real Ronin practice route');
 
-      // A real direct-practice result becomes semantically ready only after the production
-      // reconciliation adapter has observed the terminal retry receipt. Synchronize on that
-      // receipt once, then assert the unchanged 1/3 → same-opponent retry contract without
-      // racing a second fixed presentation timer.
-      if (!await waitForPracticeTerminalReconciled(doc, 'ronin-practice')) {
-        throw new Error('first real Ronin practice did not reach a reconciled production terminal result');
-      }
-      const repeatActionOk =
-        appRoot.dataset.betaReadinessProgress === '1/3' &&
-        appRoot.dataset.betaReadinessNextStep === 'repeat-practice' &&
-        appRoot.dataset.betaReadinessNextTarget === 'restart-button' &&
-        visible(next) && next.textContent.includes('再練');
+      // The terminal receipt and the player-visible retry CTA settle through separate DOM/layout
+      // work. Treat the complete player-facing retry action as one fail-closed predicate instead
+      // of sampling geometry once immediately after the semantic reconciliation receipt.
+      const repeatActionOk = await waitForPracticeRepeatAction(doc, next, 'ronin-practice');
       root.dataset.betaReadinessNextRepeat = repeatActionOk ? 'pass' : 'fail';
-      if (!repeatActionOk) throw new Error('first real direct-practice result did not keep the tester on same-opponent retry');
+      if (!repeatActionOk) {
+        const diagnostic = visibilityDiagnostic(next);
+        root.dataset.betaReadinessNextRepeatVisibility = diagnostic.slice(0, 900);
+        throw new Error(`first real direct-practice result did not settle the complete same-opponent retry action; ${diagnostic}`);
+      }
 
       next.click();
       const retryStarted = await waitFor(() =>

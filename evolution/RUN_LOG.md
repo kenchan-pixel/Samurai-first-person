@@ -160,3 +160,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the same real-production Closed Beta campaign → Ronin → same-opponent retry → comparison → explicit feedback → 3/3 path plus challenge/今日陣 quietness.
 - Exact-head GitHub `Vercel` success remains mandatory. The PR run comment is authoritative for the resulting SHA, CI, regression result and deployment status under the one-commit rule.
+
+## Run 171 — Wait on the complete Closed Beta retry action
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `9743ced2ebfee4dd5738f12a9a7807cf8a56effe`.
+- Exact-head GitHub `Vercel` status is terminal success; the Vercel PR bot reports the branch Preview Ready with 0 unresolved feedback. The direct Vercel connector still returns zero projects for the recorded team, so the repository-approved GitHub status fallback is used. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review threads are empty.
+- Actions CI #217 / run `34027476435` is terminal red only at the real 320×568 Closed Beta gate after **190/190 Node tests** and every preceding browser gate passed. The failure-time inner production receipt already satisfies `ronin-practice`, `practiceProgressState=first`, `terminal-retry-match`, `1/3`, `repeat-practice → restart-button`, `nextVisible=true`, `nextHidden=false` and `下一步 · 再練`.
+- Current-head P1 review therefore identifies the remaining false negative as acceptance-harness observation timing: Run 170 ends its bounded wait at the semantic receipt and then samples player-visible geometry only once.
+
+### Repair
+
+- Keep the real production document, 320×568 viewport, route, production state machine and all downstream fail-closed assertions unchanged.
+- Replace the semantic-only first-Ronin settle gate plus one-shot geometry sample with one bounded wait over the **complete** acceptance predicate: correct run mode, visible real result, production reconciliation receipt, `1/3`, `repeat-practice`, `restart-button`, actual `getClientRects()` visibility and `下一步 · 再練` copy.
+- If that complete predicate times out, record the CTA's `hidden` state, `getClientRects().length`, bounding rect, computed display/visibility/opacity/pointer-events and a bounded five-ancestor visibility chain in the failure receipt. This makes a genuine layout defect actionable without weakening the gate or adding another fixed delay.
+- No combat, renderer, input, balance, damage, posture, score, persistence, identifier, analytics, feedback transport, privacy or network authority changed.
+
+### Verification boundary
+
+- Post-commit exact-head Actions must pass `npm test` and the complete `npm run test:browser`, including the same real-production Closed Beta campaign → Ronin → same-opponent retry → comparison → explicit feedback → 3/3 path plus challenge/今日陣 quietness.
+- Exact-head GitHub `Vercel` success remains mandatory. If CI is still red, the new geometric/computed-visibility receipt—not another timing guess—becomes the next blocker authority. The PR run comment is authoritative for the resulting SHA, CI, regression and deployment result under the one-commit rule.
