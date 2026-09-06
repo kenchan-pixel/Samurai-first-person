@@ -15,6 +15,7 @@
     const root = document.documentElement;
     const frame = document.querySelector('#game');
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    let capturedFeedbackPayload = null;
 
     async function waitFor(check, timeout = 12000) {
       const started = performance.now();
@@ -47,6 +48,26 @@
       const ar = a.getBoundingClientRect();
       const br = b.getBoundingClientRect();
       return !(ar.right <= br.left || br.right <= ar.left || ar.bottom <= br.top || br.bottom <= ar.top);
+    }
+
+    function installDeterministicFeedbackExport(windowRef) {
+      const navigatorRef = windowRef?.navigator;
+      if (!navigatorRef) return false;
+      try {
+        Object.defineProperty(navigatorRef, 'share', {
+          configurable: true,
+          value: async (payload) => {
+            capturedFeedbackPayload = {
+              title: String(payload?.title || ''),
+              text: String(payload?.text || ''),
+              url: String(payload?.url || ''),
+            };
+          },
+        });
+        return typeof navigatorRef.share === 'function';
+      } catch {
+        return false;
+      }
     }
 
     async function waitForTerminal(doc, expectedMode, timeout = 14000) {
@@ -185,11 +206,30 @@
       mark('betaReadinessNextFeedbackNavigation', feedbackNavigationOk);
       if (!feedbackNavigationOk) throw new Error('production 下一步 · 回報 did not open the existing feedback panel');
 
+      // Headless Chrome does not provide a reliable OS share sheet/clipboard. Replace only
+      // that platform-owned primitive; the production send button, payload builder,
+      // deliverBetaFeedback path and beta-completion observer remain untouched.
+      const platformSeamOk = installDeterministicFeedbackExport(frame.contentWindow);
+      mark('betaReadinessNextPlatformSeam', platformSeamOk);
+      if (!platformSeamOk) throw new Error('could not install deterministic Web Share platform seam');
+      const note = doc.querySelector('[data-feedback-note]');
+      if (!note) throw new Error('production feedback note field missing');
+      note.value = '320×568 平台匯出驗證';
+      note.dispatchEvent(new Event('input', { bubbles: true }));
+
       doc.querySelector('[data-feedback-send]')?.click();
-      const exported = await waitFor(() =>
-        appRoot.dataset.resultFeedbackLast === 'shared' || appRoot.dataset.resultFeedbackLast === 'copied'
-      , 1800);
-      if (!exported) throw new Error('explicit production feedback export did not complete through share/copy');
+      const exported = await waitFor(() => appRoot.dataset.resultFeedbackLast === 'shared', 1800);
+      if (!exported) throw new Error('explicit production feedback export did not complete through the deterministic Web Share seam');
+      const expectedUrl = new URL('/', frame.contentWindow.location.href).toString();
+      const payloadOk = Boolean(
+        capturedFeedbackPayload &&
+        capturedFeedbackPayload.title.includes('體驗意見') &&
+        capturedFeedbackPayload.text.includes('玩家補充：320×568 平台匯出驗證') &&
+        capturedFeedbackPayload.url === expectedUrl
+      );
+      mark('betaReadinessNextFeedbackPayload', payloadOk);
+      if (!payloadOk) throw new Error('real production feedback payload did not reach the deterministic platform seam intact');
+
       const doneOk = await waitFor(() =>
         appRoot.dataset.betaReadinessProgress === '3/3' &&
         appRoot.dataset.betaReadinessComplete === 'true' &&
@@ -231,6 +271,8 @@
         'betaReadinessNextPracticeNavigation',
         'betaReadinessNextTouch',
         'betaReadinessNextFeedbackNavigation',
+        'betaReadinessNextPlatformSeam',
+        'betaReadinessNextFeedbackPayload',
         'betaReadinessNextDone',
         'betaReadinessNextChallengeQuiet',
         'betaReadinessNextDailyQuiet',

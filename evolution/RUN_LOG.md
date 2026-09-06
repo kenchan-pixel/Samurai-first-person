@@ -638,3 +638,28 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The revised runner and embedded production-harness module pass local `node --check` syntax validation before Git object assembly. No existing Node/browser gate is removed; only the previously synthetic Closed Beta gate is made stricter and production-composed.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including the production Closed Beta gate, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 161 — Make headless feedback export deterministic without bypassing production
+
+**Date:** 2026-09-06  
+**Action type:** BLOCKER_FIX
+
+### Preflight
+
+- Incoming exact HEAD: `6a1fc79a3483f9ed29997fc383fa8d09a2b37f36`.
+- Exact-head Actions CI #206 / run `34005288562` failed twice on the same SHA. `npm test` is **181/181 green** and every preceding browser gate passes; the real 320×568 Closed Beta production path also reaches campaign terminal → Ronin practice → same-opponent retry/comparison → feedback panel before failing because headless Chromium cannot complete OS Web Share/clipboard export.
+- Exact-head GitHub `Vercel` status is success and Preview is Ready with 0 unresolved feedback. Draft PR #1 remains open/Draft/unmerged; `main` is untouched; inline review comments are empty.
+- Current-head All Repos review `5123807212` classifies the red acceptance as actionable **P1** and explicitly requires a deterministic platform-export seam while retaining the real production send control, `deliverBetaFeedback` path, payload and explicit-user-action privacy contract. Feature work is prohibited.
+
+### Repair
+
+- Kept `src/result-feedback.js`, `src/beta-readiness.js` and all player/runtime behavior unchanged.
+- The existing real-production 320×568 Closed Beta harness now replaces only the same-origin `navigator.share` platform primitive after the production document and feedback panel have initialized. Headless CI still clicks the real `分享回報` button, which invokes the unchanged real `collectBetaFeedbackPayload` → `deliverBetaFeedback` path and publishes the real `resultFeedbackLast=shared` receipt.
+- The seam captures the actual exported payload and the gate now requires the real report title, a deliberately entered `320×568 平台匯出驗證` player note and the clean query/hash-free production URL before accepting the existing 3/3 completion observer. It never writes `resultFeedbackLast`, beta progress or completion datasets directly.
+- The browser runner requires explicit platform-seam and payload-integrity receipts in addition to every Run 160 production-route/layout/challenge/今日陣 assertion.
+- Closed Beta SOT now states that headless acceptance may stub only platform-owned Web Share/clipboard primitives; real send-control, delivery-path, payload and completion semantics remain mandatory. No combat, balance, persistence, analytics, identifier, backend or network product code changed.
+
+### Verification boundary
+
+- The repair is limited to test harness/runner plus acceptance SOT/state/log. It does not weaken the product privacy boundary or synthesize Closed Beta completion.
+- Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `beta-readiness-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.

@@ -35,6 +35,7 @@ The Decision Gate must define data fields, retention/deletion, abuse/spam contro
 - Do not include user agent, IP address, cookies, local-storage identifiers, hidden device data, account identifiers or background telemetry.
 - Native share cancellation is a clean no-op; unsupported share may fall back to local clipboard copy.
 - Result/report controls must remain ≥44 px and fit the 320×568 acceptance viewport without obscuring the terminal result flow.
+- Headless acceptance may replace only the platform-owned Web Share / clipboard primitive with a deterministic same-origin test seam after the real production document has initialized. The gate must still click the real production send control, execute the real `deliverBetaFeedback` path, inspect the real exported payload and clean URL, and reach 3/3 only from the resulting real `shared` / `copied` receipt. It must never set feedback/completion datasets directly or bypass the explicit player-triggered privacy contract.
 
 ## Closed Beta release-readiness UI contract
 

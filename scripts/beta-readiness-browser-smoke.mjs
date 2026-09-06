@@ -56,6 +56,8 @@ try {
     ['data-beta-readiness-next-repeat="pass"', 'real direct-practice result did not preserve same-opponent retry'],
     ['data-beta-readiness-next-feedback="pass"', 'real repeat-practice comparison did not route into explicit feedback'],
     ['data-beta-readiness-next-feedback-navigation="true"', 'result CTA did not open the real feedback panel'],
+    ['data-beta-readiness-next-platform-seam="true"', 'headless gate did not install the bounded Web Share platform seam'],
+    ['data-beta-readiness-next-feedback-payload="true"', 'real production feedback payload did not reach the platform seam intact'],
     ['data-beta-readiness-next-done="true"', 'real explicit feedback export did not complete 3/3'],
     ['data-beta-readiness-next-challenge-quiet="true"', 'result CTA leaked into a real standard challenge terminal'],
     ['data-beta-readiness-next-daily-quiet="true"', 'result CTA leaked into a real 今日陣 terminal'],
@@ -66,7 +68,7 @@ try {
     if (!dom.includes(marker)) throw new Error(`${message}. DOM:\n${dom.slice(0, 9000)}`);
   }
 
-  console.log(`Closed Beta production next-test browser smoke passed with ${browser}: real campaign result → Ronin retry/comparison → feedback/export → challenge + 今日陣 quietness at 320×568`);
+  console.log(`Closed Beta production next-test browser smoke passed with ${browser}: real campaign result → Ronin retry/comparison → real feedback payload through deterministic Web Share seam → challenge + 今日陣 quietness at 320×568`);
 } finally {
   if (server.exitCode === null && !server.killed) server.kill('SIGTERM');
   if (server.exitCode === null) {
