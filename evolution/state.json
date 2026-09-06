@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 163,
-  "last_action_type": "FEATURE",
-  "last_action": "Incoming exact HEAD 654c9726b105ca0d910b8f7f070dc5605a35c4d2 is terminal green on Actions CI #208 / run 34009302753 and exact-head GitHub Vercel status, Draft PR #1 remains open/Draft/unmerged, main is untouched, unresolved review threads are empty, Preview feedback reports 0 unresolved items and the latest exact-head review reports no actionable P0/P1/P2. Candidate scoring selected a session-only campaign replay objective 23/25 over manual-counter impact recoil 21/25 and a bounded live mastery cue 18/25: it closes the campaign result→retry learning loop using already-authoritative run-analysis facts, diversifies away from the just-modified renderer subsystem, adds no live-combat HUD and keeps persistence/network authority unchanged. Run 163 adds one compact campaign-only 再戰目標 row inside the existing result-analysis card. A defeat asks the next campaign to reach one stage farther (or defeat the Shogun from Stage 4); a completed campaign asks for fewer hits, zero missed counter openings or one bounded Perfect target. The target lives only in module memory, is consumed by the next campaign, is graded truthfully on the following campaign result, stays unchanged when missed, and is hidden from direct practice, 連戰試煉 and 今日陣. A dedicated production-page 320x568 browser gate proves offer→retry completion→next target plus challenge isolation and in-bounds composition.",
-  "last_commit": "654c9726b105ca0d910b8f7f070dc5605a35c4d2",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the campaign replay objective implementation. No further feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 164,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD 1639359f08d3482b1167c6bc2b26639ccb624d58 has exact-head GitHub Vercel success, Draft PR #1 remains open/Draft/unmerged, main is untouched and unresolved review threads are empty, but Actions CI #209 / run 34012224087 failed after npm test 189/189 and every preceding browser gate passed. The failing real 320x568 Closed Beta production path had already reached the first Ronin-practice terminal; it sampled the observer-owned 下一步 state immediately after result-modal visibility and before the beta-readiness MutationObserver was guaranteed to publish the same-opponent retry action. Run 164 keeps all production/runtime behavior and all semantic assertions unchanged, but makes that one observer-dependent acceptance edge wait fail-closed for the exact existing 1/3 + repeat-practice + restart-button + visible 再練 state for up to 1800 ms, matching the already-established wait pattern used by the second-practice feedback transition. This repairs the autonomous delivery gate rather than weakening it: wrong target, stale progress, missing CTA or missing same-opponent copy still fail. No combat, renderer, input, balance, persistence, privacy, feedback payload, navigation or network product code changes.",
+  "last_commit": "1639359f08d3482b1167c6bc2b26639ccb624d58",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the Closed Beta observer-timing acceptance repair. No feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "campaign_replay_objective_pending_exact_head",
-    "last_observed_head": "654c9726b105ca0d910b8f7f070dc5605a35c4d2",
-    "incoming_ci_run": 34009302753,
-    "incoming_ci_result": "success",
+    "status": "closed_beta_observer_timing_fix_pending_exact_head",
+    "last_observed_head": "1639359f08d3482b1167c6bc2b26639ccb624d58",
+    "incoming_ci_run": 34012224087,
+    "incoming_ci_result": "initial exact-head run failed only at first direct-practice Closed Beta next-step settlement after 189/189 Node tests and all earlier browser gates passed; same-SHA rerun was used as supplemental flake diagnosis but does not waive the blocker repair",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 163 is a result-only campaign replay slice. It mirrors authoritative run-analysis events into a separate in-memory observer, never mutates CombatEngine authority, and renders one compact line inside the existing result-analysis card. The production 320x568 gate must prove a Stage-1 defeat offers 打入第2關, the next campaign reaching Stage 2 grades that target achieved and offers 打入第3關, and challenge mode hides/clears the campaign-only line. No storage, identifier, analytics, backend or network API is introduced."
+    "note": "Run 164 is a delivery-gate-only repair. The real production document, real campaign -> Ronin-practice route, real beta-readiness MutationObserver, real next button and exact same-opponent retry assertions remain mandatory. Only the test observation point changes from an immediate synchronous sample after result visibility to a bounded wait for the observer-owned state to settle. Production source, game runtime, feedback export, storage and network behavior are unchanged."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,9 +65,9 @@
     }
   },
   "next_candidates": [
+    "ACCEPTANCE: keep the real 320x568 Closed Beta 下一步 production gate fail-closed at every observer-owned result transition; refine only if exact Preview/CI evidence shows another timing race, stale routing, payload/export failure or challenge/今日陣 leakage",
     "ACCEPTANCE: inspect the new campaign 再戰目標 at 320x568 together with 關鍵一刻, 四向防守, Closed Beta 下一步/回報/分享 and the restart button; refine only if exact Preview/CI evidence shows wrapping, stale target carry, route leakage, misleading progression or terminal overlap",
     "ACCEPTANCE: inspect the normal/Perfect/guard-break enemy parry recoil at 320x568 together with authored Attack* recovery, pressured-guard body language, blade trajectory and actual-Sword afterimages; refine only if exact Preview/CI evidence shows excessive motion, blade-axis drift, unclear escalation or counter/late-recovery leakage",
-    "ACCEPTANCE: keep the Closed Beta 下一步 production-page gate fail-closed at 320x568; refine only if exact Preview/CI evidence shows timing flake, overlap, stale routing, payload/export failure or challenge/今日陣 leakage",
     "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
     "FEATURE: consider a manual-counter impact reaction only if concrete Preview evidence shows successful counters still lack physical contact feel after the existing parry-recoil pass; avoid another renderer-only iteration without evidence",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
