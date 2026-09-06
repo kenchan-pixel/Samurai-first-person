@@ -13,6 +13,7 @@ export const ENEMIES = Object.freeze([
     name: 'Ashigaru Scout',
     title: 'Gate of Reeds',
     maxHp: 3,
+    postureMax: 3,
     gapMs: 620,
     recoveryMs: 920,
     perfectWindowMs: 105,
@@ -30,6 +31,7 @@ export const ENEMIES = Object.freeze([
     name: 'Wandering Ronin',
     title: 'Moonlit Courtyard',
     maxHp: 5,
+    postureMax: 4,
     gapMs: 470,
     recoveryMs: 760,
     perfectWindowMs: 82,
@@ -48,6 +50,7 @@ export const ENEMIES = Object.freeze([
     name: 'Oni Guard',
     title: 'Ember Keep',
     maxHp: 8,
+    postureMax: 5,
     gapMs: 390,
     recoveryMs: 680,
     perfectWindowMs: 68,
@@ -70,6 +73,15 @@ const OPPOSITE = Object.freeze({
   [Direction.BOTTOM]: Direction.TOP,
   [Direction.LEFT]: Direction.RIGHT,
 });
+
+const PARRY_LEAD_BUFFER_MIN_MS = 60;
+const PARRY_LEAD_BUFFER_MAX_MS = 110;
+
+function parryLeadBufferMs(enemy) {
+  const perfectWindowMs = Number(enemy?.perfectWindowMs);
+  const derived = Number.isFinite(perfectWindowMs) ? Math.round(perfectWindowMs + 12) : 72;
+  return Math.max(PARRY_LEAD_BUFFER_MIN_MS, Math.min(PARRY_LEAD_BUFFER_MAX_MS, derived));
+}
 
 export function oppositeDirection(direction) {
   return OPPOSITE[direction] ?? null;
@@ -114,18 +126,22 @@ function cloneAttack(definition) {
     parried: false,
     perfect: false,
     counterUsed: false,
+    guardBroken: false,
     strikeStartedAt: 0,
+    bufferedParryDirection: null,
+    bufferedParryCommittedAt: 0,
   };
 }
 
 export class CombatEngine {
-  constructor({ enemies = ENEMIES, playerMaxHp = 5 } = {}) {
+  constructor({ enemies = ENEMIES, playerMaxHp = 5, playerPostureMax = 4 } = {}) {
     if (!Array.isArray(enemies) || enemies.length === 0) {
       throw new TypeError('CombatEngine requires at least one enemy.');
     }
 
     this.enemies = enemies;
     this.playerMaxHp = playerMaxHp;
+    this.playerPostureMax = playerPostureMax;
     this.events = [];
     this.started = false;
     this.reset(0);
@@ -134,8 +150,10 @@ export class CombatEngine {
   reset(now = 0) {
     this.started = false;
     this.playerHp = this.playerMaxHp;
+    this.playerPosture = 0;
     this.enemyIndex = 0;
     this.enemyHp = this.enemies[0].maxHp;
+    this.enemyPosture = 0;
     this.attackCursor = 0;
     this.currentAttack = null;
     this.phase = 'ready';
@@ -150,12 +168,17 @@ export class CombatEngine {
   start(now = 0) {
     this.started = true;
     this.playerHp = this.playerMaxHp;
+    this.playerPosture = 0;
     this.enemyIndex = 0;
     this.#startStage(0, now);
   }
 
   get enemy() {
     return this.enemies[this.enemyIndex];
+  }
+
+  get enemyPostureMax() {
+    return Number.isFinite(this.enemy?.postureMax) && this.enemy.postureMax > 0 ? this.enemy.postureMax : 4;
   }
 
   update(now) {
@@ -201,6 +224,38 @@ export class CombatEngine {
       return { accepted: false, reason: 'invalid-input' };
     }
 
+    if (this.phase === 'telegraph' && this.currentAttack) {
+      const remainingMs = this.phaseEndsAt - now;
+      const withinLeadBuffer =
+        remainingMs >= 0 &&
+        remainingMs <= parryLeadBufferMs(this.enemy) &&
+        this.currentAttack.feintResolved;
+
+      if (!withinLeadBuffer) {
+        this.combo = 0;
+        this.#emit('parry-miss', { direction, reason: 'wrong-time' });
+        return { accepted: false, reason: 'wrong-time' };
+      }
+
+      if (direction !== this.currentAttack.direction) {
+        this.combo = 0;
+        this.#emit('parry-miss', {
+          direction,
+          expected: this.currentAttack.direction,
+          reason: 'wrong-direction',
+        });
+        return { accepted: false, reason: 'wrong-direction' };
+      }
+
+      if (this.currentAttack.bufferedParryDirection) {
+        return { accepted: false, reason: 'already-buffered' };
+      }
+
+      this.currentAttack.bufferedParryDirection = direction;
+      this.currentAttack.bufferedParryCommittedAt = now;
+      return { accepted: true, perfect: false, buffered: true };
+    }
+
     if (this.phase !== 'strike' || !this.currentAttack) {
       this.combo = 0;
       this.#emit('parry-miss', { direction, reason: 'wrong-time' });
@@ -218,20 +273,34 @@ export class CombatEngine {
     }
 
     const elapsed = Math.max(0, now - this.currentAttack.strikeStartedAt);
-    const perfect = elapsed <= this.enemy.perfectWindowMs;
+    const buffered = Boolean(this.currentAttack.bufferedParryDirection);
+    const perfect = !buffered && elapsed <= this.enemy.perfectWindowMs;
     this.currentAttack.parried = true;
     this.currentAttack.perfect = perfect;
+    this.playerPosture = Math.max(0, this.playerPosture - 1);
+    this.enemyPosture = Math.min(this.enemyPostureMax, this.enemyPosture + (perfect ? 2 : 1));
+    this.currentAttack.guardBroken = this.enemyPosture >= this.enemyPostureMax;
     this.combo += 1;
     this.score += perfect ? 180 : 100;
     this.phase = 'recovery';
     this.phaseStartedAt = now;
-    this.phaseEndsAt = now + this.enemy.recoveryMs;
+    this.phaseEndsAt = now + Math.round(this.enemy.recoveryMs * (this.currentAttack.guardBroken ? 1.45 : 1));
     this.#emit(perfect ? 'perfect-parry' : 'parry', {
       direction,
       perfect,
       combo: this.combo,
+      enemyPosture: this.enemyPosture,
+      enemyPostureMax: this.enemyPostureMax,
     });
-    return { accepted: true, perfect };
+    if (this.currentAttack.guardBroken) {
+      this.score += 250;
+      this.#emit('enemy-guard-break', {
+        enemyId: this.enemy.id,
+        enemyPosture: this.enemyPosture,
+        enemyPostureMax: this.enemyPostureMax,
+      });
+    }
+    return { accepted: true, perfect, ...(buffered ? { buffered: true } : {}) };
   }
 
   attemptAttack(direction, now) {
@@ -254,15 +323,18 @@ export class CombatEngine {
     }
 
     this.currentAttack.counterUsed = true;
-    const baseDamage = this.currentAttack.parried ? 1 : 0;
+    const baseDamage = 1;
     const perfectBonus = this.currentAttack.perfect ? 1 : 0;
     const directionalBonus = direction === oppositeDirection(this.currentAttack.direction) ? 1 : 0;
-    const damage = Math.max(1, baseDamage + perfectBonus + directionalBonus);
+    const guardBreakBonus = this.currentAttack.guardBroken ? 2 : 0;
+    const damage = Math.max(1, baseDamage + perfectBonus + directionalBonus + guardBreakBonus);
+    if (this.currentAttack.guardBroken) this.enemyPosture = 0;
     this.enemyHp = Math.max(0, this.enemyHp - damage);
     this.score += damage * 120 + this.combo * 15;
     this.#emit('counter', {
       direction,
       damage,
+      guardBroken: this.currentAttack.guardBroken,
       enemyHp: this.enemyHp,
       maxEnemyHp: this.enemy.maxHp,
     });
@@ -292,6 +364,7 @@ export class CombatEngine {
           parried: this.currentAttack.parried,
           perfect: this.currentAttack.perfect,
           counterUsed: this.currentAttack.counterUsed,
+          guardBroken: this.currentAttack.guardBroken,
         }
       : null;
 
@@ -301,11 +374,15 @@ export class CombatEngine {
       phaseProgress: this.phaseProgress(now),
       playerHp: this.playerHp,
       playerMaxHp: this.playerMaxHp,
+      playerPosture: this.playerPosture,
+      playerPostureMax: this.playerPostureMax,
       enemyIndex: this.enemyIndex,
       stage: this.enemyIndex + 1,
       stageCount: this.enemies.length,
       enemy: this.enemy,
       enemyHp: this.enemyHp,
+      enemyPosture: this.enemyPosture,
+      enemyPostureMax: this.enemyPostureMax,
       attack,
       score: this.score,
       combo: this.combo,
@@ -319,6 +396,8 @@ export class CombatEngine {
   #startStage(index, now) {
     this.enemyIndex = index;
     this.enemyHp = this.enemy.maxHp;
+    this.enemyPosture = 0;
+    this.playerPosture = 0;
     this.attackCursor = 0;
     this.currentAttack = null;
     this.phase = 'stage-intro';
@@ -347,6 +426,7 @@ export class CombatEngine {
   }
 
   #startStrike(now) {
+    const bufferedParryDirection = this.currentAttack.bufferedParryDirection;
     this.currentAttack.displayedDirection = this.currentAttack.direction;
     this.currentAttack.feintResolved = true;
     this.currentAttack.strikeStartedAt = now;
@@ -358,15 +438,25 @@ export class CombatEngine {
       damage: this.currentAttack.damage,
       heavy: Boolean(this.currentAttack.heavy),
     });
+    if (bufferedParryDirection) this.attemptParry(bufferedParryDirection, now);
   }
 
   #resolveMissedStrike(now) {
-    this.playerHp = Math.max(0, this.playerHp - this.currentAttack.damage);
+    const postureGain = this.currentAttack.heavy ? 2 : 1;
+    this.playerPosture = Math.min(this.playerPostureMax, this.playerPosture + postureGain);
+    const guardBroken = this.playerPosture >= this.playerPostureMax;
+    const damage = this.currentAttack.damage + (guardBroken ? 1 : 0);
+    if (guardBroken) this.playerPosture = 0;
+    this.playerHp = Math.max(0, this.playerHp - damage);
     this.combo = 0;
     this.#emit('player-hit', {
-      damage: this.currentAttack.damage,
+      damage,
       direction: this.currentAttack.direction,
       playerHp: this.playerHp,
+      guardBroken,
+      postureGain,
+      playerPosture: this.playerPosture,
+      playerPostureMax: this.playerPostureMax,
     });
 
     if (this.playerHp <= 0) {
@@ -383,6 +473,9 @@ export class CombatEngine {
   }
 
   #finishRecovery(now) {
+    if (this.currentAttack?.guardBroken && !this.currentAttack.counterUsed) {
+      this.enemyPosture = Math.floor(this.enemyPostureMax / 2);
+    }
     this.currentAttack = null;
     this.phase = 'gap';
     this.phaseStartedAt = now;

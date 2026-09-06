@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <style>
+    :root{--safe-top:0px;--safe-right:0px;--safe-bottom:0px;--safe-left:0px}
+    html,body{margin:0;width:100%;height:100%;background:#090a0d}
+    #app{position:relative;width:100vw;height:100vh;overflow:hidden}
+    #start-screen{position:absolute;inset:0}
+    #start-button{position:absolute;left:50%;top:60%;transform:translateX(-50%)}
+  </style>
+</head>
+<body>
+  <main id="app">
+    <section id="start-screen"><button id="start-button" type="button">拔刀</button></section>
+  </main>
+  <script type="module">
+    import { CombatEngine, Direction } from '../src/game-core.js';
+    import '../src/readability-mode.js';
+
+    const root = document.documentElement;
+    const toggle = document.querySelector('#blade-readability-toggle');
+    const engine = new CombatEngine();
+    const drain = () => engine.drainEvents();
+
+    toggle?.click();
+    const toggleOn = root.dataset.readabilityMode === 'on' && toggle?.getAttribute('aria-pressed') === 'true';
+
+    engine.start(0);
+    drain();
+    engine.update(1550);
+    drain();
+    const telegraphTop = root.dataset.readabilityDirection === Direction.TOP && root.dataset.readabilityUrgent === 'false';
+
+    engine.update(2430);
+    drain();
+    const strikeDanger = root.dataset.readabilityDirection === Direction.TOP && root.dataset.readabilityUrgent === 'true';
+
+    const parry = engine.attemptParry(Direction.TOP, 2440);
+    drain();
+    const clearedAfterParry = parry.accepted === true && root.dataset.readabilityDirection === 'none';
+
+    const layer = document.querySelector('#blade-read-layer');
+    const railCount = document.querySelectorAll('.blade-read-rail').length;
+    const pointerSafe = layer && getComputedStyle(layer).pointerEvents === 'none';
+    const toggleRect = toggle?.getBoundingClientRect();
+    const layout = Boolean(toggleRect && toggleRect.left >= 0 && toggleRect.top >= 0 && toggleRect.right <= innerWidth && toggleRect.bottom <= innerHeight);
+
+    root.dataset.readabilityToggle = String(toggleOn);
+    root.dataset.readabilityDirectionFlow = String(telegraphTop);
+    root.dataset.readabilityDanger = String(strikeDanger);
+    root.dataset.readabilityClear = String(clearedAfterParry);
+    root.dataset.readabilityPointerSafe = String(pointerSafe && railCount === 4);
+    root.dataset.readabilityLayout = layout ? 'pass' : 'fail';
+    root.dataset.readabilityIntegration = toggleOn && telegraphTop && strikeDanger && clearedAfterParry && pointerSafe && railCount === 4 && layout ? 'pass' : 'fail';
+  </script>
+</body>
+</html>

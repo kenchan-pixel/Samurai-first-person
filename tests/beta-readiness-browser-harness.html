@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Closed Beta production next-test acceptance</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+    #game{display:block;width:100vw;height:100vh;border:0}
+  </style>
+</head>
+<body>
+  <iframe id="game" src="/" title="Blade Reversal production document"></iframe>
+  <script type="module">
+    const root = document.documentElement;
+    const frame = document.querySelector('#game');
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    let capturedFeedbackPayload = null;
+
+    async function waitFor(check, timeout = 12000) {
+      const started = performance.now();
+      while (performance.now() - started < timeout) {
+        try {
+          if (check()) return true;
+        } catch {
+          // The production document may still be swapping module-owned UI state.
+        }
+        await sleep(25);
+      }
+      return false;
+    }
+
+    function mark(name, value) {
+      root.dataset[name] = String(Boolean(value));
+    }
+
+    function visible(node) {
+      return Boolean(node && !node.hidden && node.getClientRects().length);
+    }
+
+    function visibilityDiagnostic(node) {
+      if (!node) return 'node=missing';
+      const view = node.ownerDocument?.defaultView;
+      const style = view?.getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      const ancestors = [];
+      let current = node.parentElement;
+      while (current && ancestors.length < 5) {
+        const currentStyle = view?.getComputedStyle(current);
+        ancestors.push([
+          current.id || current.tagName,
+          current.hidden ? 'hidden' : 'shown',
+          currentStyle?.display || 'na',
+          currentStyle?.visibility || 'na',
+          currentStyle?.opacity || 'na',
+        ].join(':'));
+        current = current.parentElement;
+      }
+      const fixed = (value) => Number.isFinite(value) ? value.toFixed(1) : 'na';
+      return [
+        `hidden=${node.hidden}`,
+        `rects=${node.getClientRects().length}`,
+        `rect=${fixed(rect.left)},${fixed(rect.top)},${fixed(rect.width)},${fixed(rect.height)}`,
+        `display=${style?.display || 'na'}`,
+        `visibility=${style?.visibility || 'na'}`,
+        `opacity=${style?.opacity || 'na'}`,
+        `pointer=${style?.pointerEvents || 'na'}`,
+        `ancestors=${ancestors.join('>') || 'none'}`,
+      ].join('|');
+    }
+
+    function rectInsideViewport(node) {
+      if (!visible(node)) return false;
+      const rect = node.getBoundingClientRect();
+      return rect.left >= -0.5 && rect.right <= 320.5 && rect.top >= -0.5 && rect.bottom <= 568.5;
+    }
+
+    function overlap(a, b) {
+      const ar = a.getBoundingClientRect();
+      const br = b.getBoundingClientRect();
+      return !(ar.right <= br.left || br.right <= ar.left || ar.bottom <= br.top || br.bottom <= ar.top);
+    }
+
+    function installDeterministicFeedbackExport(windowRef) {
+      const navigatorRef = windowRef?.navigator;
+      if (!navigatorRef) return false;
+      try {
+        Object.defineProperty(navigatorRef, 'share', {
+          configurable: true,
+          value: async (payload) => {
+            capturedFeedbackPayload = {
+              title: String(payload?.title || ''),
+              text: String(payload?.text || ''),
+              url: String(payload?.url || ''),
+            };
+          },
+        });
+        return typeof navigatorRef.share === 'function';
+      } catch {
+        return false;
+      }
+    }
+
+    async function waitForTerminal(doc, expectedMode, timeout = 14000) {
+      return waitFor(() =>
+        doc.documentElement.dataset.runMode === expectedMode &&
+        doc.querySelector('#result-screen')?.classList.contains('modal--visible')
+      , timeout);
+    }
+
+    async function waitForPracticeRepeatAction(doc, next, expectedMode, timeout = 16000) {
+      return waitFor(() =>
+        doc.documentElement.dataset.runMode === expectedMode &&
+        doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.documentElement.dataset.betaReadinessPracticeReconcile === 'terminal-retry-match' &&
+        doc.documentElement.dataset.betaReadinessProgress === '1/3' &&
+        doc.documentElement.dataset.betaReadinessNextStep === 'repeat-practice' &&
+        doc.documentElement.dataset.betaReadinessNextTarget === 'restart-button' &&
+        visible(next) &&
+        next.textContent.includes('再練')
+      , timeout);
+    }
+
+    async function returnHomeFromActiveCampaign(doc, label) {
+      const pauseButton = doc.querySelector('#pause-button');
+      if (!pauseButton) throw new Error(`${label}: production Pause control missing`);
+      pauseButton.click();
+      const paused = await waitFor(() => !doc.querySelector('#pause-screen')?.hidden, 1200);
+      if (!paused) throw new Error(`${label}: could not enter production Pause`);
+      doc.querySelector('#pause-home-button')?.click();
+      const home = await waitFor(() => doc.querySelector('#start-screen')?.classList.contains('modal--visible'), 1500);
+      if (!home) throw new Error(`${label}: Pause → Home did not restore the production start surface`);
+    }
+
+    async function handoffResultToHome(doc, selector, label) {
+      const action = doc.querySelector(selector);
+      if (!action) throw new Error(`${label}: result handoff control missing`);
+      action.click();
+      const campaignActive = await waitFor(() =>
+        doc.documentElement.dataset.runMode === 'campaign' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        !doc.querySelector('#start-screen')?.classList.contains('modal--visible')
+      , 2200);
+      if (!campaignActive) throw new Error(`${label}: result handoff did not restore active campaign`);
+      await sleep(80);
+      await returnHomeFromActiveCampaign(doc, label);
+    }
+
+    async function run() {
+      const loaded = await waitFor(() => {
+        const doc = frame.contentDocument;
+        if (!doc || doc.readyState !== 'complete') return false;
+        const appRoot = doc.documentElement;
+        return (
+          appRoot.dataset.startReady === 'true' &&
+          appRoot.dataset.practiceModeReady === 'true' &&
+          appRoot.dataset.challengeModeReady === 'true' &&
+          appRoot.dataset.dailyChallengeReady === 'true' &&
+          appRoot.dataset.resultFeedbackReady === 'true' &&
+          appRoot.dataset.resultShareReady === 'true' &&
+          appRoot.dataset.betaReadinessReady === 'true' &&
+          doc.querySelector('#start-button') &&
+          doc.querySelector('#practice-ronin-button') &&
+          doc.querySelector('#challenge-button') &&
+          doc.querySelector('#daily-challenge-button') &&
+          doc.querySelector('#beta-next-test-button')
+        );
+      }, 6000);
+      if (!loaded) throw new Error('production app did not initialize the required Closed Beta controls');
+
+      const doc = frame.contentDocument;
+      const appRoot = doc.documentElement;
+      mark('betaReadinessNextProductionDocument', frame.contentWindow?.location?.pathname === '/');
+      mark('betaReadinessNextViewport', innerWidth === 320 && innerHeight === 568 && frame.getBoundingClientRect().width === 320 && frame.getBoundingClientRect().height === 568);
+      if (appRoot.dataset.betaReadinessProgress !== '0/3') throw new Error('production session did not begin at Closed Beta 0/3');
+
+      // Real campaign terminal: no synthetic modal/data-run-mode mutation is allowed here.
+      doc.querySelector('#start-button').click();
+      const campaignStarted = await waitFor(() =>
+        appRoot.dataset.runMode === 'campaign' &&
+        !doc.querySelector('#start-screen')?.classList.contains('modal--visible')
+      , 2200);
+      if (!campaignStarted) throw new Error('real campaign did not start through the production Start control');
+      if (!await waitForTerminal(doc, 'campaign')) throw new Error('real campaign did not reach a production terminal result');
+
+      const next = doc.querySelector('#beta-next-test-button');
+      const feedback = doc.querySelector('#result-feedback-button');
+      const share = doc.querySelector('#result-share-button');
+      const resultContent = doc.querySelector('#result-screen .modal__content--result');
+      const firstActionOk =
+        appRoot.dataset.betaReadinessProgress === '1/3' &&
+        appRoot.dataset.betaReadinessNextStep === 'repeat-practice' &&
+        appRoot.dataset.betaReadinessNextTarget === 'practice-ronin-button' &&
+        visible(next) && next.textContent.includes('修行');
+      root.dataset.betaReadinessNextFirst = firstActionOk ? 'pass' : 'fail';
+      if (!firstActionOk) throw new Error('real campaign terminal did not guide into the existing Ronin practice route');
+
+      const touchOk = [next, feedback, share].every((node) => node.getBoundingClientRect().height >= 44);
+      const layoutOk =
+        [next, feedback, share, resultContent].every(rectInsideViewport) &&
+        !overlap(next, feedback) && !overlap(next, share) && !overlap(feedback, share);
+      mark('betaReadinessNextTouch', touchOk);
+      root.dataset.betaReadinessNextLayout = layoutOk ? 'pass' : 'fail';
+      if (!touchOk || !layoutOk) throw new Error('production 下一步/回報/分享 controls do not compose safely at 320×568');
+
+      next.click();
+      const practiceLaunch = await waitFor(() =>
+        appRoot.dataset.betaReadinessNextNavigation === 'practice-ronin-button' &&
+        appRoot.dataset.runMode === 'ronin-practice' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 2 / 4')
+      , 2400);
+      mark('betaReadinessNextPracticeNavigation', practiceLaunch);
+      if (!practiceLaunch) throw new Error('production 下一步 · 修行 did not invoke the real Ronin practice route');
+
+      // The terminal receipt and the player-visible retry CTA settle through separate DOM/layout
+      // work. Treat the complete player-facing retry action as one fail-closed predicate instead
+      // of sampling geometry once immediately after the semantic reconciliation receipt.
+      const repeatActionOk = await waitForPracticeRepeatAction(doc, next, 'ronin-practice');
+      root.dataset.betaReadinessNextRepeat = repeatActionOk ? 'pass' : 'fail';
+      if (!repeatActionOk) {
+        const diagnostic = visibilityDiagnostic(next);
+        root.dataset.betaReadinessNextRepeatVisibility = diagnostic.slice(0, 900);
+        throw new Error(`first real direct-practice result did not settle the complete same-opponent retry action; ${diagnostic}`);
+      }
+
+      next.click();
+      const retryStarted = await waitFor(() =>
+        appRoot.dataset.betaReadinessNextNavigation === 'restart-button' &&
+        appRoot.dataset.runMode === 'ronin-practice' &&
+        !doc.querySelector('#result-screen')?.classList.contains('modal--visible') &&
+        doc.querySelector('#stage-label')?.textContent?.includes('STAGE 2 / 4')
+      , 2400);
+      if (!retryStarted) throw new Error('production 下一步 · 再練 did not reuse the real retry control');
+
+      if (!await waitForTerminal(doc, 'ronin-practice')) throw new Error('second real Ronin practice did not reach terminal comparison result');
+      const feedbackActionOk = await waitFor(() =>
+        appRoot.dataset.practiceProgressState === 'comparison' &&
+        appRoot.dataset.betaReadinessProgress === '2/3' &&
+        appRoot.dataset.betaReadinessNextStep === 'feedback' &&
+        appRoot.dataset.betaReadinessNextTarget === 'result-feedback-button' &&
+        visible(next) && next.textContent.includes('回報')
+      , 1800);
+      root.dataset.betaReadinessNextFeedback = feedbackActionOk ? 'pass' : 'fail';
+      if (!feedbackActionOk) throw new Error('real repeat-practice comparison did not guide into explicit feedback');
+
+      next.click();
+      const feedbackPanel = doc.querySelector('#result-feedback-panel');
+      const feedbackNavigationOk = await waitFor(() =>
+        appRoot.dataset.betaReadinessNextNavigation === 'result-feedback-button' &&
+        visible(feedbackPanel)
+      , 1200);
+      mark('betaReadinessNextFeedbackNavigation', feedbackNavigationOk);
+      if (!feedbackNavigationOk) throw new Error('production 下一步 · 回報 did not open the existing feedback panel');
+
+      // Headless Chrome does not provide a reliable OS share sheet/clipboard. Replace only
+      // that platform-owned primitive; the production send button, payload builder,
+      // deliverBetaFeedback path and beta-completion observer remain untouched.
+      const platformSeamOk = installDeterministicFeedbackExport(frame.contentWindow);
+      mark('betaReadinessNextPlatformSeam', platformSeamOk);
+      if (!platformSeamOk) throw new Error('could not install deterministic Web Share platform seam');
+      const note = doc.querySelector('[data-feedback-note]');
+      if (!note) throw new Error('production feedback note field missing');
+      note.value = '320×568 平台匯出驗證';
+      note.dispatchEvent(new Event('input', { bubbles: true }));
+
+      doc.querySelector('[data-feedback-send]')?.click();
+      const exported = await waitFor(() => appRoot.dataset.resultFeedbackLast === 'shared', 1800);
+      if (!exported) throw new Error('explicit production feedback export did not complete through the deterministic Web Share seam');
+      const expectedUrl = new URL('/', frame.contentWindow.location.href).toString();
+      const payloadOk = Boolean(
+        capturedFeedbackPayload &&
+        capturedFeedbackPayload.title.includes('體驗意見') &&
+        capturedFeedbackPayload.text.includes('玩家補充：320×568 平台匯出驗證') &&
+        capturedFeedbackPayload.url === expectedUrl
+      );
+      mark('betaReadinessNextFeedbackPayload', payloadOk);
+      if (!payloadOk) throw new Error('real production feedback payload did not reach the deterministic platform seam intact');
+
+      const doneOk = await waitFor(() =>
+        appRoot.dataset.betaReadinessProgress === '3/3' &&
+        appRoot.dataset.betaReadinessComplete === 'true' &&
+        appRoot.dataset.betaReadinessNextStep === 'done' &&
+        next.disabled === true &&
+        next.textContent.includes('3/3')
+      , 1200);
+      mark('betaReadinessNextDone', doneOk);
+      if (!doneOk) throw new Error('real explicit feedback export did not close the production tester loop at 3/3');
+      doc.querySelector('[data-feedback-close]')?.click();
+
+      await handoffResultToHome(doc, '#ronin-practice-campaign', 'post-practice');
+
+      // Real standard challenge terminal must remain free of the Closed Beta CTA.
+      doc.querySelector('#challenge-button').click();
+      const challengeStarted = await waitFor(() => appRoot.dataset.runMode === 'challenge' && appRoot.dataset.dailyChallengeActive !== 'true', 2200);
+      if (!challengeStarted) throw new Error('real standard challenge did not start');
+      if (!await waitForTerminal(doc, 'challenge')) throw new Error('real standard challenge did not reach terminal result');
+      const challengeQuiet = !visible(next) && appRoot.dataset.betaReadinessNextVisible === 'false';
+      mark('betaReadinessNextChallengeQuiet', challengeQuiet);
+      if (!challengeQuiet) throw new Error('Closed Beta 下一步 leaked into a real standard challenge terminal');
+
+      await handoffResultToHome(doc, '#challenge-campaign-button', 'post-challenge');
+
+      // Real daily challenge terminal must also remain quiet.
+      doc.querySelector('#daily-challenge-button').click();
+      const dailyStarted = await waitFor(() =>
+        appRoot.dataset.runMode === 'challenge' && appRoot.dataset.dailyChallengeActive === 'true'
+      , 2200);
+      if (!dailyStarted) throw new Error('real 今日陣 did not start');
+      if (!await waitForTerminal(doc, 'challenge')) throw new Error('real 今日陣 did not reach terminal result');
+      const dailyQuiet = !visible(next) && appRoot.dataset.betaReadinessNextVisible === 'false';
+      mark('betaReadinessNextDailyQuiet', dailyQuiet);
+      if (!dailyQuiet) throw new Error('Closed Beta 下一步 leaked into a real 今日陣 terminal');
+
+      const passed = [
+        'betaReadinessNextProductionDocument',
+        'betaReadinessNextViewport',
+        'betaReadinessNextPracticeNavigation',
+        'betaReadinessNextTouch',
+        'betaReadinessNextFeedbackNavigation',
+        'betaReadinessNextPlatformSeam',
+        'betaReadinessNextFeedbackPayload',
+        'betaReadinessNextDone',
+        'betaReadinessNextChallengeQuiet',
+        'betaReadinessNextDailyQuiet',
+      ].every((key) => root.dataset[key] === 'true') &&
+        root.dataset.betaReadinessNextFirst === 'pass' &&
+        root.dataset.betaReadinessNextRepeat === 'pass' &&
+        root.dataset.betaReadinessNextFeedback === 'pass' &&
+        root.dataset.betaReadinessNextLayout === 'pass';
+      root.dataset.betaReadinessNextBrowser = passed ? 'pass' : 'fail';
+    }
+
+    run().catch((error) => {
+      console.error(error);
+      root.dataset.betaReadinessNextBrowser = 'fail';
+      root.dataset.betaReadinessNextError = String(error?.message || error).slice(0, 1000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Training recommendation browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="start-screen" class="modal modal--visible">
+      <div class="modal__content">
+        <h1>Blade Reversal</h1>
+        <button id="start-button" class="primary-button" type="button">拔刀</button>
+      </div>
+    </section>
+    <section id="result-screen" class="modal" aria-live="assertive">
+      <div id="result-content" class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">DUEL COMPLETE</p>
+        <h2 id="result-title">勝利</h2>
+        <p id="result-summary">等待測試。</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">0</strong></div>
+        <button id="restart-button" class="primary-button" type="button">重新挑戰</button>
+      </div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    import '../src/mastery-overlay.js';
+    import '../src/practice-mode.js';
+    import '../src/training-recommendation.js';
+    import { CombatEngine, Direction, ENEMIES } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE } from '../src/boss-encounter.js';
+
+    const BEST_KEY = 'blade-reversal-mastery-v1';
+    const root = document.documentElement;
+    const startScreen = document.querySelector('#start-screen');
+    const resultScreen = document.querySelector('#result-screen');
+    const startButton = document.querySelector('#start-button');
+    const restartButton = document.querySelector('#restart-button');
+    const errorNode = document.querySelector('#harness-error');
+    const combat = new CombatEngine({ enemies: [...ENEMIES, BOSS_PHASE_ONE] });
+    let now = 1000;
+
+    const flush = async () => {
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    };
+
+    function begin(reset = false) {
+      if (reset) combat.reset(now);
+      now += 1000;
+      startScreen.classList.remove('modal--visible');
+      resultScreen.classList.remove('modal--visible');
+      combat.start(now);
+    }
+
+    startButton.addEventListener('click', () => begin(false));
+    restartButton.addEventListener('click', () => begin(true));
+
+    function drainWithTerminalUi() {
+      const events = combat.drainEvents();
+      if (events.some((event) => event.type === 'victory' || event.type === 'defeat')) {
+        resultScreen.classList.add('modal--visible');
+      }
+      return events;
+    }
+
+    async function forceStageClear(stage, { weaken = false } = {}) {
+      if (combat.enemyIndex !== stage - 1) throw new Error(`expected stage ${stage}, got ${combat.enemyIndex + 1}`);
+      if (weaken) {
+        for (let hit = 0; hit < 3; hit += 1) {
+          combat.events.push({ type: 'strike', detail: { direction: Direction.LEFT, stage } });
+          combat.events.push({ type: 'player-hit', detail: { direction: Direction.LEFT, damage: 1, stage } });
+        }
+        drainWithTerminalUi();
+      }
+      const enemyId = combat.enemy.id;
+      combat.enemyHp = 0;
+      combat.phase = 'stage-clear';
+      combat.phaseStartedAt = now + 10;
+      combat.phaseEndsAt = now + 20;
+      combat.events.push({ type: 'enemy-defeated', detail: { enemyId, stage } });
+      now += 20;
+      combat.update(now);
+      const events = drainWithTerminalUi();
+      await flush();
+      return events;
+    }
+
+    try {
+      localStorage.removeItem(BEST_KEY);
+      startButton.click();
+      const firstStart = drainWithTerminalUi().find((event) => event.type === 'stage-start');
+      if (firstStart?.detail?.stage !== 1) throw new Error('campaign did not start on Stage 1');
+
+      for (let stage = 1; stage <= 4; stage += 1) {
+        const events = await forceStageClear(stage, { weaken: stage === 2 });
+        if (stage < 4) {
+          const next = events.find((event) => event.type === 'stage-start');
+          if (next?.detail?.stage !== stage + 1) throw new Error(`campaign did not advance to Stage ${stage + 1}`);
+        } else if (!events.some((event) => event.type === 'victory')) {
+          throw new Error('campaign did not end in victory');
+        }
+      }
+      await flush();
+
+      const panel = document.querySelector('#training-recommendation');
+      const action = panel?.querySelector('[data-training-action]');
+      const analysis = document.querySelector('#result-analysis');
+      const directions = analysis?.querySelector('[data-analysis-directions]');
+      const recommendationOk =
+        root.dataset.trainingRecommendationReady === 'true' &&
+        root.dataset.trainingRecommendationState === 'recommended' &&
+        root.dataset.trainingRecommendationStage === '2' &&
+        panel?.hidden === false &&
+        action?.textContent === '練浪人' &&
+        panel.textContent.includes('第2關') &&
+        panel.textContent.includes('浪人') &&
+        directions?.hidden === false &&
+        root.dataset.runAnalysisWeakDirection === Direction.LEFT;
+      root.dataset.trainingRecommendationCampaign = String(recommendationOk);
+      if (!recommendationOk) throw new Error('campaign analysis did not recommend the weak Ronin stage with the direction map');
+
+      const layoutNodes = [document.querySelector('#result-content'), analysis, directions, panel, action].filter(Boolean);
+      const layoutOk = layoutNodes.every((node) => {
+        const rect = node.getBoundingClientRect();
+        return rect.left >= -0.5 && rect.right <= innerWidth + 0.5 && rect.top >= -0.5 && rect.bottom <= innerHeight + 0.5;
+      }) && action.getBoundingClientRect().height >= 44;
+      root.dataset.trainingRecommendationLayout = layoutOk ? 'pass' : 'fail';
+      if (!layoutOk) throw new Error('training recommendation plus direction map overflowed 320x568 or lost its 44px action target');
+
+      const campaignBest = localStorage.getItem(BEST_KEY);
+      action.click();
+      const practiceStart = drainWithTerminalUi().find((event) => event.type === 'stage-start');
+      const launchOk =
+        root.dataset.trainingRecommendationLaunched === '2' &&
+        root.dataset.runMode === 'ronin-practice' &&
+        combat.enemy.id === 'wandering-ronin' &&
+        practiceStart?.detail?.practice === true &&
+        practiceStart?.detail?.stage === 2;
+      root.dataset.trainingRecommendationLaunch = String(launchOk);
+      if (!launchOk) throw new Error('training recommendation did not launch the real Ronin practice route');
+
+      await forceStageClear(2);
+      await flush();
+      const completionOk =
+        root.dataset.trainingRecommendationState === 'practice-complete' &&
+        panel.hidden === false &&
+        panel.textContent.includes('完成一輪') &&
+        action.textContent === '再練一次' &&
+        localStorage.getItem(BEST_KEY) === campaignBest;
+      root.dataset.trainingRecommendationCompletion = String(completionOk);
+      if (!completionOk) throw new Error('recommended practice did not close the coaching loop or preserve campaign best');
+
+      action.click();
+      const retryStart = drainWithTerminalUi().find((event) => event.type === 'stage-start');
+      const retryOk =
+        combat.enemy.id === 'wandering-ronin' &&
+        retryStart?.detail?.practice === true &&
+        retryStart?.detail?.stage === 2;
+      root.dataset.trainingRecommendationRetry = String(retryOk);
+      if (!retryOk) throw new Error('training completion action did not retry the same practice route');
+
+      root.dataset.trainingRecommendationBrowserIntegration = 'pass';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.trainingRecommendationBrowserIntegration = 'fail';
+    }
+  </script>
+</body>
+</html>

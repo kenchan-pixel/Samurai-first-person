@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Footwork Browser Harness</title>
+</head>
+<body>
+  <div id="app">
+    <canvas id="game-canvas"></canvas>
+    <div id="gesture-hint"></div>
+    <section id="start-screen"><small></small></section>
+    <div class="combat-guide__cards"></div>
+    <div id="combat-action-cue" hidden><strong></strong><span></span></div>
+  </div>
+  <script type="module">
+    import { CombatEngine, Direction } from '../src/game-core.js';
+    import { BOSS_PHASE_ONE, BOSS_PHASE_TWO, installBossEncounter } from '../src/boss-encounter.js';
+    import { installFootwork } from '../src/footwork.js';
+    import { installPerfectStep } from '../src/perfect-step.js';
+
+    installBossEncounter(CombatEngine);
+    installFootwork(CombatEngine);
+    installPerfectStep(CombatEngine);
+
+    const app = document.querySelector('#app');
+    const canvas = document.querySelector('#game-canvas');
+    const step = document.querySelector('#footwork-step');
+    const range = document.querySelector('#footwork-range');
+    const feedback = document.querySelector('#footwork-feedback');
+    const actionCue = document.querySelector('#combat-action-cue');
+    let stepBubbleCount = 0;
+    let capturedPointer = null;
+    let canvasPointer = null;
+
+    app.addEventListener('pointerdown', (event) => {
+      if (event.target === step) stepBubbleCount += 1;
+    });
+    app.addEventListener('pointerup', (event) => {
+      if (event.target === step) stepBubbleCount += 1;
+    });
+    canvas.addEventListener('pointerdown', (event) => {
+      canvasPointer = event.pointerId;
+    });
+    canvas.addEventListener('pointerup', (event) => {
+      if (canvasPointer === event.pointerId) canvasPointer = null;
+    });
+    if (step) {
+      step.setPointerCapture = (pointerId) => {
+        capturedPointer = pointerId;
+      };
+    }
+
+    function dispatchStep(pointerId, fromX, fromY, toX, toY) {
+      step?.dispatchEvent(new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        pointerId,
+        clientX: fromX,
+        clientY: fromY,
+      }));
+      step?.dispatchEvent(new PointerEvent('pointerup', {
+        bubbles: true,
+        cancelable: true,
+        pointerId,
+        clientX: toX,
+        clientY: toY,
+      }));
+    }
+
+    const shortEnemy = {
+      id: 'ashigaru-scout',
+      name: 'Short Range',
+      title: 'Harness',
+      maxHp: 4,
+      postureMax: 4,
+      gapMs: 100,
+      recoveryMs: 300,
+      perfectWindowMs: 45,
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 1 }],
+    };
+
+    const shortCombat = new CombatEngine({ enemies: [shortEnemy] });
+    shortCombat.start(0);
+    shortCombat.update(1550);
+    const telegraph = shortCombat.snapshot(1550);
+    shortCombat.update(1650);
+    const postureBeforePerfectStep = shortCombat.enemyPosture;
+    dispatchStep(41, 100, 100, 103, 102);
+    const evadeSnapshot = shortCombat.snapshot(1660);
+    const autoHp = shortCombat.enemyHp;
+    const autoEvents = shortCombat.drainEvents();
+    const perfectStepVisible =
+      autoHp === 3 &&
+      shortCombat.enemyPosture === postureBeforePerfectStep &&
+      autoEvents.some((event) => event.type === 'counter' && event.detail?.automatic && event.detail?.perfectStep) &&
+      feedback?.textContent.includes('PERFECT STEP') &&
+      actionCue?.querySelector('strong')?.textContent.includes('PERFECT STEP') &&
+      actionCue?.querySelector('span')?.textContent.includes('仲可掃屏');
+    const counter = shortCombat.attemptAttack(Direction.BOTTOM, 1670);
+
+    const bossCombat = new CombatEngine({ enemies: [BOSS_PHASE_ONE] });
+    bossCombat.start(0);
+    bossCombat.attackCursor = 1;
+    bossCombat.update(1550);
+    bossCombat.drainEvents();
+    bossCombat.enemyHp = 7;
+    bossCombat.enemyPosture = 0;
+    const bossStrikeAt = bossCombat.phaseEndsAt;
+    bossCombat.update(bossStrikeAt);
+    dispatchStep(44, 100, 100, 102, 101);
+    await Promise.resolve();
+    const bossImmediateFeedback = feedback?.textContent || '';
+    const bossEvents = bossCombat.drainEvents();
+    const bossCueBody = actionCue?.querySelector('span')?.textContent || '';
+    const bossThresholdPassed =
+      bossCombat.enemyHp === 6 &&
+      bossCombat.enemyPosture === 0 &&
+      bossCombat.phase === 'gap' &&
+      bossCombat.currentAttack === null &&
+      bossCombat.enemy.title === BOSS_PHASE_TWO.title &&
+      bossEvents.some((event) =>
+        event.type === 'counter' &&
+        event.detail?.automatic &&
+        event.detail?.perfectStep &&
+        event.detail?.bossPhase === 2 &&
+        event.detail?.openingClosed === true
+      ) &&
+      bossEvents.some((event) => event.type === 'boss-phase' && event.detail?.phase === 2) &&
+      bossImmediateFeedback.includes('BLOOD MOON') &&
+      !bossImmediateFeedback.includes('掃屏') &&
+      feedback?.textContent.includes('BLOOD MOON') &&
+      !feedback?.textContent.includes('掃屏') &&
+      bossCueBody.includes('BLOOD MOON') &&
+      !bossCueBody.includes('掃屏');
+
+    const thresholdCombat = new CombatEngine({ enemies: [shortEnemy] });
+    thresholdCombat.start(0);
+    thresholdCombat.update(1550);
+    thresholdCombat.update(1650);
+    thresholdCombat.drainEvents();
+    dispatchStep(42, 90, 90, 125, 90);
+    const thresholdEvents = thresholdCombat.drainEvents();
+    const thresholdSnapshot = thresholdCombat.snapshot(1660);
+
+    const heavyEnemy = {
+      ...shortEnemy,
+      id: 'oni-guard',
+      name: 'Long Range',
+      attacks: [{ direction: Direction.TOP, telegraphMs: 100, strikeMs: 120, damage: 2, heavy: true }],
+    };
+    const heavyCombat = new CombatEngine({ enemies: [heavyEnemy], playerMaxHp: 5 });
+    heavyCombat.start(0);
+    heavyCombat.update(1550);
+    const heavyTelegraph = heavyCombat.snapshot(1550);
+    heavyCombat.update(1650);
+    dispatchStep(43, 100, 100, 101, 101);
+    const trackedSnapshot = heavyCombat.snapshot(1660);
+    const heavyEventsBeforeHit = heavyCombat.drainEvents();
+    heavyCombat.update(1770);
+
+    canvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 77, clientX: 10, clientY: 10 }));
+    canvas.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 77, clientX: 12, clientY: 12 }));
+
+    const uiReady = Boolean(step && range && document.documentElement.dataset.footworkReady === 'true');
+    const guideReady =
+      document.documentElement.dataset.perfectStepReady === 'true' &&
+      document.documentElement.dataset.perfectStepGuide === 'true' &&
+      document.querySelector('[data-perfect-step-guide]')?.textContent.includes('PERFECT STEP');
+    const shortPassed =
+      telegraph.enemyDistance === 0 &&
+      telegraph.attack?.reachDistance === 0 &&
+      evadeSnapshot.phase === 'recovery' &&
+      evadeSnapshot.attack?.evaded === true &&
+      perfectStepVisible &&
+      counter.accepted === true &&
+      counter.evaded === true &&
+      counter.damage === 2 &&
+      shortCombat.enemyHp === 1;
+    const longPassed =
+      heavyTelegraph.enemyDistance === 2 &&
+      heavyTelegraph.attack?.reachDistance === 2 &&
+      trackedSnapshot.phase === 'strike' &&
+      trackedSnapshot.attack?.evaded === false &&
+      !heavyEventsBeforeHit.some((event) => event.type === 'counter' && event.detail?.perfectStep) &&
+      heavyCombat.playerHp === 3;
+    const pointerPathPassed = capturedPointer === 43 && stepBubbleCount === 0 && canvasPointer === null;
+    const travelThresholdPassed =
+      thresholdSnapshot.phase === 'strike' &&
+      thresholdSnapshot.attack?.evaded === false &&
+      !thresholdEvents.some((event) => event.type === 'backstep-evade' || event.type === 'footwork-miss' || event.detail?.perfectStep);
+
+    document.documentElement.dataset.footworkIntegration = shortPassed && bossThresholdPassed && longPassed && uiReady && guideReady ? 'pass' : 'fail';
+    document.documentElement.dataset.footworkShortEvade = String(shortPassed);
+    document.documentElement.dataset.footworkLongTrack = String(longPassed);
+    document.documentElement.dataset.footworkUi = String(uiReady);
+    document.documentElement.dataset.footworkPointer = String(pointerPathPassed);
+    document.documentElement.dataset.footworkTravelThreshold = String(travelThresholdPassed);
+    document.documentElement.dataset.perfectStepIntegration = String(perfectStepVisible && bossThresholdPassed && guideReady);
+    document.documentElement.dataset.perfectStepBossThreshold = String(bossThresholdPassed);
+  </script>
+</body>
+</html>

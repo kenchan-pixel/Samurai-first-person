@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <style>
+    :root{--safe-top:0px;--safe-right:0px;--safe-bottom:0px;--safe-left:0px;background:#090a0d}
+    html,body,#app{width:100%;height:100%;margin:0;overflow:hidden}
+    #start-screen{position:absolute;inset:0}
+    #start-button{position:absolute;left:12px;top:12px}
+  </style>
+</head>
+<body>
+  <main id="app">
+    <section id="start-screen"><button id="start-button" type="button">Start</button><small></small></section>
+  </main>
+  <script type="module">
+    const root = document.documentElement;
+    try {
+      await import('../src/onboarding-coach.js');
+      const {
+        applyPerfectTechniqueCue,
+        installPerfectTechniqueCueStyles,
+        perfectTechniqueCueForEvent,
+      } = await import('../src/perfect-technique-cue.js');
+      installPerfectTechniqueCueStyles();
+
+      const cue = document.querySelector('#combat-action-cue');
+      if (!cue) throw new Error('combat action cue missing');
+
+      const insideViewport = (rect) => rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight;
+      const parryProfile = perfectTechniqueCueForEvent({ type: 'perfect-parry', detail: { direction: 'top' } });
+      if (!applyPerfectTechniqueCue(cue, parryProfile)) throw new Error('perfect parry cue not applied');
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const parryRect = cue.getBoundingClientRect();
+      const parryStyle = getComputedStyle(cue);
+      const parrySignature = `${parryStyle.borderTopColor}|${parryStyle.backgroundImage}|${cue.dataset.kind}`;
+      const parryText = `${cue.querySelector('strong')?.textContent}|${cue.querySelector('span')?.textContent}`;
+      const parryPass = cue.dataset.kind === 'perfect-parry' && parryText.includes('PERFECT PARRY') && parryText.includes('敵勢大增');
+
+      const stepProfile = perfectTechniqueCueForEvent({ type: 'counter', detail: { perfectStep: true, enemyHp: 3 } });
+      if (!applyPerfectTechniqueCue(cue, stepProfile)) throw new Error('perfect step cue not applied');
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const stepRect = cue.getBoundingClientRect();
+      const stepStyle = getComputedStyle(cue);
+      const stepSignature = `${stepStyle.borderTopColor}|${stepStyle.backgroundImage}|${cue.dataset.kind}`;
+      const stepText = `${cue.querySelector('strong')?.textContent}|${cue.querySelector('span')?.textContent}`;
+      const stepPass = cue.dataset.kind === 'perfect-step' && stepText.includes('PERFECT STEP') && stepText.includes('無敵勢');
+      const layoutPass = insideViewport(parryRect) && insideViewport(stepRect) && parryRect.width > 0 && stepRect.height > 0;
+      const pointerPass = getComputedStyle(cue).pointerEvents === 'none';
+      const identityPass = parrySignature !== stepSignature;
+
+      root.dataset.perfectTechniqueParry = parryPass ? 'pass' : 'fail';
+      root.dataset.perfectTechniqueStep = stepPass ? 'pass' : 'fail';
+      root.dataset.perfectTechniqueLayout = layoutPass ? 'pass' : 'fail';
+      root.dataset.perfectTechniquePointer = pointerPass ? 'pass' : 'fail';
+      root.dataset.perfectTechniqueIdentity = identityPass ? 'pass' : 'fail';
+      root.dataset.perfectTechniqueBrowser = parryPass && stepPass && layoutPass && pointerPass && identityPass ? 'pass' : 'fail';
+    } catch (error) {
+      root.dataset.perfectTechniqueBrowser = 'fail';
+      root.dataset.perfectTechniqueError = String(error?.message || error).slice(0, 240);
+    }
+  </script>
+</body>
+</html>

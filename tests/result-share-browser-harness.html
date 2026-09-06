@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../src/styles.css" />
+  <title>Result actions browser harness</title>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="result-screen" class="modal modal--visible" aria-live="assertive">
+      <div class="modal__content modal__content--result">
+        <p id="result-eyebrow" class="modal__eyebrow">連戰試煉 · MASTERY 94</p>
+        <h2 id="result-title">S 級 · 八關制霸</h2>
+        <p id="result-summary">格擋 92% · 完美 7/12 · 破防 3 · 受擊 1 · 02:41</p>
+        <div class="result-score"><span>得分</span><strong id="result-score">004200</strong></div>
+        <div id="challenge-result"><strong data-challenge-progress>連戰 8/8 · 制霸</strong></div>
+        <button id="restart-button" class="primary-button" type="button">再戰連陣</button>
+      </div>
+    </section>
+    <section id="start-screen" class="modal">
+      <div class="modal__content"><h1>刃返</h1><button id="start-button" class="primary-button" type="button">拔刀</button></div>
+    </section>
+    <pre id="harness-error" hidden></pre>
+  </main>
+
+  <script type="module">
+    const root = document.documentElement;
+    const errorNode = document.querySelector('#harness-error');
+
+    const flush = async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    };
+
+    const rectInsideViewport = (rect, requireTouch = true) =>
+      (!requireTouch || (rect.width >= 44 && rect.height >= 44)) &&
+      rect.left >= -0.5 &&
+      rect.right <= innerWidth + 0.5 &&
+      rect.top >= -0.5 &&
+      rect.bottom <= innerHeight + 0.5;
+
+    try {
+      await import('../src/result-share.js');
+      await import('../src/result-feedback.js');
+
+      const shareButton = document.querySelector('#result-share-button');
+      if (!shareButton) throw new Error('result share control missing');
+      const shareRect = shareButton.getBoundingClientRect();
+      const shareLayoutOk = rectInsideViewport(shareRect);
+      root.dataset.resultShareLayout = shareLayoutOk ? 'pass' : 'fail';
+      if (!shareLayoutOk) throw new Error(`share control escaped 320x568 viewport: ${JSON.stringify(shareRect.toJSON?.() || shareRect)}`);
+
+      let nativePayload = null;
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: async (payload) => { nativePayload = payload; },
+      });
+      shareButton.click();
+      await flush();
+      const nativeOk = Boolean(
+        nativePayload &&
+        nativePayload.text.includes('S 級 · 八關制霸') &&
+        nativePayload.text.includes('連戰 8/8 · 制霸') &&
+        nativePayload.text.includes('得分 004200') &&
+        nativePayload.text.includes('格擋 92%') &&
+        !nativePayload.url.includes('?') &&
+        !nativePayload.url.includes('#') &&
+        root.dataset.resultShareLast === 'shared'
+      );
+      root.dataset.resultShareNative = nativeOk ? 'pass' : 'fail';
+      if (!nativeOk) throw new Error(`native share payload incomplete: ${JSON.stringify(nativePayload)}`);
+
+      let copied = '';
+      Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { writeText: async (value) => { copied = value; } },
+      });
+      shareButton.click();
+      await flush();
+      const clipboardOk =
+        copied.includes('S 級 · 八關制霸') &&
+        copied.includes('得分 004200') &&
+        copied.includes(location.origin) &&
+        root.dataset.resultShareLast === 'copied';
+      root.dataset.resultShareClipboard = clipboardOk ? 'pass' : 'fail';
+      if (!clipboardOk) throw new Error(`clipboard fallback incomplete: ${copied}`);
+
+      const feedbackButton = document.querySelector('#result-feedback-button');
+      const panel = document.querySelector('#result-feedback-panel');
+      if (!feedbackButton || !panel) throw new Error('Closed Beta feedback controls missing');
+      const feedbackButtonRect = feedbackButton.getBoundingClientRect();
+      feedbackButton.click();
+      await flush();
+      const panelRect = panel.getBoundingClientRect();
+      const privacyText = panel.querySelector('[data-feedback-privacy]')?.textContent || '';
+      const feedbackLayoutOk =
+        rectInsideViewport(feedbackButtonRect) &&
+        !panel.hidden &&
+        rectInsideViewport(panelRect, false) &&
+        privacyText.includes('不會自動上傳');
+      root.dataset.resultFeedbackLayout = feedbackLayoutOk ? 'pass' : 'fail';
+      if (!feedbackLayoutOk) throw new Error(`feedback panel failed 320x568/privacy boundary: ${privacyText}`);
+
+      panel.querySelector('[data-feedback-kind="bug"]')?.click();
+      const note = panel.querySelector('[data-feedback-note]');
+      note.value = '血月下段刀有一次睇唔清楚';
+      copied = '';
+      panel.querySelector('[data-feedback-send]')?.click();
+      await flush();
+      const feedbackExportOk =
+        copied.includes('刃返 Closed Beta｜錯誤回報') &&
+        copied.includes('S 級 · 八關制霸') &&
+        copied.includes('得分：004200') &&
+        copied.includes('血月下段刀有一次睇唔清楚') &&
+        copied.includes(location.origin) &&
+        !copied.includes('?browser-smoke') &&
+        root.dataset.resultFeedbackLast === 'copied';
+      root.dataset.resultFeedbackExport = feedbackExportOk ? 'pass' : 'fail';
+      if (!feedbackExportOk) throw new Error(`feedback local export incomplete: ${copied}`);
+
+      panel.querySelector('[data-feedback-close]')?.click();
+      const closedOk = panel.hidden && feedbackButton.getAttribute('aria-expanded') === 'false';
+      root.dataset.resultFeedbackClose = closedOk ? 'pass' : 'fail';
+      if (!closedOk) throw new Error('feedback panel did not close cleanly');
+
+      document.querySelector('#result-screen')?.classList.remove('modal--visible');
+      document.querySelector('#start-screen')?.classList.add('modal--visible');
+      await import('../src/beta-readiness.js');
+      await flush();
+      const betaButton = document.querySelector('#beta-readiness-button');
+      const betaPanel = document.querySelector('#beta-readiness-panel');
+      if (!betaButton || !betaPanel) throw new Error('Closed Beta readiness controls missing');
+      const betaButtonOk = rectInsideViewport(betaButton.getBoundingClientRect());
+      betaButton.click();
+      await flush();
+      const betaPrivacy = betaPanel.querySelector('[data-beta-readiness-privacy]')?.textContent || '';
+      const betaItems = [...betaPanel.querySelectorAll('[data-beta-readiness-item]')];
+      const betaLayoutOk = betaButtonOk && !betaPanel.hidden && rectInsideViewport(betaPanel.getBoundingClientRect(), false);
+      const betaCopyOk = betaItems.length === 3 && betaPrivacy.includes('唔會自動上傳') && betaPrivacy.includes('冇登入') && betaPrivacy.includes('背景遙測');
+      betaPanel.querySelector('[data-beta-readiness-close]')?.click();
+      const betaCloseOk = betaPanel.hidden && betaButton.getAttribute('aria-expanded') === 'false';
+      root.dataset.betaReadinessLayout = betaLayoutOk ? 'pass' : 'fail';
+      root.dataset.betaReadinessCopy = betaCopyOk ? 'pass' : 'fail';
+      root.dataset.betaReadinessClose = betaCloseOk ? 'pass' : 'fail';
+      root.dataset.betaReadinessBrowser = betaLayoutOk && betaCopyOk && betaCloseOk ? 'pass' : 'fail';
+      if (root.dataset.betaReadinessBrowser !== 'pass') throw new Error(`Closed Beta readiness failed: layout=${betaLayoutOk} copy=${betaCopyOk} close=${betaCloseOk}`);
+
+      root.dataset.resultShareBrowser = shareLayoutOk && nativeOk && clipboardOk ? 'pass' : 'fail';
+      root.dataset.resultFeedbackBrowser = feedbackLayoutOk && feedbackExportOk && closedOk ? 'pass' : 'fail';
+    } catch (error) {
+      errorNode.hidden = false;
+      errorNode.textContent = error?.stack || String(error);
+      root.dataset.resultShareBrowser = 'fail';
+      root.dataset.resultFeedbackBrowser = 'fail';
+      root.dataset.betaReadinessBrowser = 'fail';
+    }
+  </script>
+</body>
+</html>

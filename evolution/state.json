@@ -1,0 +1,76 @@
+{
+  "status": "verifying",
+  "run_number": 174,
+  "last_action_type": "BLOCKER_FIX",
+  "last_action": "Incoming exact HEAD de255568d6806376858bd2c26d4b0348b91b63e8 has terminal exact-head GitHub Vercel success and Vercel Preview toolbar feedback reports 0 unresolved threads; Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty. Actions CI #220 / run 34036554052 is terminal red at npm test before the browser suite can run. The current-head All Repos P1 pinpoints a contract mismatch in enemyCounterReactionFrame(): a normal TOP manual counter gets the intended lift plus an unintended neutral 0.020 base drop, contradicting the Run 173 baseline that TOP lifts while BOTTOM drives the stance lower. Run 174 repairs only that vertical presentation branch: TOP now owns zero base drop, while the separate defeated/finisher collapse drop remains available; RIGHT/LEFT settling drop, BOTTOM drop, tier escalation, hit-age settling and whole-root/Euler-only renderer ownership remain unchanged. The focused top.lift > 0 && top.drop === 0 assertion and the complete real 320x568 PlayCanvas browser contract are not weakened. No combat timing, damage, posture, score, input, persistence, identifier, analytics, privacy, network or Sword/HandR authority changes.",
+  "last_commit": "de255568d6806376858bd2c26d4b0348b91b63e8",
+  "active_blocker": "Post-commit exact-head Actions must pass npm test plus the complete browser suite, including the extended 320x568 real PlayCanvas pressure/parry/directional-counter/guard-break/finisher/settle gate and all unchanged Closed Beta/challenge/practice gates, and exact-head Vercel must be terminal success before feature work resumes. Any red exact-head result becomes the next BLOCKER_FIX authority.",
+  "ci_status": "pending_self_verification",
+  "preview_status": "pending_exact_head_verification",
+  "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
+  "preview_status_target": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app/build-meta.json",
+  "deployment_status_source": "Direct Vercel exact-SHA deployment data when available; otherwise exact-head GitHub Vercel status; when those integration signals are unavailable/missing (not failed), fail-closed Preview /build-meta.json exact-SHA receipt.",
+  "vercel_project": "samurai-first-person",
+  "vercel_team": "kenchan-pixels-projects",
+  "vercel_project_id": "prj_UC2Q7h9EPyVHEuzt3ZBOEzHid5cr",
+  "vercel_team_id": "team_qnmhvwQSVdB0ygoS9fw5lLtr",
+  "preview_feedback_unresolved": 0,
+  "preview_self_verification": {
+    "viewport": "320x568",
+    "status": "manual_counter_top_drop_fix_pending_exact_head",
+    "last_observed_head": "de255568d6806376858bd2c26d4b0348b91b63e8",
+    "incoming_ci_run": 34036554052,
+    "incoming_ci_result": "failure: npm test failed at the focused TOP-vs-BOTTOM manual-counter vertical body-read assertion; npm run test:browser was skipped",
+    "incoming_github_vercel_status_count": 1,
+    "incoming_github_vercel_result": "success",
+    "direct_vercel_connector": "list_deployments for the recorded project/team returned 403 Forbidden this run; exact-head GitHub Vercel status is therefore the repository-approved deployment signal",
+    "owner_preview_reachability": "Vercel Preview toolbar reports 0 unresolved feedback for autonomous-evolution; supplemental only, while exact-head GitHub Vercel status remains authoritative",
+    "receipt_path": "/build-meta.json",
+    "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
+    "note": "Run 174 fixes only the proven TOP base-drop mismatch. A normal TOP counter keeps its upward lift with zero base drop; a defeated TOP counter may still receive the separate finisher-collapse drop. The focused Node assertion and the 320x568 PlayCanvas directional counter/guard-break/finisher gate remain unchanged and fail-closed."
+  },
+  "external_deployment_recovery": {
+    "last_incident": {
+      "provider": "vercel",
+      "incident_key": "vercel:deployment-rate-limit:42ada958c082324b0fd9f057556266f34eb334d8",
+      "failure_kind": "deployment_rate_limit",
+      "blocked_head": "42ada958c082324b0fd9f057556266f34eb334d8",
+      "status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/Fpu2hoWYQiNfDnCkjYFKJ16FwyBj",
+      "first_seen_at": "2026-08-29T19:38:36Z",
+      "cooldown_until": "2026-08-30T19:38:36Z",
+      "rearm_attempted": true,
+      "rearm_head": "1a2ddce4f610d911a519a3808412d2b4c6232bf6",
+      "resolution": "success",
+      "resolved_at": "2026-09-01T01:33:00Z",
+      "resolved_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/3jPHtzwpzwXbWsean16q9VutK6Mf"
+    }
+  },
+  "delivery_verification_recovery": {
+    "last_incident": {
+      "provider": "vercel",
+      "incident_key": "vercel:missing-integration-signal:5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+      "failure_kind": "missing_exact_head_integration_signal",
+      "blocked_head": "5b3859dd553d9cf25bde9c6e164b2ee8597cab8f",
+      "first_observed_at": "2026-09-03T10:21:08Z",
+      "incoming_ci": "success",
+      "github_vercel_status": "missing",
+      "direct_vercel_connector": "403_list_deployments_and_404_alias_lookup",
+      "preview_alias_reachable": true,
+      "repair": "emit_no_store_build_meta_exact_sha_receipt",
+      "receipt_path": "/build-meta.json",
+      "resolution": "success",
+      "resolved_head": "b76784eb181763f6b5d472f511b8a5c9d9afe165",
+      "resolved_at": "2026-09-03T10:35:32Z",
+      "resolved_status_target": "https://vercel.com/kenchan-pixels-projects/samurai-first-person/EqETAzzctTknakQvodRhUnYJNVBs"
+    }
+  },
+  "next_candidates": [
+    "ACCEPTANCE: if Run 174 exact-head CI and Vercel are green, treat the TOP directional-contract blocker as resolved and manual-counter body impact as delivered; refine only if exact Preview/CI evidence shows excessive displacement, wrong swipe mirroring, Sword/HandR drift, telegraph leakage or poor settling",
+    "MAINTENANCE: centralize the machine-readable direct-practice terminal/retry contract shared by practice-mode, Blood Moon and Closed Beta reconciliation, including blood-moon-practice / 再戰血月, when it can be bundled with a qualifying implementation rather than consuming a run as a pure refactor",
+    "ACCEPTANCE: keep the real 320x568 Closed Beta 下一步 production gate fail-closed at every observer/reconciliation-owned result transition; refine only if exact Preview/CI evidence shows another stale routing, payload/export failure or challenge/今日陣 leakage",
+    "ACCEPTANCE: inspect the campaign 再戰目標 at 320x568 together with 關鍵一刻, 四向防守, Closed Beta 下一步/回報/分享 and the restart button; refine only if exact Preview/CI evidence shows wrapping, stale target carry, route leakage, misleading progression or terminal overlap",
+    "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
+    "FEATURE: consider a bounded opponent recovery/guard-reset transition only if exact Preview evidence shows the new counter impact still snaps unnaturally back into the next authored guard after the existing hit-age envelope",
+    "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
+  ]
+}
