@@ -1,10 +1,10 @@
 {
   "status": "verifying",
-  "run_number": 161,
-  "last_action_type": "BLOCKER_FIX",
-  "last_action": "Incoming exact HEAD 6a1fc79a3483f9ed29997fc383fa8d09a2b37f36 has exact-head GitHub Vercel success and Preview Ready with 0 unresolved feedback, Draft PR #1 remains open/Draft/unmerged, main is untouched and inline review threads are empty, but Actions CI #206 / run 34005288562 failed twice after npm test 181/181 because the real production Closed Beta browser gate reached the feedback panel but headless Chromium could not complete the OS Web Share/clipboard export. Current-head review 5123807212 classifies this as P1 and requires a deterministic platform-export seam without bypassing the real send control, deliverBetaFeedback path, payload or explicit-user-action privacy contract. Run 161 changes only the browser acceptance seam plus the Closed Beta acceptance SOT: the real production document still drives campaign terminal → Ronin practice → same-opponent retry/comparison → feedback, then clicks the real production send control; only navigator.share is replaced in the same-origin headless test, and the gate now verifies the real payload/clean URL reaches that seam before 3/3. No gameplay/runtime product behavior changes.",
-  "last_commit": "6a1fc79a3483f9ed29997fc383fa8d09a2b37f36",
-  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the deterministic headless feedback-export acceptance repair. No feature work is allowed until the resulting HEAD is terminal green.",
+  "run_number": 162,
+  "last_action_type": "FEATURE",
+  "last_action": "Incoming exact HEAD c32ab5e1032fd2f2f10748ac590d76697121a881 is terminal green on Actions CI #207 / run 34006686352 and exact-head GitHub Vercel status, Draft PR #1 remains open/Draft/unmerged, main is untouched, inline review comments are empty, Preview feedback reports 0 unresolved items and the latest exact-head review reports no actionable P0/P1/P2. Candidate scoring selected bounded enemy parry recoil 24/25 over a campaign replay objective 20/25 and a live mastery cue 18/25 because it materially improves physical combat response without adding HUD, persistence or gameplay authority. Run 162 adds a presentation-only whole-body recoil during the already-authoritative pre-counter recovery after a parry: normal parry recoils visibly, Perfect Parry is stronger, guard break is strongest, horizontal attack directions mirror the off-axis reaction, and the effect settles before late recovery or immediately when a manual counter is consumed. It is exactly neutral during telegraph/strike/gap, owns no timer, never rotates Sword/HandR directly and composes before blade-trajectory verification. The existing 320x568 enemy-posture PlayCanvas gate is strengthened to prove normal→Perfect→guard-break escalation, telegraph suppression, bounded finite transforms, late-recovery settlement and unchanged HandR/grip authority.",
+  "last_commit": "c32ab5e1032fd2f2f10748ac590d76697121a881",
+  "active_blocker": "Post-commit exact-head CI and Vercel Preview verification are required for the parry-recoil implementation. No further feature work is allowed until the resulting HEAD is terminal green.",
   "ci_status": "pending_self_verification",
   "preview_status": "pending_exact_head_verification",
   "preview_url": "https://samurai-first-person-git-autonom-9c4929-kenchan-pixels-projects.vercel.app",
@@ -17,17 +17,17 @@
   "preview_feedback_unresolved": 0,
   "preview_self_verification": {
     "viewport": "320x568",
-    "status": "closed_beta_feedback_platform_seam_pending_exact_head",
-    "last_observed_head": "6a1fc79a3483f9ed29997fc383fa8d09a2b37f36",
-    "incoming_ci_run": 34005288562,
-    "incoming_ci_result": "failure",
+    "status": "enemy_parry_recoil_pending_exact_head",
+    "last_observed_head": "c32ab5e1032fd2f2f10748ac590d76697121a881",
+    "incoming_ci_run": 34006686352,
+    "incoming_ci_result": "success",
     "incoming_github_vercel_status_count": 1,
     "incoming_github_vercel_result": "success",
     "direct_vercel_connector": "not required for preflight because exact-head GitHub Vercel status is the repository-approved fallback deployment signal",
     "owner_preview_reachability": "supplemental only; exact-head GitHub Vercel status is authoritative for this preflight",
     "receipt_path": "/build-meta.json",
     "receipt_requirement": "commitSha must be a valid 40-character SHA equal to exact autonomous-evolution HEAD; branch must equal autonomous-evolution when available",
-    "note": "Run 161 is a test/SOT blocker repair only. The 320x568 gate continues to embed the real production index.html and forbids manual run-mode/practice-progress/feedback-completion mutation. After the real campaign → Ronin repeat/comparison → feedback-panel path, headless acceptance replaces only the same-origin navigator.share platform primitive, clicks the real production send control, requires resultFeedbackLast=shared from the real deliverBetaFeedback call, verifies the exported title/player note/clean URL captured at that seam, and only then accepts the real beta 3/3 completion observer. Challenge/今日陣 suppression, full Node/browser CI and Vercel exact-head verification remain mandatory."
+    "note": "Run 162 is a player-visible renderer slice only. It reads the existing recovery phaseProgress plus attack.parried/perfect/guardBroken/counterUsed flags, adds bounded whole-enemy/root and skinned-model reaction offsets, remains zero in telegraph/strike/gap and after the counter/late-recovery boundary, and is sampled before blade-trajectory/afterimage verification. No CombatEngine, timing, damage, posture, score, input, storage, identifier, analytics or network authority changes. The focused 320x568 production PlayCanvas gate must prove normal/Perfect/guard-break escalation and unchanged Sword→HandR grip authority."
   },
   "external_deployment_recovery": {
     "last_incident": {
@@ -65,12 +65,12 @@
     }
   },
   "next_candidates": [
+    "ACCEPTANCE: inspect the new normal/Perfect/guard-break enemy parry recoil at 320x568 together with authored Attack* recovery, pressured-guard body language, blade trajectory and actual-Sword afterimages; refine only if exact Preview/CI evidence shows excessive motion, blade-axis drift, unclear escalation or counter/late-recovery leakage",
     "ACCEPTANCE: keep the Closed Beta 下一步 production-page gate fail-closed at 320x568; refine only if exact Preview/CI evidence shows timing flake, overlap, stale routing, payload/export failure or challenge/今日陣 leakage",
     "ACCEPTANCE: inspect the repaired campaign-only 關鍵一刻 isolation at 320x568, including early 連戰試煉/今日陣 defeat plus normal campaign result; refine only if exact Preview evidence shows mode leakage, stale marker state, wrapping or terminal overlap",
-    "ACCEPTANCE: inspect the enemy-posture pressured-guard read at 320x568 together with Guard + four authored cuts + measured/standard/quick tempo; refine only if exact Preview evidence shows blade-axis drift, excessive body sway, weak visibility or telegraph contamination",
     "ACCEPTANCE: repeat Ronin/Oni/Shogun/Blood Moon direct practice at 320x568 and inspect 本次修行 together with 比上次, 上局目標, 近3局, 今局修行, 四向防守 and 修行進度; refine only if exact Preview evidence shows crowding, stale-route leakage, misleading best aggregation or unclear refresh semantics",
-    "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
     "FEATURE: consider a campaign replay objective only if it reuses existing result/run-analysis evidence and adds no persistence/network/live-HUD density",
+    "FEATURE: consider a bounded live-combat mastery cue only if it reuses an existing transient feedback surface and cannot obscure blade reads or introduce timing-adjacent authority",
     "DECISION_GATE: before cloud leaderboard, remote feedback inbox, server-stored nickname/player ID or telemetry, define identifiers, data fields, retention/deletion, public visibility, abuse controls and hosting/cost ownership"
   ]
 }

@@ -6,6 +6,7 @@ import { installMobileCombatReadabilityView } from './mobile-combat-readability.
 import { installHeavyAttackWeight } from './heavy-attack-weight.js';
 import { installAttackRhythm } from './attack-rhythm.js';
 import { installEnemyPosturePresence } from './enemy-posture-presence.js';
+import { installEnemyParryRecoil } from './enemy-parry-recoil.js';
 import { installBladeTrajectoryView } from './blade-trajectory.js';
 import { installEnemyBladeAfterimage } from './enemy-blade-afterimage.js';
 import { installMobileControlReadability } from './mobile-control-readability.js';
@@ -34,11 +35,13 @@ export class View {
         installPlayerWeaponFidelity(
           installEnemyBladeAfterimage(
             installBladeTrajectoryView(
-              installEnemyPosturePresence(
-                installAttackRhythm(
-                  installHeavyAttackWeight(
-                    installMobileCombatReadabilityView(
-                      installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+              installEnemyParryRecoil(
+                installEnemyPosturePresence(
+                  installAttackRhythm(
+                    installHeavyAttackWeight(
+                      installMobileCombatReadabilityView(
+                        installStageIdentity(installAuthoredEnemyAttacks(new PlayCanvasView(canvas))),
+                      ),
                     ),
                   ),
                 ),

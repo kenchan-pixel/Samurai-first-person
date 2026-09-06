@@ -230,7 +230,7 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 ### Repair
 
-- Kept the campaign/direct-practice 敵式 card, copy, layout, timing and practice coaching unchanged.
+- Kept the Run 137 campaign/direct-practice 敵式 card, copy, layout, timing and practice coaching unchanged.
 - The duel-read adapter now treats the CombatEngine `Symbol.for('blade-reversal.challenge-active-v1')` flag as authoritative for challenge/今日陣 suppression and retains the existing DOM `data-challenge-active` check only as a presentation fallback. Because challenge-mode sets the engine flag before entering the underlying start flow, a stage-start/boss-phase event cannot expose the card during startup ordering while the DOM mirror is still stale.
 - Added a focused unit regression proving challenge suppression remains true when the authoritative engine flag is true but the DOM mirror still says false. The existing production-browser challenge/daily suppression gate remains intact.
 - No combat timing, damage, posture, parry/Perfect/STEP, score, renderer, input, CSS, persistence, identifier, analytics or network authority changed.
@@ -663,3 +663,27 @@ This log is intentionally concise. Full diffs, exact SHAs, CI receipts and Previ
 
 - The repair is limited to test harness/runner plus acceptance SOT/state/log. It does not weaken the product privacy boundary or synthesize Closed Beta completion.
 - Post-commit exact-head Actions `npm test` + complete `npm run test:browser` including `beta-readiness-browser-smoke.mjs`, plus exact-head Vercel success, are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
+
+## Run 162 — Make successful parries physically knock the opponent off-line
+
+**Date:** 2026-09-06  
+**Action type:** FEATURE
+
+### Preflight
+
+- Incoming exact HEAD: `c32ab5e1032fd2f2f10748ac590d76697121a881`.
+- Exact-head Actions CI #207 / run `34006686352` is terminal success with the complete Node/browser suite green and exact-head GitHub `Vercel` status is success. Draft PR #1 is open/Draft/unmerged; `main` is untouched; inline review comments are empty; Preview feedback reports 0 unresolved items; latest exact-head Second Hourly review `5123851628` reports no actionable P0/P1/P2.
+- Candidate scoring: **bounded enemy parry recoil 24/25** (impact 5, goal 5, novelty 5, confidence 4, safety 5); campaign replay objective 20/25; bounded live-combat mastery cue 18/25. The recoil wins because it improves the core sword-contact feel and makes the existing recovery opening readable through the opponent's body rather than another HUD surface, while reusing only authoritative recovery state.
+
+### Feature
+
+- Added `src/enemy-parry-recoil.js`, a presentation-only PlayCanvas adapter that reacts only after an authoritative parry has already opened recovery. A normal parry pushes the complete opponent back/off-axis, Perfect Parry is stronger, and a true guard break is strongest; RIGHT/LEFT incoming directions mirror the whole-body lateral/yaw/roll reaction rather than rewriting gameplay direction.
+- The effect owns no timer: it derives entirely from existing `phaseProgress`, `attack.parried`, `attack.perfect`, `attack.guardBroken` and `attack.counterUsed`. It is exactly neutral during ready/stage-intro/gap/telegraph/strike, fades to zero before late recovery and clears immediately once the manual counter is consumed.
+- Renderer composition places the recoil after pressured-guard body language and before blade-trajectory/afterimage sampling. It changes only complete enemy-root position and skinned whole-model Euler presentation; Sword/HandR are never rotated directly and downstream grip/trajectory evidence sees the final composed pose.
+- Added deterministic pure tests for lifecycle, normal→Perfect→guard-break escalation, horizontal mirroring and no storage/transport/timer APIs. Strengthened the existing real 320×568 enemy-posture PlayCanvas gate to prove gap/telegraph suppression, visible normal recoil, stronger Perfect recoil, strongest bounded guard-break recoil, finite transforms, late-recovery settlement and unchanged Sword→HandR/grip/orientation authority.
+- No attack definition, timing, damage, posture value, parry/Perfect/STEP rule, HP, score, roster, input, HUD, persistence, identifier, analytics or network behavior changed.
+
+### Verification boundary
+
+- The new focused pure suite passed 4/4 locally and all modified/new JavaScript passed `node --check` before Git object assembly. Repository-authoritative full verification remains exact-head Actions after the single final commit.
+- Post-commit exact-head `npm test`, complete `npm run test:browser` including the strengthened enemy-posture browser gate, and exact-head GitHub Vercel success are mandatory. The PR run comment is authoritative for the resulting SHA/status under the one-commit rule.
